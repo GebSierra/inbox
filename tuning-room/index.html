@@ -460,11 +460,14 @@ function makeTrial(st){
 // Aim at weak notes: weight grows with average miss; untried notes get a high weight so the map fills in.
 function weakPick(lo,hi){const ws=[];for(let m=lo;m<=hi;m++){const a=noteAvg(m);ws.push(a==null?4:1+a/25)}
   let r=Math.random()*ws.reduce((x,y)=>x+y,0);for(let i=0;i<ws.length;i++){r-=ws[i];if(r<=0)return lo+i}return hi}
+// Bar height = how reliably you hit the note. On pitch = full height; way off = a stub. Untried = empty outline.
 function mapHTML(){if(!S.range)return"";const [lo,hi]=trainRange();let cols="";
-  for(let m=lo;m<=hi;m++){const a=noteAvg(m);const h=a==null?8:Math.max(8,Math.min(100,a));
-    const col=a==null?"var(--line)":a<=25?"var(--good)":a<=50?"var(--accent)":a<=100?"var(--warn)":"var(--bad)";
-    cols+=`<div title="${noteName(m)}: ${a==null?"not tried":tuneWord(a)+" on average"}"><i style="height:${h*0.7}px;background:${col}"></i><span>${noteName(m).replace(/\d/,"")}</span></div>`}
-  return `<div class="label" style="margin-top:6px">Your pitch map · taller bars are weaker notes</div><div class="map">${cols}</div>`}
+  for(let m=lo;m<=hi;m++){const a=noteAvg(m);
+    const h=a==null?70:Math.max(8,Math.min(70,70*(1-(Math.max(0,a-15))/185)));
+    const col=a==null?"transparent":a<=25?"var(--good)":a<=50?"var(--accent)":a<=100?"var(--warn)":"var(--bad)";
+    const extra=a==null?"border:1.5px dashed var(--line);":"";
+    cols+=`<div title="${noteName(m)}: ${a==null?"not tried yet":tuneWord(a)+" on average"}"><i style="height:${h}px;background:${col};${extra}"></i><span>${noteName(m).replace(/\d/,"")}</span></div>`}
+  return `<div class="label" style="margin-top:6px">Your pitch map · taller bars are stronger notes · dashed = not tried yet</div><div class="map">${cols}</div>`}
 const screenOnShare=()=>Math.max(.25,.5-S.sessions.filter(s=>s.stage===S.stage).length*.05);
 
 let session=null;
