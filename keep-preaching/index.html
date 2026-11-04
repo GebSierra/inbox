@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Keep Preaching</title>
+<meta name="description" content="Sermon practice: keep talking until the timer ends, or the run is lost.">
+<meta name="theme-color" content="#1f2b5b">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#1f2b5b; --bg:#0e1327; --gold:#f2b71c; --red:#e0483a;
+  --text:#f4f2ec; --muted:#9aa3c0; --line:#2c3768; --green:#17b26a;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{min-height:100%}
+body{font-family:'Poppins',system-ui,sans-serif;background:var(--bg);color:var(--text);
+  -webkit-tap-highlight-color:transparent}
+button,select,textarea{font:inherit}
+.screen{display:none;min-height:100vh;min-height:100dvh;flex-direction:column;align-items:center;
+  justify-content:center;padding:32px 16px;text-align:center}
+.screen.active{display:flex}
+
+/* ---------- start ---------- */
+.logo{display:flex;align-items:center;gap:18px;margin-bottom:18px}
+.mic{width:76px;height:76px;border:6px solid var(--gold);border-radius:50%;display:grid;place-items:center}
+.mic span{width:24px;height:36px;background:var(--gold);border-radius:12px}
+.logo h1{font-size:clamp(2rem,8vw,3.4rem);line-height:1;text-align:left;font-weight:800}
+.logo h1 b{color:var(--gold);display:block}
+.tag{color:var(--muted);font-size:1.05rem;margin-bottom:28px}
+.opts{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-bottom:18px}
+.opts label{display:flex;flex-direction:column;gap:6px;font-size:.8rem;color:var(--muted);text-align:left}
+select{background:var(--navy);color:var(--text);border:1px solid var(--line);border-radius:8px;
+  padding:8px 10px;min-width:140px}
+details{width:100%;max-width:520px;margin-bottom:24px;text-align:left}
+summary{cursor:pointer;color:var(--muted);font-size:.9rem;text-align:center}
+textarea{width:100%;min-height:140px;margin-top:10px;background:var(--navy);color:var(--text);
+  border:1px solid var(--line);border-radius:8px;padding:10px;resize:vertical}
+.btn{background:none;color:var(--gold);border:2px solid var(--gold);border-radius:999px;
+  padding:14px 30px;font-weight:700;font-size:1.05rem;cursor:pointer}
+.btn:hover{background:var(--gold);color:var(--bg)}
+.btn.small{padding:8px 18px;font-size:.9rem}
+.btn.quiet{border-color:var(--line);color:var(--muted)}
+.btn.quiet:hover{background:var(--line);color:var(--text)}
+.note{color:var(--muted);font-size:.78rem;max-width:520px;margin-top:22px;line-height:1.5}
+.err{color:var(--red);margin-top:16px;max-width:520px}
+
+/* ---------- session ---------- */
+#session{justify-content:flex-start;position:relative;transition:background-color .15s linear}
+.bar{position:fixed;top:0;left:0;height:6px;background:var(--gold);width:0}
+.top{width:100%;max-width:900px;display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+#clock{font-size:1.4rem;font-weight:700;font-variant-numeric:tabular-nums}
+#status{font-size:clamp(1.6rem,6vw,2.6rem);font-weight:800;margin:4vh 0 10px;min-height:1.3em}
+#meter{width:min(420px,90%);height:10px;background:var(--line);border-radius:5px;overflow:hidden;margin-bottom:8px}
+#meter i{display:block;height:100%;width:0;background:var(--green)}
+#hint{color:var(--muted);font-size:.9rem;min-height:1.4em}
+#notesView{width:100%;max-width:760px;margin-top:4vh;text-align:left;white-space:pre-wrap;
+  font-size:1.15rem;line-height:1.6;color:var(--text);opacity:.9}
+#live{width:100%;max-width:760px;margin-top:3vh;text-align:left;color:var(--muted);font-size:.95rem;
+  line-height:1.5;max-height:30vh;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end}
+
+/* ---------- results ---------- */
+.result h2{font-size:clamp(2rem,7vw,3rem);font-weight:800;margin-bottom:8px}
+.result.lost h2{color:var(--red)}
+.result.won h2{color:var(--gold)}
+.result p{color:var(--muted);margin-bottom:22px}
+.stats{display:flex;gap:26px;flex-wrap:wrap;justify-content:center;margin-bottom:24px}
+.stats div{font-size:.8rem;color:var(--muted)}
+.stats b{display:block;font-size:1.5rem;color:var(--text)}
+audio{width:min(480px,100%);margin-bottom:18px}
+.row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:22px}
+#ideas{width:100%;max-width:760px;min-height:70px;margin-top:3vh}
+.field{width:100%;max-width:760px;text-align:left;margin-bottom:20px}
+.field span{display:block;font-size:.85rem;color:var(--muted);margin-bottom:4px}
+.field textarea{margin-top:0;min-height:120px}
+#saved{color:var(--muted);font-size:.8rem;min-height:1.2em;margin:10px 0 18px}
+</style>
+</head>
+<body>
+
+<!-- START -->
+<section id="start" class="screen active">
+  <div class="logo">
+    <div class="mic"><span></span></div>
+    <h1><b>Keep</b>Preaching</h1>
+  </div>
+  <p class="tag">Don't stop talking, or the whole run is lost.</p>
+
+  <div class="opts">
+    <label>Session length
+      <select id="optLen">
+        <option value="5">5 minutes</option>
+        <option value="10">10 minutes</option>
+        <option value="15">15 minutes</option>
+        <option value="20" selected>20 minutes</option>
+        <option value="30">30 minutes</option>
+        <option value="45">45 minutes</option>
+      </select>
+    </label>
+    <label>Longest pause allowed
+      <select id="optPause">
+        <option value="3">3 seconds</option>
+        <option value="5" selected>5 seconds</option>
+        <option value="8">8 seconds</option>
+        <option value="12">12 seconds</option>
+      </select>
+    </label>
+    <label>Live transcript
+      <select id="optTranscript">
+        <option value="on">On</option>
+        <option value="off">Off</option>
+      </select>
+    </label>
+  </div>
+
+  <details>
+    <summary>Add your outline (shown while you preach)</summary>
+    <textarea id="notes" placeholder="Paste your sermon outline or key points here."></textarea>
+  </details>
+
+  <button class="btn" id="go">Start preaching</button>
+  <p class="err" id="startErr"></p>
+  <p class="note" id="privacy">
+    Your voice is recorded only in this browser and is never uploaded.
+    If the run is lost, the recording is thrown away.
+  </p>
+</section>
+
+<!-- SESSION -->
+<section id="session" class="screen">
+  <div class="bar" id="bar"></div>
+  <div class="top">
+    <button class="btn small quiet" id="quit">Quit</button>
+    <div id="clock">20:00</div>
+  </div>
+  <div id="status">Get ready</div>
+  <div id="meter"><i id="level"></i></div>
+  <div id="hint"></div>
+  <textarea id="ideas" placeholder="Jot a quick idea here. Typing counts as talking, so you won't lose the run."></textarea>
+  <div id="notesView"></div>
+  <div id="live"></div>
+</section>
+
+<!-- RESULT -->
+<section id="result" class="screen result">
+  <h2 id="resTitle"></h2>
+  <p id="resMsg"></p>
+  <div class="stats" id="stats"></div>
+  <audio id="player" controls hidden></audio>
+  <div class="row" id="downloads"></div>
+  <label class="field"><span>Ideas you jotted</span>
+    <textarea id="ideasOut" placeholder="Anything that came to you while preaching."></textarea></label>
+  <label class="field" id="transcriptField"><span>Transcript (paste your own, e.g. from Raycast, or keep the browser's)</span>
+    <textarea id="transcriptOut" placeholder="Paste your transcript here."></textarea></label>
+  <button class="btn small" id="saveNotes">Download notes</button>
+  <p id="saved"></p>
+  <button class="btn" id="again">Try again</button>
+</section>
+
+<script>
+const $ = id => document.getElementById(id);
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+if (!SR) {
+  $('optTranscript').value = 'off';
+  $('optTranscript').disabled = true;
+  $('optTranscript').parentElement.title = 'Not supported in this browser';
+} else {
+  $('privacy').textContent += ' Note: the live transcript uses your browser\'s speech service, which may send audio to the browser maker (Google for Chrome, Apple for Safari). Turn it off to keep everything on your device.';
+}
+
+let s = null; // current session state
+
+function show(id){
+  document.querySelectorAll('.screen').forEach(el => el.classList.toggle('active', el.id === id));
+}
+function fmt(sec){
+  sec = Math.max(0, Math.ceil(sec));
+  return Math.floor(sec / 60) + ':' + String(sec % 60).padStart(2, '0');
+}
+
+$('go').onclick = async () => {
+  $('startErr').textContent = '';
+  let stream;
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
+  } catch (e) {
+    $('startErr').textContent = 'I need the microphone to hear you. Please allow mic access and try again.';
+    return;
+  }
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  const analyser = ctx.createAnalyser();
+  analyser.fftSize = 2048;
+  ctx.createMediaStreamSource(stream).connect(analyser);
+
+  s = {
+    stream, ctx, analyser,
+    buf: new Float32Array(analyser.fftSize),
+    lengthSec: +$('optLen').value * 60,
+    pauseSec: +$('optPause').value,
+    useTranscript: $('optTranscript').value === 'on' && !!SR,
+    phase: 'calibrate',
+    calibrate: [], threshold: 0.02,
+    startAt: 0, lastVoice: 0, longestPause: 0,
+    chunks: [], finalText: '', interim: '',
+    timer: null, wakeLock: null, rec: null, recorder: null
+  };
+
+  $('notesView').textContent = $('notes').value.trim();
+  $('live').textContent = '';
+  $('ideas').value = store.get();
+  $('bar').style.width = '0';
+  $('clock').textContent = fmt(s.lengthSec);
+  $('session').style.backgroundColor = '';
+  $('status').textContent = 'Stay quiet a moment…';
+  $('hint').textContent = 'Listening to the room so I can tell your voice from background noise.';
+  show('session');
+
+  try { s.wakeLock = await navigator.wakeLock.request('screen'); } catch (e) {}
+
+  s.calStart = performance.now();
+  s.timer = setInterval(tick, 50);
+};
+
+function rms(){
+  s.analyser.getFloatTimeDomainData(s.buf);
+  let sum = 0;
+  for (let i = 0; i < s.buf.length; i++) sum += s.buf[i] * s.buf[i];
+  return Math.sqrt(sum / s.buf.length);
+}
+
+function tick(){
+  if (!s) return;
+  const now = performance.now();
+  const level = rms();
+  $('level').style.width = Math.min(100, level / (s.threshold * 4) * 100) + '%';
+
+  if (s.phase === 'calibrate') {
+    s.calibrate.push(level);
+    const left = 3 - (now - s.calStart) / 1000;
+    if (left > 0) return;
+    // Noise floor: a high percentile of quiet-room levels, then leave headroom above it.
+    const sorted = s.calibrate.slice().sort((a, b) => a - b);
+    const floor = sorted[Math.floor(sorted.length * 0.9)] || 0;
+    s.threshold = Math.max(0.012, floor * 3);
+    beginSpeaking(now);
+    return;
+  }
+
+  const voiced = level > s.threshold;
+  $('level').style.background = voiced ? 'var(--green)' : 'var(--muted)';
+  if (voiced) s.lastVoice = now;
+
+  const silent = (now - s.lastVoice) / 1000;
+  s.longestPause = Math.max(s.longestPause, silent);
+  const elapsed = (now - s.startAt) / 1000;
+  const remaining = s.lengthSec - elapsed;
+
+  $('clock').textContent = fmt(remaining);
+  $('bar').style.width = Math.min(100, elapsed / s.lengthSec * 100) + '%';
+
+  // Red creeps in after one second of silence.
+  const danger = Math.max(0, (silent - 1) / (s.pauseSec - 1));
+  $('session').style.backgroundColor = danger > 0
+    ? `rgba(224,72,58,${Math.min(1, danger) * 0.85})` : '';
+  if (danger > 0) {
+    $('status').textContent = 'Keep going! ' + Math.max(0, s.pauseSec - silent).toFixed(1) + 's';
+  } else {
+    $('status').textContent = 'Preaching';
+  }
+
+  if (silent >= s.pauseSec) return finish(false);
+  if (remaining <= 0) return finish(true);
+}
+
+function beginSpeaking(now){
+  s.phase = 'run';
+  s.startAt = now;
+  s.lastVoice = now + 2000; // two seconds to draw breath before the first word
+  $('hint').textContent = 'Go. Pauses longer than ' + s.pauseSec + ' seconds end the run.';
+
+  // Record audio
+  if (window.MediaRecorder) {
+    try {
+      s.recorder = new MediaRecorder(s.stream);
+      s.recorder.ondataavailable = e => { if (e.data.size) s.chunks.push(e.data); };
+      s.recorder.start(1000);
+    } catch (e) { s.recorder = null; }
+  }
+
+  // Live transcript
+  if (s.useTranscript) {
+    const rec = new SR();
+    rec.continuous = true;
+    rec.interimResults = true;
+    rec.lang = navigator.language || 'en-US';
+    rec.onresult = e => {
+      let interim = '';
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        const r = e.results[i];
+        if (r.isFinal) s.finalText += r[0].transcript.trim() + ' ';
+        else interim += r[0].transcript;
+      }
+      s.interim = interim;
+      $('live').textContent = (s.finalText + interim).slice(-600);
+    };
+    // Browsers end recognition on their own every so often; restart while the run lasts.
+    rec.onend = () => { if (s && s.rec === rec && s.phase === 'run') { try { rec.start(); } catch (e) {} } };
+    rec.onerror = e => { if (e.error === 'not-allowed' || e.error === 'service-not-allowed') s.rec = null; };
+    s.rec = rec;
+    try { rec.start(); } catch (e) {}
+  }
+}
+
+function stopAll(){
+  clearInterval(s.timer);
+  s.phase = 'done';
+  if (s.rec) { const r = s.rec; s.rec = null; try { r.stop(); } catch (e) {} }
+  s.stream.getTracks().forEach(t => t.stop());
+  s.ctx.close();
+  if (s.wakeLock) s.wakeLock.release().catch(() => {});
+}
+
+function finish(won){
+  const elapsed = Math.min(s.lengthSec, (performance.now() - s.startAt) / 1000);
+  const rec = s.recorder;
+  stopAll();
+  $('session').style.backgroundColor = '';
+
+  const st = s;
+  const done = () => showResult(won, elapsed, st);
+  if (rec && rec.state !== 'inactive') { rec.onstop = done; rec.stop(); } else done();
+}
+
+function showResult(won, elapsed, st){
+  const box = $('result');
+  box.classList.toggle('won', won);
+  box.classList.toggle('lost', !won);
+  $('downloads').innerHTML = '';
+  $('stats').innerHTML = '';
+  $('player').hidden = true;
+  $('saved').textContent = '';
+  // Ideas are never thrown away, even on a lost run.
+  $('ideasOut').value = $('ideas').value;
+  $('transcriptOut').value = '';
+  $('transcriptField').hidden = !won;
+
+  if (!won) {
+    // The run is lost: throw away the recording and transcript.
+    st.chunks = []; st.finalText = '';
+    $('resTitle').textContent = 'Run lost';
+    $('resMsg').textContent = `You paused for ${st.pauseSec} seconds at ${fmt(elapsed)} of ${fmt(st.lengthSec)}. The recording is gone, but your ideas are kept.`;
+  } else {
+    $('resTitle').textContent = 'Well preached';
+    $('resMsg').textContent = `You kept going for the full ${fmt(st.lengthSec)}.`;
+    const words = st.finalText.trim() ? st.finalText.trim().split(/\s+/).length : 0;
+    const stats = [['Time', fmt(elapsed)], ['Longest pause', st.longestPause.toFixed(1) + 's']];
+    if (words) stats.push(['Words', words], ['Words / min', Math.round(words / (elapsed / 60))]);
+    $('stats').innerHTML = stats.map(([k, v]) => `<div><b>${v}</b>${k}</div>`).join('');
+
+    const stamp = new Date().toISOString().slice(0, 16).replace(/[:T]/g, '-');
+    if (st.chunks.length) {
+      const blob = new Blob(st.chunks, { type: st.chunks[0].type || 'audio/webm' });
+      const url = URL.createObjectURL(blob);
+      $('player').src = url;
+      $('player').hidden = false;
+      const ext = (blob.type.includes('mp4') ? 'm4a' : blob.type.includes('ogg') ? 'ogg' : 'webm');
+      addDownload('Download recording', url, `sermon-${stamp}.${ext}`);
+    }
+    $('transcriptOut').value = st.finalText.trim();
+  }
+  s = null;
+  show('result');
+}
+
+function addDownload(label, url, name){
+  const a = document.createElement('a');
+  a.className = 'btn small';
+  a.style.textDecoration = 'none';
+  a.textContent = label;
+  a.href = url;
+  a.download = name;
+  $('downloads').appendChild(a);
+}
+
+const store = {
+  get(){ try { return localStorage.getItem('kp-ideas') || ''; } catch (e) { return ''; } },
+  set(v){ try { localStorage.setItem('kp-ideas', v); } catch (e) {} }
+};
+$('ideas').addEventListener('input', () => {
+  if (s && s.phase === 'run') s.lastVoice = performance.now();
+  store.set($('ideas').value);
+});
+$('ideasOut').addEventListener('input', () => store.set($('ideasOut').value));
+
+$('saveNotes').onclick = () => {
+  const date = new Date();
+  const parts = ['Sermon practice, ' + date.toLocaleString()];
+  const outline = $('notes').value.trim();
+  const ideas = $('ideasOut').value.trim();
+  const tr = $('transcriptOut').value.trim();
+  if (outline) parts.push('OUTLINE\n' + outline);
+  if (ideas) parts.push('IDEAS\n' + ideas);
+  if (tr) parts.push('TRANSCRIPT\n' + tr);
+  const url = URL.createObjectURL(new Blob([parts.join('\n\n')], { type: 'text/plain' }));
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'sermon-notes-' + date.toISOString().slice(0, 16).replace(/[:T]/g, '-') + '.txt';
+  a.click();
+  $('saved').textContent = 'Saved. Your ideas stay in this browser until you clear them.';
+};
+
+$('quit').onclick = () => {
+  if (!s) return;
+  if (s.recorder && s.recorder.state !== 'inactive') s.recorder.stop();
+  stopAll();
+  s = null;
+  show('start');
+};
+$('again').onclick = () => show('start');
+</script>
+</body>
+</html>
