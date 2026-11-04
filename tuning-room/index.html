@@ -1,0 +1,1091 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tuning Room</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a single practice column. The dial is the instrument; everything else frames it. */
+:root{
+  --bg:#eef1ee; --surface:#ffffff; --raise:#f6f8f6; --ink:#17201d; --muted:#5a6661; --line:#d6ddd9;
+  --accent:#167565; --accent-ink:#ffffff; --accent-soft:#d3ebe5;
+  --good:#257a4a; --warn:#a8641c; --bad:#b03a2e;
+  --display:"Bricolage Grotesque",system-ui,sans-serif;
+  --body:"Atkinson Hyperlegible",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0f1312; --surface:#171d1b; --raise:#1d2422; --ink:#e6ece9; --muted:#97a39e; --line:#29322f;
+  --accent:#5cc4ae; --accent-ink:#08201b; --accent-soft:#1c3a33;
+  --good:#6cc790; --warn:#e3a35e; --bad:#e8796d; color-scheme:dark;}}
+*{box-sizing:border-box}
+html,body{background:var(--bg)}
+body{margin:0;color:var(--ink);font:16px/1.55 var(--body)}
+main{max-width:760px;margin:0 auto;padding:28px max(16px,env(safe-area-inset-left)) 72px max(16px,env(safe-area-inset-right))}
+header{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+h1{font:800 2.4rem/1 var(--display);margin:0;letter-spacing:-.02em}
+h2{font:700 1.35rem/1.2 var(--display);margin:0 0 6px;text-wrap:balance}
+p{margin:6px 0}
+.sub{color:var(--muted);margin:6px 0 0}
+.chip{display:inline-flex;gap:6px;align-items:center;padding:6px 12px;border-radius:99px;background:var(--accent-soft);color:var(--accent);font:700 13px var(--body)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;margin-bottom:16px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.between{justify-content:space-between}
+button{font:700 15px var(--body);padding:11px 18px;border-radius:10px;border:1px solid var(--line);background:var(--raise);color:var(--ink);cursor:pointer}
+button:hover{border-color:var(--muted)}
+button.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+button.ghost{background:none;border-color:transparent;color:var(--muted);padding-inline:8px}
+button:disabled{opacity:.4;cursor:default}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.label{font:700 11.5px var(--body);text-transform:uppercase;letter-spacing:.09em;color:var(--muted)}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media (max-width:560px){.stats{grid-template-columns:repeat(2,1fr)}}
+.stat .v{font:600 1.35rem var(--mono);margin-top:2px}
+.instrument{display:grid;grid-template-columns:260px 1fr;gap:22px;align-items:center}
+@media (max-width:620px){.instrument{grid-template-columns:1fr;justify-items:center;text-align:center}}
+.dial{width:260px;height:260px;max-width:100%}
+.meter{height:8px;border-radius:99px;background:var(--raise);overflow:hidden;border:1px solid var(--line);margin-top:10px}
+.meter i{display:block;height:100%;width:0;background:var(--accent);transition:width .08s linear}
+.prompt{font:800 2rem/1.1 var(--display);margin:4px 0 8px}
+.trace{width:100%;height:200px;display:block;border-radius:12px;background:var(--raise)}
+.blind{height:200px;display:flex;align-items:center;justify-content:center;flex-direction:column;border-radius:12px;background:var(--ink);color:var(--surface);text-align:center;padding:16px}
+.blind .prompt{color:var(--surface)}
+.dots{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 2px}
+.dots span{width:22px;height:6px;border-radius:3px;background:var(--line)}
+.dots span.on{background:var(--accent)}.dots span.done{background:var(--muted)}
+.efforts{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:12px}
+@media (max-width:620px){.efforts{grid-template-columns:1fr}}
+.efforts button{padding:14px 8px;font-size:14px;text-align:center}
+.efforts button[data-e="0"]{border-color:var(--good)}
+.efforts button[data-e="3"],.efforts button[data-e="4"]{border-color:var(--bad)}
+.good{color:var(--good)}.warn{color:var(--warn)}.bad{color:var(--bad)}.muted{color:var(--muted)}
+.steps{display:grid;gap:10px;margin:14px 0}
+.step{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:baseline;padding:12px 14px;border-radius:12px;background:var(--raise)}
+.step b{font-family:var(--display)}
+canvas#chart{width:100%;height:200px;display:block}
+select,input[type=number]{font:15px var(--body);padding:9px;border-radius:10px;border:1px solid var(--line);background:var(--raise);color:var(--ink)}
+small{color:var(--muted)}
+.kbd{font:600 12px var(--mono);padding:1px 6px;border:1px solid var(--line);border-radius:5px}
+body.focus #trainView > :not(#stage), body.focus nav.tabs, body.focus header{display:none}
+nav.tabs{display:flex;gap:6px;margin-bottom:16px;border-bottom:1px solid var(--line)}
+nav.tabs button{border:none;background:none;border-radius:0;padding:10px 14px;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-1px}
+nav.tabs button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--accent)}
+.wave{width:100%;height:110px;display:block;border-radius:12px;background:var(--raise);cursor:crosshair;touch-action:none}
+.list{display:grid;gap:8px;margin-top:10px}
+.item{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:10px 14px;border-radius:12px;background:var(--raise)}
+.item.sel{outline:2px solid var(--accent)}
+.item .grow{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.secchip{padding:6px 12px;border-radius:99px;font-size:14px}
+.secchip.sel{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+input[type=range]{accent-color:var(--accent)}
+label.check{display:inline-flex;gap:6px;align-items:center}
+.exgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-top:10px}
+.excard{display:flex;flex-direction:column;align-items:flex-start;gap:6px;text-align:left;padding:14px;border-radius:14px;background:var(--raise);min-width:0}
+.excard b{font:700 1.05rem var(--display)}
+.excard .muted{font-weight:400;font-size:13px}
+.exglyph{color:var(--accent)}
+.exglyph.big{margin:10px 0}
+body.focus #stage{min-height:60vh}
+.map{display:flex;gap:4px;align-items:flex-end;height:90px;margin-top:10px}
+.map div{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0}
+.map i{display:block;width:100%;border-radius:4px 4px 0 0;background:var(--line)}
+.map span{font:600 10px var(--mono);color:var(--muted)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div>
+      <h1>Tuning Room</h1>
+      <p class="sub">The goal: sing in tune with the screen off.</p>
+    </div>
+    <span class="chip">🎧 Wear wired headphones</span>
+  </header>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" id="tabTrain" aria-selected="true">Training</button>
+    <button role="tab" id="tabEx" aria-selected="false">Exercises</button>
+    <button role="tab" id="tabSongs" aria-selected="false">Songs</button>
+  </nav>
+
+  <div id="exView" hidden></div>
+
+  <div id="songView" hidden>
+    <div class="card">
+      <div class="row between"><h2>Your songs</h2><button class="primary" id="addSong">Add a song file</button></div>
+      <input type="file" id="songFile" accept="audio/*" hidden>
+      <p class="muted">Use recordings you own: MP3, M4A or WAV. They stay on this computer.</p>
+      <div class="list" id="songList"></div>
+    </div>
+    <div class="card" id="songCard" hidden></div>
+  </div>
+
+  <div id="trainView">
+  <div class="card">
+    <div class="stats">
+      <div class="stat"><div class="label">Stage</div><div class="v" id="stStage">1</div></div>
+      <div class="stat"><div class="label">Range</div><div class="v" id="stRange">–</div></div>
+      <div class="stat"><div class="label">Screen off</div><div class="v" id="stErr">–</div></div>
+      <div class="stat"><div class="label">This week</div><div class="v" id="stWeek">0 / 5</div></div>
+    </div>
+  </div>
+
+  <section class="card" id="stage" aria-live="polite"></section>
+
+  <div class="card">
+    <div class="row between"><h2>Progress</h2><span class="label">screen-off only</span></div>
+    <p class="muted">How close your screen-off singing lands. Lower on the chart is better. Solid line: drills. Dashed line: the hymn line. Dots below show how strained each session felt.</p>
+    <canvas id="chart"></canvas>
+  </div>
+
+  <div class="card">
+    <h2>Settings</h2>
+    <div class="row" style="margin-top:8px">
+      <label for="selStage">Stage</label><select id="selStage"></select>
+      <label for="inpGap">Memory gap</label><input id="inpGap" type="number" min="0" max="8" step="1" style="width:70px"><span class="muted">seconds</span>
+    </div>
+    <div class="row" style="margin-top:14px">
+      <button id="btnTuner">Open tuner</button>
+      <button id="btnRange">Find my range again</button>
+      <button id="btnOwn">Re-record my note</button>
+      <button id="btnTest">Check pitch engine</button>
+      <button id="btnExport">Copy my data</button>
+    </div>
+    <p id="msg" class="muted"></p>
+    <p><small>Wired headphones keep the target tone out of the microphone. Bluetooth works but adds delay. Practice in a quiet room, same spot each day.</small></p>
+  </div>
+  </div>
+</main>
+
+<script>
+/* ================= state ================= */
+const STAGES=[
+ {n:1,name:"Match your own voice",notes:1,own:true},
+ {n:2,name:"Single notes across an octave",notes:1},
+ {n:3,name:"Two-note jumps",notes:2},
+ {n:4,name:"Four-note patterns",notes:4},
+ {n:5,name:"Patterns from memory",notes:4,gap:3}];
+const EFFORT=["No strain","A little strained","Kind of strained","Strained","Hurting"];
+const KEY="tuningRoom.v1";
+let S={range:null,stage:1,gap:0,sessions:[],ownRef:null,notes:{}};
+try{const r=localStorage.getItem(KEY); if(r) S=Object.assign(S,JSON.parse(r));}catch(e){}
+S.notes=S.notes||{};S.weekly=S.weekly||[];S.blind=S.blind||[];
+// Old Hundredth, line 1, as scale steps from "do": do do ti la sol do re mi. Public domain (1551).
+const HYMN={name:"Old Hundredth",words:"Praise God from whom all blessings flow",steps:[0,0,-1,-3,-5,0,2,4],beats:[2,1,1,1,1,1,1,3]};
+function noteAvg(m){const s=S.notes[m];return s&&s.n?s.sum/s.n:null}
+function logNote(m,abs){const s=S.notes[m]||(S.notes[m]={n:0,sum:0});s.n++;s.sum+=abs;
+  if(s.n>30){s.sum*=30/s.n;s.n=30}} // keep it recent: cap the weight of old tries
+function chime(good){if(!ctx)return;const t=ctx.currentTime,g=ctx.createGain();g.connect(ctx.destination);
+  g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.12,t+0.02);g.gain.exponentialRampToValueAtTime(0.0001,t+0.6);
+  (good?[1320,1760]:[330]).forEach((f,i)=>{const o=ctx.createOscillator();o.type="sine";o.frequency.value=f;o.connect(g);o.start(t+i*0.09);o.stop(t+0.6)})}
+function setFocus(on){document.body.classList.toggle("focus",on)}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+
+const $=id=>document.getElementById(id);
+const midiToHz=m=>440*Math.pow(2,(m-69)/12), hzToMidi=f=>69+12*Math.log2(f/440);
+const NAMES=["C","C♯","D","D♯","E","F","F♯","G","G♯","A","A♯","B"];
+const noteName=m=>{const r=Math.round(m);return NAMES[(r%12+12)%12]+(Math.floor(r/12)-1)};
+const median=a=>{if(!a.length)return NaN;const s=[...a].sort((x,y)=>x-y),h=s.length>>1;return s.length%2?s[h]:(s[h-1]+s[h])/2};
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+// Plain-word grades. Inside: a half step is 100 "cents"; most listeners hear under 50 as in tune.
+// One connected scale: On pitch → Slightly off → Off → Way off. With a direction: Slightly high → Too high → Way too high.
+const tuneWord=c=>c==null?"–":c<=25?"On pitch":c<=50?"Slightly off":c<=100?"Off":"Way off";
+const dirWord=c=>{if(c==null)return "–";const a=Math.abs(c),d=c>0?"high":"low";return a<=25?"On pitch":a<=50?"Slightly "+d:a<=100?"Too "+d:"Way too "+d};
+const tuneCls=c=>c==null?"muted":c<=50?"good":c<=100?"warn":"bad";
+// Harmonics sit at fixed distances above the real note (the 9th is 38 half steps up).
+// Weak mics on low voices often catch a harmonic instead of the note, so readings that are a harmonic of the note are folded back down.
+const HK=[2,3,4,5,6,7,8,9,10,11,12].map(k=>12*Math.log2(k));
+function harmOffset(m,ref){const d=m-ref;for(const s of HK)if(Math.abs(d-s)<=0.5)return s;return null}
+const toward=(m,target)=>{if(m==null)return null;const h=harmOffset(m,target);return h==null?m:m-h};
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+/* ================= pitch engine: YIN ================= */
+function yin(buf,sr,minF=55,maxF=1100){
+  const N=buf.length,half=N>>1,maxTau=Math.min(half-1,Math.floor(sr/minF)),minTau=Math.max(2,Math.floor(sr/maxF));
+  let rms=0;for(let i=0;i<N;i++)rms+=buf[i]*buf[i];rms=Math.sqrt(rms/N);
+  if(rms<0.004)return {f:null,rms};
+  const d=new Float32Array(maxTau+1);
+  for(let t=1;t<=maxTau;t++){let s=0;for(let i=0;i<half;i++){const x=buf[i]-buf[i+t];s+=x*x}d[t]=s}
+  let run=0;d[0]=1;for(let t=1;t<=maxTau;t++){run+=d[t];d[t]=run?d[t]*t/run:1}
+  let dmin=1;for(let t=minTau;t<=maxTau;t++)if(d[t]<dmin)dmin=d[t];
+  if(dmin>0.35)return {f:null,rms};
+  // shortest period whose dip is close to the deepest one
+  const lim=Math.max(0.1,dmin+0.06);let tau=-1;
+  for(let t=minTau;t<=maxTau;t++){if(d[t]<=lim){while(t+1<=maxTau&&d[t+1]<d[t])t++;tau=t;break}}
+  let b=tau;if(tau>1&&tau<maxTau){const a=d[tau-1],c=d[tau+1],den=a+c-2*d[tau];if(den)b=tau+(a-c)/(2*den)}
+  return {f:sr/b,conf:1-d[tau],rms};
+}
+
+/* ================= audio ================= */
+let ctx=null,stream=null,analyser=null,buf=null;
+async function ensureAudio(){
+  if(ctx){if(ctx.state==="suspended")await ctx.resume();return}
+  ctx=new (window.AudioContext||window.webkitAudioContext)();
+  stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:true}});
+  const src=ctx.createMediaStreamSource(stream);
+  analyser=ctx.createAnalyser();analyser.fftSize=2048;src.connect(analyser);
+  buf=new Float32Array(analyser.fftSize);
+}
+// one reading: {m: midi or null, level 0..1}
+function read(){
+  analyser.getFloatTimeDomainData(buf);
+  const p=yin(buf,ctx.sampleRate);
+  const level=Math.min(1,p.rms*12);
+  return {m:p.f&&p.conf>0.65?hzToMidi(p.f):null,level};
+}
+function frameLoop(fn){ // calls fn(reading, ms) every frame until fn returns false
+  return new Promise(res=>{const t0=performance.now();
+    (function tick(){const r=read();const keep=fn(r,performance.now()-t0);if(keep===false)res();else requestAnimationFrame(tick)})();});
+}
+function playTone(m,dur=1){
+  const t=ctx.currentTime+0.02,f=midiToHz(m),g=ctx.createGain();g.connect(ctx.destination);
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(0.22,t+0.03);g.gain.setValueAtTime(0.22,t+dur-0.12);g.gain.linearRampToValueAtTime(0,t+dur);
+  [[1,1],[2,.32],[3,.12],[4,.05]].forEach(([h,a])=>{const o=ctx.createOscillator(),og=ctx.createGain();og.gain.value=a;o.frequency.value=f*h;o.connect(og).connect(g);o.start(t);o.stop(t+dur)});
+  return sleep(dur*1000+40);
+}
+let ownBuffer=null;
+async function loadOwn(){if(ownBuffer||!S.ownRef)return;try{const bin=Uint8Array.from(atob(S.ownRef.data),c=>c.charCodeAt(0));ownBuffer=await ctx.decodeAudioData(bin.buffer)}catch(e){ownBuffer=null}}
+async function playOwn(m,dur=1.3){
+  await loadOwn(); if(!ownBuffer)return playTone(m,dur);
+  const s=ctx.createBufferSource();s.buffer=ownBuffer;s.playbackRate.value=midiToHz(m)/midiToHz(S.ownRef.midi);
+  const g=ctx.createGain();g.connect(ctx.destination);const t=ctx.currentTime;
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(1,t+0.04);g.gain.setValueAtTime(1,t+dur-0.1);g.gain.linearRampToValueAtTime(0,t+dur);
+  s.connect(g);s.start(t,S.ownRef.offset,dur*s.playbackRate.value+0.05);return sleep(dur*1000+60);
+}
+
+/* ================= the dial ================= */
+// Shows the note you're singing, how far off (needle), and a ring that fills while you hold steady.
+function drawDial(cv,{m=null,target=null,hold=0,hint=""}={}){
+  const dpr=devicePixelRatio||1,W=cv.clientWidth,H=cv.clientHeight;cv.width=W*dpr;cv.height=H*dpr;
+  const c=cv.getContext("2d");c.scale(dpr,dpr);const cx=W/2,cy=H/2,R=Math.min(W,H)/2-10;
+  c.lineCap="round";
+  c.strokeStyle=css("--line");c.lineWidth=10;c.beginPath();c.arc(cx,cy,R,0,7);c.stroke();
+  if(hold>0){c.strokeStyle=css("--accent");c.beginPath();c.arc(cx,cy,R,-Math.PI/2,-Math.PI/2+hold*2*Math.PI);c.stroke()}
+  // cents scale, top arc
+  const ref=target!=null?target:(m!=null?Math.round(m):null);
+  const A0=-Math.PI/2, span=Math.PI/2.4, r2=R-26;
+  c.lineWidth=6;c.strokeStyle=css("--raise");c.beginPath();c.arc(cx,cy,r2,A0-span,A0+span);c.stroke();
+  c.strokeStyle=css("--accent-soft");c.beginPath();c.arc(cx,cy,r2,A0-span*0.25,A0+span*0.25);c.stroke();
+  let cents=null;
+  if(m!=null&&ref!=null){cents=(m-ref)*100;const cl=Math.max(-100,Math.min(100,cents));const a=A0+cl/100*span;
+    const col=Math.abs(cents)<=25?css("--good"):Math.abs(cents)<=50?css("--warn"):css("--bad");
+    c.strokeStyle=col;c.lineWidth=4;c.beginPath();c.moveTo(cx+Math.cos(a)*(r2-16),cy+Math.sin(a)*(r2-16));c.lineTo(cx+Math.cos(a)*(r2+8),cy+Math.sin(a)*(r2+8));c.stroke()}
+  c.textAlign="center";c.fillStyle=css("--ink");
+  c.font=`800 ${R*0.42}px ${css("--display")}`;c.fillText(m!=null?noteName(m):"—",cx,cy+R*0.16);
+  c.font=`600 ${R*0.13}px ${css("--mono")}`;c.fillStyle=css("--muted");
+  c.fillText(cents!=null?dirWord(cents).toLowerCase():(hint||"listening"),cx,cy+R*0.42);
+  if(target!=null){c.font=`700 ${R*0.1}px ${css("--body")}`;c.fillText("target "+noteName(target),cx,cy+R*0.62)}
+}
+
+/* ================= hold a steady note ================= */
+// Waits until you hold one note steady (within ±40¢) for `need` ms. Never moves on by itself.
+function holdNote({title,body,need=3000,target=null,onCancel,replay=null}){
+  stage.innerHTML=`<div class="instrument">
+      <canvas class="dial" id="dial"></canvas>
+      <div><div class="label">${title}</div><div class="prompt" id="hp">${body}</div>
+        <p class="muted" id="hint">Start singing when ready. Take a breath any time; the ring restarts.</p>
+        <div class="label" style="margin-top:12px">Mic level</div><div class="meter"><i id="lvl"></i></div>
+        <div class="row" style="margin-top:14px">${replay?`<button id="replay">▶ Hear it again</button>`:""}<button id="cancel" class="ghost">Cancel</button></div></div></div>`;
+  let cancelled=false,muteUntil=0;$("cancel").onclick=()=>{cancelled=true};
+  if(replay)$("replay").onclick=()=>{muteUntil=performance.now()+1800;runStart=null;runVals=[];replay()};
+  // A stray reading (another sound, a harmonic) is ignored. Only a new note held for 0.4 s, or 0.4 s with no match, restarts the ring.
+  let runStart=null,runVals=[],lastMatch=0,cand=null,candStart=0,result=null;
+  return frameLoop((r,t)=>{
+    if(cancelled){onCancel&&onCancel();return false}
+    $("lvl").style.width=(r.level*100)+"%";
+    if(performance.now()<muteUntil){drawDial($("dial"),{m:null,target,hold:0,hint:"listen"});return true}
+    let ref=runVals.length?median(runVals.slice(-15)):null;let rm=r.m;
+    if(rm!=null&&ref!=null){const h=harmOffset(rm,ref);if(h!=null)rm-=h;else{const u=harmOffset(ref,rm);if(u!=null){runVals=runVals.map(v=>v-u);ref-=u}}}
+    r={...r,m:rm};
+    if(r.m!=null){
+      if(ref==null){runStart=t;runVals=[r.m];lastMatch=t;cand=null}
+      else if(Math.abs(r.m-ref)<=0.5){runVals.push(r.m);lastMatch=t;cand=null}
+      else if(cand!=null&&Math.abs(r.m-cand)<=0.5){if(t-candStart>400){runStart=candStart;runVals=[cand,r.m];lastMatch=t;cand=null}}
+      else{cand=r.m;candStart=t}
+    }
+    if(runStart!=null&&t-lastMatch>400){runStart=null;runVals=[]}
+    const held=runStart!=null?t-runStart:0,frac=Math.min(1,held/need);
+    const shownM=runVals.length?median(runVals.slice(-8)):null;
+    drawDial($("dial"),{m:shownM,target,hold:frac,hint:r.level<0.05?"sing louder":"listening"});
+    if(t>15000&&!runStart)$("hint").textContent="Still listening. If the mic level bar barely moves, check that Chrome is using the right microphone. Wired earbuds with a mic work best.";
+    if(frac>=1){result=median(runVals.slice(Math.floor(runVals.length*0.3)));return false}
+  }).then(()=>cancelled?null:result);
+}
+
+/* ================= status & chart ================= */
+function weekCount(){const now=new Date();const mon=new Date(now);mon.setHours(0,0,0,0);mon.setDate(mon.getDate()-((mon.getDay()+6)%7));
+  return new Set(S.sessions.filter(s=>new Date(s.date)>=mon).map(s=>s.date.slice(0,10))).size}
+function refresh(){
+  $("stStage").textContent=S.stage;
+  $("stRange").textContent=S.range?noteName(S.range.lo)+"–"+noteName(S.range.hi):"–";
+  const last=[...S.sessions].reverse().find(s=>s.offErr!=null);
+  $("stErr").textContent=last?tuneWord(last.offErr):"–";
+  $("stWeek").textContent=weekCount()+" / 5";
+  $("selStage").innerHTML=STAGES.map(s=>`<option value="${s.n}" ${s.n===S.stage?"selected":""}>${s.n}. ${s.name}</option>`).join("");
+  $("inpGap").value=S.gap;drawChart();
+}
+function drawChart(){
+  const cv=$("chart"),dpr=devicePixelRatio||1,W=cv.clientWidth,H=cv.clientHeight;cv.width=W*dpr;cv.height=H*dpr;
+  const c=cv.getContext("2d");c.scale(dpr,dpr);const pts=S.sessions.filter(s=>s.offErr!=null);
+  c.font=`12px ${css("--mono")}`;c.fillStyle=css("--muted");
+  if(!pts.length){c.fillText("Your first session will appear here.",8,H/2);return}
+  const maxY=Math.max(120,...pts.map(p=>p.offErr))*1.08,L=64,B=30,T=8;
+  const y=v=>T+(1-v/maxY)*(H-B-T),x=i=>L+(pts.length===1?.5:i/(pts.length-1))*(W-L-14);
+  c.strokeStyle=css("--line");c.lineWidth=1;
+  [[25,"on pitch"],[50,"slightly off"],[100,"off"]].forEach(([v,l])=>{c.beginPath();c.moveTo(L,y(v));c.lineTo(W-6,y(v));c.stroke();c.fillText(l,2,y(v)+4)});
+  c.fillStyle=css("--accent-soft");c.fillRect(L,y(50),W-L-6,y(0)-y(50));
+  c.strokeStyle=css("--accent");c.lineWidth=2.5;c.beginPath();pts.forEach((p,i)=>i?c.lineTo(x(i),y(p.offErr)):c.moveTo(x(i),y(p.offErr)));c.stroke();
+  // hymn line: dashed
+  c.setLineDash([5,5]);c.strokeStyle=css("--muted");c.lineWidth=2;c.beginPath();let pen=false;
+  pts.forEach((p,i)=>{if(p.hymn==null){pen=false;return}const py=y(Math.min(p.hymn,maxY));pen?c.lineTo(x(i),py):c.moveTo(x(i),py);pen=true});c.stroke();c.setLineDash([]);
+  pts.forEach((p,i)=>{c.fillStyle=css("--accent");c.beginPath();c.arc(x(i),y(p.offErr),i===pts.length-1?5:3,0,7);c.fill();
+    if(p.effort!=null){c.fillStyle=[css("--good"),css("--good"),css("--warn"),css("--bad"),css("--bad")][p.effort];c.beginPath();c.arc(x(i),H-10,4,0,7);c.fill()}});
+}
+$("selStage").onchange=e=>{S.stage=+e.target.value;save();refresh();home()};
+$("inpGap").onchange=e=>{S.gap=Math.max(0,Math.min(8,+e.target.value||0));save()};
+
+/* ================= screens ================= */
+let stage=$("stage");
+function micError(){stage.innerHTML=`<h2>I can't reach your microphone</h2><p>Open this file in Chrome on your computer and click Allow when asked. If you blocked it before, click the lock icon by the address bar and allow the microphone.</p><button class="primary" id="go">Try again</button>`;$("go").onclick=home}
+async function needAudio(){try{await ensureAudio();return true}catch(e){micError();return false}}
+
+function home(){
+  setFocus(false);
+  if(!S.range){stage.innerHTML=`<h2>Let's find your range</h2>
+    <p>You'll hold two notes: your lowest comfortable note and your highest comfortable note. Comfortable means you could sing it all day, not the edge of what you can reach.</p>
+    <p class="muted">The app waits until you hold each note steady for 3 seconds.</p>
+    <div class="row" style="margin-top:14px"><button class="primary" id="go">Start</button></div>`;$("go").onclick=rangeFlow;return}
+  if(!S.ownRef){stage.innerHTML=`<h2>Record your own target note</h2>
+    <p>People match their own voice more accurately than a piano tone. Stage 1 plays your own voice back as the target.</p>
+    <div class="row" style="margin-top:14px"><button class="primary" id="go">Record my note</button></div>`;$("go").onclick=ownFlow;return}
+  const st=STAGES[S.stage-1];
+  stage.innerHTML=`<div class="row between"><span class="label">Today</span><span class="label">Stage ${st.n} of 5</span></div>
+    <h2>${st.name}</h2>
+    <div class="steps">
+      <div class="step"><span class="num muted">1</span><div><b>Warm up</b><br><span class="muted">Straw in shallow water or lip trills. Easy slides.</span></div><span class="num">3 min</span></div>
+      <div class="step"><span class="num muted">2</span><div><b>Pitch work</b><br><span class="muted">12 tries. Screen on for some, off for others.</span></div><span class="num">7 min</span></div>
+      <div class="step"><span class="num muted">3</span><div><b>Real singing test</b><br><span class="muted">One hymn line, screen off: ${HYMN.words}.</span></div><span class="num">1 min</span></div>
+      <div class="step"><span class="num muted">4</span><div><b>Check in</b><br><span class="muted">How did your voice feel?</span></div><span class="num">10 s</span></div>
+    </div>
+    ${mapHTML()}
+    ${weeklyHTML()}
+    <div style="height:14px"></div>
+    <div class="row"><button class="primary" id="go">Start session</button><button id="skip">Skip warm-up</button><span class="muted">Headphones in?</span></div>`;
+  $("go").onclick=warmup;$("skip").onclick=drill;
+  $("weekly").onclick=weeklyFlow;if($("blindBtn"))$("blindBtn").onclick=blindFlow;
+}
+
+async function rangeFlow(){
+  if(!await needAudio())return;
+  const lo=await holdNote({title:"Step 1 of 2",body:"Hold your lowest comfortable note",onCancel:home});
+  if(lo==null)return;
+  stage.innerHTML=`<h2>Low note: <span class="num">${noteName(lo)}</span></h2><p class="muted">Now your highest comfortable note.</p><div class="row" style="margin-top:12px"><button class="primary" id="go">Next</button><button id="redo">Redo low note</button></div>`;
+  const next=await new Promise(r=>{$("go").onclick=()=>r(1);$("redo").onclick=()=>r(0)});
+  if(!next)return rangeFlow();
+  const hi=await holdNote({title:"Step 2 of 2",body:"Hold your highest comfortable note",onCancel:home});
+  if(hi==null)return;
+  if(hi-lo<5){stage.innerHTML=`<h2>Those notes are close together</h2><p>Low ${noteName(lo)}, high ${noteName(hi)}. That's less than half an octave. Try sliding further on each, staying comfortable.</p><button class="primary" id="go">Try again</button>`;$("go").onclick=rangeFlow;return}
+  S.range={lo:Math.round(lo),hi:Math.round(hi)};save();refresh();
+  const [a,b]=trainRange();
+  stage.innerHTML=`<h2>Your range: <span class="num">${noteName(lo)}–${noteName(hi)}</span></h2>
+    <p>${Math.round(hi-lo)} half steps. You'll train from <b>${noteName(a)}</b> to <b>${noteName(b)}</b>, the easy middle.</p>
+    <div class="row" style="margin-top:12px"><button class="primary" id="go">Continue</button><button id="redo">Redo</button></div>`;
+  $("go").onclick=home;$("redo").onclick=rangeFlow;
+}
+
+async function ownFlow(){
+  if(!await needAudio())return;
+  const mid0=Math.round((S.range.lo+S.range.hi)/2);
+  stage.innerHTML=`<h2>Listen first: this is ${noteName(mid0)}</h2>
+    <p>Hum it back quietly a couple of times. When it feels easy, hold it on "ah" for 3 seconds.</p>
+    <div class="row" style="margin-top:12px"><button id="hear">▶ Play ${noteName(mid0)}</button><button class="primary" id="ready">I'm ready</button></div>`;
+  $("hear").onclick=()=>playTone(mid0,1.5);playTone(mid0,1.5);
+  await new Promise(r=>$("ready").onclick=r);
+  const rec=new MediaRecorder(stream),chunks=[];rec.ondataavailable=e=>chunks.push(e.data);
+  const recStart=performance.now();rec.start();
+  const mid=Math.round((S.range.lo+S.range.hi)/2);
+  const m=await holdNote({title:"Your target note",body:`Hold an easy "ah" on ${noteName(mid)}`,target:mid,replay:()=>playTone(mid,1.5),onCancel:()=>{rec.stop();home()}});
+  if(m==null)return;
+  const total=(performance.now()-recStart)/1000;rec.stop();await new Promise(r=>rec.onstop=r);
+  const b64=await new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(fr.result.split(",")[1]);fr.readAsDataURL(new Blob(chunks,{type:rec.mimeType}))});
+  const cand={data:b64,midi:m,offset:Math.max(0,total-2.2)};
+  S.ownRef=cand;ownBuffer=null;
+  stage.innerHTML=`<h2>Your note: <span class="num">${noteName(m)}</span></h2><p>Play it back. Keep it if it sounds steady and easy.</p>
+    <div class="row" style="margin-top:12px"><button id="play">▶ Play</button><button class="primary" id="keep">Keep it</button><button id="redo">Record again</button></div>`;
+  $("play").onclick=()=>playOwn(m,1.5);$("keep").onclick=()=>{save();home()};$("redo").onclick=ownFlow;
+}
+
+async function warmup(){
+  if(!await needAudio())return;
+  setFocus(true);
+  let left=180;
+  stage.innerHTML=`<div class="row between"><span class="label">Warm up</span><span class="prompt num" id="clock" style="margin:0">3:00</span></div>
+    <h2>Straw in shallow water</h2>
+    <ul><li>1 to 2 cm of water in a cup. Straw just under the surface.</li>
+    <li>Hum through it: slow slides up and down, then a simple tune.</li>
+    <li>Small, steady bubbles. Easy volume.</li>
+    <li>If your throat tightens, lift the straw out of the water or switch to lip trills.</li></ul>
+    <div class="row" style="margin-top:12px"><button class="primary" id="done">Done, start pitch work</button></div>`;
+  const tm=setInterval(()=>{left--;const el=$("clock");if(!el){clearInterval(tm);return}el.textContent=left>0?`${Math.floor(left/60)}:${String(left%60).padStart(2,"0")}`:"Done";if(left<=0)clearInterval(tm)},1000);
+  $("done").onclick=()=>{clearInterval(tm);drill()};
+}
+
+/* ================= drill ================= */
+function trainRange(){const mid=Math.round((S.range.lo+S.range.hi)/2);let lo=Math.max(S.range.lo+1,mid-6),hi=Math.min(S.range.hi-1,mid+6);if(hi-lo<4){lo=S.range.lo;hi=S.range.hi}return [lo,hi]}
+function makeTrial(st){
+  const [lo,hi]=trainRange();
+  if(st.own){const c=Math.round(S.ownRef.midi),a=Math.max(lo,c-4),b=Math.min(hi,c+4);return [a+Math.floor(Math.random()*(b-a+1))]}
+  const n=[weakPick(lo,hi)];while(n.length<st.notes){const s=[-5,-4,-3,-2,-1,1,2,3,4,5,7][Math.floor(Math.random()*11)];n.push(Math.max(lo,Math.min(hi,n[n.length-1]+s)))}return n;
+}
+// Aim at weak notes: weight grows with average miss; untried notes get a high weight so the map fills in.
+function weakPick(lo,hi){const ws=[];for(let m=lo;m<=hi;m++){const a=noteAvg(m);ws.push(a==null?4:1+a/25)}
+  let r=Math.random()*ws.reduce((x,y)=>x+y,0);for(let i=0;i<ws.length;i++){r-=ws[i];if(r<=0)return lo+i}return hi}
+function mapHTML(){if(!S.range)return"";const [lo,hi]=trainRange();let cols="";
+  for(let m=lo;m<=hi;m++){const a=noteAvg(m);const h=a==null?8:Math.max(8,Math.min(100,a));
+    const col=a==null?"var(--line)":a<=25?"var(--good)":a<=50?"var(--accent)":a<=100?"var(--warn)":"var(--bad)";
+    cols+=`<div title="${noteName(m)}: ${a==null?"not tried":tuneWord(a)+" on average"}"><i style="height:${h*0.7}px;background:${col}"></i><span>${noteName(m).replace(/\d/,"")}</span></div>`}
+  return `<div class="label" style="margin-top:6px">Your pitch map · taller bars are weaker notes</div><div class="map">${cols}</div>`}
+const screenOnShare=()=>Math.max(.25,.5-S.sessions.filter(s=>s.stage===S.stage).length*.05);
+
+let session=null;
+async function drill(){
+  if(!await needAudio())return;
+  const st=STAGES[S.stage-1],N=12,on=Math.round(N*screenOnShare());
+  const plan=Array.from({length:N},(_,i)=>i<on);for(let i=N-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[plan[i],plan[j]]=[plan[j],plan[i]]}
+  plan[0]=true;setFocus(true);
+  session={st,plan,results:[],quit:false,hymn:null};
+  for(let k=0;k<N&&!session.quit;k++){const r=await trial(k);if(r)session.results.push(r)}
+  if(!session.quit&&session.results.length) session.hymn=await hymnTest();
+  effortCheck();
+}
+function dotsHTML(k){return `<div class="dots">${session.plan.map((v,i)=>`<span class="${i<k?"done":i===k?"on":""}"></span>`).join("")}</div>`}
+
+async function trial(k,fixed){
+  const {st,plan}=session,visible=plan[k],notes=fixed||makeTrial(st),gap=Math.max(S.gap,st.gap||0);
+  const one=notes.length===1,noteDur=one?1.4:.75,singMs=one?2400:950;
+  stage.innerHTML=`<div class="row between"><span class="label">Try ${k+1} of ${plan.length}</span>
+      <span class="chip" style="${visible?"":"background:var(--ink);color:var(--surface)"}">${visible?"Screen on":"Screen off"}</span></div>
+    ${dotsHTML(k)}
+    <div class="prompt" id="cue">Listen</div>
+    ${visible?`<canvas class="trace" id="trace"></canvas>`:`<div class="blind" id="trace"><div class="prompt">Eyes closed</div><div>Listen to yourself. Your result shows after.</div></div>`}
+    <div class="row between" style="margin-top:12px"><button class="ghost" id="end">End session</button><button id="replay">↺ Hear it again</button></div>`;
+  $("end").onclick=()=>{session.quit=true};
+  const play=async()=>{for(const m of notes){st.own?await playOwn(m,noteDur):await playTone(m,noteDur);await sleep(40)}};
+  await play();
+  if(session.quit)return null;
+  $("replay").onclick=null;$("replay").disabled=true;
+  if(gap){$("cue").textContent="Hold it in your head";await sleep(gap*1000)}
+  $("cue").textContent="Sing when ready";
+  const targets=notes.map((m,i)=>({m,start:i*singMs,end:(i+1)*singMs}));
+  // wait for your voice, then record from the moment you start
+  let frames=[],onset=null,waited=0;
+  await frameLoop((r,t)=>{
+    if(session.quit)return false;
+    if(onset==null){ if(r.m!=null){onset=t;$("cue").textContent="Singing…"} else if(t>8000){return false} else return true; }
+    const tt=t-onset;frames.push({t:tt,m:toward(r.m,(targets.find(g=>tt<g.end)||targets[targets.length-1]).m)});
+    if(visible)drawTrace($("trace"),frames,targets);
+    return tt<singMs*notes.length;
+  });
+  if(session.quit)return null;
+  if(onset==null){$("cue").innerHTML=`<span class="warn">I didn't hear you</span>`;await sleep(1400);return null}
+  // score the steady middle of each note, octave errors folded
+  const errs=targets.map(t=>{const sp=t.end-t.start;const ms=frames.filter(f=>f.m!=null&&f.t>t.start+sp*.3&&f.t<t.end-sp*.08).map(f=>toward(f.m,t.m)).filter(m=>Math.abs(m-t.m)<=7);
+    if(ms.length<5)return null;let e=(median(ms)-t.m)*100;const oct=Math.abs(e)>600;e=((e%1200)+1800)%1200-600;return {e,oct}});
+  let land=null;
+  if(one&&errs[0]){const v=frames.filter(f=>f.m!=null);for(let i=0;i+6<=v.length;i++){if(v.slice(i,i+6).every(f=>Math.abs(f.m-notes[0])*100<=50)){land=v[i].t;break}}}
+  targets.forEach((t,i)=>{if(errs[i])logNote(t.m,Math.abs(errs[i].e))});
+  const ok=errs.filter(Boolean),mean=ok.length?ok.reduce((a,x)=>a+Math.abs(x.e),0)/ok.length:null;
+  const bias=ok.length?ok.reduce((a,x)=>a+x.e,0)/ok.length:0;
+  const word=mean==null?"No clear note":dirWord(Math.sign(bias||1)*mean);
+  const cls=mean==null?"warn":mean<=50?"good":mean<=100?"warn":"bad";
+  const detail=mean==null?"Try a steady 'ah'.":`${one?(land==null?"Never settled":`Settled in ${(land/1000).toFixed(1)}s`):""}${ok.some(x=>x.oct)?" · octave off":""}`;
+  $("cue").innerHTML=`<span class="${cls}">${word}</span>`;
+  if(mean!=null)chime(mean<=50);
+  if(visible) drawTrace($("trace"),frames,targets,true);
+  else $("trace").innerHTML=`<div class="prompt">${word}</div><div class="num">${detail}</div>`;
+  if(visible) $("cue").insertAdjacentHTML("beforeend",` <span class="num muted" style="font-size:1rem">${detail}</span>`);
+  await sleep(1800);
+  return {visible,mean,land,notes};
+}
+function drawTrace(cv,frames,targets,final){
+  const dpr=devicePixelRatio||1,W=cv.clientWidth,H=cv.clientHeight;cv.width=W*dpr;cv.height=H*dpr;
+  const c=cv.getContext("2d");c.scale(dpr,dpr);
+  const ms=targets.map(t=>t.m),lo=Math.min(...ms)-3,hi=Math.max(...ms)+3,tot=targets[targets.length-1].end;
+  const y=m=>H-(m-lo)/(hi-lo)*H,x=t=>t/tot*W;
+  c.strokeStyle=css("--line");c.lineWidth=1;
+  for(let m=Math.ceil(lo);m<=hi;m++){c.beginPath();c.moveTo(0,y(m));c.lineTo(W,y(m));c.stroke()}
+  targets.forEach(t=>{c.fillStyle=css("--accent-soft");c.fillRect(x(t.start)+2,y(t.m+.5),x(t.end)-x(t.start)-4,y(t.m-.5)-y(t.m+.5));
+    c.fillStyle=css("--muted");c.font=`600 12px ${css("--mono")}`;c.fillText(noteName(t.m),x(t.start)+8,y(t.m+.5)-6)});
+  c.strokeStyle=css("--accent");c.lineWidth=3;c.lineJoin="round";c.beginPath();let pen=false;
+  frames.forEach(f=>{if(f.m==null||f.m<lo-2||f.m>hi+2){pen=false;return}const px=x(f.t),py=y(f.m);pen?c.lineTo(px,py):c.moveTo(px,py);pen=true});c.stroke();
+}
+
+/* ================= hymn line: the real-singing test ================= */
+function hymnKey(){const c=(S.range.lo+S.range.hi)/2+0.5;return Math.round(Math.max(S.range.lo+5,Math.min(S.range.hi-4,c)))}
+async function hymnTest(){const r=await phraseTest();return r&&r.mean}
+async function phraseTest(tune={name:HYMN.name,words:"“"+HYMN.words+"”",notes:HYMN.steps.map(s=>hymnKey()+s),beats:HYMN.beats},record=false,label="Real singing test"){
+  const beat=560,notes=tune.notes;
+  let t=0;const targets=notes.map((m,i)=>{const r={m,start:t,end:t+tune.beats[i]*beat};t=r.end;return r});
+  const total=t;
+  stage.innerHTML=`<div class="row between"><span class="label">${label}</span><span class="chip" style="background:var(--ink);color:var(--surface)">Screen off</span></div>
+    <div class="prompt" id="cue">Listen</div>
+    <div class="blind" id="trace"><div class="prompt">${tune.words}</div><div>${tune.name}, in your key. Listen once, then sing it back.</div></div>
+    <div class="row between" style="margin-top:12px"><button class="ghost" id="skipH">Skip</button><span></span></div>`;
+  let skip=false;$("skipH").onclick=()=>{skip=true};
+  for(let i=0;i<notes.length&&!skip;i++){await playTone(notes[i],(targets[i].end-targets[i].start)/1000-0.03)}
+  if(skip)return null;
+  $("cue").textContent="Sing when ready";
+  const stopRec=record?startRecorder():null;
+  let frames=[],onset=null;
+  await frameLoop((r,tt)=>{if(skip)return false;
+    if(onset==null){if(r.m!=null){onset=tt;$("cue").textContent="Singing…"}else return tt<8000}
+    const x=tt-onset;frames.push({t:x,m:toward(r.m,median(notes))});
+    if(x>1200&&frames.slice(-40).every(f=>f.m==null))return false; // stopped singing
+    return x<total*1.45});
+  const blob=stopRec?await stopRec():null;
+  if(skip||onset==null)return null;
+  // You won't keep the exact tempo, so try a range of tempos and score the best fit.
+  let best=null;
+  for(let s=0.7;s<=1.45;s+=0.025){
+    const errs=targets.map(tg=>{const a=tg.start*s,b=tg.end*s,sp=b-a;
+      const ms=frames.filter(f=>f.m!=null&&f.t>a+sp*.3&&f.t<b-sp*.1).map(f=>toward(f.m,tg.m)).filter(m=>Math.abs(m-tg.m)<=7);
+      if(ms.length<3)return null;let e=(median(ms)-tg.m)*100;e=((e%1200)+1800)%1200-600;return e});
+    const ok=errs.filter(e=>e!=null);if(ok.length<Math.ceil(notes.length*0.75))continue;
+    const mean=ok.reduce((a,e)=>a+Math.abs(e),0)/ok.length;
+    if(!best||mean<best.mean)best={mean,s,errs};
+  }
+  if(!best){$("cue").innerHTML=`<span class="warn">I couldn't follow that one</span>`;await sleep(1600);return null}
+  const shown=targets.map(tg=>({m:tg.m,start:tg.start*best.s,end:tg.end*best.s}));
+  const cls=best.mean<=50?"good":best.mean<=100?"warn":"bad";
+  chime(best.mean<=50);
+  stage.innerHTML=`<div class="row between"><span class="label">${label}</span><span class="label">${tune.name}</span></div>
+    <div class="prompt"><span class="${cls}">${tuneWord(best.mean)}</span> <span class="muted" style="font-size:1rem">across the whole line</span></div>
+    <canvas class="trace" id="trace"></canvas>
+    <p class="muted">Shaded bars are the tune. Your line is what you sang. ${best.errs.map((e,i)=>e!=null&&Math.abs(e)>50?i:null).filter(i=>i!=null).length?"Look at the bars your line missed; those are the jumps to work on.":"Every note landed within 50¢."}</p>
+    <div class="row" style="margin-top:12px"><button class="primary" id="go">Continue</button></div>`;
+  drawTrace($("trace"),frames,shown,true);
+  await new Promise(r=>$("go").onclick=r);
+  return {mean:best.mean,blob};
+}
+
+function effortCheck(){
+  const res=session.results;
+  if(!res.length){home();return}
+  stage.innerHTML=`<h2>How did your voice feel?</h2><p class="muted">Answer for the whole session. Your body knows strain before any app can measure it.</p>
+    <div class="efforts">${EFFORT.map((e,i)=>`<button data-e="${i}">${e}</button>`).join("")}</div>`;
+  stage.querySelectorAll(".efforts button").forEach(b=>b.onclick=()=>finish(+b.dataset.e));
+}
+function finish(effort){
+  const res=session.results,off=res.filter(r=>!r.visible&&r.mean!=null),on=res.filter(r=>r.visible&&r.mean!=null);
+  const avg=a=>a.length?a.reduce((s,r)=>s+r.mean,0)/a.length:null,offErr=avg(off),onErr=avg(on);
+  const within=off.length?off.filter(r=>r.mean<=50).length/off.length:null;
+  const lands=res.filter(r=>r.land!=null).map(r=>r.land);
+  S.sessions.push({date:new Date().toISOString(),stage:S.stage,offErr,onErr,within,effort,settle:lands.length?median(lands):null,n:res.length,hymn:session.hymn});
+  const recent=S.sessions.filter(s=>s.stage===S.stage).slice(-2);
+  let up=false;
+  if(S.stage<5&&recent.length===2&&recent.every(s=>s.offErr!=null&&s.offErr<35&&s.within>=.7&&(s.effort??0)<=1)){S.stage++;up=true}
+  save();refresh();
+  const strainMsg=effort>=4?`<p class="bad"><b>Stop for today.</b> Rest your voice and drink water. If singing hurts again over the next week or two, or your speaking voice stays hoarse, see a doctor who treats voices (an ENT).</p>`
+    :effort>=3?`<p class="warn">Next time: softer, lower, and shorter. Pitch gains built on a squeezed throat don't help you sing well.</p>`
+    :effort===2?`<p class="muted">Keep an eye on it. Stay in the easy middle and don't push volume.</p>`:"";
+  stage.innerHTML=`<h2>Session done</h2>
+    <div class="stats" style="margin:12px 0">
+      <div class="stat"><div class="label">Screen off</div><div class="v"><span class="${tuneCls(offErr)}">${tuneWord(offErr)}</span></div></div>
+      <div class="stat"><div class="label">In tune (off)</div><div class="v">${within==null?"–":Math.round(within*100)+"%"}</div></div>
+      <div class="stat"><div class="label">Hymn line</div><div class="v"><span class="${tuneCls(session.hymn)}">${tuneWord(session.hymn)}</span></div></div>
+      <div class="stat"><div class="label">Felt</div><div class="v" style="font-size:1rem">${EFFORT[effort]}</div></div>
+    </div>
+    ${strainMsg}
+    <p>${up?`<b>Moving up to stage ${S.stage}.</b> Two strong, easy screen-off sessions in a row.`:`You move up after two sessions in a row where most screen-off tries are in tune, without strain.`}</p>
+    <div class="row" style="margin-top:12px"><button class="primary" id="go">Done</button></div>`;
+  $("go").onclick=home;
+}
+
+/* ================= tuner ================= */
+$("btnTuner").onclick=async()=>{
+  if(!await needAudio())return;
+  stage.scrollIntoView({behavior:"smooth",block:"start"});
+  stage.innerHTML=`<div class="instrument"><canvas class="dial" id="dial"></canvas>
+    <div><div class="label">Free tuner</div><div class="prompt">Sing anything</div><p class="muted">No scoring. The needle shows how far you are from the nearest note.</p>
+    <div class="label" style="margin-top:12px">Mic level</div><div class="meter"><i id="lvl"></i></div>
+    <div class="row" style="margin-top:14px"><button id="close">Close tuner</button></div></div></div>`;
+  let open=true;$("close").onclick=()=>{open=false;home()};
+  frameLoop(r=>{if(!open||!$("dial"))return false;$("lvl").style.width=(r.level*100)+"%";drawDial($("dial"),{m:r.m});});
+};
+
+/* ================= settings actions ================= */
+$("btnTest").onclick=()=>{
+  const sr=48000,N=2048;let worst=0,rows=[];
+  [82.41,110,146.83,196,261.63,329.63,440,587.33].forEach(f=>{const b=new Float32Array(N);
+    for(let i=0;i<N;i++){let s=0;for(let h=1;h<=8;h++)s+=Math.sin(2*Math.PI*f*h*i/sr+h)/h;b[i]=.3*s+(Math.random()-.5)*.02}
+    const p=yin(b,sr),e=p.f?Math.abs(1200*Math.log2(p.f/f)):Infinity;worst=Math.max(worst,e);rows.push(`${noteName(hzToMidi(f))} ${p.f?e.toFixed(1):"miss"}¢`)});
+  $("msg").innerHTML=`Engine check, 8 test voices from low E to high D: worst error <b class="num">${worst.toFixed(1)}¢</b>. ${worst<5?"Accurate.":"Something is off."}<br><small class="num">${rows.join(" · ")}</small>`;
+};
+$("btnRange").onclick=()=>{S.range=null;save();refresh();home();stage.scrollIntoView({behavior:"smooth"})};
+$("btnOwn").onclick=()=>{S.ownRef=null;ownBuffer=null;save();home();stage.scrollIntoView({behavior:"smooth"})};
+$("btnExport").onclick=async()=>{const t=JSON.stringify({range:S.range,stage:S.stage,sessions:S.sessions},null,1);
+  try{await navigator.clipboard.writeText(t);$("msg").textContent="Copied. Paste it to Claude to review your progress."}catch(e){$("msg").textContent=t}};
+document.addEventListener("keydown",e=>{if(e.code==="Space"&&e.target===document.body){const b=stage.querySelector("button.primary");if(b){e.preventDefault();b.click()}}});
+
+/* ================= weekly check ================= */
+// Same notes, same hymn line, screen off, once a week. Plus one new tune to test transfer.
+function weekNo(d=new Date()){const t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));const day=t.getUTCDay()||7;t.setUTCDate(t.getUTCDate()+4-day);
+  const y0=new Date(Date.UTC(t.getUTCFullYear(),0,1));return t.getUTCFullYear()*100+Math.ceil(((t-y0)/864e5+1)/7)}
+function seeded(seed){let x=seed%2147483646+1;return()=>(x=x*16807%2147483647)/2147483647}
+function weeklyNotes(){const [lo,hi]=trainRange(),c=Math.round((lo+hi)/2);return [-4,-2,0,2,4].map(d=>Math.max(lo,Math.min(hi,c+d)))}
+function newTune(){const r=seeded(weekNo()),[lo,hi]=trainRange();const n=[Math.round((lo+hi)/2)];const steps=[-4,-3,-2,-1,1,2,3,4,5];
+  while(n.length<6)n.push(Math.max(lo,Math.min(hi,n[n.length-1]+steps[Math.floor(r()*steps.length)])));
+  return {name:"New tune",words:"A short tune you haven't heard",notes:n,beats:[1,1,1,1,1,2]}}
+function weeklyHTML(){
+  const last=S.weekly[S.weekly.length-1],days=last?(Date.now()-new Date(last.date))/864e5:Infinity;
+  const due=days>=6,base=S.weekly.length<3;
+  return `<div class="item" style="margin-top:14px"><span class="grow"><b>Weekly check</b> <span class="muted">· ${!last?"not done yet. Your first three set your baseline.":due?"due now":"done "+new Date(last.date).toLocaleDateString(undefined,{weekday:"short"})}${last&&!due&&base?". Baseline needs "+(3-S.weekly.length)+" more, on separate days.":""}</span></span>
+    <span class="row"><button id="weekly" ${due||base?"":""}>${due||!last?"Take it":"Take again"}</button>${S.weekly.length>=2?`<button class="ghost" id="blindBtn">Blind tone test</button>`:""}</span></div>`;
+}
+async function weeklyFlow(){
+  if(!await needAudio())return;setFocus(true);
+  const today=new Date().toISOString().slice(0,10),practiced=S.sessions.some(s=>s.date.slice(0,10)===today);
+  stage.innerHTML=`<span class="label">Weekly check</span><h2>Five notes, one hymn line, one new tune</h2>
+    <p>All screen off. About 3 minutes. It measures what you keep, not what you can do while warmed up and watching.</p>
+    <ul><li>Do it <b>before</b> practice, on a fresh voice.</li><li>Same room, same mic distance as last time.</li><li>The hymn line is recorded so you can compare your tone week to week.</li></ul>
+    ${practiced?`<p class="warn">You already practiced today, so this check will run a bit high. Tomorrow morning would be a cleaner reading.</p>`:""}
+    <div class="row" style="margin-top:12px"><button class="primary" id="go">Start</button><button class="ghost" id="back">Not now</button></div>`;
+  const go=await new Promise(r=>{$("go").onclick=()=>r(1);$("back").onclick=()=>r(0)});if(!go)return home();
+  const notes=weeklyNotes();
+  session={st:{notes:1},plan:notes.map(()=>false),results:[],quit:false};
+  for(let k=0;k<notes.length&&!session.quit;k++){const r=await trial(k,[notes[k]]);if(r)session.results.push(r)}
+  if(session.quit)return home();
+  const ok=session.results.filter(r=>r.mean!=null),single=ok.length?ok.reduce((a,r)=>a+r.mean,0)/ok.length:null;
+  const h=await phraseTest(undefined,true,"Weekly check · 2 of 3");
+  let recId=null;if(h&&h.blob){recId=uid();try{await DB.put("weekly",{id:recId,date:new Date().toISOString(),blob:h.blob})}catch(e){recId=null}}
+  const tn=await phraseTest(newTune(),false,"Weekly check · 3 of 3");
+  const w={date:new Date().toISOString(),single,hymn:h?h.mean:null,tune:tn?tn.mean:null,recId};S.weekly.push(w);save();refresh();
+  const base=S.weekly.slice(0,3),bavg=k=>{const v=base.map(x=>x[k]).filter(v=>v!=null);return v.length?v.reduce((a,b)=>a+b,0)/v.length:null};
+  const cell=(k,label)=>{const v=w[k],b=bavg(k);const d=S.weekly.length>3&&v!=null&&b!=null?v-b:null;
+    return `<div class="stat"><div class="label">${label}</div><div class="v"><span class="${tuneCls(v)}">${tuneWord(v)}</span></div>${d==null?"":`<div class="${d<0?"good":"bad"}">${Math.abs(d)<10?"Same as baseline":d<0?"Better than baseline":"Worse than baseline"}</div>`}</div>`};
+  stage.innerHTML=`<span class="label">Weekly check</span><h2>${S.weekly.length<=3?`Baseline ${S.weekly.length} of 3 recorded`:"This week's reading"}</h2>
+    <div class="stats" style="margin:12px 0">${cell("single","Single notes")}${cell("hymn","Hymn line")}${cell("tune","New tune")}</div>
+    <p class="muted">${S.weekly.length<=3?"Take two more on separate days. The average becomes the line you measure against.":"Lower is better. The new tune is the hardest test: it shows whether your skill carries to music you haven't practiced."}</p>
+    <div class="row" style="margin-top:12px"><button class="primary" id="go">Done</button></div>`;
+  $("go").onclick=home;
+}
+async function blindFlow(){
+  if(!await needAudio())return;setFocus(true);
+  let recs=[];try{recs=(await DB.all("weekly")).sort((a,b)=>a.date.localeCompare(b.date))}catch(e){}
+  if(recs.length<2){stage.innerHTML=`<h2>Not enough recordings yet</h2><p>You need two weekly checks with a hymn recording.</p><button class="primary" id="go">Back</button>`;$("go").onclick=home;return}
+  const first=recs[0],latest=recs[recs.length-1],flip=Math.random()<.5,A=flip?latest:first,B=flip?first:latest;
+  const player={};const play=r=>{Object.values(player).forEach(p=>p.pause());const p=new Audio(URL.createObjectURL(r.blob));player.cur=p;p.play()};
+  stage.innerHTML=`<span class="label">Blind tone test</span><h2>Which sounds freer and more pleasant?</h2>
+    <p>Two recordings of you singing the same hymn line: your first weekly check and your latest. You don't know which is which. Ignore small pitch slips. Listen for ease, warmth, steadiness.</p>
+    <div class="row" style="margin:14px 0"><button id="pa">▶ Play A</button><button id="pb">▶ Play B</button></div>
+    <div class="row"><button class="primary" id="ca">A</button><button class="primary" id="cb">B</button><button id="cn">Can't tell</button></div>`;
+  $("pa").onclick=()=>play(A);$("pb").onclick=()=>play(B);
+  const pick=await new Promise(r=>{$("ca").onclick=()=>r("A");$("cb").onclick=()=>r("B");$("cn").onclick=()=>r(null)});
+  Object.values(player).forEach(p=>p.pause());
+  const chosen=pick==null?null:(pick==="A"?A:B),newer=chosen?chosen.id===latest.id:null;
+  S.blind.push({date:new Date().toISOString(),newer,weeks:Math.round((new Date(latest.date)-new Date(first.date))/6048e5)});save();
+  const wins=S.blind.filter(b=>b.newer===true).length,tot=S.blind.filter(b=>b.newer!=null).length;
+  stage.innerHTML=`<span class="label">Blind tone test</span>
+    <h2>${pick==null?"No pick this time":newer?"You chose your latest recording":"You chose your first recording"}</h2>
+    <p>A was your <b>${A.id===latest.id?"latest":"first"}</b> check. B was your <b>${B.id===latest.id?"latest":"first"}</b>.</p>
+    ${tot?`<p class="muted">Across ${tot} blind ${tot===1?"pick":"picks"}, you preferred the newer recording ${wins} ${wins===1?"time":"times"}. One pick means little; a pattern over weeks means a lot.</p>`:""}
+    <p class="muted">Tip: have someone else take the test too. A second pair of ears is fairer than your own.</p>
+    <div class="row" style="margin-top:12px"><button class="primary" id="go">Done</button></div>`;
+  $("go").onclick=home;
+}
+
+/* ================= exercises ================= */
+// Classic vocal warm-up patterns, as scale steps from the starting note (0 = start, 12 = an octave up).
+const EX=[
+ {id:"nehnoy",cat:"Pitch",name:"Neh Noy Scale",steps:[0,2,4,5,7,9,11,12,11,9,7,5,4,2,0],syl:["Neh","Noy"],beats:[1,1,1,1,1,1,1,2,1,1,1,1,1,1,2],
+  goal:"Move cleanly from one note to the next.",how:"Step up and back down the scale. Land each note; don't slide between them."},
+ {id:"nya",cat:"Tone",name:"Descending Nya",steps:[7,5,4,2,0],syl:["Nya"],beats:[1,1,1,1,2],
+  goal:"A bright, forward sound.",how:"Say “nya” like a cheeky kid. Keep the buzz in the front of your face as you step down."},
+ {id:"mum",cat:"Tone",name:"Mum Motif",steps:[0,4,7,4,0],syl:["Mum"],beats:[1,1,1,1,2],
+  goal:"Resonance without pushing.",how:"Close your lips fully on each “m.” Feel the buzz on your lips and nose."},
+ {id:"nyum",cat:"Tone",name:"Nyum Scale",steps:[0,2,4,5,7,5,4,2,0],syl:["Nyum"],beats:[1,1,1,1,2,1,1,1,2],
+  goal:"Keep the bright buzz through a whole scale.",how:"Start with “ny,” end each note on “m.” Same easy volume up and down."},
+ {id:"hmmmah",cat:"Tone",name:"Hum to Mah Arpeggio",steps:[0,4,7,12,7,4,0],syl:["Hmm","Hmm","Hmm","Mah","Mah","Mah","Mah"],beats:[1,1,1,2,1,1,2],
+  goal:"Carry the ease of a hum into an open vowel.",how:"Hum up the arpeggio, open to “mah” at the top. Keep the same feel when your mouth opens."},
+ {id:"vowels",cat:"Articulation",name:"Mah Meh Mee Moh Moo",steps:[0,0,0,0,0],syl:["Mah","Meh","Mee","Moh","Moo"],beats:[1,1,1,1,2],
+  goal:"Clear vowels on one steady pitch.",how:"One breath. Only your mouth shape changes; the pitch stays flat."},
+ {id:"octnay",cat:"Range",name:"Octave Repeat Nay",steps:[0,4,7,12,12,12,12,7,4,0],syl:["Nay"],beats:[1,1,1,1,1,1,1,1,1,2],
+  goal:"Reach the top of an octave with ease.",how:"Light and bright on the repeated top notes. Stop if your throat tightens.",stretch:2},
+ {id:"hum",cat:"Breathing",name:"Long Steady Hum",steps:[0],syl:["Mmm"],beats:[8],
+  goal:"Steady breath, steady pitch.",how:"One breath, easy volume. Keep your line perfectly flat on the screen."},
+ {id:"trill",cat:"Breathing",name:"Lip Trill Five",steps:[0,2,4,5,7,5,4,2,0],syl:["Brr"],beats:[1,1,1,1,2,1,1,1,2],
+  goal:"Even, steady airflow.",how:"Let your lips flutter the whole way. If they stop, add a little air, not more push."},
+];
+// Public-domain hymn lines. Notes checked against Hymnary.org incipits.
+const HYMNS=[
+ {id:"old100",name:"Old Hundredth",words:"Praise God from whom all blessings flow",steps:[0,0,-1,-3,-5,0,2,4],beats:[2,1,1,1,1,1,1,3]},
+ {id:"amazing",name:"Amazing Grace",words:"Amazing grace, how sweet the sound",steps:[-5,0,4,0,4,2,0,-3,-5],beats:[1,2,.5,.5,2,1,2,1,3]},
+ {id:"joyful",name:"Joyful, Joyful, We Adore Thee",words:"Joyful, joyful, we adore Thee, God of glory, Lord of love",steps:[4,4,5,7,7,5,4,2,0,0,2,4,4,2,2],beats:[1,1,1,1,1,1,1,1,1,1,1,1,1.5,.5,2]},
+ {id:"holy",name:"Holy, Holy, Holy",words:"Holy, holy, holy",steps:[0,0,4,4,7,7],beats:[1,1,1,1,2,2]},
+ {id:"surrender",name:"I Surrender All",words:"All to Jesus I surrender",steps:[4,4,5,4,2,2,4,2,0],beats:[1,1,1,1,2,1,1,1,3]},
+ {id:"fount",name:"Come, Thou Fount",words:"Come, Thou Fount of every blessing",steps:[4,2,0,0,4,7,2,2],beats:[1,1,1,1,1,1,1,2]},
+ {id:"itiswell",name:"It Is Well with My Soul",words:"When peace like a river attendeth my way",steps:[7,7,5,4,4,2,4,5,9,7],beats:[1,1,1,1,2,1,1,1,1,3]},
+];
+S.ex=S.ex||{};
+// Pick a starting note so the pattern sits inside your comfortable range.
+function fitKey(steps,lo=S.range.lo,hi=S.range.hi){const mn=Math.min(...steps),mx=Math.max(...steps);
+  const c=(lo+hi)/2-(mn+mx)/2;return Math.round(Math.max(lo-mn,Math.min(hi-mx,c)))}
+function glyph(steps,w=120,h=44){const mn=Math.min(...steps),mx=Math.max(...steps),n=steps.length,sp=Math.max(1,mx-mn);
+  return `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" aria-hidden="true">${steps.map((s,i)=>`<rect x="${4+i*(w-8)/n}" y="${h-8-(s-mn)/sp*(h-16)}" width="${Math.max(4,(w-8)/n-3)}" height="4" rx="2" fill="currentColor"/>`).join("")}</svg>`}
+let exStop=false;
+function lastPct(id){const h=S.ex[id];return h&&h.length?h[h.length-1].pct:null}
+function exHome(){
+  setFocus(false);
+  const V=$("exView");
+  if(!S.range){V.innerHTML=`<div class="card"><h2>Find your range first</h2><p>Exercises are set to your voice. Go to Training to find your range.</p></div>`;return}
+  const cats=[...new Set(EX.map(e=>e.cat))];
+  const card=(id,title,sub,steps,pct)=>`<button class="excard" data-id="${id}"><span class="label">${sub}</span><span class="exglyph">${glyph(steps)}</span><b>${title}</b><span class="muted">${pct==null?"Not tried yet":Math.round(pct*100)+"% on pitch last time"}</span></button>`;
+  V.innerHTML=`<div class="card"><h2>Hymn lines</h2><p class="muted">Listen to a line in your key, then sing it back with the screen off.</p>
+      <div class="exgrid">${HYMNS.map(h=>card("h:"+h.id,h.name,"Hymn",h.steps,null)).join("")}</div></div>
+    ${cats.map(c=>`<div class="card"><h2>${c}</h2><div class="exgrid">${EX.filter(e=>e.cat===c).map(e=>card(e.id,e.name,c,e.steps,lastPct(e.id))).join("")}</div></div>`).join("")}`;
+  V.querySelectorAll(".excard").forEach(b=>b.onclick=()=>b.dataset.id.startsWith("h:")?hymnPractice(b.dataset.id.slice(2)):exIntro(b.dataset.id));
+  HYMNS.forEach(h=>{const r=S.ex["h:"+h.id];if(r&&r.length){const el=V.querySelector(`[data-id="h:${h.id}"] .muted`);if(el)el.textContent=tuneWord(r[r.length-1].miss)+" last time"}});
+}
+async function hymnPractice(id){
+  const h=HYMNS.find(x=>x.id===id),V=$("exView");if(!await needAudio())return;setFocus(true);
+  const home0=stage;home0.innerHTML="";
+  V.innerHTML=`<section class="card" id="exStage"></section>`;stage=$("exStage");
+  try{
+    const doM=fitKey(h.steps);
+    const r=await phraseTest({name:h.name,words:"“"+h.words+"”",notes:h.steps.map(s=>doM+s),beats:h.beats},false,"Hymn line");
+    if(r){(S.ex["h:"+id]=S.ex["h:"+id]||[]).push({date:new Date().toISOString(),miss:r.mean});save()}
+  }finally{stage=home0}
+  exHome();
+}
+function exIntro(id){
+  const e=EX.find(x=>x.id===id),V=$("exView");setFocus(true);
+  V.innerHTML=`<section class="card"><div class="row between"><span class="label">${e.cat}</span><button class="ghost" id="exBack">Back</button></div>
+    <h2 style="font-size:1.8rem">${e.name}</h2><div class="exglyph big">${glyph(e.steps,260,80)}</div>
+    <div class="steps"><div class="step"><span></span><div><span class="label">Goal</span><br>${e.goal}</div><span></span></div>
+    <div class="step"><span></span><div><span class="label">How</span><br>${e.how}</div><span></span></div></div>
+    <div class="row"><button class="primary" id="exGo">Start</button><label class="check"><input type="checkbox" id="exGuide" checked> Play the notes with me</label></div>
+    <p class="muted">Each round moves up a half step. Sing along as the notes reach the line.</p></section>`;
+  $("exBack").onclick=exHome;$("exGo").onclick=()=>exRun(e,$("exGuide").checked);
+}
+function scheduleTone(m,t,dur,vol=0.18){const f=midiToHz(m),g=ctx.createGain();g.connect(ctx.destination);
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+0.03);g.gain.setValueAtTime(vol,Math.max(t+0.04,t+dur-0.08));g.gain.linearRampToValueAtTime(0,t+dur);
+  [[1,1],[2,.3],[3,.1]].forEach(([h,a])=>{const o=ctx.createOscillator(),og=ctx.createGain();og.gain.value=a;o.frequency.value=f*h;o.connect(og).connect(g);o.start(t);o.stop(t+dur+0.02)})}
+async function exRun(e,guide){
+  if(!await needAudio())return;exStop=false;
+  const beat=e.id==="vowels"?650:520,mn=Math.min(...e.steps),mx=Math.max(...e.steps),top=S.range.hi+(e.stretch||0);
+  // rounds: start low in your range, move up a half step each round while the top note still fits
+  let start=S.range.lo+1-mn,roots=[];
+  for(let r=start;r+mx<=top&&roots.length<6;r++)roots.push(r);
+  if(roots.length<3){const k=fitKey(e.steps);roots=[k-1,k,k+1].filter(r=>r+mn>=S.range.lo-1)}
+  // timeline: each round = cue note (1 beat) + rest (1 beat) + pattern
+  const notes=[];let t=0;
+  roots.forEach(r=>{notes.push({m:r+e.steps[0],start:t,end:t+beat*.9,cue:true,syl:"♪"});t+=beat*2;
+    e.steps.forEach((s,i)=>{const d=e.beats[i]*beat;notes.push({m:r+s,start:t,end:t+d*.94,syl:e.syl[i%e.syl.length]});t+=d});t+=beat});
+  const total=t,V=$("exView");
+  V.innerHTML=`<section class="card" style="padding:14px"><div class="row between"><b>${e.name}</b><span class="muted" id="exRound"></span><button class="ghost" id="exEnd">End</button></div>
+    <canvas id="lane" style="width:100%;height:min(62vh,520px);display:block;border-radius:12px;background:var(--raise);margin-top:8px"></canvas>
+    <div class="row between" style="margin-top:8px"><span id="exNow" class="prompt" style="font-size:1.3rem;margin:0">Get ready</span><span class="muted">Headphones in</span></div></section>`;
+  $("exEnd").onclick=()=>{exStop=true};
+  const t0=ctx.currentTime+1.2;
+  notes.forEach(n=>{if(n.cue||guide)scheduleTone(n.m,t0+n.start/1000,(n.end-n.start)/1000,n.cue?0.2:0.12)});
+  const frames=[],LAG=140;
+  const cv=$("lane"),allM=notes.map(n=>n.m),lo=Math.min(...allM)-2,hi=Math.max(...allM)+2;
+  await frameLoop(r=>{
+    if(exStop||!$("lane"))return false;
+    const now=(ctx.currentTime-t0)*1000;
+    const cur=notes.find(n=>!n.cue&&now-LAG>=n.start&&now-LAG<n.end)||notes.find(n=>n.start>now)||notes[notes.length-1];
+    const m=toward(r.m,cur.m);frames.push({t:now-LAG,m});
+    notes.forEach(n=>{if(!n.cue&&n.grade===undefined&&now-LAG>n.end+60){
+      const sp=n.end-n.start,ms=frames.filter(f=>f.m!=null&&f.t>n.start+sp*.3&&f.t<n.end-sp*.08).map(f=>toward(f.m,n.m)).filter(x=>Math.abs(x-n.m)<=7);
+      n.grade=ms.length>=3?(median(ms)-n.m)*100:null}});
+    drawLane(cv,notes,frames,now,lo,hi);
+    const ri=Math.min(roots.length,Math.floor(Math.max(0,now)/((total)/roots.length))+1);$("exRound").textContent=`Round ${ri} of ${roots.length}`;
+    const nx=notes.find(n=>n.start>now-LAG&&!n.cue);
+    $("exNow").textContent=now<0?"Get ready":cur&&!cur.cue&&now-LAG>=cur.start&&now-LAG<cur.end?(m==null?cur.syl:dirWord((m-cur.m)*100)):"Listen";
+    return now<total+400;
+  });
+  const sung=notes.filter(n=>!n.cue),graded=sung.filter(n=>n.grade!=null);
+  if(exStop&&graded.length<3){exIntro(e.id);return}
+  const pct=graded.length?graded.filter(n=>Math.abs(n.grade)<=50).length/sung.length:0;
+  const bias=graded.length?graded.reduce((a,n)=>a+n.grade,0)/graded.length:0;
+  (S.ex[e.id]=S.ex[e.id]||[]).push({date:new Date().toISOString(),pct});save();
+  // weakest spot: which step of the pattern missed most
+  const bySteps=e.steps.map((_,i)=>{const g=sung.filter((n,j)=>j%e.steps.length===i&&n.grade!=null).map(n=>Math.abs(n.grade));return g.length?g.reduce((a,b)=>a+b,0)/g.length:null});
+  const worst=bySteps.reduce((w,v,i)=>v!=null&&(w<0||v>bySteps[w])?i:w,-1);
+  chime(pct>=.7);
+  $("exView").innerHTML=`<section class="card"><span class="label">${e.cat}</span><h2>${e.name}</h2>
+    <div class="stats" style="margin:12px 0">
+      <div class="stat"><div class="label">On pitch</div><div class="v ${pct>=.7?"good":pct>=.4?"warn":"bad"}">${Math.round(pct*100)}%</div><div class="muted">of notes, within “slightly off”</div></div>
+      <div class="stat"><div class="label">Tendency</div><div class="v" style="font-size:1.1rem">${Math.abs(bias)<=25?"Centered":bias>0?"Runs high":"Runs low"}</div></div>
+      <div class="stat"><div class="label">Hardest spot</div><div class="v" style="font-size:1.1rem">${worst<0?"–":"Note "+(worst+1)+" of "+e.steps.length}</div></div>
+    </div>
+    <canvas id="lane" style="width:100%;height:260px;display:block;border-radius:12px;background:var(--raise)"></canvas>
+    <p class="muted">Your whole run. Green notes were on pitch or slightly off; amber were off; red were way off.</p>
+    <div class="row" style="margin-top:12px"><button class="primary" id="again">Again</button><button id="exBack">All exercises</button></div></section>`;
+  drawLane($("lane"),notes,frames,null,lo,hi);
+  $("again").onclick=()=>exRun(e,guide);$("exBack").onclick=exHome;
+}
+// Scrolling note lane: notes slide left toward the line; your voice draws behind it. now=null draws the whole run.
+function drawLane(cv,notes,frames,now,lo,hi){
+  const dpr=devicePixelRatio||1,W=cv.clientWidth,H=cv.clientHeight;cv.width=W*dpr;cv.height=H*dpr;
+  const c=cv.getContext("2d");c.scale(dpr,dpr);
+  const L=36,rows=hi-lo,rh=H/rows,y=m=>H-(m-lo)*rh-rh/2;
+  const full=now==null,total=notes[notes.length-1].end+200;
+  const ppm=full?(W-L-10)/total:(W-L)*0.62/2600,px=full?L:L+(W-L)*0.3;
+  const x=t=>px+(t-(full?0:now))*ppm;
+  for(let m=lo;m<=hi;m++){const yy=y(m);c.fillStyle=css("--line");c.fillRect(L,yy,W-L,1);
+    if((m%12+12)%12===0||m%2===0){c.fillStyle=css("--muted");c.font=`600 10px ${css("--mono")}`;c.fillText(noteName(m),4,yy+3)}}
+  if(!full){c.fillStyle=css("--accent");c.globalAlpha=.35;c.fillRect(px-1,0,2,H);c.globalAlpha=1}
+  notes.forEach(n=>{const a=x(n.start),b=x(n.end);if(b<L||a>W)return;
+    const g=n.grade,col=n.cue?css("--line"):g===undefined?css("--ink"):g==null?css("--muted"):Math.abs(g)<=50?css("--good"):Math.abs(g)<=100?css("--warn"):css("--bad");
+    const hh=Math.max(14,Math.min(26,rh*.8)),yy=y(n.m)-hh/2,ww=Math.max(6,b-a-3);
+    c.fillStyle=col;c.globalAlpha=n.cue?.6:1;c.beginPath();c.roundRect(Math.max(L,a),yy,ww-(Math.max(L,a)-a),hh,hh/2);c.fill();c.globalAlpha=1;
+    if(ww>28&&!full){c.fillStyle=n.cue?css("--ink"):css("--surface");c.font=`700 12px ${css("--body")}`;c.fillText(n.syl,Math.max(L,a)+10,yy+hh/2+4)}});
+  c.strokeStyle=css("--accent");c.lineWidth=3;c.lineJoin="round";c.beginPath();let pen=false;
+  frames.forEach(f=>{if(f.m==null||f.m<lo-1||f.m>hi+1){pen=false;return}const xx=x(f.t);if(xx<L||(!full&&xx>px)){pen=false;return}pen?c.lineTo(xx,y(f.m)):c.moveTo(xx,y(f.m));pen=true});c.stroke();
+}
+
+/* ================= tabs ================= */
+function showTab(which){
+  ["Train","Ex","Songs"].forEach(n=>$("tab"+n).setAttribute("aria-selected",n===which));
+  $("trainView").hidden=which!=="Train";$("exView").hidden=which!=="Ex";$("songView").hidden=which!=="Songs";
+  exStop=true;stopAll();
+  if(which==="Songs")loadSongs();else if(which==="Ex")exHome();else{drawChart();home()}
+}
+$("tabTrain").onclick=()=>showTab("Train");$("tabEx").onclick=()=>showTab("Ex");$("tabSongs").onclick=()=>showTab("Songs");
+
+/* ================= songs: storage ================= */
+const DB=(()=>{let p=null;
+  const open=()=>p||(p=new Promise((res,rej)=>{const r=indexedDB.open("tuningRoomSongs",2);
+    r.onupgradeneeded=()=>{const d=r.result;["songs","takes","weekly"].forEach(n=>{if(!d.objectStoreNames.contains(n))d.createObjectStore(n,{keyPath:"id"})})};
+    r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)}));
+  const tx=async(st,mode,fn)=>{const d=await open();return new Promise((res,rej)=>{const t=d.transaction(st,mode);const q=fn(t.objectStore(st));t.oncomplete=()=>res(q.result);t.onerror=()=>rej(t.error)})};
+  return {put:(st,v)=>tx(st,"readwrite",s=>s.put(v)),del:(st,k)=>tx(st,"readwrite",s=>s.delete(k)),all:st=>tx(st,"readonly",s=>s.getAll())};
+})();
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const fmt=s=>`${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,"0")}`;
+
+let songs=[],cur=null,sel=null,takes=[],songEl=null,songNode=null,songGain=null,songUrl=null,busy=false,stopFlag=false,takePlayers=[];
+async function loadSongs(){
+  try{songs=await DB.all("songs")}catch(e){songs=[];$("songList").innerHTML=`<p class="bad">This browser blocked local storage, so songs can't be saved. Try Chrome in a normal window.</p>`;return}
+  renderSongList();if(cur)renderSong();
+}
+function renderSongList(){
+  $("songList").innerHTML=songs.length?songs.map(s=>`<div class="item ${cur&&cur.id===s.id?"sel":""}"><span class="grow"><b>${esc(s.name)}</b> <span class="muted num">${fmt(s.duration)}</span></span>
+    <span class="row"><button data-open="${s.id}">Open</button><button class="ghost" data-del="${s.id}">Delete</button></span></div>`).join("")
+    :`<p class="muted">No songs yet. Add a recording of a song you sing on Sundays.</p>`;
+  $("songList").querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>openSong(b.dataset.open));
+  $("songList").querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>confirmDel(b));
+}
+function esc(t){return String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+function confirmDel(b){
+  if(b.dataset.sure){const id=b.dataset.del;DB.del("songs",id).then(async()=>{for(const t of (await DB.all("takes")).filter(t=>t.songId===id))await DB.del("takes",t.id);if(cur&&cur.id===id){cur=null;$("songCard").hidden=true}loadSongs()});return}
+  b.dataset.sure=1;b.textContent="Tap again to delete";b.classList.add("bad");setTimeout(()=>{if(b.isConnected){b.textContent="Delete";delete b.dataset.sure;b.classList.remove("bad")}},3000);
+}
+$("addSong").onclick=()=>$("songFile").click();
+$("songFile").onchange=async e=>{
+  const f=e.target.files[0];e.target.value="";if(!f)return;
+  if(!ctx)ctx=new (window.AudioContext||window.webkitAudioContext)();
+  $("songList").insertAdjacentHTML("afterbegin",`<p class="muted" id="adding">Reading ${esc(f.name)}…</p>`);
+  try{
+    const ab=await ctx.decodeAudioData(await f.arrayBuffer());
+    const ch=ab.getChannelData(0),B=800,step=Math.floor(ch.length/B),peaks=[];
+    for(let i=0;i<B;i++){let mx=0;for(let j=i*step;j<(i+1)*step;j+=8)mx=Math.max(mx,Math.abs(ch[j]));peaks.push(+mx.toFixed(3))}
+    const s={id:uid(),name:f.name.replace(/\.[^.]+$/,""),blob:f,duration:ab.duration,peaks,sections:[]};
+    await DB.put("songs",s);cur=null;await loadSongs();openSong(s.id);
+  }catch(err){$("adding")&&($("adding").outerHTML=`<p class="bad">That file wouldn't open. Try an MP3 or WAV.</p>`)}
+};
+
+/* ================= songs: player ================= */
+async function openSong(id){
+  stopAll();cur=songs.find(s=>s.id===id);if(!cur)return;
+  sel=cur.sections[0]?{...cur.sections[0]}:{id:null,name:"",a:0,b:Math.min(cur.duration,20)};
+  if(songUrl)URL.revokeObjectURL(songUrl);songUrl=URL.createObjectURL(cur.blob);
+  if(!songEl){songEl=new Audio();songEl.preservesPitch=true}
+  songEl.src=songUrl;renderSongList();renderSong();
+}
+async function routeSong(){ // song plays through the audio graph so its volume is ours
+  if(!await needAudioQuiet())return false;
+  if(!songNode){songNode=ctx.createMediaElementSource(songEl);songGain=ctx.createGain();songNode.connect(songGain).connect(ctx.destination)}
+  songGain.gain.value=+($("vol")?.value||0.8);return true;
+}
+async function needAudioQuiet(){try{await ensureAudio();return true}catch(e){$("songMsg")&&($("songMsg").innerHTML=`<span class="bad">I can't reach your microphone. Click the lock icon by the address bar and allow it.</span>`);return false}}
+function stopAll(){stopFlag=true;if(songEl)songEl.pause();takePlayers.forEach(p=>{try{p.pause()}catch(e){}});takePlayers=[]}
+
+function renderSong(){
+  const c=$("songCard");c.hidden=false;
+  c.innerHTML=`<div class="row between"><h2>${esc(cur.name)}</h2><span class="muted num" id="secTime"></span></div>
+    <canvas class="wave" id="wave" aria-label="Song waveform. Drag to choose a section."></canvas>
+    <p class="muted" style="margin-top:6px">Drag across the waveform to choose a part of the song.</p>
+    <div class="row" id="secChips"></div>
+    <div class="row" style="margin-top:12px">
+      <button id="playSec">▶ Play section</button><label class="check"><input type="checkbox" id="loop"> Loop</label>
+      <label for="speed">Speed</label><select id="speed"><option value="1">100%</option><option value="0.9">90%</option><option value="0.8">80%</option><option value="0.7">70%</option></select>
+      <label for="vol">Song volume</label><input type="range" id="vol" min="0" max="1" step="0.05" value="0.8" style="width:110px">
+    </div>
+    <div class="card" style="background:var(--raise);margin:16px 0 0">
+      <div class="row between"><h2 style="margin:0">Practice this section</h2></div>
+      <div class="row" style="margin-top:10px">
+        <button class="primary" id="along">Sing along</button>
+        <button class="primary" id="back">Sing it back</button>
+        <label class="check"><input type="checkbox" id="listenFirst" checked> Listen first</label>
+      </div>
+      <p class="muted" id="songMsg">Sing along trains with the song in your ears. Sing it back trains without it. Turn off "listen first" to sing from memory.</p>
+      <canvas class="trace" id="songTrace" style="margin-top:8px"></canvas>
+    </div>
+    <h2 style="margin-top:18px">Your takes</h2><div class="list" id="takeList"></div>`;
+  $("speed").onchange=()=>{songEl.playbackRate=+$("speed").value};
+  $("vol").oninput=()=>{if(songGain)songGain.gain.value=+$("vol").value};
+  $("playSec").onclick=()=>songEl.paused?playSection():stopAll();
+  $("along").onclick=singAlong;$("back").onclick=singBack;
+  wireWave();renderChips();drawWave();loadTakes();drawLiveSong([],null);
+}
+function renderChips(){
+  $("secTime").textContent=`${fmt(sel.a)} – ${fmt(sel.b)}`;
+  $("secChips").innerHTML=cur.sections.map(s=>`<button class="secchip ${sel.id===s.id?"sel":""}" data-s="${s.id}">${esc(s.name)}</button>`).join("")+
+    (sel.id?`<button class="ghost" id="renSec">Rename</button><button class="ghost" id="delSec">Remove</button>`:`<input id="secName" placeholder="Name this part, e.g. Chorus" style="font:15px var(--body);padding:8px;border-radius:10px;border:1px solid var(--line);background:var(--raise);color:var(--ink)"><button id="saveSec">Save section</button>`);
+  $("secChips").querySelectorAll("[data-s]").forEach(b=>b.onclick=()=>{stopAll();sel={...cur.sections.find(s=>s.id===b.dataset.s)};renderChips();drawWave();loadTakes()});
+  if($("saveSec"))$("saveSec").onclick=async()=>{const name=$("secName").value.trim()||`Part ${cur.sections.length+1}`;sel={...sel,id:uid(),name};cur.sections.push({...sel});await DB.put("songs",cur);renderChips();loadTakes()};
+  if($("delSec"))$("delSec").onclick=async()=>{cur.sections=cur.sections.filter(s=>s.id!==sel.id);sel={...sel,id:null,name:""};await DB.put("songs",cur);renderChips();loadTakes()};
+  if($("renSec"))$("renSec").onclick=()=>{const b=$("renSec");b.outerHTML=`<input id="newName" value="${esc(sel.name)}" style="font:15px var(--body);padding:8px;border-radius:10px;border:1px solid var(--line);background:var(--raise);color:var(--ink)"><button id="okName">Save</button>`;
+    $("okName").onclick=async()=>{sel.name=$("newName").value.trim()||sel.name;cur.sections=cur.sections.map(s=>s.id===sel.id?{...sel}:s);await DB.put("songs",cur);renderChips()}};
+}
+function wireWave(){
+  const w=$("wave");let down=null;
+  const tAt=e=>{const r=w.getBoundingClientRect();return Math.max(0,Math.min(1,(e.clientX-r.left)/r.width))*cur.duration};
+  w.onpointerdown=e=>{w.setPointerCapture(e.pointerId);down=tAt(e);stopAll()};
+  w.onpointermove=e=>{if(down==null)return;const t=tAt(e);sel={id:null,name:"",a:Math.min(down,t),b:Math.max(down,t)};drawWave();$("secTime").textContent=`${fmt(sel.a)} – ${fmt(sel.b)}`};
+  w.onpointerup=e=>{if(down==null)return;const t=tAt(e);if(Math.abs(t-down)<1){sel={id:null,name:"",a:t,b:Math.min(cur.duration,t+15)}}down=null;renderChips();drawWave();loadTakes()};
+}
+function drawWave(head){
+  const cv=$("wave");if(!cv)return;const dpr=devicePixelRatio||1,W=cv.clientWidth,H=cv.clientHeight;cv.width=W*dpr;cv.height=H*dpr;
+  const c=cv.getContext("2d");c.scale(dpr,dpr);const P=cur.peaks,mx=Math.max(...P)||1,x=t=>t/cur.duration*W;
+  c.fillStyle=css("--accent-soft");c.fillRect(x(sel.a),0,x(sel.b)-x(sel.a),H);
+  P.forEach((p,i)=>{const px=i/P.length*W,h=Math.max(1,p/mx*H*0.85),t=i/P.length*cur.duration;
+    c.fillStyle=t>=sel.a&&t<=sel.b?css("--accent"):css("--muted");c.fillRect(px,(H-h)/2,Math.max(1,W/P.length-0.5),h)});
+  if(head!=null){c.fillStyle=css("--ink");c.fillRect(x(head)-1,0,2,H)}
+}
+async function playSection(){
+  if(!await routeSong())return;stopFlag=false;songEl.playbackRate=+$("speed").value;songEl.currentTime=sel.a;await songEl.play();
+  $("playSec").textContent="■ Stop";
+  await new Promise(res=>{(function tick(){if(stopFlag||songEl.paused){res();return}
+    if(songEl.currentTime>=sel.b){if($("loop")?.checked){songEl.currentTime=sel.a}else{songEl.pause();res();return}}
+    drawWave(songEl.currentTime);requestAnimationFrame(tick)})()});
+  if($("playSec"))$("playSec").textContent="▶ Play section";drawWave();
+}
+
+/* ================= songs: recording takes ================= */
+function startRecorder(){const r=new MediaRecorder(stream),ch=[];r.ondataavailable=e=>ch.push(e.data);r.start();
+  return ()=>new Promise(res=>{r.onstop=()=>res(new Blob(ch,{type:r.mimeType}));r.stop()})}
+function setBusy(b){busy=b;["along","back","playSec"].forEach(id=>$(id)&&($(id).disabled=b))}
+async function singAlong(){
+  if(busy||!await routeSong())return;setBusy(true);stopFlag=false;
+  const rate=+$("speed").value;songEl.playbackRate=rate;
+  const lead=Math.min(2,sel.a);songEl.currentTime=sel.a-lead;await songEl.play();
+  $("songMsg").innerHTML=`<b>Get ready…</b> Sing with the song. Recording starts at the section.`;
+  const frames=[];let stopRec=null;
+  await frameLoop(r=>{
+    if(stopFlag||songEl.paused)return false;
+    const st=songEl.currentTime;drawWave(st);
+    if(st<sel.a)return true;
+    if(!stopRec){stopRec=startRecorder();$("songMsg").innerHTML=`<b>Recording.</b> Sing along.`}
+    frames.push([+(st-sel.a).toFixed(3),r.m==null?null:+r.m.toFixed(3)]);
+    drawLiveSong(frames,null,sel.b-sel.a);
+    return st<sel.b;
+  });
+  songEl.pause();const blob=stopRec?await stopRec():null;setBusy(false);drawWave();
+  if(stopFlag||!blob){$("songMsg").textContent="Stopped.";return}
+  const score=onNote(frames);
+  const take={id:uid(),songId:cur.id,secKey:secKey(),mode:"along",date:new Date().toISOString(),rate,frames,blob,score,ref:false};
+  if(!takes.some(t=>t.mode==="along"&&t.ref))take.ref=true;
+  await DB.put("takes",take);
+  $("songMsg").innerHTML=score==null?`<span class="warn">I heard very little singing. Sing a bit louder.</span>`:
+    `<b>${Math.round(score*100)}% on a note.</b> <span class="muted">That's time spent squarely on a note rather than between notes. Play "me + song" below to hear if it was the right one.</span>`;
+  chime(score!=null&&score>=0.6);loadTakes();
+}
+async function singBack(){
+  if(busy||!await routeSong())return;setBusy(true);stopFlag=false;
+  const rate=+$("speed").value;songEl.playbackRate=rate;
+  if($("listenFirst").checked){
+    $("songMsg").innerHTML=`<b>Listen.</b> Then sing it back with the song off.`;
+    songEl.currentTime=sel.a;await songEl.play();
+    await new Promise(res=>{(function tick(){if(stopFlag||songEl.paused||songEl.currentTime>=sel.b){songEl.pause();res();return}drawWave(songEl.currentTime);requestAnimationFrame(tick)})()});
+    drawWave();if(stopFlag){setBusy(false);return}
+  }
+  $("songMsg").innerHTML=`<b>Your turn.</b> Sing it alone. Stop singing and it ends on its own.`;
+  const dur=(sel.b-sel.a)/rate*1000;const frames=[];let onset=null,stopRec=startRecorder();
+  await frameLoop((r,t)=>{
+    if(stopFlag)return false;
+    if(onset==null){if(r.m!=null)onset=t;else return t<8000}
+    const x=t-onset;frames.push([+(x/1000).toFixed(3),r.m==null?null:+r.m.toFixed(3)]);
+    drawLiveSong(frames,null,dur/1000*1.3);
+    if(x>dur*0.5&&frames.slice(-60).every(f=>f[1]==null))return false;
+    return x<dur*1.6;
+  });
+  const blob=await stopRec();setBusy(false);
+  if(stopFlag){$("songMsg").textContent="Stopped.";return}
+  if(onset==null){$("songMsg").innerHTML=`<span class="warn">I didn't hear you.</span>`;return}
+  const ref=takes.find(t=>t.mode==="along"&&t.ref);
+  const miss=ref?dtwMiss(voiced(frames),voiced(ref.frames)):null;
+  const take={id:uid(),songId:cur.id,secKey:secKey(),mode:$("listenFirst").checked?"back":"memory",date:new Date().toISOString(),rate,frames,blob,score:onNote(frames),miss,ref:false};
+  await DB.put("takes",take);
+  $("songMsg").innerHTML=miss!=null?`<b>${tuneWord(miss)} compared with your reference take.</b> <span class="muted">${miss<=50?"You held the tune without the song.":"Listen to both takes and find where they part ways."}</span>`
+    :`<b>${take.score==null?"–":Math.round(take.score*100)+"%"} on a note.</b> <span class="muted">Mark a sing-along take as your reference to score sing-backs against the tune.</span>`;
+  chime(miss!=null?miss<=50:(take.score||0)>=0.6);loadTakes();
+}
+const secKey=()=>sel.id||`${sel.a.toFixed(1)}-${sel.b.toFixed(1)}`;
+function onNote(frames){const v=frames.map(f=>f[1]).filter(m=>m!=null);if(v.length<20)return null;return v.filter(m=>Math.abs(m-Math.round(m))<=0.3).length/v.length}
+// voiced pitch every ~50ms, for comparing two takes
+function voiced(frames){const out=[];let bucket=[],t0=null;const med=median(frames.map(f=>f[1]).filter(m=>m!=null));
+  frames.forEach(([t,m])=>{if(t0==null)t0=t;if(t-t0>=0.05){if(bucket.length)out.push(median(bucket));bucket=[];t0=t}if(m!=null&&Math.abs(m-med)<=9)bucket.push(m)});
+  if(bucket.length)out.push(median(bucket));return out}
+// Dynamic time warping: lines up two takes sung at different speeds, then averages the pitch gap (in cents).
+function dtwMiss(A,B){const n=A.length,m=B.length;if(n<8||m<8)return null;const W=m+1,D=new Float64Array((n+1)*W).fill(Infinity),L=new Uint32Array((n+1)*W);D[0]=0;
+  for(let i=1;i<=n;i++)for(let j=1;j<=m;j++){const c=Math.abs(A[i-1]-B[j-1]);let k=(i-1)*W+j-1,best=D[k];
+    if(D[(i-1)*W+j]<best){k=(i-1)*W+j;best=D[k]}if(D[i*W+j-1]<best){k=i*W+j-1;best=D[k]}D[i*W+j]=best+c;L[i*W+j]=L[k]+1}
+  return D[n*W+m]/L[n*W+m]*100}
+
+function drawLiveSong(frames,ref,span){
+  const cv=$("songTrace");if(!cv)return;const dpr=devicePixelRatio||1,W=cv.clientWidth,H=cv.clientHeight;cv.width=W*dpr;cv.height=H*dpr;
+  const c=cv.getContext("2d");c.scale(dpr,dpr);const v=frames.map(f=>f[1]).filter(m=>m!=null);
+  if(!v.length){c.fillStyle=css("--muted");c.font=`13px ${css("--body")}`;c.fillText("Your pitch will draw here.",12,H/2);return}
+  const mid=median(v.slice(-80)),lo=Math.floor(mid-7),hi=Math.ceil(mid+7),y=m=>H-(m-lo)/(hi-lo)*H;
+  const T=span||Math.max(...frames.map(f=>f[0])),x=t=>t/T*W;
+  for(let m=lo;m<=hi;m++){c.strokeStyle=css("--line");c.lineWidth=1;c.beginPath();c.moveTo(0,y(m));c.lineTo(W,y(m));c.stroke();
+    c.fillStyle=css("--muted");c.font=`600 10px ${css("--mono")}`;if(m%2===0)c.fillText(noteName(m),4,y(m)-2)}
+  c.strokeStyle=css("--accent");c.lineWidth=3;c.lineJoin="round";c.beginPath();let pen=false;
+  frames.forEach(([t,m])=>{if(m==null){pen=false;return}pen?c.lineTo(x(t),y(m)):c.moveTo(x(t),y(m));pen=true});c.stroke();
+}
+
+/* ================= songs: takes list ================= */
+async function loadTakes(){
+  const all=await DB.all("takes").catch(()=>[]);
+  takes=all.filter(t=>t.songId===cur.id&&t.secKey===secKey()).sort((a,b)=>b.date.localeCompare(a.date));
+  const L=$("takeList");if(!L)return;
+  const label={along:"Sing along",back:"Sing back",memory:"From memory"};
+  L.innerHTML=takes.length?takes.map(t=>`<div class="item"><span class="grow"><b>${label[t.mode]}</b>${t.ref?` <span class="chip" style="padding:2px 8px">reference</span>`:""}
+      <span class="muted num"> · ${t.miss!=null?tuneWord(t.miss)+" vs reference":t.score!=null?Math.round(t.score*100)+"% on a note":"–"} · ${new Date(t.date).toLocaleDateString(undefined,{month:"short",day:"numeric"})}${t.rate<1?` · ${Math.round(t.rate*100)}%`:""}</span></span>
+      <span class="row"><button data-me="${t.id}">▶ Me</button>${t.mode==="along"?`<button data-mix="${t.id}">▶ Me + song</button>${t.ref?"":`<button class="ghost" data-ref="${t.id}">Make reference</button>`}`:""}<button class="ghost" data-tdel="${t.id}">Delete</button></span></div>`).join("")
+    :`<p class="muted">No takes for this part yet.</p>`;
+  L.querySelectorAll("[data-me]").forEach(b=>b.onclick=()=>playTake(b.dataset.me,false));
+  L.querySelectorAll("[data-mix]").forEach(b=>b.onclick=()=>playTake(b.dataset.mix,true));
+  L.querySelectorAll("[data-ref]").forEach(b=>b.onclick=async()=>{for(const t of takes.filter(t=>t.mode==="along")){t.ref=t.id===b.dataset.ref;await DB.put("takes",t)}loadTakes()});
+  L.querySelectorAll("[data-tdel]").forEach(b=>b.onclick=async()=>{await DB.del("takes",b.dataset.tdel);loadTakes()});
+  const last=takes[0];if(last)drawLiveSong(last.frames,null);
+}
+async function playTake(id,mix){
+  stopAll();stopFlag=false;const t=takes.find(x=>x.id===id);if(!t)return;
+  const me=new Audio(URL.createObjectURL(t.blob));takePlayers=[me];drawLiveSong(t.frames,null);
+  if(mix){if(!await routeSong())return;songEl.playbackRate=t.rate;songEl.currentTime=sel.a;await songEl.play();
+    const end=()=>{if(stopFlag||songEl.currentTime>=sel.b||songEl.paused){songEl.pause();return}drawWave(songEl.currentTime);requestAnimationFrame(end)};end()}
+  me.play();
+}
+
+refresh();home();addEventListener("resize",()=>{drawChart();if(cur&&!$("songView").hidden)drawWave()});
+</script>
+</body>
+</html>
