@@ -154,6 +154,7 @@ body.focus #stage{min-height:60vh}
       <button id="btnOwn">Re-record my note</button>
       <button id="btnTest">Check pitch engine</button>
       <button id="btnExport">Copy my data</button>
+      <button id="btnTestMode" class="ghost">Test mode</button>
     </div>
     <p id="msg" class="muted"></p>
     <p><small>Wired headphones keep the target tone out of the microphone. Bluetooth works but adds delay. Practice in a quiet room, same spot each day.</small></p>
@@ -183,7 +184,7 @@ function chime(good){if(!ctx)return;const t=ctx.currentTime,g=ctx.createGain();g
   g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.12,t+0.02);g.gain.exponentialRampToValueAtTime(0.0001,t+0.6);
   (good?[1320,1760]:[330]).forEach((f,i)=>{const o=ctx.createOscillator();o.type="sine";o.frequency.value=f;o.connect(g);o.start(t+i*0.09);o.stop(t+0.6)})}
 function setFocus(on){document.body.classList.toggle("focus",on)}
-const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const save=()=>{if(S.test)return;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 
 const $=id=>document.getElementById(id);
 const midiToHz=m=>440*Math.pow(2,(m-69)/12), hzToMidi=f=>69+12*Math.log2(f/440);
@@ -354,19 +355,20 @@ function micError(){stage.innerHTML=`<h2>I can't reach your microphone</h2><p>Op
 async function needAudio(){try{await ensureAudio();return true}catch(e){micError();return false}}
 
 function home(){
+  testBanner();
   setFocus(false);
   if(!S.range){stage.innerHTML=`<h2>Let's find your range</h2>
     <p>You'll hold two notes: your lowest comfortable note and your highest comfortable note. Comfortable means you could sing it all day, not the edge of what you can reach.</p>
     <p class="muted">The app waits until you hold each note steady for 3 seconds.</p>
     <div class="row" style="margin-top:14px"><button class="primary" id="go">Start</button></div>`;$("go").onclick=rangeFlow;return}
-  if(!S.ownRef){stage.innerHTML=`<h2>Record your own target note</h2>
+  if(!S.ownRef&&!S.test){stage.innerHTML=`<h2>Record your own target note</h2>
     <p>People match their own voice more accurately than a piano tone. Stage 1 plays your own voice back as the target.</p>
     <div class="row" style="margin-top:14px"><button class="primary" id="go">Record my note</button></div>`;$("go").onclick=ownFlow;return}
   const st=STAGES[S.stage-1];
   stage.innerHTML=`<div class="row between"><span class="label">Today</span><span class="label">Stage ${st.n} of 5</span></div>
     <h2>${st.name}</h2>
     <div class="steps">
-      <div class="step"><span class="num muted">1</span><div><b>Warm up</b><br><span class="muted">Straw in shallow water or lip trills. Easy slides.</span></div><span class="num">3 min</span></div>
+      <div class="step"><span class="num muted">1</span><div><b>Warm up</b><br><span class="muted">5 yawns, vowels 3 times, lip trills. Straw optional.</span></div><span class="num">3 min</span></div>
       <div class="step"><span class="num muted">2</span><div><b>Pitch work</b><br><span class="muted">12 tries. Screen on for some, off for others.</span></div><span class="num">7 min</span></div>
       <div class="step"><span class="num muted">3</span><div><b>Real singing test</b><br><span class="muted">One hymn line, screen off: ${HYMN.words}.</span></div><span class="num">1 min</span></div>
       <div class="step"><span class="num muted">4</span><div><b>Check in</b><br><span class="muted">How did your voice feel?</span></div><span class="num">10 s</span></div>
@@ -419,26 +421,40 @@ async function ownFlow(){
   $("play").onclick=()=>playOwn(m,1.5);$("keep").onclick=()=>{save();home()};$("redo").onclick=ownFlow;
 }
 
+// Geb's warm-up: yawns, open vowels, lip trills. Then optional straw work.
+const WARMUP=[
+ {name:"Yawns",count:5,unit:"yawn",how:"Big, slow yawns. Let your throat open and your jaw drop. Drop your shoulders on each one."},
+ {name:"Vowels",count:3,unit:"round",how:"Ah, Eh, Ee, Oh, Oo. Full and relaxed, like calling across a field. Loud comes from breath, not from squeezing your throat."},
+ {name:"Lip trills",count:5,unit:"slide",how:"Let your lips flutter like a motorboat. Slide from low to high and back down. Keep the flutter going the whole way."},
+ {name:"Straw (optional)",count:0,time:120,how:"Straw in 1 to 2 cm of water. Hum slow slides and a simple tune. Small, steady bubbles. Skip it if you're short on time."},
+];
 async function warmup(){
   if(!await needAudio())return;
   setFocus(true);
-  let left=180;
-  stage.innerHTML=`<div class="row between"><span class="label">Warm up</span><span class="prompt num" id="clock" style="margin:0">3:00</span></div>
-    <h2>Straw in shallow water</h2>
-    <ul><li>1 to 2 cm of water in a cup. Straw just under the surface.</li>
-    <li>Hum through it: slow slides up and down, then a simple tune.</li>
-    <li>Small, steady bubbles. Easy volume.</li>
-    <li>If your throat tightens, lift the straw out of the water or switch to lip trills.</li></ul>
-    <div class="row" style="margin-top:12px"><button class="primary" id="done">Done, start pitch work</button></div>`;
-  const tm=setInterval(()=>{left--;const el=$("clock");if(!el){clearInterval(tm);return}el.textContent=left>0?`${Math.floor(left/60)}:${String(left%60).padStart(2,"0")}`:"Done";if(left<=0)clearInterval(tm)},1000);
-  $("done").onclick=()=>{clearInterval(tm);drill()};
+  for(let i=0;i<WARMUP.length;i++){
+    const w=WARMUP[i];let n=0,left=w.time||0,tm=null;
+    stage.innerHTML=`<div class="row between"><span class="label">Warm up · step ${i+1} of ${WARMUP.length}</span><button class="ghost" id="wSkipAll">Skip to pitch work</button></div>
+      <div class="dots">${WARMUP.map((_,j)=>`<span class="${j<i?"done":j===i?"on":""}"></span>`).join("")}</div>
+      <h2 style="font-size:1.8rem">${w.name}</h2><p>${w.how}</p>
+      <div class="prompt num" id="wCount">${w.count?`0 / ${w.count}`:fmtT(left)}</div>
+      <div class="row" style="margin-top:12px">${w.count?`<button class="primary" id="wTap">Done one ${w.unit}</button>`:""}<button ${w.count?"":'class="primary"'} id="wNext">${i===WARMUP.length-1?"Start pitch work":"Next"}</button></div>
+      ${w.count?`<p class="muted">Tap after each ${w.unit}, or press Space.</p>`:""}`;
+    const res=await new Promise(r=>{
+      $("wSkipAll").onclick=()=>r("skip");$("wNext").onclick=()=>r("next");
+      if(w.count)$("wTap").onclick=()=>{n++;$("wCount").textContent=`${n} / ${w.count}`;if(n>=w.count)r("next")};
+      else tm=setInterval(()=>{left--;const el=$("wCount");if(!el){clearInterval(tm);return}el.textContent=left>0?fmtT(left):"Done"},1000);
+    });
+    clearInterval(tm);if(res==="skip")break;
+  }
+  drill();
 }
+const fmtT=s=>`${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`;
 
 /* ================= drill ================= */
 function trainRange(){const mid=Math.round((S.range.lo+S.range.hi)/2);let lo=Math.max(S.range.lo+1,mid-6),hi=Math.min(S.range.hi-1,mid+6);if(hi-lo<4){lo=S.range.lo;hi=S.range.hi}return [lo,hi]}
 function makeTrial(st){
   const [lo,hi]=trainRange();
-  if(st.own){const c=Math.round(S.ownRef.midi),a=Math.max(lo,c-4),b=Math.min(hi,c+4);return [a+Math.floor(Math.random()*(b-a+1))]}
+  if(st.own){const c=Math.round(S.ownRef?S.ownRef.midi:(S.range.lo+S.range.hi)/2),a=Math.max(lo,c-4),b=Math.min(hi,c+4);return [a+Math.floor(Math.random()*(b-a+1))]}
   const n=[weakPick(lo,hi)];while(n.length<st.notes){const s=[-5,-4,-3,-2,-1,1,2,3,4,5,7][Math.floor(Math.random()*11)];n.push(Math.max(lo,Math.min(hi,n[n.length-1]+s)))}return n;
 }
 // Aim at weak notes: weight grows with average miss; untried notes get a high weight so the map fills in.
@@ -629,7 +645,7 @@ $("btnRange").onclick=()=>{S.range=null;save();refresh();home();stage.scrollInto
 $("btnOwn").onclick=()=>{S.ownRef=null;ownBuffer=null;save();home();stage.scrollIntoView({behavior:"smooth"})};
 $("btnExport").onclick=async()=>{const t=JSON.stringify({range:S.range,stage:S.stage,sessions:S.sessions},null,1);
   try{await navigator.clipboard.writeText(t);$("msg").textContent="Copied. Paste it to Claude to review your progress."}catch(e){$("msg").textContent=t}};
-document.addEventListener("keydown",e=>{if(e.code==="Space"&&e.target===document.body){const b=stage.querySelector("button.primary");if(b){e.preventDefault();b.click()}}});
+document.addEventListener("keydown",e=>{if(e.code==="Space"&&e.target===document.body){const b=document.querySelector("#wTap")||stage.querySelector("button.primary");if(b){e.preventDefault();b.click()}}});
 
 /* ================= weekly check ================= */
 // Same notes, same hymn line, screen off, once a week. Plus one new tune to test transfer.
@@ -661,7 +677,7 @@ async function weeklyFlow(){
   if(session.quit)return home();
   const ok=session.results.filter(r=>r.mean!=null),single=ok.length?ok.reduce((a,r)=>a+r.mean,0)/ok.length:null;
   const h=await phraseTest(undefined,true,"Weekly check · 2 of 3");
-  let recId=null;if(h&&h.blob){recId=uid();try{await DB.put("weekly",{id:recId,date:new Date().toISOString(),blob:h.blob})}catch(e){recId=null}}
+  let recId=null;if(h&&h.blob&&!S.test){recId=uid();try{await DB.put("weekly",{id:recId,date:new Date().toISOString(),blob:h.blob})}catch(e){recId=null}}
   const tn=await phraseTest(newTune(),false,"Weekly check · 3 of 3");
   const w={date:new Date().toISOString(),single,hymn:h?h.mean:null,tune:tn?tn.mean:null,recId};S.weekly.push(w);save();refresh();
   const base=S.weekly.slice(0,3),bavg=k=>{const v=base.map(x=>x[k]).filter(v=>v!=null);return v.length?v.reduce((a,b)=>a+b,0)/v.length:null};
@@ -848,6 +864,20 @@ function drawLane(cv,notes,frames,now,lo,hi){
   c.strokeStyle=css("--accent");c.lineWidth=3;c.lineJoin="round";c.beginPath();let pen=false;
   frames.forEach(f=>{if(f.m==null||f.m<lo-1||f.m>hi+1){pen=false;return}const xx=x(f.t);if(xx<L||(!full&&xx>px)){pen=false;return}pen?c.lineTo(xx,y(f.m)):c.moveTo(xx,y(f.m));pen=true});c.stroke();
 }
+
+/* ================= test mode ================= */
+// Fills in a sample range so every screen can be clicked through. Nothing is saved while it's on.
+function testBanner(){let b=$("testBar");
+  if(!S.test){if(b)b.remove();return}
+  if(!b){b=document.createElement("div");b.id="testBar";b.className="card";b.style.borderColor="var(--warn)";
+    document.querySelector("main").insertBefore(b,document.querySelector("nav.tabs"));}
+  b.innerHTML=`<div class="row between"><span><b class="warn">Test mode.</b> Sample range D♯2–A3. Nothing you do is saved.</span><button id="testOff">Leave test mode</button></div>`;
+  $("testOff").onclick=()=>location.reload();
+}
+$("btnTestMode").onclick=()=>{
+  S=JSON.parse(JSON.stringify(S));S.test=true;S.range={lo:39,hi:57};
+  testBanner();refresh();showTab("Train");window.scrollTo({top:0,behavior:"smooth"});
+};
 
 /* ================= tabs ================= */
 function showTab(which){
