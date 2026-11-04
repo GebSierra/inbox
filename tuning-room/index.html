@@ -69,7 +69,7 @@ canvas#chart{width:100%;height:200px;display:block}
 select,input[type=number]{font:15px var(--body);padding:9px;border-radius:10px;border:1px solid var(--line);background:var(--raise);color:var(--ink)}
 small{color:var(--muted)}
 .kbd{font:600 12px var(--mono);padding:1px 6px;border:1px solid var(--line);border-radius:5px}
-body.focus #trainView > :not(#stage), body.focus nav.tabs, body.focus header{display:none}
+body.focus #trainView > :not(#stage), body.focus nav.tabs, body.focus #progView, body.focus header{display:none}
 nav.tabs{display:flex;gap:6px;margin-bottom:16px;border-bottom:1px solid var(--line)}
 nav.tabs button{border:none;background:none;border-radius:0;padding:10px 14px;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-1px}
 nav.tabs button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--accent)}
@@ -82,6 +82,15 @@ nav.tabs button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--a
 .secchip.sel{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 input[type=range]{accent-color:var(--accent)}
 label.check{display:inline-flex;gap:6px;align-items:center}
+.pblock{border-top:1px solid var(--line);margin-top:20px;padding-top:18px}
+.pchart{width:100%;height:220px;display:block}
+.small{font-size:12px}
+.cal{display:grid;grid-template-columns:auto repeat(7,1fr) auto;gap:4px;align-items:center;font:600 11px var(--mono);color:var(--muted)}
+.cal i{display:block;aspect-ratio:1;max-height:26px;border-radius:5px;background:var(--raise);border:1px solid var(--line)}
+.cal i.on{background:var(--accent);border-color:var(--accent)}
+.cal i.today{outline:2px solid var(--ink);outline-offset:1px}
+.cal i.future{opacity:.35}
+.cal .hit{color:var(--good)}
 .exgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-top:10px}
 .excard{display:flex;flex-direction:column;align-items:flex-start;gap:6px;text-align:left;padding:14px;border-radius:14px;background:var(--raise);min-width:0}
 .excard b{font:700 1.05rem var(--display)}
@@ -110,9 +119,45 @@ body.focus #stage{min-height:60vh}
     <button role="tab" id="tabTrain" aria-selected="true">Training</button>
     <button role="tab" id="tabEx" aria-selected="false">Exercises</button>
     <button role="tab" id="tabSongs" aria-selected="false">Songs</button>
+    <button role="tab" id="tabProg" aria-selected="false">Progress</button>
   </nav>
 
   <div id="exView" hidden></div>
+
+  <div id="progView" hidden>
+    <div class="card">
+      <div class="stats">
+        <div class="stat"><div class="label">Stage</div><div class="v" id="stStage">1</div></div>
+        <div class="stat"><div class="label">Range</div><div class="v" id="stRange">–</div></div>
+        <div class="stat"><div class="label">Last screen-off</div><div class="v" id="stErr">–</div></div>
+        <div class="stat"><div class="label">Usual landing time</div><div class="v" id="stLand">–</div></div>
+      </div>
+
+      <div class="pblock">
+        <div class="row between"><h2>Practice streak</h2>
+          <span class="row"><label for="selGoal" class="muted">Goal</label><select id="selGoal"></select></span></div>
+        <div class="stats" style="margin:8px 0 12px">
+          <div class="stat"><div class="label">This week</div><div class="v" id="stWeek">0 / 3</div></div>
+          <div class="stat"><div class="label">Weeks in a row</div><div class="v" id="stWkStreak">0</div><div class="muted small">hitting your goal</div></div>
+          <div class="stat"><div class="label">Days in a row</div><div class="v" id="stDayStreak">0</div></div>
+          <div class="stat"><div class="label">Total days</div><div class="v" id="stTotal">0</div></div>
+        </div>
+        <div id="cal" class="cal"></div>
+      </div>
+
+      <div class="pblock">
+        <div class="row between"><h2>Pitch accuracy</h2><span class="label">screen off · higher is better</span></div>
+        <p class="muted">Solid line: drills. Dashed line: the hymn line. Dots along the bottom: how strained each session felt.</p>
+        <canvas id="chart" class="pchart"></canvas>
+      </div>
+
+      <div class="pblock">
+        <div class="row between"><h2>Time to land a note</h2><span class="label">higher is faster</span></div>
+        <p class="muted">How long it takes your voice to settle on the note after you start singing. Most beginners slide up into notes; a shorter time means you're aiming better from the start.</p>
+        <canvas id="landChart" class="pchart"></canvas>
+      </div>
+    </div>
+  </div>
 
   <div id="songView" hidden>
     <div class="card">
@@ -125,22 +170,7 @@ body.focus #stage{min-height:60vh}
   </div>
 
   <div id="trainView">
-  <div class="card">
-    <div class="stats">
-      <div class="stat"><div class="label">Stage</div><div class="v" id="stStage">1</div></div>
-      <div class="stat"><div class="label">Range</div><div class="v" id="stRange">–</div></div>
-      <div class="stat"><div class="label">Screen off</div><div class="v" id="stErr">–</div></div>
-      <div class="stat"><div class="label">This week</div><div class="v" id="stWeek">0 / 5</div></div>
-    </div>
-  </div>
-
   <section class="card" id="stage" aria-live="polite"></section>
-
-  <div class="card">
-    <div class="row between"><h2>Progress</h2><span class="label">screen-off only</span></div>
-    <p class="muted">How close your screen-off singing lands. Lower on the chart is better. Solid line: drills. Dashed line: the hymn line. Dots below show how strained each session felt.</p>
-    <canvas id="chart"></canvas>
-  </div>
 
   <div class="card">
     <h2>Settings</h2>
@@ -317,35 +347,65 @@ function holdNote({title,body,need=3000,target=null,onCancel,replay=null}){
   }).then(()=>cancelled?null:result);
 }
 
-/* ================= status & chart ================= */
-function weekCount(){const now=new Date();const mon=new Date(now);mon.setHours(0,0,0,0);mon.setDate(mon.getDate()-((mon.getDay()+6)%7));
-  return new Set(S.sessions.filter(s=>new Date(s.date)>=mon).map(s=>s.date.slice(0,10))).size}
+/* ================= progress ================= */
+S.goal=S.goal||3;
+const dayKey=d=>{const x=new Date(d);return `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}-${String(x.getDate()).padStart(2,"0")}`};
+function practiceDays(){return new Set([...S.sessions.map(s=>s.date),...S.weekly.map(w=>w.date),...Object.values(S.ex||{}).flat().map(e=>e.date)].map(dayKey))}
+function mondayOf(d){const m=new Date(d);m.setHours(0,0,0,0);m.setDate(m.getDate()-((m.getDay()+6)%7));return m}
+function weekCount(){const days=practiceDays(),mon=mondayOf(new Date());let n=0;for(let i=0;i<7;i++){const d=new Date(mon);d.setDate(d.getDate()+i);if(days.has(dayKey(d)))n++}return n}
+function streaks(){
+  const days=practiceDays();let dayS=0;const d=new Date();if(!days.has(dayKey(d)))d.setDate(d.getDate()-1);
+  while(days.has(dayKey(d))){dayS++;d.setDate(d.getDate()-1)}
+  let wkS=0;const m=mondayOf(new Date());const cnt=mon=>{let n=0;for(let i=0;i<7;i++){const x=new Date(mon);x.setDate(x.getDate()+i);if(days.has(dayKey(x)))n++}return n};
+  if(cnt(m)>=S.goal)wkS++;const w=new Date(m);w.setDate(w.getDate()-7);
+  while(cnt(w)>=S.goal){wkS++;w.setDate(w.getDate()-7)}
+  return {dayS,wkS,total:days.size}
+}
+function drawCal(){
+  const days=practiceDays(),today=dayKey(new Date()),m0=mondayOf(new Date());let h=`<span></span>${["M","T","W","T","F","S","S"].map(x=>`<span style="text-align:center">${x}</span>`).join("")}<span></span>`;
+  for(let k=7;k>=0;k--){const mon=new Date(m0);mon.setDate(mon.getDate()-7*k);let n=0,cells="";
+    for(let i=0;i<7;i++){const d=new Date(mon);d.setDate(d.getDate()+i);const key=dayKey(d),on=days.has(key);if(on)n++;
+      cells+=`<i class="${on?"on":""} ${key===today?"today":""} ${d>new Date()?"future":""}" title="${d.toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric"})}${on?": practiced":""}"></i>`}
+    h+=`<span>${mon.toLocaleDateString(undefined,{month:"short",day:"numeric"})}</span>${cells}<span class="${n>=S.goal?"hit":""}">${n>=S.goal?"✓":n?n+"/"+S.goal:""}</span>`}
+  $("cal").innerHTML=h;
+}
 function refresh(){
   $("stStage").textContent=S.stage;
   $("stRange").textContent=S.range?noteName(S.range.lo)+"–"+noteName(S.range.hi):"–";
   const last=[...S.sessions].reverse().find(s=>s.offErr!=null);
   $("stErr").textContent=last?tuneWord(last.offErr):"–";
-  $("stWeek").textContent=weekCount()+" / 5";
+  const lands=S.sessions.slice(-5).map(s=>s.settle).filter(v=>v!=null);
+  $("stLand").textContent=lands.length?(median(lands)/1000).toFixed(1)+" sec":"–";
+  const st=streaks();$("stWeek").textContent=weekCount()+" / "+S.goal;$("stWkStreak").textContent=st.wkS;$("stDayStreak").textContent=st.dayS;$("stTotal").textContent=st.total;
+  $("selGoal").innerHTML=[2,3,4,5,6,7].map(n=>`<option value="${n}" ${n===S.goal?"selected":""}>${n} days a week</option>`).join("");
   $("selStage").innerHTML=STAGES.map(s=>`<option value="${s.n}" ${s.n===S.stage?"selected":""}>${s.n}. ${s.name}</option>`).join("");
-  $("inpGap").value=S.gap;drawChart();
+  $("inpGap").value=S.gap;
+  if(!$("progView").hidden){drawCal();drawChart();drawLand()}
+}
+function setupCanvas(cv){const dpr=devicePixelRatio||1,W=cv.clientWidth,H=cv.clientHeight;cv.width=W*dpr;cv.height=H*dpr;const c=cv.getContext("2d");c.scale(dpr,dpr);return {c,W,H}}
+// shared line chart: values where higher on screen = better. ticks: [[value,label]]
+function lineChart(cv,series,ticks,{min,max,dots}={}){
+  const {c,W,H}=setupCanvas(cv);c.font=`12px ${css("--mono")}`;
+  const n=Math.max(...series.map(s=>s.v.length),0);
+  if(!n||!series.some(s=>s.v.some(v=>v!=null))){c.fillStyle=css("--muted");c.fillText("Finish a training session to see this chart.",8,H/2);return}
+  const L=92,B=dots?26:10,T=10,y=v=>T+(1-(Math.max(min,Math.min(max,v))-min)/(max-min))*(H-B-T),x=i=>L+(n===1?.5:i/(n-1))*(W-L-14);
+  ticks.forEach(([v,l])=>{c.strokeStyle=css("--line");c.lineWidth=1;c.beginPath();c.moveTo(L,y(v));c.lineTo(W-6,y(v));c.stroke();c.fillStyle=css("--muted");c.fillText(l,2,y(v)+4)});
+  series.forEach(sr=>{c.setLineDash(sr.dash?[5,5]:[]);c.strokeStyle=sr.color;c.lineWidth=sr.dash?2:2.5;c.beginPath();let pen=false;
+    sr.v.forEach((v,i)=>{if(v==null){pen=false;return}pen?c.lineTo(x(i),y(v)):c.moveTo(x(i),y(v));pen=true});c.stroke();c.setLineDash([]);
+    if(!sr.dash)sr.v.forEach((v,i)=>{if(v==null)return;c.fillStyle=sr.color;c.beginPath();c.arc(x(i),y(v),i===n-1?5:3,0,7);c.fill()})});
+  if(dots)dots.forEach((e,i)=>{if(e==null)return;c.fillStyle=[css("--good"),css("--good"),css("--warn"),css("--bad"),css("--bad")][e];c.beginPath();c.arc(x(i),H-9,4,0,7);c.fill()});
 }
 function drawChart(){
-  const cv=$("chart"),dpr=devicePixelRatio||1,W=cv.clientWidth,H=cv.clientHeight;cv.width=W*dpr;cv.height=H*dpr;
-  const c=cv.getContext("2d");c.scale(dpr,dpr);const pts=S.sessions.filter(s=>s.offErr!=null);
-  c.font=`12px ${css("--mono")}`;c.fillStyle=css("--muted");
-  if(!pts.length){c.fillText("Your first session will appear here.",8,H/2);return}
-  const maxY=Math.max(120,...pts.map(p=>p.offErr))*1.08,L=64,B=30,T=8;
-  const y=v=>T+(1-v/maxY)*(H-B-T),x=i=>L+(pts.length===1?.5:i/(pts.length-1))*(W-L-14);
-  c.strokeStyle=css("--line");c.lineWidth=1;
-  [[25,"on pitch"],[50,"slightly off"],[100,"off"]].forEach(([v,l])=>{c.beginPath();c.moveTo(L,y(v));c.lineTo(W-6,y(v));c.stroke();c.fillText(l,2,y(v)+4)});
-  c.fillStyle=css("--accent-soft");c.fillRect(L,y(50),W-L-6,y(0)-y(50));
-  c.strokeStyle=css("--accent");c.lineWidth=2.5;c.beginPath();pts.forEach((p,i)=>i?c.lineTo(x(i),y(p.offErr)):c.moveTo(x(i),y(p.offErr)));c.stroke();
-  // hymn line: dashed
-  c.setLineDash([5,5]);c.strokeStyle=css("--muted");c.lineWidth=2;c.beginPath();let pen=false;
-  pts.forEach((p,i)=>{if(p.hymn==null){pen=false;return}const py=y(Math.min(p.hymn,maxY));pen?c.lineTo(x(i),py):c.moveTo(x(i),py);pen=true});c.stroke();c.setLineDash([]);
-  pts.forEach((p,i)=>{c.fillStyle=css("--accent");c.beginPath();c.arc(x(i),y(p.offErr),i===pts.length-1?5:3,0,7);c.fill();
-    if(p.effort!=null){c.fillStyle=[css("--good"),css("--good"),css("--warn"),css("--bad"),css("--bad")][p.effort];c.beginPath();c.arc(x(i),H-10,4,0,7);c.fill()}});
+  const pts=S.sessions.filter(s=>s.offErr!=null),flip=v=>v==null?null:-v;
+  lineChart($("chart"),[{v:pts.map(p=>flip(p.offErr)),color:css("--accent")},{v:pts.map(p=>flip(p.hymn)),color:css("--muted"),dash:true}],
+    [[-25,"on pitch"],[-50,"slightly off"],[-100,"off"],[-150,"way off"]],{min:-170,max:0,dots:pts.map(p=>p.effort)});
 }
+function drawLand(){
+  const pts=S.sessions.filter(s=>s.offErr!=null);
+  lineChart($("landChart"),[{v:pts.map(p=>p.settle==null?null:-p.settle/1000),color:css("--accent")}],
+    [[-0.3,"0.3 sec"],[-0.6,"0.6 sec"],[-1,"1 sec"],[-1.5,"1.5 sec"]],{min:-1.8,max:-0.1});
+}
+$("selGoal").onchange=e=>{S.goal=+e.target.value;save();refresh()};
 $("selStage").onchange=e=>{S.stage=+e.target.value;save();refresh();home()};
 $("inpGap").onchange=e=>{S.gap=Math.max(0,Math.min(8,+e.target.value||0));save()};
 
@@ -365,7 +425,7 @@ function home(){
     <p>People match their own voice more accurately than a piano tone. Stage 1 plays your own voice back as the target.</p>
     <div class="row" style="margin-top:14px"><button class="primary" id="go">Record my note</button></div>`;$("go").onclick=ownFlow;return}
   const st=STAGES[S.stage-1];
-  stage.innerHTML=`<div class="row between"><span class="label">Today</span><span class="label">Stage ${st.n} of 5</span></div>
+  stage.innerHTML=`<div class="row between"><span class="label">This week: ${weekCount()} of ${S.goal} days</span><span class="label">Stage ${st.n} of 5</span></div>
     <h2>${st.name}</h2>
     <div class="steps">
       <div class="step"><span class="num muted">1</span><div><b>Warm up</b><br><span class="muted">5 yawns, vowels 3 times, lip trills. Straw optional.</span></div><span class="num">3 min</span></div>
@@ -884,12 +944,12 @@ $("btnTestMode").onclick=()=>{
 
 /* ================= tabs ================= */
 function showTab(which){
-  ["Train","Ex","Songs"].forEach(n=>$("tab"+n).setAttribute("aria-selected",n===which));
-  $("trainView").hidden=which!=="Train";$("exView").hidden=which!=="Ex";$("songView").hidden=which!=="Songs";
+  ["Train","Ex","Songs","Prog"].forEach(n=>$("tab"+n).setAttribute("aria-selected",n===which));
+  $("trainView").hidden=which!=="Train";$("exView").hidden=which!=="Ex";$("songView").hidden=which!=="Songs";$("progView").hidden=which!=="Prog";
   exStop=true;stopAll();
-  if(which==="Songs")loadSongs();else if(which==="Ex")exHome();else{drawChart();home()}
+  if(which==="Songs")loadSongs();else if(which==="Ex")exHome();else if(which==="Prog")refresh();else home()
 }
-$("tabTrain").onclick=()=>showTab("Train");$("tabEx").onclick=()=>showTab("Ex");$("tabSongs").onclick=()=>showTab("Songs");
+$("tabTrain").onclick=()=>showTab("Train");$("tabEx").onclick=()=>showTab("Ex");$("tabSongs").onclick=()=>showTab("Songs");$("tabProg").onclick=()=>showTab("Prog");
 
 /* ================= songs: storage ================= */
 const DB=(()=>{let p=null;
@@ -1118,7 +1178,7 @@ async function playTake(id,mix){
   me.play();
 }
 
-refresh();home();addEventListener("resize",()=>{drawChart();if(cur&&!$("songView").hidden)drawWave()});
+refresh();home();addEventListener("resize",()=>{refresh();if(cur&&!$("songView").hidden)drawWave()});
 </script>
 </body>
 </html>
