@@ -91,9 +91,19 @@ details textarea{margin-top:8px}
 .pane{background:rgba(20,27,56,.75);border:1px solid var(--line);border-radius:16px;padding:16px}
 #notesView{white-space:pre-wrap;font-size:1.1rem;line-height:1.65;max-height:40vh;overflow:auto}
 #ideas{min-height:110px}
-#live{width:100%;max-width:960px;margin-top:16px;text-align:left;color:var(--muted);font-size:.92rem;
+#live{width:100%;max-width:960px;margin-top:16px;text-align:left;color:var(--muted);font-size:.92rem;opacity:.12;
   line-height:1.55;max-height:22vh;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;
   -webkit-mask-image:linear-gradient(to bottom,transparent,#000 40%);mask-image:linear-gradient(to bottom,transparent,#000 40%)}
+
+#hint{transition:opacity .8s ease}
+#hint.fade{opacity:0}
+#hint.tip{color:var(--gold);font-weight:600;font-size:1.05rem}
+#filler{position:absolute;top:70%;padding:4px 14px;border-radius:999px;background:var(--red);color:#fff;
+  font-weight:700;font-size:.9rem;opacity:0;transform:scale(.8);transition:opacity .2s,transform .2s}
+#filler.show{opacity:1;transform:scale(1)}
+#fillerCount{font-size:.8rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.opt details{margin-top:6px}
+.opt details textarea{min-height:90px;font-size:.9rem}
 
 /* ---------- results ---------- */
 .result .card{max-width:760px}
@@ -150,11 +160,27 @@ audio{width:100%;margin-bottom:14px}
       </select>
     </div>
     <div class="opt" id="trOpt">
-      <span class="label">Live transcript from your browser</span>
+      <span class="label">Live transcript (shown faintly)</span>
       <div class="chips" data-for="optTranscript">
         <button class="chip" data-val="on">On</button><button class="chip" data-val="off">Off</button>
       </div>
       <select id="optTranscript" class="hidden"><option value="on">On</option><option value="off">Off</option></select>
+    </div>
+    <div class="opt">
+      <span class="label">Speaking tips</span>
+      <div class="chips" data-for="optTips">
+        <button class="chip" data-val="on">On</button><button class="chip" data-val="off">Off</button>
+      </div>
+      <select id="optTips" class="hidden"><option value="on">On</option><option value="off">Off</option></select>
+      <details><summary>Edit tips (one per line)</summary><textarea id="tipsList"></textarea></details>
+    </div>
+    <div class="opt" id="fillerOpt">
+      <span class="label">Ding on filler words</span>
+      <div class="chips" data-for="optFiller">
+        <button class="chip" data-val="on">On</button><button class="chip" data-val="off">Off</button>
+      </div>
+      <select id="optFiller" class="hidden"><option value="on">On</option><option value="off">Off</option></select>
+      <details><summary>Edit filler words (comma separated)</summary><textarea id="fillerList"></textarea></details>
     </div>
     <details>
       <summary>Add your outline (shown while you preach)</summary>
@@ -173,13 +199,14 @@ audio{width:100%;margin-bottom:14px}
 <section id="session" class="screen">
   <div class="top">
     <button class="btn small quiet" id="quit">Quit</button>
+    <div id="fillerCount"></div>
     <div class="live-dot"><i></i>Recording</div>
   </div>
   <div class="ring">
     <div id="level"></div>
     <svg viewBox="0 0 100 100"><circle class="track" cx="50" cy="50" r="45"/>
       <circle class="prog" id="prog" cx="50" cy="50" r="45" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"/></svg>
-    <div class="center"><div id="clock">20:00</div><small>remaining</small></div>
+    <div class="center"><div id="clock">20:00</div><small>remaining</small><div id="filler"></div></div>
   </div>
   <div id="status">Get ready</div>
   <div id="hint"></div>
@@ -220,8 +247,64 @@ if (!SR) {
   $('optTranscript').value = 'off';
   $('optTranscript').disabled = true;
   $('trOpt').hidden = true;
+  $('optFiller').value = 'off';
+  $('fillerOpt').hidden = true;
 } else {
-  $('privacy').textContent += ' Note: the live transcript uses your browser\'s speech service, which may send audio to the browser maker (Google for Chrome, Apple for Safari). Turn it off to keep everything on your device.';
+  $('privacy').textContent += ' Note: the live transcript and the filler word ding use your browser\'s speech service, which may send audio to the browser maker (Google for Chrome, Apple for Safari). Turn both off to keep everything on your device.';
+}
+
+const DEFAULT_TIPS = [
+  'Stand up straight.', 'Be in the moment.', 'Breathe low and slow.', 'Slow down.',
+  'Look up from your notes.', 'Plant your feet.', 'Let your pauses land.',
+  'Speak to one face at a time.', 'Let your hands move.', 'Relax your shoulders.',
+  'Finish your sentences strong.', 'Smile when it fits.'
+].join('\n');
+const DEFAULT_FILLERS = 'um, uh, er, like, you know, basically, actually, literally, kind of, sort of, I mean';
+
+function saved(key, fallback){ try { return localStorage.getItem(key) ?? fallback; } catch (e) { return fallback; } }
+function keep(key, val){ try { localStorage.setItem(key, val); } catch (e) {} }
+$('tipsList').value = saved('kp-tips', DEFAULT_TIPS);
+$('fillerList').value = saved('kp-fillers', DEFAULT_FILLERS);
+$('tipsList').addEventListener('input', () => keep('kp-tips', $('tipsList').value));
+$('fillerList').addEventListener('input', () => keep('kp-fillers', $('fillerList').value));
+
+function fillerRegex(){
+  const words = $('fillerList').value.split(',').map(w => w.trim()).filter(Boolean)
+    .map(w => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s+'));
+  return words.length ? new RegExp('\\b(' + words.join('|') + ')\\b', 'gi') : null;
+}
+
+function ding(){
+  if (!s || s.ctx.state === 'closed') return;
+  const o = s.ctx.createOscillator(), g = s.ctx.createGain(), t0 = s.ctx.currentTime;
+  o.type = 'sine'; o.frequency.value = 880;
+  g.gain.setValueAtTime(0.0001, t0);
+  g.gain.exponentialRampToValueAtTime(0.25, t0 + 0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.35);
+  o.connect(g).connect(s.ctx.destination);
+  o.start(t0); o.stop(t0 + 0.4);
+}
+
+function onFiller(word){
+  s.fillers++;
+  ding();
+  $('fillerCount').textContent = 'Fillers: ' + s.fillers;
+  $('filler').textContent = '\u201c' + word.toLowerCase() + '\u201d';
+  $('filler').classList.add('show');
+  clearTimeout(s.fillerHide);
+  s.fillerHide = setTimeout(() => $('filler').classList.remove('show'), 1200);
+}
+
+// Tips rotate in the hint line, after the pause rule has had a moment on screen.
+function nextTip(){
+  if (!s || !s.tips.length) return;
+  $('hint').classList.add('fade');
+  setTimeout(() => {
+    if (!s || s.phase !== 'run') return;
+    $('hint').textContent = s.tips[s.tipIndex++ % s.tips.length];
+    $('hint').classList.add('tip');
+    $('hint').classList.remove('fade');
+  }, 800);
 }
 
 let s = null; // current session state
@@ -265,6 +348,11 @@ $('go').onclick = async () => {
     lengthSec: +$('optLen').value * 60,
     pauseSec: +$('optPause').value,
     useTranscript: $('optTranscript').value === 'on' && !!SR,
+    fillerRe: $('optFiller').value === 'on' && SR ? fillerRegex() : null,
+    fillers: 0, fillerSeen: {}, fillerHide: null,
+    tips: $('optTips').value === 'on'
+      ? $('tipsList').value.split('\n').map(x => x.trim()).filter(Boolean).sort(() => Math.random() - 0.5) : [],
+    tipIndex: 0, tipTimer: null,
     phase: 'calibrate',
     calibrate: [], threshold: 0.02,
     startAt: 0, lastVoice: 0, longestPause: 0,
@@ -276,6 +364,8 @@ $('go').onclick = async () => {
   $('notesPane').hidden = !$('notes').value.trim();
   $('panes').classList.toggle('two', !!$('notes').value.trim());
   $('live').textContent = '';
+  $('hint').classList.remove('tip', 'fade');
+  $('fillerCount').textContent = s.fillerRe ? 'Fillers: 0' : '';
   $('ideas').value = store.get();
   $('prog').style.strokeDashoffset = 100;
   $('session').classList.remove('danger');
@@ -357,8 +447,13 @@ function beginSpeaking(now){
     } catch (e) { s.recorder = null; }
   }
 
-  // Live transcript
-  if (s.useTranscript) {
+  // Speaking tips: first after 6 seconds, then a new one every 40 seconds.
+  if (s.tips.length) {
+    s.tipTimer = setTimeout(() => { nextTip(); s.tipTimer = setInterval(nextTip, 40000); }, 6000);
+  }
+
+  // Speech recognition feeds the live transcript and the filler word ding.
+  if (s.useTranscript || s.fillerRe) {
     const rec = new SR();
     rec.continuous = true;
     rec.interimResults = true;
@@ -369,10 +464,17 @@ function beginSpeaking(now){
         const r = e.results[i];
         if (r.isFinal) s.finalText += r[0].transcript.trim() + ' ';
         else interim += r[0].transcript;
+        if (s.fillerRe) {
+          // Count fillers per result; interim results repeat, so only ding for new ones.
+          const found = r[0].transcript.match(s.fillerRe) || [];
+          for (let k = s.fillerSeen[i] || 0; k < found.length; k++) onFiller(found[k]);
+          s.fillerSeen[i] = Math.max(s.fillerSeen[i] || 0, found.length);
+        }
       }
       s.interim = interim;
-      $('live').textContent = (s.finalText + interim).slice(-600);
+      if (s.useTranscript) $('live').textContent = (s.finalText + interim).slice(-600);
     };
+    rec.onstart = () => { if (s) s.fillerSeen = {}; };
     // Browsers end recognition on their own every so often; restart while the run lasts.
     rec.onend = () => { if (s && s.rec === rec && s.phase === 'run') { try { rec.start(); } catch (e) {} } };
     rec.onerror = e => { if (e.error === 'not-allowed' || e.error === 'service-not-allowed') s.rec = null; };
@@ -383,6 +485,9 @@ function beginSpeaking(now){
 
 function stopAll(){
   clearInterval(s.timer);
+  clearTimeout(s.tipTimer); clearInterval(s.tipTimer);
+  clearTimeout(s.fillerHide);
+  $('filler').classList.remove('show');
   s.phase = 'done';
   if (s.rec) { const r = s.rec; s.rec = null; try { r.stop(); } catch (e) {} }
   s.stream.getTracks().forEach(t => t.stop());
@@ -426,6 +531,7 @@ function showResult(won, elapsed, st){
     $('resMsg').textContent = `You kept going for the full ${fmt(st.lengthSec)}.`;
     const words = st.finalText.trim() ? st.finalText.trim().split(/\s+/).length : 0;
     const stats = [['Time', fmt(elapsed)], ['Longest pause', st.longestPause.toFixed(1) + 's']];
+    if (st.fillerRe) stats.push(['Fillers heard', st.fillers]);
     if (words) stats.push(['Words', words], ['Words / min', Math.round(words / (elapsed / 60))]);
     $('stats').innerHTML = stats.map(([k, v]) => `<div><b>${v}</b>${k}</div>`).join('');
 
@@ -438,7 +544,7 @@ function showResult(won, elapsed, st){
       const ext = (blob.type.includes('mp4') ? 'm4a' : blob.type.includes('ogg') ? 'ogg' : 'webm');
       addDownload('Download recording', url, `sermon-${stamp}.${ext}`);
     }
-    $('transcriptOut').value = st.finalText.trim();
+    if (st.useTranscript) $('transcriptOut').value = st.finalText.trim();
   }
   s = null;
   show('result');
