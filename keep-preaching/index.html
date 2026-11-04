@@ -11,71 +11,109 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --navy:#1f2b5b; --bg:#0e1327; --gold:#f2b71c; --red:#e0483a;
-  --text:#f4f2ec; --muted:#9aa3c0; --line:#2c3768; --green:#17b26a;
+  --navy:#1f2b5b; --bg:#0b1022; --card:#141b38; --gold:#f2b71c; --red:#e0483a;
+  --text:#f4f2ec; --muted:#9aa3c0; --line:#26305c; --green:#17b26a;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{min-height:100%}
-body{font-family:'Poppins',system-ui,sans-serif;background:var(--bg);color:var(--text);
-  -webkit-tap-highlight-color:transparent}
-button,select,textarea{font:inherit}
+body{font-family:'Poppins',system-ui,sans-serif;color:var(--text);-webkit-tap-highlight-color:transparent;
+  background:radial-gradient(1100px 600px at 50% -10%,#1d2a5e 0%,var(--bg) 60%) fixed,var(--bg)}
+button,select,textarea{font:inherit;color:inherit}
 .screen{display:none;min-height:100vh;min-height:100dvh;flex-direction:column;align-items:center;
   justify-content:center;padding:32px 16px;text-align:center}
-.screen.active{display:flex}
+.screen.active{display:flex;animation:fadein .4s ease both}
+@keyframes fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.card{width:100%;max-width:560px;background:var(--card);border:1px solid var(--line);border-radius:20px;
+  padding:24px;box-shadow:0 20px 50px rgba(0,0,0,.35)}
+.label{display:block;font-size:.72rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:8px;text-align:left}
+textarea{width:100%;min-height:120px;background:#0f1530;border:1px solid var(--line);border-radius:12px;
+  padding:12px 14px;resize:vertical;line-height:1.55;outline:none;transition:border-color .2s}
+textarea:focus{border-color:var(--gold)}
+textarea::placeholder{color:#5f6890}
 
 /* ---------- start ---------- */
-.logo{display:flex;align-items:center;gap:18px;margin-bottom:18px}
-.mic{width:76px;height:76px;border:6px solid var(--gold);border-radius:50%;display:grid;place-items:center}
-.mic span{width:24px;height:36px;background:var(--gold);border-radius:12px}
-.logo h1{font-size:clamp(2rem,8vw,3.4rem);line-height:1;text-align:left;font-weight:800}
+.logo{display:flex;align-items:center;gap:18px;margin-bottom:14px}
+.mic{width:78px;height:78px;border:6px solid var(--gold);border-radius:50%;display:grid;place-items:center;
+  animation:breathe 3s ease-in-out infinite}
+.mic span{width:22px;height:34px;background:var(--gold);border-radius:12px}
+@keyframes breathe{0%,100%{box-shadow:0 0 0 0 rgba(242,183,28,.35)}50%{box-shadow:0 0 0 14px rgba(242,183,28,0)}}
+.logo h1{font-size:clamp(2.1rem,8vw,3.4rem);line-height:1;text-align:left;font-weight:800}
 .logo h1 b{color:var(--gold);display:block}
-.tag{color:var(--muted);font-size:1.05rem;margin-bottom:28px}
-.opts{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-bottom:18px}
-.opts label{display:flex;flex-direction:column;gap:6px;font-size:.8rem;color:var(--muted);text-align:left}
-select{background:var(--navy);color:var(--text);border:1px solid var(--line);border-radius:8px;
-  padding:8px 10px;min-width:140px}
-details{width:100%;max-width:520px;margin-bottom:24px;text-align:left}
-summary{cursor:pointer;color:var(--muted);font-size:.9rem;text-align:center}
-textarea{width:100%;min-height:140px;margin-top:10px;background:var(--navy);color:var(--text);
-  border:1px solid var(--line);border-radius:8px;padding:10px;resize:vertical}
-.btn{background:none;color:var(--gold);border:2px solid var(--gold);border-radius:999px;
-  padding:14px 30px;font-weight:700;font-size:1.05rem;cursor:pointer}
+.tag{color:var(--muted);font-size:1.05rem;margin-bottom:26px}
+.opt{margin-bottom:18px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:#0f1530;border:1px solid var(--line);border-radius:999px;padding:7px 14px;font-size:.9rem;
+  cursor:pointer;transition:all .15s}
+.chip:hover{border-color:var(--muted)}
+.chip.on{background:var(--gold);border-color:var(--gold);color:var(--bg);font-weight:600}
+.hidden{display:none}
+details{margin-top:4px;text-align:left}
+summary{cursor:pointer;color:var(--muted);font-size:.9rem;list-style:none;padding:6px 0}
+summary::before{content:'+ ';color:var(--gold);font-weight:700}
+details[open] summary::before{content:'– '}
+details textarea{margin-top:8px}
+.btn{display:inline-block;background:none;color:var(--gold);border:2px solid var(--gold);border-radius:999px;
+  padding:13px 30px;font-weight:700;font-size:1rem;cursor:pointer;text-decoration:none;transition:all .15s}
 .btn:hover{background:var(--gold);color:var(--bg)}
-.btn.small{padding:8px 18px;font-size:.9rem}
+.btn.solid{background:var(--gold);color:var(--bg)}
+.btn.solid:hover{background:#ffcb3d;transform:translateY(-1px);box-shadow:0 8px 24px rgba(242,183,28,.3)}
+.btn.small{padding:8px 18px;font-size:.88rem}
 .btn.quiet{border-color:var(--line);color:var(--muted)}
 .btn.quiet:hover{background:var(--line);color:var(--text)}
-.note{color:var(--muted);font-size:.78rem;max-width:520px;margin-top:22px;line-height:1.5}
-.err{color:var(--red);margin-top:16px;max-width:520px}
+#go{width:100%;margin-top:22px;font-size:1.1rem;padding:15px}
+.note{color:var(--muted);font-size:.78rem;max-width:560px;margin-top:20px;line-height:1.55}
+.err{color:var(--red);margin-top:14px}
 
 /* ---------- session ---------- */
-#session{justify-content:flex-start;position:relative;transition:background-color .15s linear}
-.bar{position:fixed;top:0;left:0;height:6px;background:var(--gold);width:0}
-.top{width:100%;max-width:900px;display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
-#clock{font-size:1.4rem;font-weight:700;font-variant-numeric:tabular-nums}
-#status{font-size:clamp(1.6rem,6vw,2.6rem);font-weight:800;margin:4vh 0 10px;min-height:1.3em}
-#meter{width:min(420px,90%);height:10px;background:var(--line);border-radius:5px;overflow:hidden;margin-bottom:8px}
-#meter i{display:block;height:100%;width:0;background:var(--green)}
-#hint{color:var(--muted);font-size:.9rem;min-height:1.4em}
-#notesView{width:100%;max-width:760px;margin-top:4vh;text-align:left;white-space:pre-wrap;
-  font-size:1.15rem;line-height:1.6;color:var(--text);opacity:.9}
-#live{width:100%;max-width:760px;margin-top:3vh;text-align:left;color:var(--muted);font-size:.95rem;
-  line-height:1.5;max-height:30vh;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end}
+#session{justify-content:flex-start;transition:background-color .15s linear}
+.top{width:100%;max-width:960px;display:flex;justify-content:space-between;align-items:center}
+.live-dot{display:flex;align-items:center;gap:8px;font-size:.8rem;font-weight:600;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted)}
+.live-dot i{width:9px;height:9px;border-radius:50%;background:var(--red);animation:blink 1.4s infinite}
+@keyframes blink{50%{opacity:.25}}
+.ring{position:relative;width:min(260px,64vw);aspect-ratio:1;margin:3vh 0 2vh}
+.ring svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:8}
+.ring .track{stroke:var(--line)}
+.ring .prog{stroke:var(--gold);stroke-linecap:round;transition:stroke .2s}
+#session.danger .ring .prog{stroke:#fff}
+#level{position:absolute;inset:14%;border-radius:50%;background:radial-gradient(circle,rgba(23,178,106,.45),rgba(23,178,106,0) 70%);
+  transform:scale(var(--lv,0));transition:transform .08s linear}
+.ring .center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+#clock{font-size:clamp(2.4rem,11vw,3.4rem);font-weight:800;font-variant-numeric:tabular-nums;line-height:1}
+.ring small{color:var(--muted);font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;margin-top:6px}
+#status{font-size:clamp(1.4rem,5vw,2.1rem);font-weight:800;min-height:1.3em}
+#hint{color:var(--muted);font-size:.9rem;min-height:1.4em;margin-top:4px}
+.panes{width:100%;max-width:960px;display:grid;grid-template-columns:1fr;gap:16px;margin-top:3vh;text-align:left}
+.panes.two{grid-template-columns:1.4fr 1fr}
+@media (max-width:720px){.panes.two{grid-template-columns:1fr}}
+.pane{background:rgba(20,27,56,.75);border:1px solid var(--line);border-radius:16px;padding:16px}
+#notesView{white-space:pre-wrap;font-size:1.1rem;line-height:1.65;max-height:40vh;overflow:auto}
+#ideas{min-height:110px}
+#live{width:100%;max-width:960px;margin-top:16px;text-align:left;color:var(--muted);font-size:.92rem;
+  line-height:1.55;max-height:22vh;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;
+  -webkit-mask-image:linear-gradient(to bottom,transparent,#000 40%);mask-image:linear-gradient(to bottom,transparent,#000 40%)}
 
 /* ---------- results ---------- */
-.result h2{font-size:clamp(2rem,7vw,3rem);font-weight:800;margin-bottom:8px}
+.result .card{max-width:760px}
+.badge{width:72px;height:72px;border-radius:50%;display:grid;place-items:center;margin:0 auto 14px;
+  font-size:2rem;font-weight:800}
+.result.won .badge{background:rgba(242,183,28,.15);color:var(--gold);border:3px solid var(--gold)}
+.result.lost .badge{background:rgba(224,72,58,.15);color:var(--red);border:3px solid var(--red)}
+.result h2{font-size:clamp(2rem,7vw,2.8rem);font-weight:800;line-height:1.1;margin-bottom:6px}
 .result.lost h2{color:var(--red)}
 .result.won h2{color:var(--gold)}
-.result p{color:var(--muted);margin-bottom:22px}
-.stats{display:flex;gap:26px;flex-wrap:wrap;justify-content:center;margin-bottom:24px}
-.stats div{font-size:.8rem;color:var(--muted)}
-.stats b{display:block;font-size:1.5rem;color:var(--text)}
-audio{width:min(480px,100%);margin-bottom:18px}
-.row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:22px}
-#ideas{width:100%;max-width:760px;min-height:70px;margin-top:3vh}
-.field{width:100%;max-width:760px;text-align:left;margin-bottom:20px}
-.field span{display:block;font-size:.85rem;color:var(--muted);margin-bottom:4px}
-.field textarea{margin-top:0;min-height:120px}
-#saved{color:var(--muted);font-size:.8rem;min-height:1.2em;margin:10px 0 18px}
+#resMsg{color:var(--muted);margin-bottom:22px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:22px}
+.stats div{background:#0f1530;border:1px solid var(--line);border-radius:14px;padding:12px;font-size:.75rem;
+  color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.stats b{display:block;font-size:1.5rem;color:var(--text);letter-spacing:0;text-transform:none}
+audio{width:100%;margin-bottom:14px}
+.row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:20px}
+.field{display:block;text-align:left;margin-bottom:18px}
+#saved{color:var(--muted);font-size:.8rem;min-height:1.2em;margin:10px 0 6px}
+.actions{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:8px}
 </style>
 </head>
 <body>
@@ -88,40 +126,43 @@ audio{width:min(480px,100%);margin-bottom:18px}
   </div>
   <p class="tag">Don't stop talking, or the whole run is lost.</p>
 
-  <div class="opts">
-    <label>Session length
-      <select id="optLen">
-        <option value="5">5 minutes</option>
-        <option value="10">10 minutes</option>
-        <option value="15">15 minutes</option>
-        <option value="20" selected>20 minutes</option>
-        <option value="30">30 minutes</option>
-        <option value="45">45 minutes</option>
+  <div class="card">
+    <div class="opt">
+      <span class="label">Session length</span>
+      <div class="chips" data-for="optLen">
+        <button class="chip" data-val="5">5 min</button><button class="chip" data-val="10">10</button>
+        <button class="chip" data-val="15">15</button><button class="chip" data-val="20">20</button>
+        <button class="chip" data-val="30">30</button><button class="chip" data-val="45">45</button>
+      </div>
+      <select id="optLen" class="hidden">
+        <option value="5">5</option><option value="10">10</option><option value="15">15</option>
+        <option value="20" selected>20</option><option value="30">30</option><option value="45">45</option>
       </select>
-    </label>
-    <label>Longest pause allowed
-      <select id="optPause">
-        <option value="3">3 seconds</option>
-        <option value="5" selected>5 seconds</option>
-        <option value="8">8 seconds</option>
-        <option value="12">12 seconds</option>
+    </div>
+    <div class="opt">
+      <span class="label">Longest pause allowed</span>
+      <div class="chips" data-for="optPause">
+        <button class="chip" data-val="3">3 sec</button><button class="chip" data-val="5">5</button>
+        <button class="chip" data-val="8">8</button><button class="chip" data-val="12">12</button>
+      </div>
+      <select id="optPause" class="hidden">
+        <option value="3">3</option><option value="5" selected>5</option><option value="8">8</option><option value="12">12</option>
       </select>
-    </label>
-    <label>Live transcript
-      <select id="optTranscript">
-        <option value="on">On</option>
-        <option value="off">Off</option>
-      </select>
-    </label>
+    </div>
+    <div class="opt" id="trOpt">
+      <span class="label">Live transcript from your browser</span>
+      <div class="chips" data-for="optTranscript">
+        <button class="chip" data-val="on">On</button><button class="chip" data-val="off">Off</button>
+      </div>
+      <select id="optTranscript" class="hidden"><option value="on">On</option><option value="off">Off</option></select>
+    </div>
+    <details>
+      <summary>Add your outline (shown while you preach)</summary>
+      <textarea id="notes" placeholder="Paste your sermon outline or key points here."></textarea>
+    </details>
+    <button class="btn solid" id="go">Start preaching</button>
+    <p class="err" id="startErr"></p>
   </div>
-
-  <details>
-    <summary>Add your outline (shown while you preach)</summary>
-    <textarea id="notes" placeholder="Paste your sermon outline or key points here."></textarea>
-  </details>
-
-  <button class="btn" id="go">Start preaching</button>
-  <p class="err" id="startErr"></p>
   <p class="note" id="privacy">
     Your voice is recorded only in this browser and is never uploaded.
     If the run is lost, the recording is thrown away.
@@ -130,33 +171,45 @@ audio{width:min(480px,100%);margin-bottom:18px}
 
 <!-- SESSION -->
 <section id="session" class="screen">
-  <div class="bar" id="bar"></div>
   <div class="top">
     <button class="btn small quiet" id="quit">Quit</button>
-    <div id="clock">20:00</div>
+    <div class="live-dot"><i></i>Recording</div>
+  </div>
+  <div class="ring">
+    <div id="level"></div>
+    <svg viewBox="0 0 100 100"><circle class="track" cx="50" cy="50" r="45"/>
+      <circle class="prog" id="prog" cx="50" cy="50" r="45" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"/></svg>
+    <div class="center"><div id="clock">20:00</div><small>remaining</small></div>
   </div>
   <div id="status">Get ready</div>
-  <div id="meter"><i id="level"></i></div>
   <div id="hint"></div>
-  <textarea id="ideas" placeholder="Jot a quick idea here. Typing counts as talking, so you won't lose the run."></textarea>
-  <div id="notesView"></div>
+  <div class="panes" id="panes">
+    <div class="pane" id="notesPane"><span class="label">Outline</span><div id="notesView"></div></div>
+    <div class="pane"><span class="label">Ideas</span>
+      <textarea id="ideas" placeholder="Jot a quick idea. Typing counts as talking."></textarea></div>
+  </div>
   <div id="live"></div>
 </section>
 
 <!-- RESULT -->
 <section id="result" class="screen result">
-  <h2 id="resTitle"></h2>
-  <p id="resMsg"></p>
-  <div class="stats" id="stats"></div>
-  <audio id="player" controls hidden></audio>
-  <div class="row" id="downloads"></div>
-  <label class="field"><span>Ideas you jotted</span>
-    <textarea id="ideasOut" placeholder="Anything that came to you while preaching."></textarea></label>
-  <label class="field" id="transcriptField"><span>Transcript (paste your own, e.g. from Raycast, or keep the browser's)</span>
-    <textarea id="transcriptOut" placeholder="Paste your transcript here."></textarea></label>
-  <button class="btn small" id="saveNotes">Download notes</button>
-  <p id="saved"></p>
-  <button class="btn" id="again">Try again</button>
+  <div class="card">
+    <div class="badge" id="badge"></div>
+    <h2 id="resTitle"></h2>
+    <p id="resMsg"></p>
+    <div class="stats" id="stats"></div>
+    <audio id="player" controls hidden></audio>
+    <div class="row" id="downloads"></div>
+    <label class="field"><span class="label">Ideas you jotted</span>
+      <textarea id="ideasOut" placeholder="Anything that came to you while preaching."></textarea></label>
+    <label class="field" id="transcriptField"><span class="label">Transcript: paste your own (e.g. Raycast) or keep the browser's</span>
+      <textarea id="transcriptOut" placeholder="Paste your transcript here."></textarea></label>
+    <p id="saved"></p>
+    <div class="actions">
+      <button class="btn" id="saveNotes">Download notes</button>
+      <button class="btn solid" id="again">Preach again</button>
+    </div>
+  </div>
 </section>
 
 <script>
@@ -166,12 +219,23 @@ const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 if (!SR) {
   $('optTranscript').value = 'off';
   $('optTranscript').disabled = true;
-  $('optTranscript').parentElement.title = 'Not supported in this browser';
+  $('trOpt').hidden = true;
 } else {
   $('privacy').textContent += ' Note: the live transcript uses your browser\'s speech service, which may send audio to the browser maker (Google for Chrome, Apple for Safari). Turn it off to keep everything on your device.';
 }
 
 let s = null; // current session state
+
+// Chip buttons drive the hidden selects.
+document.querySelectorAll('.chips').forEach(group => {
+  const sel = $(group.dataset.for);
+  const paint = () => group.querySelectorAll('.chip').forEach(c => c.classList.toggle('on', c.dataset.val === sel.value));
+  group.addEventListener('click', e => {
+    const c = e.target.closest('.chip');
+    if (c) { sel.value = c.dataset.val; paint(); }
+  });
+  paint();
+});
 
 function show(id){
   document.querySelectorAll('.screen').forEach(el => el.classList.toggle('active', el.id === id));
@@ -209,9 +273,12 @@ $('go').onclick = async () => {
   };
 
   $('notesView').textContent = $('notes').value.trim();
+  $('notesPane').hidden = !$('notes').value.trim();
+  $('panes').classList.toggle('two', !!$('notes').value.trim());
   $('live').textContent = '';
   $('ideas').value = store.get();
-  $('bar').style.width = '0';
+  $('prog').style.strokeDashoffset = 100;
+  $('session').classList.remove('danger');
   $('clock').textContent = fmt(s.lengthSec);
   $('session').style.backgroundColor = '';
   $('status').textContent = 'Stay quiet a moment…';
@@ -235,7 +302,7 @@ function tick(){
   if (!s) return;
   const now = performance.now();
   const level = rms();
-  $('level').style.width = Math.min(100, level / (s.threshold * 4) * 100) + '%';
+  $('level').style.setProperty('--lv', Math.min(1, level / (s.threshold * 4)));
 
   if (s.phase === 'calibrate') {
     s.calibrate.push(level);
@@ -250,7 +317,6 @@ function tick(){
   }
 
   const voiced = level > s.threshold;
-  $('level').style.background = voiced ? 'var(--green)' : 'var(--muted)';
   if (voiced) s.lastVoice = now;
 
   const silent = (now - s.lastVoice) / 1000;
@@ -259,12 +325,13 @@ function tick(){
   const remaining = s.lengthSec - elapsed;
 
   $('clock').textContent = fmt(remaining);
-  $('bar').style.width = Math.min(100, elapsed / s.lengthSec * 100) + '%';
+  $('prog').style.strokeDashoffset = Math.max(0, 100 - elapsed / s.lengthSec * 100);
 
   // Red creeps in after one second of silence.
   const danger = Math.max(0, (silent - 1) / (s.pauseSec - 1));
   $('session').style.backgroundColor = danger > 0
     ? `rgba(224,72,58,${Math.min(1, danger) * 0.85})` : '';
+  $('session').classList.toggle('danger', danger > 0);
   if (danger > 0) {
     $('status').textContent = 'Keep going! ' + Math.max(0, s.pauseSec - silent).toFixed(1) + 's';
   } else {
@@ -328,6 +395,7 @@ function finish(won){
   const rec = s.recorder;
   stopAll();
   $('session').style.backgroundColor = '';
+  $('session').classList.remove('danger');
 
   const st = s;
   const done = () => showResult(won, elapsed, st);
@@ -338,6 +406,7 @@ function showResult(won, elapsed, st){
   const box = $('result');
   box.classList.toggle('won', won);
   box.classList.toggle('lost', !won);
+  $('badge').textContent = won ? '\u2713' : '!';
   $('downloads').innerHTML = '';
   $('stats').innerHTML = '';
   $('player').hidden = true;
@@ -378,7 +447,6 @@ function showResult(won, elapsed, st){
 function addDownload(label, url, name){
   const a = document.createElement('a');
   a.className = 'btn small';
-  a.style.textDecoration = 'none';
   a.textContent = label;
   a.href = url;
   a.download = name;
