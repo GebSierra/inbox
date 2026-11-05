@@ -14,12 +14,14 @@ canvas{display:block}
 #joy{position:fixed;left:calc(28px + env(safe-area-inset-left,0px));bottom:calc(28px + env(safe-area-inset-bottom,0px));width:130px;height:130px;border-radius:50%;background:var(--glass);border:1px solid var(--edge);backdrop-filter:blur(4px)}
 #knob{position:absolute;left:40px;top:40px;width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,.55)}
 #hint{position:fixed;right:calc(20px + env(safe-area-inset-right,0px));bottom:calc(24px + env(safe-area-inset-bottom,0px));font:12px system-ui,sans-serif;opacity:.75;text-align:right;pointer-events:none;max-width:200px}
+#credit{position:fixed;left:0;right:0;bottom:calc(6px + env(safe-area-inset-bottom,0px));text-align:center;font:10px system-ui,sans-serif;opacity:.55;pointer-events:none}#credit a{color:inherit;pointer-events:auto}
 #start:disabled{opacity:.6;cursor:wait}
 </style>
 </head><body>
 <div id="title"><h1>My Place</h1><p>Prototype · alpine falls</p><button id="start" type="button" disabled>Loading the valley…</button></div>
 <div id="joy"><div id="knob"></div></div>
 <div id="hint">Joystick or WASD to walk · drag to look</div>
+<div id="credit">Textures and models: Poly Haven (CC0). Grass: “Low Poly Tree Scene Free” by Nicholas-3D, <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>.</div>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 <script type="module">
 import * as THREE from 'three';
@@ -30,6 +32,7 @@ import {UnrealBloomPass} from 'three/addons/postprocessing/UnrealBloomPass.js';
 import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {RGBELoader} from 'three/addons/loaders/RGBELoader.js';
+import {Reflector} from 'three/addons/objects/Reflector.js';
 import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
 const A='assets/';
 const TL=new THREE.TextureLoader();
@@ -48,7 +51,23 @@ const sm=(a,b,x)=>{const t=Math.min(1,Math.max(0,(x-a)/(b-a)));return t*t*(3-2*t
 // ---------- world shape ----------
 const FALL_Z=-178;
 const riverX=z=>Math.sin(z*.018)*10+Math.sin(z*.05)*3;
-function H(x,z){
+// lake basin behind the start point
+const LZ=370,LRX=150,LRZ=110;
+const shoreOf=(x,z)=>Math.hypot(x/LRX,(z-LZ)/LRZ)-1;   // <0 water, 0 waterline
+const lakeMix=z=>sm(195,255,z);
+const CABIN={x:-52,z:251};
+// woodland trail from the gorge to the beach, along the east bank
+const pathX=z=>riverX(Math.min(z,235))+13+Math.sin(z*.035)*4+sm(200,248,z)*(20-riverX(235)-13);
+const onPath=(x,z,w)=>z>-150&&z<252&&Math.abs(x-pathX(z))<w;
+function lakeH(x,z){const s=shoreOf(x,z);
+ if(s<0)return -.6+s*9;
+ return s*6+sm(.15,.6,s)*(16+fbm(x*.02,z*.02)*14)+Math.max(0,s-.55)*45+fbm(x*.12,z*.12)*.3*sm(.1,.3,s);}
+function H(x,z){const lm=lakeMix(z);if(lm>=1)return lakeH(x,z);
+ let g=G0(x,z);if(lm<=0)return g;
+ let h=g+(lakeH(x,z)-g)*lm;const d=Math.abs(x-riverX(z));
+ if(z<262)h=Math.min(h,Math.max(-1.6+sm(9,22,d)*5,h-(1-sm(10,26,d))*30));   // river mouth channel
+ return h}
+function G0(x,z){
  const d=Math.abs(x-riverX(z));
  let h=-1.6+fbm(x*.1,z*.1)*.5;
  h+=sm(9,22,d)*5;
@@ -67,30 +86,32 @@ renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.
 document.body.prepend(renderer.domElement);
 const scene=new THREE.Scene();
 const FOG=new THREE.Color(0xaab3b4);scene.background=FOG;scene.fog=new THREE.FogExp2(FOG,.0042);
-const camera=new THREE.PerspectiveCamera(62,innerWidth/innerHeight,.1,900);
-scene.add(new THREE.HemisphereLight(0xdfe6e8,0x2c3326,.55));
-const sun=new THREE.DirectionalLight(0xf0f2ee,.7);sun.position.set(-60,120,80);scene.add(sun);
+const camera=new THREE.PerspectiveCamera(62,innerWidth/innerHeight,.1,4000);
+const hemi=new THREE.HemisphereLight(0xdfe6e8,0x2c3326,.55);scene.add(hemi);
+const sun=new THREE.DirectionalLight(0xf0f2ee,.7);sun.position.set(220,150,420);scene.add(sun);
 // overcast HDRI drives image-based lighting
 {const pm=new THREE.PMREMGenerator(renderer);
  pending.push(new RGBELoader().loadAsync(A+'sky/overcast_soil_puresky_1k.hdr').then(hdr=>{scene.environment=pm.fromEquirectangular(hdr).texture;hdr.dispose()}).catch(()=>{}));}
 
 // ---------- terrain ----------
-{const g=new THREE.PlaneGeometry(420,560,210,280);g.rotateX(-Math.PI/2);g.translate(0,0,-30);
+{const g=new THREE.PlaneGeometry(600,830,280,400);g.rotateX(-Math.PI/2);g.translate(0,0,105);
  const p=g.attributes.position;for(let i=0;i<p.count;i++)p.setY(i,H(p.getX(i),p.getZ(i)));
- g.computeVertexNormals();const n=g.attributes.normal,col=[];const c=new THREE.Color();
+ g.computeVertexNormals();const n=g.attributes.normal,col=[],bch=[];const c=new THREE.Color();
  // vertex colour = splat weights: r rock, g grass/moss, b forest-floor leaves
  for(let i=0;i<p.count;i++){const ny=n.getY(i),x=p.getX(i),z=p.getZ(i),k=fbm(x*.08,z*.08);
   const d=Math.abs(x-riverX(z));
   let r=Math.max(1-sm(.68,.86,ny),1-sm(9,13,d));
-  let l=sm(24,40,d+k*10)*(1-r);let gr=Math.max(0,1-r-l);
-  col.push(r,gr,l)}
- g.setAttribute('color',new THREE.Float32BufferAttribute(col,3));
+  let l=sm(24,40,d+k*10)*(1-r);
+  const lm=lakeMix(z),sh=shoreOf(x,z),r2=1-sm(.68,.86,ny),l2=sm(.25,.45,sh+k*.1)*(1-r2);
+  r+= (r2-r)*lm;l+=(l2-l)*lm;let gr=Math.max(0,1-r-l);
+  col.push(r,gr,l);bch.push(Math.max(lm*(1-sm(.1,.19,sh+k*.03)),onPath(x,z,3.2)?(1-sm(1.4,3.2,Math.abs(x-pathX(z))+k))*.9:0))}
+ g.setAttribute('color',new THREE.Float32BufferAttribute(col,3));g.setAttribute('beach',new THREE.Float32BufferAttribute(bch,1));
  const mat=new THREE.MeshStandardMaterial({roughness:.95,normalMap:tex('dark_rock_nor_gl.jpg'),normalScale:new THREE.Vector2(.8,.8)});
- const tR=tex('dark_rock_diff.jpg',1),tG=tex('grass_ground_diff.jpg',1),tLf=tex('forest_leaves_02_diff.jpg',1);
- mat.onBeforeCompile=s=>{Object.assign(s.uniforms,{tR:{value:tR},tG:{value:tG},tLf:{value:tLf}});
-  s.vertexShader=s.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 vWP;varying vec3 vWN;varying vec3 vSplat;attribute vec3 color;')
-   .replace('#include <begin_vertex>','#include <begin_vertex>\nvWP=(modelMatrix*vec4(position,1.)).xyz;vWN=normal;vSplat=color;');
-  s.fragmentShader=s.fragmentShader.replace('#include <common>','#include <common>\nuniform sampler2D tR,tG,tLf;varying vec3 vWP;varying vec3 vWN;varying vec3 vSplat;')
+ const tS=tex('gravel_diff.jpg',1),tR=tex('dark_rock_diff.jpg',1),tG=tex('grass_ground_diff.jpg',1),tLf=tex('forest_leaves_02_diff.jpg',1);
+ mat.onBeforeCompile=s=>{Object.assign(s.uniforms,{tS:{value:tS},tR:{value:tR},tG:{value:tG},tLf:{value:tLf}});
+  s.vertexShader=s.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 vWP;varying vec3 vWN;varying vec3 vSplat;varying float vBeach;attribute vec3 color;attribute float beach;')
+   .replace('#include <begin_vertex>','#include <begin_vertex>\nvWP=(modelMatrix*vec4(position,1.)).xyz;vWN=normal;vSplat=color;vBeach=beach;');
+  s.fragmentShader=s.fragmentShader.replace('#include <common>','#include <common>\nuniform sampler2D tS,tR,tG,tLf;varying vec3 vWP;varying vec3 vWN;varying vec3 vSplat;varying float vBeach;')
    .replace('#include <map_fragment>',`
     vec3 an=abs(normalize(vWN));an/=an.x+an.y+an.z;
     vec3 rock=texture2D(tR,vWP.zy*.08).rgb*an.x+texture2D(tR,vWP.xz*.08).rgb*an.y+texture2D(tR,vWP.xy*.08).rgb*an.z;
@@ -100,7 +121,9 @@ const sun=new THREE.DirectionalLight(0xf0f2ee,.7);sun.position.set(-60,120,80);s
     vec3 sp=vSplat/max(.001,vSplat.r+vSplat.g+vSplat.b);
     // wet darkening near the waterline
     float wet=1.-smoothstep(.2,2.2,vWP.y);
-    diffuseColor.rgb=(rock*sp.r+grass*sp.g+leaf*sp.b)*mix(1.,.55,wet);`)
+    vec3 sand=texture2D(tS,vWP.xz*.18).rgb;sand=mix(vec3(dot(sand,vec3(.34))),sand,.4)*mix(.8,1.1,texture2D(tS,vWP.xz*.02).r);
+    vec3 base=(rock*sp.r+grass*sp.g+leaf*sp.b)*mix(1.,.55,wet);
+    diffuseColor.rgb=mix(base,sand*mix(1.,.6,1.-smoothstep(-.6,.25,vWP.y)),vBeach);`)
    .replace('#include <normal_fragment_maps>','#if 0\n#include <normal_fragment_maps>\n#endif\n{vec3 mn=texture2D(normalMap,vWP.xz*.08).xyz*2.-1.;normal=normalize(normal+(vSplat.r*.9+.2)*vec3(mn.x,mn.y,0.)*normalScale.x*.5);}');};
  scene.add(new THREE.Mesh(g,mat));}
 
@@ -112,12 +135,12 @@ const U={t:{value:0}};
 
 // ---------- river ----------
 {const segZ=260,segX=40,pos=[],uv=[],idx=[];
- for(let j=0;j<=segZ;j++){const z=250-j*(250+166)/segZ;for(let i=0;i<=segX;i++){const u=(i/segX-.5)*26;
+ for(let j=0;j<=segZ;j++){const z=262-j*(262+166)/segZ;for(let i=0;i<=segX;i++){const u=(i/segX-.5)*26;
   pos.push(riverX(z)+u,0,z);uv.push(u,z)}}
  for(let j=0;j<segZ;j++)for(let i=0;i<segX;i++){const a=j*(segX+1)+i,b=a+segX+1;idx.push(a,b,a+1,b,b+1,a+1)}
  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
  g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));g.setIndex(idx);
- const m=new THREE.ShaderMaterial({uniforms:THREE.UniformsUtils.merge([THREE.UniformsLib.fog,{t:U.t}]),fog:true,side:THREE.DoubleSide,
+ const m=new THREE.ShaderMaterial({uniforms:THREE.UniformsUtils.merge([THREE.UniformsLib.fog,{t:U.t}]),fog:true,side:THREE.DoubleSide,transparent:true,
  vertexShader:`${GN}uniform float t;varying vec2 vUv;varying float vF;varying vec3 vW;
  #include <fog_pars_vertex>
  void main(){vUv=uv;vec3 p=position;float f=fb(vec2(uv.x*.25,uv.y*.12-t*1.6));
@@ -132,12 +155,12 @@ const U={t:{value:0}};
   vec3 deep=vec3(.20,.26,.26),white=vec3(.93,.95,.95);
   vec3 c=mix(deep,white,foam);vec3 n=normalize(cross(dFdx(vW),dFdy(vW)));
   float spec=pow(max(dot(reflect(normalize(vW-cameraPosition),n),normalize(vec3(-.4,.8,.5))),0.),30.)*.4;
-  gl_FragColor=vec4(c+spec,1.);
+  float mouth=smoothstep(232.,261.,vUv.y);c=mix(c,deep*.6,mouth*.7);gl_FragColor=vec4(c+spec,1.-mouth);
   #include <tonemapping_fragment>
   #include <colorspace_fragment>
   #include <fog_fragment>
  }`});
- scene.add(new THREE.Mesh(g,m));}
+ m.uniforms.t=U.t;scene.add(new THREE.Mesh(g,m));}
 
 // ---------- waterfall ----------
 {const rows=120,cols=30,pos=[],uv=[],idx=[];
@@ -162,7 +185,7 @@ const U={t:{value:0}};
   #include <colorspace_fragment>
   #include <fog_fragment>
  }`});
- scene.add(new THREE.Mesh(g,m));}
+ m.uniforms.t=U.t;scene.add(new THREE.Mesh(g,m));}
 
 // ---------- rocks ----------
 function rockGeo(s){const g=new THREE.IcosahedronGeometry(1,3),p=g.attributes.position,v=new THREE.Vector3();
@@ -171,9 +194,9 @@ function rockGeo(s){const g=new THREE.IcosahedronGeometry(1,3),p=g.attributes.po
   // facet the top like split granite
   const f=Math.max(v.x*.5+v.y,0);v.y-=f*.15;p.setXYZ(i,v.x,v.y,v.z)}g.computeVertexNormals();return g}
 {const geos=[rockGeo(1),rockGeo(9)],mat=new THREE.MeshStandardMaterial({map:tex('dark_rock_diff.jpg',1),normalMap:tex('dark_rock_nor_gl.jpg'),roughness:.6,metalness:0});
- const N=520;const ms=geos.map(g=>new THREE.InstancedMesh(g,mat,N));
+ const N=900;const ms=geos.map(g=>new THREE.InstancedMesh(g,mat,N));
  const o=new THREE.Object3D(),c=new THREE.Color();let k=[0,0];
- const add=(x,z,s,y)=>{if(Math.hypot(x-riverX(-10)-9.5,z+10)<5)return;const which=rnd()<.5?0:1;o.position.set(x,y??H(x,z)-s*.15,z);
+ const add=(x,z,s,y)=>{if(Math.hypot(x-riverX(-10)-9.5,z+10)<5||onPath(x,z,2.5))return;const which=rnd()<.5?0:1;o.position.set(x,y??H(x,z)-s*.15,z);
   o.rotation.set(rnd()*.3,rnd()*6.28,rnd()*.3);o.scale.set(s*(.8+rnd()*.6),s*(.7+rnd()*.6),s*(.8+rnd()*.6));o.updateMatrix();
   const m=ms[which];if(k[which]>=N)return;m.setMatrixAt(k[which],o.matrix);const g=.75+rnd()*.45;c.setRGB(g,g,g*1.02);m.setColorAt(k[which]++,c)};
  for(let i=0;i<550;i++){const z=-165+rnd()*415,side=rnd()<.5?-1:1,d=10+Math.pow(rnd(),1.4)*10;
@@ -181,35 +204,53 @@ function rockGeo(s){const g=new THREE.IcosahedronGeometry(1,3),p=g.attributes.po
  for(let i=0;i<50;i++){const z=-160+rnd()*400,x=riverX(z)+(rnd()-.5)*14;add(x,z,.4+rnd()*1.1,-1.1)}
  // hero boulders near start, right bank, like the video
  add(riverX(30)+8,30,5.5);add(riverX(22)+10,22,3);add(riverX(40)-11,40,3.5);
+ for(let i=0;i<500;i++){const a=rnd()*6.283,e=1+.01+rnd()*.15;const x=Math.cos(a)*LRX*e,z=LZ+Math.sin(a)*LRZ*e;if(z>300||Math.hypot(x-CABIN.x,z-CABIN.z)<14)continue;add(x,z,.08+rnd()*rnd()*.6)}
  ms.forEach((m,i)=>{m.count=k[i];scene.add(m)});}
 
-// ---------- conifers ----------
+// ---------- spruce forest: bark trunk + drooping branch cards (game-style foliage) ----------
 const firSpots=[];
-function treeGeo(){const parts=[];const layers=7;
- for(let i=0;i<layers;i++){const t=i/layers,r=3.2*(1-t)+.4,h=4.2*(1-t*.4);
-  const g=new THREE.ConeGeometry(r,h,9,2,true);const p=g.attributes.position;
-  for(let j=0;j<p.count;j++){const x=p.getX(j),z=p.getZ(j),y=p.getY(j);const a=Math.atan2(z,x);
-   const jag=1+Math.sin(a*9+i)*.12+ (y<-h/2+.1?0.15*Math.sin(a*23):0);p.setXYZ(j,x*jag,y-(y<-h/2+.1?.5:0),z*jag)}
-  g.translate(0,3+i*2.5,0);parts.push(g)}
- const g=mergeGeometries(parts);g.computeVertexNormals();return g}
-{const fg=treeGeo(),tg=new THREE.CylinderGeometry(.18,.45,8,6);tg.translate(0,4,0);
- const N=4200;const fol=new THREE.InstancedMesh(fg,new THREE.MeshStandardMaterial({color:0xffffff,roughness:.95,side:THREE.DoubleSide,envMapIntensity:.3}),N);
- const tr=new THREE.InstancedMesh(tg,new THREE.MeshStandardMaterial({color:0x2f2620,roughness:1}),N);
- const o=new THREE.Object3D(),c=new THREE.Color();let n=0;
- for(let tries=0;tries<40000&&n<N;tries++){const x=(rnd()-.5)*400,z=-290+rnd()*530;const d=Math.abs(x-riverX(z));
-  if(d<15+fbm(z*.1,1)*4)continue;if(slope(x,z)>1.35)continue;if(z>-200&&z<-150&&d<40)continue;
-  if(d<30&&rnd()<.35)continue;if(Math.hypot(x-riverX(-10)-9.5,z+10)<14)continue;
-  if(d<45&&firSpots.length<240){firSpots.push([x,z]);continue}
-  const s=.8+rnd()*.9,y=H(x,z);o.position.set(x,y-.3,z);o.rotation.set(0,rnd()*6.28,0);o.scale.set(s*(.85+rnd()*.3),s*(1+rnd()*.5),s*(.85+rnd()*.3));o.updateMatrix();
-  fol.setMatrixAt(n,o.matrix);tr.setMatrixAt(n,o.matrix);const k=rnd();c.setRGB(.035+k*.03,.07+k*.04,.05+k*.02);fol.setColorAt(n,c);n++}
- fol.count=tr.count=n;scene.add(fol,tr);}
+function spruceGeo(seedV){const P=[],N=[],UV=[],I=[];let vi=0;const Ht=24,W=24;
+ const quad=(a,b,c,d,n,q)=>{const u0=(q&1)*.5,v0=(q>>1)*.5;
+  [[a,u0+.04,v0+.5],[b,u0+.46,v0+.5],[c,u0+.46,v0+.02],[d,u0+.04,v0+.02]].forEach(([p,u,v])=>{P.push(...p);N.push(...n);UV.push(u,v)});
+  I.push(vi,vi+2,vi+1,vi,vi+3,vi+2);vi+=4};
+ let r=seedV*13.7;const rr=()=>{r=(r*9301+49297)%233280;return r/233280};
+ for(let i=0;i<W;i++){const t=i/W,y=2.2+t*(Ht-3.2),L=Math.pow(1-t,.85)*5.6+.5,n=6+Math.floor(rr()*2);
+  for(let j=0;j<n;j++){const a=j/n*6.283+i*.9+rr()*.5,ca=Math.cos(a),sa=Math.sin(a),l=L*(.8+rr()*.35),droop=.28+t*.1+rr()*.15;
+   const w=l*.5,px=-sa,pz=ca,tip=[ca*l,y-l*droop,sa*l];const nrm=[ca*.55,.8,sa*.55];
+   const q=Math.floor(rr()*4);
+   // flat card
+   quad([px*w*.5,y,pz*w*.5],[-px*w*.5,y,-pz*w*.5],[tip[0]-px*w*.5,tip[1],tip[2]-pz*w*.5],[tip[0]+px*w*.5,tip[1],tip[2]+pz*w*.5],nrm,q);
+   // crossed card for volume
+   quad([0,y+w*.35,0],[0,y-w*.35,0],[tip[0],tip[1]-w*.35,tip[2]],[tip[0],tip[1]+w*.35,tip[2]],nrm,(q+1)&3)}}
+ // leader at the top
+ for(let k=0;k<2;k++){const a=k*1.57,c=Math.cos(a),s2=Math.sin(a);quad([c*.6,Ht+.6,s2*.6],[-c*.6,Ht+.6,-s2*.6],[-c*.6,Ht-2.4,-s2*.6],[c*.6,Ht-2.4,s2*.6],[0,1,0],k)}
+ const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(P,3));g.setAttribute('normal',new THREE.Float32BufferAttribute(N,3));
+ g.setAttribute('uv',new THREE.Float32BufferAttribute(UV,2));g.setIndex(I);return g}
+const spruceSpots=[];
+{for(let tries=0;tries<70000&&spruceSpots.length<5600;tries++){const x=(rnd()-.5)*580,z=-290+rnd()*800;const d=Math.abs(x-riverX(z));
+  const lm=lakeMix(z),sh=shoreOf(x,z);
+  if(lm>.5){if(sh<.18+fbm(x*.05,z*.05)*.08||Math.hypot(x-CABIN.x,z-CABIN.z)<26)continue}
+  else{if(d<15+fbm(z*.1,1)*4)continue;if(Math.abs(x)>200)continue;if(z>-200&&z<-150&&d<40)continue;if(d<30&&rnd()<.35)continue}
+  if(slope(x,z)>1.35||onPath(x,z,4.5))continue;if(Math.hypot(x-riverX(-10)-9.5,z+10)<14)continue;
+  spruceSpots.push([x,z])}
+ const fm=new THREE.MeshStandardMaterial({map:tex('spruce_branch.webp',1),normalMap:tex('spruce_branch_nor.jpg'),alphaTest:.42,side:THREE.DoubleSide,roughness:.9,envMapIntensity:.45,alphaToCoverage:true});
+ fm.map.wrapS=fm.map.wrapT=THREE.ClampToEdgeWrapping;
+ const bm=new THREE.MeshStandardMaterial({map:tex('spruce_bark.jpg',1),normalMap:tex('spruce_bark_nor.jpg'),roughness:1,color:0x6a625c});
+ const tg=new THREE.CylinderGeometry(.06,.42,25,8,1,true);tg.translate(0,12.5,0);{const uv=tg.attributes.uv;for(let i=0;i<uv.count;i++)uv.setY(i,uv.getY(i)*6)}
+ const VAR=3,o=new THREE.Object3D(),c=new THREE.Color();
+ for(let v=0;v<VAR;v++){const mine=spruceSpots.filter((_,i)=>i%VAR===v);
+  const fol=new THREE.InstancedMesh(spruceGeo(v+1),fm,mine.length),tr=new THREE.InstancedMesh(tg,bm,mine.length);
+  mine.forEach(([x,z],k)=>{const near=Math.abs(x-riverX(z))<45&&lakeMix(z)<.5;const s=(near?.75:.6)+rnd()*.5;
+   o.position.set(x,H(x,z)-.3,z);o.rotation.set((rnd()-.5)*.04,rnd()*6.28,(rnd()-.5)*.04);o.scale.set(s*(.9+rnd()*.2),s,s*(.9+rnd()*.2));o.updateMatrix();
+   fol.setMatrixAt(k,o.matrix);tr.setMatrixAt(k,o.matrix);const q=rnd();c.setRGB(.55+q*.3,.62+q*.3,.55+q*.25);fol.setColorAt(k,c)});
+  fol.frustumCulled=tr.frustumCulled=false;scene.add(fol,tr)}}
 
 // ---------- bushes / ferns ----------
 {const g=new THREE.IcosahedronGeometry(1,1),p=g.attributes.position;for(let i=0;i<p.count;i++)p.setXYZ(i,p.getX(i)*(1+(rnd()-.5)*.5),p.getY(i)*(.7+rnd()*.3),p.getZ(i)*(1+(rnd()-.5)*.5));g.computeVertexNormals();
  const N=2600,m=new THREE.InstancedMesh(g,new THREE.MeshStandardMaterial({color:0xffffff,roughness:.9,flatShading:true,envMapIntensity:.3}),N);
  const o=new THREE.Object3D(),c=new THREE.Color();let n=0;
  for(let t=0;t<20000&&n<N;t++){const z=-160+rnd()*420,side=rnd()<.5?-1:1,d=11+rnd()*28;const x=riverX(z)+side*d;
-  if(slope(x,z)>1.1)continue;const s=.5+rnd()*1.6;o.position.set(x,H(x,z)+s*.2,z);o.scale.set(s,s*.8,s);o.rotation.y=rnd()*6;o.updateMatrix();
+  if(slope(x,z)>1.1||onPath(x,z,2.6)||(lakeMix(z)>0&&shoreOf(x,z)<.2))continue;const s=.5+rnd()*1.6;o.position.set(x,H(x,z)+s*.2,z);o.scale.set(s,s*.8,s);o.rotation.y=rnd()*6;o.updateMatrix();
   m.setMatrixAt(n,o.matrix);const k=rnd();c.setRGB(.05+k*.05,.11+k*.07,.04+k*.03);m.setColorAt(n++,c)}
  m.count=n;scene.add(m);}
 
@@ -228,18 +269,80 @@ function scatter(vars,items){vars.forEach((v,i)=>{const mine=items.filter(e=>e.v
  v.parts.forEach(p=>{const im=new THREE.InstancedMesh(p.g,p.m,mine.length);im.frustumCulled=false;
   mine.forEach((e,k)=>{o3.position.set(e.x,e.y,e.z);o3.rotation.set(e.rx||0,e.ry,e.rz||0);o3.scale.setScalar(e.s/(e.abs?1:v.h));o3.updateMatrix();im.setMatrixAt(k,o3.matrix)});scene.add(im)})})}
 const o3=new THREE.Object3D();
-// tall firs along the river corridor, 16–27 m
-pending.push(GL.loadAsync(A+'fir_medium.glb').then(gl=>{const vs=variants(gl);
- scatter(vs,firSpots.map(([x,z])=>({v:Math.floor(rnd()*9),x,y:H(x,z)-.4,z,ry:rnd()*6.28,s:16+rnd()*11})))}).catch(e=>console.warn(e)));
 // young firs and pines on the banks
 const saplingSpots=[];for(let t=0;t<6000&&saplingSpots.length<260;t++){const z=-150+rnd()*390,side=rnd()<.5?-1:1,d=12+rnd()*22,x=riverX(z)+side*d;
- if(slope(x,z)>1||Math.hypot(x-riverX(-10)-9.5,z+10)<6)continue;saplingSpots.push({x,y:H(x,z)-.1,z,ry:rnd()*6.28,v:Math.floor(rnd()*9)})}
+ if(slope(x,z)>1||onPath(x,z,3)||(lakeMix(z)>0&&shoreOf(x,z)<.2)||Math.hypot(x-riverX(-10)-9.5,z+10)<6)continue;saplingSpots.push({x,y:H(x,z)-.1,z,ry:rnd()*6.28,v:Math.floor(rnd()*9)})}
 pending.push(GL.loadAsync(A+'fir_sapling.glb').then(gl=>scatter(variants(gl),saplingSpots.slice(0,180).map(e=>({...e,s:1.5+rnd()*4})))).catch(e=>console.warn(e)));
 pending.push(GL.loadAsync(A+'pine_sapling_small.glb').then(gl=>scatter(variants(gl),saplingSpots.slice(180).map(e=>({...e,s:1+rnd()*2})))).catch(e=>console.warn(e)));
+// low-poly pack (Nicholas-3D, CC-BY-4.0): grass clumps and broadleaf trees by the lake
+const upright=vs=>{vs.forEach(v=>{v.parts.forEach(p=>p.g.rotateX(Math.PI/2));const b=new THREE.Box3();v.parts.forEach(p=>{p.g.computeBoundingBox();b.union(p.g.boundingBox)});
+ v.parts.forEach(p=>p.g.translate(-(b.min.x+b.max.x)/2,-b.min.y,-(b.min.z+b.max.z)/2));v.h=b.max.y-b.min.y});return vs};
+pending.push(GL.loadAsync(A+'lp_grass.glb').then(gl=>{const it=[];for(let t=0;t<30000&&it.length<4000;t++){const z=-150+rnd()*600,x=riverX(Math.min(z,240))+(rnd()-.5)*90;
+  const lm=lakeMix(z),sh=shoreOf(x,z),d=Math.abs(x-riverX(z));if(lm<.5&&(d<11||d>40))continue;if(lm>=.5&&(sh<.14||sh>.5))continue;if(slope(x,z)>.9||onPath(x,z,1.6))continue;
+  it.push({v:0,x,y:H(x,z)-.03,z,ry:rnd()*6.28,s:.5+rnd()*.7})}scatter(variants(gl),it)}).catch(e=>console.warn(e)));
 // scanned granite outcrops: banks and cliff foot
 pending.push(GL.loadAsync(A+'rock_outcrop.glb').then(gl=>{const vs=variants(gl);vs[0].parts.forEach(p=>{p.m.color.setRGB(.8,.8,.82)});
  const spots=[[14,24,.55],[-15,5,.45],[16,-60,.6],[-14,-95,.5],[15,-130,.55],[-18,-150,.7],[19,-150,.65],[13,90,.5],[-13,140,.5]];
  scatter(vs,spots.map(([dx,z,s])=>{const x=riverX(z)+dx;return {v:0,x,y:H(x,z)-.6,z,ry:rnd()*6.28,rx:(rnd()-.5)*.15,s,abs:1}}))}).catch(e=>console.warn(e)));
+
+// ---------- sky dome: clouds, sun, overcast toward the falls ----------
+const SUN=new THREE.Vector3(.5,.32,.8).normalize();
+const skyU={t:U.t,oc:{value:.5},fogC:{value:scene.fog.color},sunDir:{value:SUN}};
+const sky=new THREE.Mesh(new THREE.SphereGeometry(3000,48,24),new THREE.ShaderMaterial({uniforms:skyU,side:THREE.BackSide,depthWrite:false,fog:false,
+ vertexShader:`varying vec3 vD;void main(){vD=position;vec4 p=projectionMatrix*modelViewMatrix*vec4(position,1.);gl_Position=p.xyww;}`,
+ fragmentShader:`${GN}uniform float t,oc;uniform vec3 fogC,sunDir;varying vec3 vD;
+ void main(){vec3 d=normalize(vD);float h=max(d.y,0.);
+  vec3 col=mix(fogC,vec3(.10,.25,.62),pow(h,.55));
+  float sd=max(dot(d,sunDir),0.);col+=vec3(1.,.82,.55)*(pow(sd,6.)*.35+pow(sd,400.)*3.);
+  vec2 cu=d.xz/(d.y+.1)*.9+vec2(t*.003,t*.001);
+  float c=fb(cu)*.65+fb(cu*3.3+4.)*.35;
+  float cov=smoothstep(.46,.74,c)*smoothstep(0.,.14,d.y);
+  vec3 cl=mix(vec3(.38,.40,.46),vec3(.98,.96,.92),smoothstep(.5,.85,c))+vec3(1.,.75,.45)*pow(sd,3.)*.5*cov;
+  col=mix(col,cl,cov*.92);
+  float o=clamp(oc+smoothstep(.2,-.5,d.z)*.75,0.,1.);   // heavier cloud over the gorge and falls
+  col=mix(col,fogC*mix(.95,1.08,fb(cu*1.5)),o);
+  gl_FragColor=vec4(col,1.);
+  #include <tonemapping_fragment>
+  #include <colorspace_fragment>
+ }`}));
+sky.frustumCulled=false;sky.renderOrder=-1;scene.add(sky);
+
+// ---------- distant mountains ----------
+{const M=(x,z)=>{let m=470*Math.exp(-(((x-210)/260)**2+((z-1380)/180)**2))+300*Math.exp(-(((x+260)/360)**2+((z-1450)/240)**2))
+  +160*Math.exp(-((x/700)**2+((z-1150)/150)**2))+40*sm(520,760,z);
+  return m+(1-Math.abs(vnoise(x*.007,z*.007)))*110*sm(60,260,m)+fbm(x*.02,z*.02)*30*sm(20,120,m)};
+ const g=new THREE.PlaneGeometry(2600,1300,260,130);g.rotateX(-Math.PI/2);g.translate(0,0,1250);
+ const p=g.attributes.position;for(let i=0;i<p.count;i++)p.setY(i,M(p.getX(i),p.getZ(i))-15);
+ g.computeVertexNormals();const n=g.attributes.normal,col=[];
+ for(let i=0;i<p.count;i++){const y=p.getY(i),ny=n.getY(i),k=fbm(p.getX(i)*.01,p.getZ(i)*.01);
+  let c;
+  const st=vnoise(p.getX(i)*.05,p.getZ(i)*.012);c=[.17+st*.05,.18+st*.05,.2+st*.05];if(y<150+k*60)c=[.035,.07,.05];if(y>300+k*70+st*25&&ny>.38+st*.15)c=[.86,.88,.92];else if(y>260+k*60&&ny>.6)c=[.55,.57,.61];
+  col.push(...c)}
+ g.setAttribute('color',new THREE.Float32BufferAttribute(col,3));
+ scene.add(new THREE.Mesh(g,new THREE.MeshStandardMaterial({vertexColors:true,roughness:1,envMapIntensity:.5})));}
+
+// ---------- the lake: live mirror reflections with drifting ripples ----------
+const lake=new Reflector(new THREE.PlaneGeometry(2*LRX+20,2*LRZ+20),{textureWidth:Math.round(innerWidth*.6),textureHeight:Math.round(innerHeight*.6),color:0x889999,
+ shader:{uniforms:{color:{value:null},tDiffuse:{value:null},textureMatrix:{value:null},t:{value:0}},
+ vertexShader:`uniform mat4 textureMatrix;varying vec4 vUv;varying vec3 vW;void main(){vUv=textureMatrix*vec4(position,1.);vW=(modelMatrix*vec4(position,1.)).xyz;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
+ fragmentShader:`${GN}uniform sampler2D tDiffuse;uniform float t;varying vec4 vUv;varying vec3 vW;
+ void main(){vec2 o=vec2(fb(vW.xz*.06+vec2(t*.05,t*.03))-.47,fb(vW.xz*.06-vec2(t*.04,-t*.05)+7.)-.47);
+  float rp=vn(vW.xz*vec2(.5,1.4)+vec2(0.,t*.9))-.5;
+  vec4 u=vUv;u.x+=(o.x*.03+rp*.006)*u.w;u.y+=(o.y*.02+rp*.01)*u.w;
+  vec3 refl=texture2DProj(tDiffuse,u).rgb;
+  vec3 V=normalize(cameraPosition-vW);float fr=.35+.65*pow(1.-max(V.y,0.),4.);
+  float shallow=smoothstep(.0,.06,length(vec2(vW.x/${LRX}.,(vW.z-${LZ}.)/${LRZ}.))-.94);
+  vec3 deep=mix(vec3(.025,.055,.06),vec3(.18,.19,.16),shallow);
+  gl_FragColor=vec4(mix(deep,refl*.92,fr*(1.-shallow*.5)),1.);
+  #include <tonemapping_fragment>
+  #include <colorspace_fragment>
+ }`}});
+lake.material.uniforms.t=U.t;lake.rotation.x=-Math.PI/2;lake.position.set(0,-.55,LZ);scene.add(lake);
+
+// ---------- driftwood on the beach ----------
+{const m=new THREE.MeshStandardMaterial({color:0x9a8c7c,roughness:.95,normalMap:tex('dark_rock_nor_gl.jpg')});
+ [[-14,250,.35,7,.4],[8,249,.25,4.5,-.7],[-30,253,.2,3.5,1.1]].forEach(([x,z,r,l,a])=>{const g=new THREE.CylinderGeometry(r*.85,r,l,12,4);g.rotateZ(Math.PI/2);
+  const w=new THREE.Mesh(g,m);w.position.set(x,H(x,z)+r*.7,z);w.rotation.y=a;scene.add(w)});}
 
 // ---------- mist & spray ----------
 function softTex(){const c=document.createElement('canvas');c.width=c.height=64;const x=c.getContext('2d');
@@ -262,7 +365,7 @@ const composer=new EffectComposer(renderer);composer.addPass(new RenderPass(scen
 composer.addPass(new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),.12,.5,.9));composer.addPass(new OutputPass());
 
 // ---------- player & controls ----------
-const player={x:riverX(-10)+9.5,z:-10,yaw:.18,pitch:.04};
+const player={x:riverX(-10)+10,z:-10,yaw:.18,pitch:.04};window.__player=player;
 const keys={};addEventListener('keydown',e=>keys[e.code]=true);addEventListener('keyup',e=>keys[e.code]=false);
 const joy=document.getElementById('joy'),knob=document.getElementById('knob');let jv={x:0,y:0},jid=null;
 function joyMove(e){const r=joy.getBoundingClientRect();let dx=e.clientX-r.left-65,dy=e.clientY-r.top-65;const l=Math.hypot(dx,dy),m=45;if(l>m){dx*=m/l;dy*=m/l}
@@ -282,23 +385,28 @@ document.getElementById('start').onclick=()=>{
   for(let ch=0;ch<2;ch++){const d=b.getChannelData(ch);let l=0;for(let i=0;i<len;i++){const w=Math.random()*2-1;l=(l+.02*w)/1.02;d[i]=l*3.5+w*.25}}
   const mk=(f,q)=>{const s=ac.createBufferSource();s.buffer=b;s.loop=true;const fl=ac.createBiquadFilter();fl.type='lowpass';fl.frequency.value=f;fl.Q.value=q;const g=ac.createGain();g.gain.value=0;s.connect(fl).connect(g).connect(ac.destination);s.start();return g};
   audio={fall:mk(500,.3),river:mk(1800,.2)}}catch(e){}
- const t=document.getElementById('title');t.style.opacity=0;setTimeout(()=>t.hidden=true,2600)};
+ const t=document.getElementById('title');t.style.opacity=0;document.getElementById('hint').textContent='Follow the trail on the right bank back to the lake';setTimeout(()=>t.hidden=true,2600)};
 
 Promise.allSettled(pending).then(()=>{const b=document.getElementById('start');b.disabled=false;b.textContent='Enter with sound'});
 
 // ---------- loop ----------
-const clock=new THREE.Clock();
+const clock=new THREE.Clock();const GREY=new THREE.Color(0xaab3b4),HAZE=new THREE.Color(0xc7d3dc),WHITE=new THREE.Color(0xf0f2ee),WARM=new THREE.Color(0xffe2bd);
 function frame(){const dt=Math.min(clock.getDelta(),.05);U.t.value+=dt;
  let f=-jv.y,s=jv.x;if(keys.KeyW||keys.ArrowUp)f+=1;if(keys.KeyS||keys.ArrowDown)f-=1;if(keys.KeyA)s-=1;if(keys.KeyD)s+=1;
  if(keys.ArrowLeft)player.yaw+=dt*1.5;if(keys.ArrowRight)player.yaw-=dt*1.5;
  const sp=(keys.ShiftLeft?14:6)*dt,sy=Math.sin(player.yaw),cy=Math.cos(player.yaw);
  const nx=player.x+(-sy*f+cy*s)*sp,nz=player.z+(-cy*f-sy*s)*sp;
- if(slope(nx,nz)<1.6&&nz>-158&&nz<240&&Math.abs(nx)<190){player.x=nx;player.z=nz}
+ if(slope(nx,nz)<1.6&&nz>-158&&nz<480&&Math.abs(nx)<270&&!(lakeMix(nz)>.5&&shoreOf(nx,nz)<.015)){player.x=nx;player.z=nz}
  const gy=Math.max(H(player.x,player.z),.3)+1.7,bob=Math.sin(U.t.value*8)*.04*Math.min(1,Math.hypot(f,s));
  camera.position.set(player.x,gy+bob,player.z);
  camera.rotation.set(player.pitch,player.yaw,0,'YXZ');
  if(audio){const df=Math.hypot(player.x-fx,player.z+170),dr=Math.abs(player.x-riverX(player.z));
   audio.fall.gain.value=Math.min(1,60/df)*.9;audio.river.gain.value=Math.min(.5,6/(dr+4))*.5}
+ // weather: misty overcast in the gorge, clear and sunny at the lake
+ const k=sm(110,245,player.z);
+ scene.fog.color.lerpColors(GREY,HAZE,k);scene.fog.density=.0042+(.00045-.0042)*k;skyU.oc.value=.55*(1-k);
+ sun.intensity=.7+k*2.1;sun.color.lerpColors(WHITE,WARM,k);hemi.intensity=.55+k*.45;renderer.toneMappingExposure=1.05-k*.12;
+ sky.position.copy(camera.position);
  composer.render();requestAnimationFrame(frame)}
 frame();
 addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);composer.setSize(innerWidth,innerHeight)});
