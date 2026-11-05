@@ -30,7 +30,7 @@ canvas{display:block}
 </head><body>
 <div id="title"><h1>My Place</h1><p>Prototype · alpine falls</p><button id="start" type="button" disabled>Loading the valley…</button></div>
 <div id="joy"><div id="knob"></div></div>
-<nav id="places" aria-label="Places"><button type="button" data-p="falls">Waterfall</button><button type="button" data-p="trail">Trail</button><button type="button" data-p="lake">Lake</button><button type="button" data-p="cabin">Cabin</button><button type="button" data-p="inside">Inside</button><button type="button" id="fireBtn" aria-pressed="false">Light campfire</button></nav>
+<nav id="places" aria-label="Places"><button type="button" data-p="falls">Waterfall</button><button type="button" data-p="trail">Trail</button><button type="button" data-p="lake">Lake</button><button type="button" data-p="island">Island</button><button type="button" data-p="cabin">Cabin</button><button type="button" data-p="inside">Inside</button><button type="button" id="fireBtn" aria-pressed="false">Light campfire</button></nav>
 <button id="sit" type="button" hidden>Sit up</button><div id="fade"></div><div id="ring"></div>
 <div id="corner"><button type="button" id="infoBtn" aria-label="Controls and credits" aria-expanded="false" aria-controls="info">i</button><button type="button" id="fsBtn" aria-label="Full screen"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M1 5V1h4M11 1h4v4M15 11v4h-4M5 15H1v-4"/></svg></button></div>
 <div id="info" hidden><p><b>Walk:</b> joystick or WASD · <b>Look:</b> drag · <b>Go there:</b> double-tap the ground · <b>Canoe:</b> double-tap it to lie down</p><p id="hint">The trail on the right bank leads from the falls to the lake.</p><p>Textures and models: Poly Haven (CC0). Grass: “Low Poly Tree Scene Free” by Nicholas-3D, <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>. Sounds: lake by Dragon Studio, campfire by SSPsurvival.</p></div>
@@ -94,8 +94,8 @@ function H0(x,z){const lm=lakeMix(z);let h;
  // gravel bar ford across the river mouth: shallow water riffles over it, walkable
  {const fz=FORD.z+Math.sin(x*.25)*1.2+fbm(x*.3,3)*1.5,fd=Math.abs(z-fz);
   if(fd<4.2&&Math.abs(x-riverX(FORD.z))<20)h=Math.max(h,-.36-sm(1.6,4.2,fd)*1.1+fbm(x*.6,z*.6)*.08)}
- if(z>270){const ri=Math.hypot(x-ISL.x,z-ISL.z);if(ri<16)h=Math.max(h,1.5-ri*ri*.017+fbm(x*.2,z*.2)*.35);
-  {const cd=segD(x,z,CW[0],CW[1]);if(cd<2.8)h=Math.max(h,-.66-sm(1.8,2.8,cd)*.25+fbm(x*.5,z*.5)*.06)}}
+ if(z>270){const ri=Math.hypot(x-ISL.x,z-ISL.z);if(ri<16)h=Math.max(h,1.5-ri*ri*.017+fbm(x*.2,z*.2)*.35)}
+ if(z>250&&z<295){const cd=segD(x,z,CW[0],CW[1]);if(cd<2.8)h=Math.max(h,-.66-sm(1.8,2.8,cd)*.25+fbm(x*.5,z*.5)*.06)}   // causeway runs the whole way, shore to island
  return h}
 function G0(x,z){
  const d=Math.abs(x-riverX(z));
@@ -111,7 +111,7 @@ const slope=(x,z)=>Math.hypot(H(x+1,z)-H(x-1,z),H(x,z+1)-H(x,z-1))/2;
 
 // ---------- renderer ----------
 const renderer=new THREE.WebGLRenderer({antialias:true});
-const FAST=/[?&]fast/.test(location.search);renderer.setPixelRatio(FAST?.5:Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);
+const FAST=/[?&]fast/.test(location.search);renderer.setPixelRatio(FAST?1:Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);
 renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
 document.body.prepend(renderer.domElement);
 const scene=new THREE.Scene();
@@ -721,7 +721,7 @@ const composer=new EffectComposer(renderer);composer.addPass(new RenderPass(scen
 composer.addPass(new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),.12,.5,.9));composer.addPass(new OutputPass());
 
 // ---------- player & controls ----------
-const player={x:riverX(140)+10,z:140,yaw:.18,pitch:.04};window.__player=player;window.__LR=LR;window.__fromPlan=fromPlan;
+const player={x:riverX(140)+10,z:140,yaw:.18,pitch:.04};window.__player=player;window.__LR=LR;window.__fromPlan=fromPlan;window.__dbg={H:(x,z)=>H(x,z),slope:(x,z)=>slope(x,z),walk:(x,z)=>walkable(x,z),CW,ISL};
 const keys={};addEventListener('keydown',e=>keys[e.code]=true);addEventListener('keyup',e=>keys[e.code]=false);
 const joy=document.getElementById('joy'),knob=document.getElementById('knob');let jv={x:0,y:0},jid=null;
 function joyMove(e){const r=joy.getBoundingClientRect();let dx=e.clientX-r.left-65,dy=e.clientY-r.top-65;const l=Math.hypot(dx,dy),m=45;if(l>m){dx*=m/l;dy*=m/l}
@@ -747,6 +747,7 @@ cv.addEventListener('pointerdown',e=>{const now=performance.now();
 const PLACES={falls:{x:riverX(60)+16,z:60,yaw:.05,pitch:.18},trail:{x:pathX(205),z:205,yaw:3.0,pitch:0},
  lake:{x:24,z:249,yaw:3.14,pitch:.03},cabin:{...fromPlan(11,LD+7),yaw:0,pitch:.06}};
 PLACES.cabin.yaw=Math.atan2(-(CABIN.x-PLACES.cabin.x),-(CABIN.z-PLACES.cabin.z));
+PLACES.island={x:ISL.x+2,z:ISL.z-5,yaw:Math.atan2(-(CANOE.x-ISL.x-2),-(CANOE.z-ISL.z+5)),pitch:-.05};
 PLACES.inside={...fromPlan(14.4,15.2),yaw:PLACES.cabin.yaw,pitch:.08};
 const fade=document.getElementById('fade');
 {const ib=document.getElementById('infoBtn'),info=document.getElementById('info');ib.addEventListener('click',()=>{info.hidden=!info.hidden;ib.setAttribute('aria-expanded',!info.hidden)});
