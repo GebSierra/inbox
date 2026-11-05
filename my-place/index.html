@@ -33,7 +33,7 @@ canvas{display:block}
 <nav id="places" aria-label="Places"><button type="button" data-p="falls">Waterfall</button><button type="button" data-p="trail">Trail</button><button type="button" data-p="lake">Lake</button><button type="button" data-p="island">Island</button><button type="button" data-p="cabin">Cabin</button><button type="button" data-p="inside">Inside</button><button type="button" id="fireBtn" aria-pressed="false">Light campfire</button></nav>
 <button id="sit" type="button" hidden>Sit up</button><div id="fade"></div><div id="ring"></div>
 <div id="corner"><button type="button" id="infoBtn" aria-label="Controls and credits" aria-expanded="false" aria-controls="info">i</button><button type="button" id="fsBtn" aria-label="Full screen"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M1 5V1h4M11 1h4v4M15 11v4h-4M5 15H1v-4"/></svg></button></div>
-<div id="info" hidden><p><b>Walk:</b> joystick or WASD · <b>Look:</b> drag · <b>Go there:</b> double-tap the ground · <b>Canoe:</b> double-tap it to lie down</p><p id="hint">The trail on the right bank leads from the falls to the lake.</p><p>Textures and models: Poly Haven (CC0). Grass: “Low Poly Tree Scene Free” by Nicholas-3D, <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>. Sounds: lake by Dragon Studio, campfire by SSPsurvival.</p></div>
+<div id="info" hidden><p><b>Walk:</b> joystick or WASD · <b>Look:</b> drag · <b>Go there:</b> double-tap the ground · <b>Canoe:</b> double-tap it to lie down</p><p id="hint">The trail on the right bank leads from the falls to the lake.</p><p>Textures and models: Poly Haven (CC0). Grass: “Low Poly Tree Scene Free” by Nicholas-3D, <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>. Sounds: lake by Dragon Studio, campfire by SSPsurvival. Lodge props, all <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>: “Bank Vault” by AJ (ArneJans), “Gramaphone” by mohsen_esfandiar, “Old Piano” by paraverun.</p></div>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 <script type="module">
 import * as THREE from 'three';
@@ -111,7 +111,7 @@ const slope=(x,z)=>Math.hypot(H(x+1,z)-H(x-1,z),H(x,z+1)-H(x,z-1))/2;
 
 // ---------- renderer ----------
 const renderer=new THREE.WebGLRenderer({antialias:true});
-const FAST=/[?&]fast/.test(location.search);renderer.setPixelRatio(FAST?1:Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);
+const FAST=/[?&]fast/.test(location.search);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.setPixelRatio(FAST?1:Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);
 renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
 document.body.prepend(renderer.domElement);
 const scene=new THREE.Scene();
@@ -154,7 +154,7 @@ let terrain;
     float wet=1.-smoothstep(.2,2.2,vWP.y);
     vec3 sand=texture2D(tS,vWP.xz*.18).rgb;sand=mix(vec3(dot(sand,vec3(.34))),sand,.4)*mix(.8,1.1,texture2D(tS,vWP.xz*.02).r);
     vec3 base=(rock*sp.r+grass*sp.g+leaf*sp.b)*mix(1.,.55,wet);
-    diffuseColor.rgb=mix(base,sand*mix(1.,.6,1.-smoothstep(-.6,.25,vWP.y)),vBeach);`)
+    diffuseColor.rgb=mix(base,sand*mix(1.,.55,1.-smoothstep(-.6,.9,vWP.y)),vBeach);`)
    .replace('#include <normal_fragment_maps>','#if 0\n#include <normal_fragment_maps>\n#endif\n{vec3 mn=texture2D(normalMap,vWP.xz*.08).xyz*2.-1.;normal=normalize(normal+(vSplat.r*.9+.2)*vec3(mn.x,mn.y,0.)*normalScale.x*.5);}');};
  terrain=new THREE.Mesh(g,mat);scene.add(terrain);}
 
@@ -317,7 +317,7 @@ pending.push(GL.loadAsync(A+'lp_grass.glb').then(gl=>{const it=[];for(let t=0;t<
   it.push({v:0,x,y:H(x,z)-.03,z,ry:rnd()*6.28,s:.5+rnd()*.7})}scatter(variants(gl),it)}).catch(e=>console.warn(e)));
 pending.push(GL.loadAsync(A+'bush.glb').then(gl=>scatter(variants(gl),bushSpots)).catch(e=>console.warn(e)));
 pending.push(GL.loadAsync(A+'grass2.glb').then(gl=>{const it=[];for(let t=0;t<30000&&it.length<2600;t++){const z=50+rnd()*400,x=riverX(Math.min(z,240))+(rnd()-.5)*90;
-  const lm=lakeMix(z),sh=shoreOf(x,z),d=Math.abs(x-riverX(z));if(lm<.5&&(d<10||d>38))continue;if(lm>=.5&&(sh<.12||sh>.45))continue;if(slope(x,z)>.9||mouthClear(x,z)||onPath(x,z,1.4)||inLodge(x,z,1.5))continue;
+  const lm=lakeMix(z),sh=shoreOf(x,z),d=Math.abs(x-riverX(z));if(lm<.5&&(d<10||d>38))continue;if(lm>=.5&&(sh<.12||sh>.45))continue;if(slope(x,z)>.9||mouthClear(x,z)||onPath(x,z,1.4)||inLodge(x,z,.25))continue;
   it.push({v:Math.floor(rnd()*9),x,y:H(x,z)-.03,z,ry:rnd()*6.28,s:.4+rnd()*.5,abs:0})}scatter(variants(gl),it.map(e=>({...e,s:e.s})))}).catch(e=>console.warn(e)));
 // scanned granite outcrops: banks and cliff foot
 pending.push(GL.loadAsync(A+'rock_outcrop.glb').then(gl=>{const vs=variants(gl);vs[0].parts.forEach(p=>{p.m.color.setRGB(.8,.8,.82)});
@@ -331,12 +331,12 @@ const sky=new THREE.Mesh(new THREE.SphereGeometry(3000,48,24),new THREE.ShaderMa
  vertexShader:`varying vec3 vD;void main(){vD=position;vec4 p=projectionMatrix*modelViewMatrix*vec4(position,1.);gl_Position=p.xyww;}`,
  fragmentShader:`${GN}uniform float t,oc;uniform vec3 fogC,sunDir;varying vec3 vD;
  void main(){vec3 d=normalize(vD);float h=max(d.y,0.);
-  vec3 col=mix(fogC,vec3(.10,.25,.62),pow(h,.55));
+  vec3 col=mix(fogC*vec3(.95,.97,1.02),vec3(.16,.34,.72),pow(h,.38));
   float sd=max(dot(d,sunDir),0.);col+=vec3(1.,.82,.55)*(pow(sd,6.)*.35+pow(sd,400.)*3.);
   vec2 cu=d.xz/(d.y+.1)*.9+vec2(t*.003,t*.001);
   float c=fb(cu)*.65+fb(cu*3.3+4.)*.35;
-  float cov=smoothstep(.46,.74,c)*smoothstep(0.,.14,d.y);
-  vec3 cl=mix(vec3(.38,.40,.46),vec3(.98,.96,.92),smoothstep(.5,.85,c))+vec3(1.,.75,.45)*pow(sd,3.)*.5*cov;
+  float cov=smoothstep(.40,.70,c)*smoothstep(0.,.14,d.y);
+  vec3 cl=mix(vec3(.45,.47,.55),vec3(1.,.93,.82),smoothstep(.48,.85,c))+vec3(1.,.7,.4)*pow(sd,2.)*.6;
   col=mix(col,cl,cov*.92);
   float o=clamp(oc+smoothstep(.2,-.5,d.z)*.75,0.,1.);   // heavier cloud over the gorge and falls
   col=mix(col,fogC*mix(.95,1.08,fb(cu*1.5)),o);
@@ -349,7 +349,7 @@ sky.frustumCulled=false;sky.renderOrder=-1;scene.add(sky);
 // ---------- distant mountains: ridged noise, rock texture, snowline, tree line ----------
 {const ridge=(x,z)=>{let t=0,amp=1,f=1,w=1;for(let i=0;i<6;i++){let n=1-Math.abs(vnoise(x*f*.003+i*7.1,z*f*.003-i*3.3));n=Math.pow(n,1.6);t+=n*amp*w;w=Math.min(1,n*1.8);f*=2.07;amp*=.5}return t};
  const M=(x,z)=>{const m=Math.exp(-(((x-230)/400)**2+((z-1780)/280)**2))+.75*Math.exp(-(((x+320)/470)**2+((z-1880)/310)**2))+.4*Math.exp(-((x/950)**2+((z-1520)/220)**2));
-  return m*(165+ridge(x,z)*160)+30*sm(600,950,z)};
+  return m*(110+ridge(x,z)*230)+30*sm(600,950,z)};
  const g=new THREE.PlaneGeometry(3400,1700,340,170);g.rotateX(-Math.PI/2);g.translate(0,0,1500);
  const p=g.attributes.position;for(let i=0;i<p.count;i++)p.setY(i,M(p.getX(i),p.getZ(i))-15);
  g.computeVertexNormals();
@@ -364,10 +364,10 @@ sky.frustumCulled=false;sky.renderOrder=-1;scene.add(sky);
    float nz=fb(mW.xz*.006);
    float tree=(1.-smoothstep(105.+nz*70.,135.+nz*70.,mW.y))*smoothstep(.55,.75,n.y);
    vec3 forest=vec3(.028,.05,.038)*mix(.7,1.2,fb(mW.xz*.05));
-   float snowLine=235.+nz*60.;
+   float snowLine=200.+nz*60.;
    float snow=smoothstep(snowLine-10.,snowLine+20.,mW.y)*smoothstep(.42,.68,n.y+fb(mW.xz*.03)*.25);
    snow=max(snow,smoothstep(snowLine+60.,snowLine+110.,mW.y)*smoothstep(.2,.45,n.y)*.85);
-   diffuseColor.rgb=mix(mix(rock,forest,tree),vec3(.88,.9,.95),snow);`)};
+   diffuseColor.rgb=mix(mix(rock,forest,tree),vec3(.9,.92,.97),snow);diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.55,.66,.8),.28);`)};
  scene.add(new THREE.Mesh(g,mm));}
 
 // ---------- the lake: live mirror reflections with drifting ripples ----------
@@ -403,25 +403,30 @@ const plankTex=canvasTex(512,512,(x,w,h)=>{for(let i=0;i<10;i++){const y=i*h/10,
   for(let k=0;k<80;k++){x.strokeStyle=`rgba(50,28,12,${.05+rnd()*.12})`;x.beginPath();const yy=y+rnd()*h/10;x.moveTo(rnd()*w,yy);x.lineTo(rnd()*w,yy+(rnd()-.5)*2);x.stroke()}
   x.fillStyle='rgba(30,16,8,.7)';x.fillRect(0,y,w,2);x.fillRect((i*137)%w,y,2,h/10);x.fillRect((i*137+260)%w,y,2,h/10)}});
 const plasterTex=canvasTex(256,256,(x,w,h)=>{x.fillStyle='#e9e1d2';x.fillRect(0,0,w,h);for(let k=0;k<900;k++){x.fillStyle=`rgba(${rnd()<.5?255:150},${rnd()<.5?245:140},${rnd()<.5?230:120},.05)`;x.fillRect(rnd()*w,rnd()*h,3+rnd()*8,3+rnd()*8)}});
+const logGrain=canvasTex(256,256,(x,w,h)=>{x.fillStyle='#d8d2c8';x.fillRect(0,0,w,h);for(let k=0;k<260;k++){const g=150+rnd()*60;x.fillStyle=`rgba(${g},${g*.92|0},${g*.82|0},${.15+rnd()*.25})`;x.fillRect(0,rnd()*h,w,1+rnd()*2)}for(let k=0;k<14;k++){x.fillStyle='rgba(90,70,50,.35)';x.beginPath();x.ellipse(rnd()*w,rnd()*h,3+rnd()*5,2+rnd()*3,0,0,6.3);x.fill()}});logGrain.rotation=Math.PI/2;logGrain.repeat.set(.6,1.5);
+const LOGS=[0xe2c59c,0xd6ba92,0xc8b190].map(c=>new THREE.MeshStandardMaterial({map:logGrain,color:c,roughness:.85}));
 const lodge=new THREE.Group();lodge.position.set(CABIN.x,FLOOR,CABIN.z);lodge.rotation.y=LR;scene.add(lodge);
 const lodgeSegs=[];   // collision: plan-space segments with a radius
 const LM={
  log:new THREE.MeshStandardMaterial({map:logTex,roughness:.8,color:0xc8b8a4}),
- plaster:new THREE.MeshStandardMaterial({map:plasterTex,roughness:.95}),
- floor:new THREE.MeshStandardMaterial({map:plankTex,roughness:.45,color:0xc89a6c}),
+ plaster:new THREE.MeshStandardMaterial({map:plasterTex,roughness:.95,color:0xd9cfbf}),
+ floor:new THREE.MeshStandardMaterial({map:plankTex,roughness:.4,color:0xe8c8a0}),
  porch:new THREE.MeshStandardMaterial({map:plankTex,roughness:.8,color:0xb9a284}),
- ceil:new THREE.MeshStandardMaterial({map:plankTex,roughness:.7,color:0xe2b98c}),
+ ceil:new THREE.MeshStandardMaterial({map:logGrain,roughness:.7,color:0xe6c49a}),
  roof:new THREE.MeshStandardMaterial({map:roofTex,roughness:.85}),
- beam:new THREE.MeshStandardMaterial({map:tex('spruce_bark.jpg',1),roughness:.8,color:0xc8a27a}),
+ beam:new THREE.MeshStandardMaterial({map:logGrain,roughness:.8,color:0xc9a170}),
  trim:new THREE.MeshStandardMaterial({color:0x7a5232,roughness:.6}),
- glass:new THREE.MeshStandardMaterial({color:0xb8c8d0,roughness:.03,metalness:.2,transparent:true,opacity:.18,depthWrite:false,envMapIntensity:1.4}),
- stone:new THREE.MeshStandardMaterial({map:tex('dark_rock_diff.jpg',1),normalMap:tex('dark_rock_nor_gl.jpg'),color:0xd6d0c4,roughness:.95}),
+ glass:new THREE.MeshStandardMaterial({color:0x5a6c72,roughness:.04,metalness:.5,transparent:true,opacity:.4,depthWrite:false,envMapIntensity:1.6}),
+ chink:new THREE.MeshStandardMaterial({color:0x2a2420,roughness:1}),
+ stone:new THREE.MeshStandardMaterial({map:canvasTex(512,512,(x,w,h)=>{x.fillStyle='#3a3530';x.fillRect(0,0,w,h);for(let r=0;r<11;r++){let cx=-20+rnd()*20;while(cx<w){const sw=40+rnd()*60,sh=34+rnd()*14,g=120+rnd()*70;
+   x.fillStyle=`rgb(${g},${g*.95|0},${g*.86|0})`;x.beginPath();x.ellipse(cx+sw/2,r*47+24+(rnd()-.5)*6,sw/2-3,sh/2-3,(rnd()-.5)*.2,0,6.3);x.fill();
+   x.fillStyle='rgba(255,255,255,.12)';x.beginPath();x.ellipse(cx+sw/2-4,r*47+18,sw/3,sh/5,0,0,6.3);x.fill();cx+=sw}}}),normalMap:tex('dark_rock_nor_gl.jpg'),roughness:.95}),
  leather:new THREE.MeshStandardMaterial({color:0x6a3a20,roughness:.5}),
  wood:new THREE.MeshStandardMaterial({map:plankTex,color:0xa8784c,roughness:.55}),
  dark:new THREE.MeshStandardMaterial({color:0x151210,roughness:.4}),
  brass:new THREE.MeshStandardMaterial({color:0xc8a050,roughness:.3,metalness:.9}),
  steel:new THREE.MeshStandardMaterial({color:0x8a8478,roughness:.45,metalness:.85}),
- glow:new THREE.MeshStandardMaterial({color:0x221408,emissive:0xff8a30,emissiveIntensity:2.2}),
+ glow:new THREE.MeshStandardMaterial({color:0x221408,emissive:0xff8a30,emissiveIntensity:3.5}),
  shade:new THREE.MeshStandardMaterial({color:0xf2dcae,emissive:0xffc070,emissiveIntensity:.9,side:THREE.DoubleSide})};
 // box in plan space: (x,y) is the plan centre, z the bottom height above the floor
 function pbox(w,h,d,m,x,y,z,ry,uvs){const g=new THREE.BoxGeometry(w,h,d);if(uvs){const uv=g.attributes.uv;for(let i=0;i<uv.count;i++)uv.setXY(i,uv.getX(i)*uvs[0],uv.getY(i)*uvs[1])}
@@ -431,12 +436,16 @@ function pcyl(r,a,b,m){const A=new THREE.Vector3(a[0]-LW/2,a[2],a[1]-LD/2),B=new
 const WH=4.2;
 // wall from (x1,y1) to (x2,y2); openings [from,to,kind] measured along the wall; kind 'w' window, 'd' door, 'o' tall opening
 function wall(x1,y1,x2,y2,t,mat,open=[]){const L=Math.hypot(x2-x1,y2-y1),ux=(x2-x1)/L,uy=(y2-y1)/L,ang=Math.atan2(-(y2-y1),x2-x1);
- const piece=(a,b,z0,z1,m)=>{if(b-a<.01||z1-z0<.01)return;const cx=x1+ux*(a+b)/2,cy=y1+uy*(a+b)/2;pbox(b-a,z1-z0,t,m,cx,cy,z0,ang,[(b-a)/2.4,(z1-z0)/2.4])};
+ const piece=(a,b,z0,z1,m)=>{if(b-a<.01||z1-z0<.01)return;const cx=x1+ux*(a+b)/2,cy=y1+uy*(a+b)/2;
+  if(m!==LM.log){pbox(b-a,z1-z0,t,m,cx,cy,z0,ang,[(b-a)/2.4,(z1-z0)/2.4]);return}
+  pbox(b-a,z1-z0,t*.45,LM.chink,cx,cy,z0,ang);
+  const ea=(a<.01&&t>.3)?.4:0,eb=(b>L-.01&&t>.3)?.4:0,r=t>.3?.17:.1;
+  for(let c=0,z=z0+r;z<z1-.02;c++,z+=r*1.9){const lm=LOGS[(Math.floor(z*3.7)+Math.floor(a))%3];pcyl(r*(.94+((c*7+Math.floor(a*3))%5)*.02),[x1+ux*(a-ea),y1+uy*(a-ea),z],[x1+ux*(b+eb),y1+uy*(b+eb),z],lm)}};
  const seg=(a,b)=>{if(b-a>.01)lodgeSegs.push({x1:x1+ux*a,y1:y1+uy*a,x2:x1+ux*b,y2:y1+uy*b,r:t/2+.26})};
  let at=0;for(const [a,b,k] of [...open].sort((p,q)=>p[0]-q[0])){piece(at,a,0,WH,mat);seg(at,a);
-  if(k==='w'){piece(a,b,0,.85,mat);piece(a,b,2.55,WH,mat);seg(a,b);const cx=x1+ux*(a+b)/2,cy=y1+uy*(a+b)/2;
-   pbox(b-a,1.7,.03,LM.glass,cx,cy,.85,ang);pbox(b-a,.09,t+.06,LM.trim,cx,cy,.8,ang);pbox(b-a,.09,t+.06,LM.trim,cx,cy,2.55,ang);
-   for(let m=0;m<=Math.round((b-a)/1.2);m++){const f=a+(b-a)*m/Math.max(1,Math.round((b-a)/1.2));pbox(.08,1.7,t+.04,LM.trim,x1+ux*f,y1+uy*f,.85,ang)}}
+  if(k==='w'||k==='W'){const lo=k==='W'?.3:.85,hi=k==='W'?3.9:2.55,gh=hi-lo;piece(a,b,0,lo,mat);piece(a,b,hi,WH,mat);seg(a,b);const cx=x1+ux*(a+b)/2,cy=y1+uy*(a+b)/2;
+   pbox(b-a,gh,.03,LM.glass,cx,cy,lo,ang);pbox(b-a,.09,t+.06,LM.trim,cx,cy,lo-.05,ang);pbox(b-a,.09,t+.06,LM.trim,cx,cy,hi,ang);
+   pbox(b-a,.06,t+.02,LM.trim,cx,cy,lo+gh*.68,ang);const nm=Math.max(1,Math.round((b-a)/(k==='W'?.9:.6)));for(let m=0;m<=nm;m++){const f=a+(b-a)*m/nm;pbox(m%nm?.05:.1,gh,t+(m%nm?.02:.08),LM.trim,x1+ux*f,y1+uy*f,lo,ang)}}
   else{piece(a,b,k==='o'?3.3:2.35,WH,mat);const ta=x1+ux*a,tb=x1+ux*b;pbox(.1,k==='o'?3.3:2.35,t+.06,LM.trim,ta,y1+uy*a,0,ang);pbox(.1,k==='o'?3.3:2.35,t+.06,LM.trim,tb,y1+uy*b,0,ang)}
   at=b}
  piece(at,L,0,WH,mat);seg(at,L)}
@@ -444,8 +453,9 @@ function wall(x1,y1,x2,y2,t,mat,open=[]){const L=Math.hypot(x2-x1,y2-y1),ux=(x2-
 wall(0,0,LW,0,.35,LM.log,[[2.7,5.07,'w'],[9.7,12.8,'w'],[15.6,18.7,'w'],[24.1,27.6,'w']]);
 wall(0,0,0,16.2,.35,LM.log,[[2.44,4.39,'w'],[7.25,9,'w'],[11.8,14,'w']]);
 wall(LW,0,LW,LD,.35,LM.log,[[3.4,6.3,'w'],[11.75,14.05,'w'],[17.7,19.6,'w']]);
-wall(0,16.2,21.2,16.2,.35,LM.log,[[.7,2.4,'w'],[3,4.75,'d'],[5.3,7,'w'],[8.9,11.8,'w'],[12.8,15.7,'w'],[16.7,19.6,'w']]);
+wall(0,16.2,21.2,16.2,.35,LM.log,[[.7,2.4,'w'],[3,4.75,'d'],[5.3,7,'w'],[8.4,11.8,'W'],[12.4,16.4,'W'],[17,20.4,'W']]);
 wall(21.2,LD,LW,LD,.35,LM.log,[[1,4.2,'w'],[7.1,9.4,'w']]);
+wall(21.2,16.2,21.2,LD,.35,LM.log,[[.4,4.2,'w']]);
 wall(7.55,0,7.55,16.2,.16,LM.plaster,[[2.65,4.2,'d'],[11.75,14.05,'o']]);
 wall(0,6.59,7.55,6.59,.16,LM.plaster,[[3.4,4.4,'d']]);
 wall(0,9.32,7.55,9.32,.16,LM.plaster,[[3.3,4.5,'d']]);
@@ -455,15 +465,17 @@ wall(21.2,7.55,LW,9.52,.16,LM.plaster);
 wall(25.88,8.52,25.88,16.2,.16,LM.plaster);
 wall(21.2,16.2,LW,16.2,.16,LM.plaster,[[1.6,2.9,'o'],[6.5,7.4,'d']]);
 wall(26.02,16.2,26.02,LD,.16,LM.plaster,[[3.6,4.4,'d']]);
+// front double door: plank leaves with glass lights
+{const dg=(x)=>{pbox(.86,2.3,.06,LM.trim,x,15.75,0,Math.PI/2);pbox(.6,.9,.08,LM.glass,x,15.75,1.2,Math.PI/2)};dg(3.08);dg(4.67);}   // doors stand open, swung inward
 // floors: indoor boards, porch boards, stone foundation skirt
 {const f=new THREE.Mesh(new THREE.PlaneGeometry(LW,16.2),LM.floor);f.rotation.x=-Math.PI/2;f.position.set(0,.01,16.2/2-LD/2);LM.floor.map=plankTex.clone();LM.floor.map.repeat.set(LW/2.2,16.2/2.2);LM.floor.map.needsUpdate=true;lodge.add(f);
  const p=new THREE.Mesh(new THREE.PlaneGeometry(LW,LD-16.2),LM.porch);p.rotation.x=-Math.PI/2;p.position.set(0,.012,(16.2+LD)/2-LD/2);LM.porch.map=plankTex.clone();LM.porch.map.repeat.set(LW/2.2,(LD-16.2)/2.2);LM.porch.map.needsUpdate=true;lodge.add(p);
  [[LW/2,-.1,LW+.4,.3],[LW/2,LD+.1,LW+.4,.3]].forEach(([x,y,w,d])=>pbox(w,.5,d,LM.stone,x,y,-.5));
  [[-.1,LD/2,.3,LD],[LW+.1,LD/2,.3,LD]].forEach(([x,y,w,d])=>pbox(w,.5,d,LM.stone,x,y,-.5));}
 // roof: main gable (ridge east-west over y=8.1), lean-to porch roof; plank ceiling underneath
-{const run=8.1+.7,rise=9-WH,len=Math.hypot(run,rise),ang=Math.atan2(rise,run);LM.ceil.map=plankTex.clone();LM.ceil.map.repeat.set(LW/2,len/2);LM.ceil.map.needsUpdate=true;
- const slab=(cy,cz,rx)=>{const g=new THREE.BoxGeometry(LW+1.4,.26,len);const m=new THREE.Mesh(g,[LM.trim,LM.trim,LM.roof,LM.ceil,LM.trim,LM.trim]);m.position.set(0,cz,cy-LD/2);m.rotation.x=rx;lodge.add(m)};
- slab((8.1-.7)/2,(WH+9)/2+.13,-ang);slab((8.1+16.9)/2,(WH+9)/2+.13,ang);
+{const E=1.4,he=WH-E*(9-WH)/8.1,run=8.1+E,rise=9-he,len=Math.hypot(run,rise),ang=Math.atan2(rise,run);
+ const slab=(cy,cz,rx)=>{const g=new THREE.BoxGeometry(LW+2.4,.34,len);const m=new THREE.Mesh(g,[LM.trim,LM.trim,LM.roof,LM.ceil,LM.trim,LM.trim]);m.position.set(0,cz,cy-LD/2);m.rotation.x=rx;lodge.add(m)};
+ slab((8.1-E)/2,(he+9)/2+.17,-ang);slab((8.1+16.2+E)/2,(he+9)/2+.17,ang);
  // gable ends
  [0,LW].forEach(x=>{const g=new THREE.BufferGeometry();const X=x-LW/2;g.setAttribute('position',new THREE.Float32BufferAttribute([X,WH,-LD/2,X,9,8.1-LD/2,X,WH,16.2-LD/2],3));
   g.setAttribute('uv',new THREE.Float32BufferAttribute([0,0,3.4,2,6.8,0],2));g.computeVertexNormals();lodge.add(new THREE.Mesh(g,new THREE.MeshStandardMaterial({map:logTex,roughness:.8,color:0xe8d8c4,side:THREE.DoubleSide})))});
@@ -474,10 +486,10 @@ wall(26.02,16.2,26.02,LD,.16,LM.plaster,[[3.6,4.4,'d']]);
   pcyl(.1,[x,4,WH],[x,8.1,6.6],LM.beam);pcyl(.1,[x,12.2,WH],[x,8.1,6.6],LM.beam)});
  pcyl(.22,[0,8.1,8.75],[LW,8.1,8.75],LM.beam);[3.4,12.8].forEach(y=>pcyl(.14,[0,y,(WH+(9-WH)*(1-Math.abs(y-8.1)/8.8))-.2],[LW,y,(WH+(9-WH)*(1-Math.abs(y-8.1)/8.8))-.2],LM.beam));}
 // porch: log posts, railing with a gap for the steps, rocking chairs
-{const posts=[.25,3.7,7.2,9.4,12.1,14.6,18,21];posts.forEach(x=>pcyl(.16,[x,LD-.25,0],[x,LD-.25,3.25],LM.beam));pcyl(.16,[.25,16.4,0],[.25,16.4,3.6],LM.beam);
- const rail=(x1,y1,x2,y2)=>{pcyl(.06,[x1,y1,.95],[x2,y2,.95],LM.beam);pcyl(.05,[x1,y1,.45],[x2,y2,.45],LM.beam);const L=Math.hypot(x2-x1,y2-y1);for(let t=.3;t<L;t+=.3)pcyl(.025,[x1+(x2-x1)*t/L,y1+(y2-y1)*t/L,0],[x1+(x2-x1)*t/L,y1+(y2-y1)*t/L,.95],LM.beam);lodgeSegs.push({x1,y1,x2,y2,r:.3})};
+{const posts=[.25,3.7,7.2,9.4,12.1,14.6,18,21];posts.forEach((x,i)=>{pcyl(.2,[x,LD-.25,0],[x,LD-.25,3.25],LOGS[i%3]);pcyl(.24,[x,LD-.25,0],[x,LD-.25,.2],LOGS[(i+1)%3])});pcyl(.16,[.25,16.4,0],[.25,16.4,3.6],LM.beam);
+ const rail=(x1,y1,x2,y2)=>{pcyl(.08,[x1,y1,.95],[x2,y2,.95],LM.beam);pcyl(.05,[x1,y1,.45],[x2,y2,.45],LM.beam);const L=Math.hypot(x2-x1,y2-y1);for(let t=.14;t<L;t+=.14)pcyl(.03,[x1+(x2-x1)*t/L,y1+(y2-y1)*t/L,0],[x1+(x2-x1)*t/L,y1+(y2-y1)*t/L,.95],LM.beam);lodgeSegs.push({x1,y1,x2,y2,r:.3})};
  rail(.25,LD-.25,9.4,LD-.25);rail(12.1,LD-.25,21,LD-.25);rail(.25,16.4,.25,LD-.25);
- [[9.6,LD+.25],[11.9,LD+.25]].forEach(([x,y])=>pbox(.3,.25,.6,LM.porch,x,y,-.25));pbox(2.5,.22,.5,LM.porch,10.75,LD+.25,-.22);
+ [[.15,.17],[.3,.5],[.45,.83]].forEach(([d,y])=>pbox(2.7,.15,.36,LM.porch,10.75,LD+y,-d));
  const rocker=(x,y,ry)=>{const g=new THREE.Group();const add=(w,h,d,px,py,pz,rx)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),LM.wood);m.position.set(px,py,pz);if(rx)m.rotation.x=rx;g.add(m)};
   add(.55,.05,.5,0,.45,0);add(.55,.7,.05,0,.85,-.27,-.2);add(.05,.06,.8,-.26,.05,0);add(.05,.06,.8,.26,.05,0);[-.26,.26].forEach(px=>{add(.05,.4,.05,px,.25,.18);add(.05,.4,.05,px,.25,-.18);add(.06,.04,.5,px,.68,0)});
   g.position.set(x-LW/2,0,y-LD/2);g.rotation.y=ry;lodge.add(g)};
@@ -487,7 +499,7 @@ wall(26.02,16.2,26.02,LD,.16,LM.plaster,[[3.6,4.4,'d']]);
  pbox(2.6,.07,1,LM.wood,23.6,19.2,.74);[[-1.2,-.4],[1.2,-.4],[-1.2,.4],[1.2,.4]].forEach(([a,b])=>pbox(.08,.74,.08,LM.wood,23.6+a,19.2+b,0));}
 // fireplaces: library (north wall) and great room (on the shared wall), with chimneys through the roof
 function fireplace(x,y,face){lodgeSegs.push({x1:x-1.3,y1:y,x2:x+1.3,y2:y,r:.8});pbox(2.6,WH,1.1,LM.stone,x,y,0,0,[1.4,2.2]);pbox(1.8,11.5-WH,1.,LM.stone,x,y,WH,0,[1,3]);
- pbox(1.2,.95,.06,LM.dark,x,y+face*.44,.35);const g=pbox(1.,.55,.04,LM.glow,x,y+face*.5,.38);pbox(1.3,.08,.2,LM.dark,x,y+face*.58,1.28);pbox(2.9,.18,.3,LM.beam,x,y+face*.62,1.55);pbox(2.8,.12,.6,LM.stone,x,y+face*.8,0);return g}
+ pbox(1.2,.95,.06,LM.dark,x,y+face*.56,.35);const g=pbox(1.,.55,.04,LM.glow,x,y+face*.6,.38);pbox(1.3,.08,.2,LM.dark,x,y+face*.58,1.28);pbox(2.9,.18,.3,LM.beam,x,y+face*.62,1.55);pbox(2.8,.12,.6,LM.stone,x,y+face*.8,0);return g}
 const hearths=[fireplace(14.4,.55,1),fireplace(14.4,8.1,1)];
 // furniture by room (simple first pass)
 function sofa(x,y,ry,w=2.3){const g=new THREE.Group();const add=(a,b,c,px,py,pz)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(a,b,c),LM.leather);m.position.set(px,py,pz);g.add(m)};
@@ -503,20 +515,16 @@ lamp(11.2,9.2,0,.5);table(11.2,9.2,.5,.5,.6);lamp(11.2,9.2,.6);
 const BOOKS=[0x6a2a1e,0x2a3a50,0x3a4a2a,0x7a6040,0x4a2a3a].map(c=>new THREE.MeshStandardMaterial({color:c,roughness:.7}));
 // library & reading nook
 rug(14.4,3.6,4.6,3,0x5a3c2a);sofa(14.4,3.2,Math.PI);chair(12.2,4.6,Math.PI*.75);chair(16.6,4.6,-Math.PI*.75);table(14.4,4.4,1.3,.7);
-[[8.2,.4],[9.6,.4],[19.4,.4],[20.6,.4]].forEach(([x,y])=>{pbox(1.3,3.2,.4,LM.wood,x,y,0);for(let s=0;s<5;s++)for(let b=0;b<9;b++)pbox(.1,.28+rnd()*.06,.3,BOOKS[(s+b)%5],x-.55+b*.13,y+.04,.1+s*.62)});
 // gramophone room: leather chairs, cabinet, gramophone, the vault door
 chair(2,2.2,Math.PI*.8);chair(2,4.6,Math.PI*.2);table(1.4,3.4,.5,.5,.6);lamp(1.4,3.4,.6);
-pbox(2.4,.9,.6,LM.wood,5.4,.45,0);{const horn=new THREE.Mesh(new THREE.ConeGeometry(.32,.6,20,1,true),LM.brass);horn.rotation.x=Math.PI/2.5;horn.position.set(5.6-LW/2,1.35,.6-LD/2);lodge.add(horn);pbox(.45,.2,.4,LM.wood,5.6,.55,.9)}
-{const v=new THREE.Mesh(new THREE.CylinderGeometry(1,1,.18,32),LM.steel);v.rotation.z=Math.PI/2;v.position.set(7.35-LW/2,1.35,4.8-LD/2);lodge.add(v);const w=new THREE.Mesh(new THREE.TorusGeometry(.3,.04,8,20),LM.brass);w.rotation.y=Math.PI/2;w.position.set(7.22-LW/2,1.35,4.8-LD/2);lodge.add(w)}
+pbox(2.4,.9,.6,LM.wood,5.4,.45,0);
 // coat room: hooks and bench; foyer: bench, rug
 pbox(2.4,.06,.08,LM.trim,3.8,6.75,1.7);for(let i=0;i<6;i++)pcyl(.02,[2.9+i*.35,6.75,1.6],[2.9+i*.35,6.9,1.7],LM.dark);pbox(1.8,.45,.45,LM.wood,3.8,9.0,0);
 rug(3.8,12.6,3.4,2.4,0x7a4a30);pbox(1.6,.45,.45,LM.wood,1,12.6,0,Math.PI/2);
 // dancing hall: grand piano on a low stage, string lights
-pbox(4,.2,3,LM.floor,26.2,2.2,0);{const pg=new THREE.Group();const b=new THREE.Mesh(new THREE.CylinderGeometry(.9,.9,.3,20,1,false,0,Math.PI),LM.dark);b.position.y=.85;b.rotation.y=Math.PI/2;pg.add(b);
- const k=new THREE.Mesh(new THREE.BoxGeometry(1.5,.32,.6),LM.dark);k.position.set(0,.85,.25);pg.add(k);[[-.6,.3],[.6,.3],[0,-.7]].forEach(([a,c])=>{const l=new THREE.Mesh(new THREE.CylinderGeometry(.05,.05,.7),LM.dark);l.position.set(a,.35,c);pg.add(l)});
- pg.position.set(26.2-LW/2,.2,2.2-LD/2);lodge.add(pg)}
+pbox(4,.2,3,LM.floor,26.2,2.2,0);
 for(let i=0;i<9;i++){const b=new THREE.Mesh(new THREE.SphereGeometry(.06,8,6),LM.shade);b.position.set(23+i*.85-LW/2,3.6-Math.sin(i/8*Math.PI)*.4,1-LD/2);lodge.add(b)}
-[[24,5.5],[28.4,5.8]].forEach(([x,y])=>{table(x,y,1,1,.74);chair(x-.8,y,Math.PI/2);chair(x+.8,y,-Math.PI/2)});
+[[24,5.5],[28.4,5.8]].forEach(([x,y])=>table(x,y,1,1,.74));
 // kitchen: L counter; sun room: two armchairs; office: desk and chair
 pbox(2.5,.92,.65,LM.wood,23.4,11,0);pbox(.65,.92,2.1,LM.wood,22.5,12.2,0);pbox(2.6,.05,.7,LM.stone,23.4,11,.92);
 chair(27.2,12.6,Math.PI*.15);chair(29.4,12.6,-Math.PI*.15);table(28.3,13.6,.7,.7);
@@ -524,19 +532,35 @@ pbox(1.6,.06,.8,LM.wood,28.4,18.3,.75);[[-.7,-.3],[.7,-.3],[-.7,.3],[.7,.3]].for
 // chandelier over the great room; warm interior lights
 {const c=new THREE.Group();const ring=new THREE.Mesh(new THREE.TorusGeometry(.6,.04,8,24),LM.dark);ring.rotation.x=Math.PI/2;c.add(ring);for(let i=0;i<6;i++){const s=new THREE.Mesh(new THREE.CylinderGeometry(.06,.09,.2,8),LM.shade);s.position.set(Math.cos(i)*.6,.12,Math.sin(i)*.6);c.add(s)}
  c.position.set(14.4-LW/2,5.2,12.4-LD/2);lodge.add(c);pcyl(.015,[14.4,12.4,5.2],[14.4,12.4,8.6],LM.dark)}
-const lodgeLights=[[14.4,12.2,3.4,9],[14.4,3.6,3.2,7],[26.2,4.5,3.4,7]].map(([x,y,z,i])=>{const l=new THREE.PointLight(0xffc488,i,13,1.4);l.position.set(x-LW/2,z,y-LD/2);lodge.add(l);return l});
+Object.values(LM).forEach(m=>{if(m!==LM.glass)m.envMapIntensity=.45});LOGS.forEach(m=>m.envMapIntensity=.45);
+const lodgeLights=[[14.4,12.2,3.4,14],[14.4,3.6,3.2,10],[26.2,4.5,3.4,10],[14.4,9.2,1.2,6],[4,12,3,8],[23.5,12,3,8]].map(([x,y,z,i])=>{const l=new THREE.PointLight(0xffc488,i,13,1.4);l.position.set(x-LW/2,z,y-LD/2);lodge.add(l);return l});
 {lodge.updateMatrixWorld(true);const inv=lodge.matrixWorld.clone().invert(),byMat=new Map(),kill=[];
  lodge.traverse(o=>{if(!o.isMesh||Array.isArray(o.material))return;const g=o.geometry.index?o.geometry.toNonIndexed():o.geometry.clone();
   if(!g.attributes.uv)g.setAttribute('uv',new THREE.Float32BufferAttribute(new Float32Array(g.attributes.position.count*2),2));
   g.applyMatrix4(inv.clone().multiply(o.matrixWorld));for(const k of Object.keys(g.attributes))if(!['position','normal','uv'].includes(k))g.deleteAttribute(k);
   (byMat.get(o.material)||byMat.set(o.material,[]).get(o.material)).push(g);kill.push(o)});
  kill.forEach(o=>o.parent.remove(o));
- byMat.forEach((gs,m)=>{const g=mergeGeometries(gs);if(g)lodge.add(new THREE.Mesh(g,m))});}
+ byMat.forEach((gs,m)=>{const g=mergeGeometries(gs);if(g){const mm=new THREE.Mesh(g,m);mm.castShadow=mm.receiveShadow=m!==LM.glass;lodge.add(mm)}});
+ lodge.traverse(o=>{if(o.isMesh&&Array.isArray(o.material)){o.castShadow=o.receiveShadow=true}});
+ sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);const sc=sun.shadow.camera;sc.left=sc.bottom=-26;sc.right=sc.top=26;sc.near=10;sc.far=260;sun.shadow.bias=-.0004;sun.shadow.normalBias=.03;
+ const sd=new THREE.Vector3(220,150,420).normalize();sun.target.position.set(CABIN.x,FLOOR,CABIN.z);sun.position.set(CABIN.x+sd.x*120,FLOOR+sd.y*120,CABIN.z+sd.z*120);scene.add(sun.target);terrain.receiveShadow=true;}
 // collision: block if within any wall segment's radius
 function hitsLodge(x,z){const p=toPlan(x,z);if(p.px<-1.5||p.px>LW+1.5||p.py<-1.5||p.py>LD+1.5)return false;
  for(const s of lodgeSegs){const vx=s.x2-s.x1,vy=s.y2-s.y1,t=Math.max(0,Math.min(1,((p.px-s.x1)*vx+(p.py-s.y1)*vy)/(vx*vx+vy*vy||1)));if(Math.hypot(p.px-s.x1-vx*t,p.py-s.y1-vy*t)<s.r)return true}
  return false}
-function updateLodge(t){const f=1+Math.sin(t*9.7)*.06+Math.sin(t*4.3)*.05;hearths.forEach(h=>h.material.emissiveIntensity=2.2*f);lodgeLights[0].intensity=9*f}
+// props (real models): each placement is [planX, planY, heightAboveFloor, rotationY]; scaled to a real-world height
+function lodgeProp(file,height,places){pending.push(GL.loadAsync(A+'lodge/'+file).then(gl=>{const root=gl.scene;root.updateMatrixWorld(true);
+ root.traverse(o=>{if(o.isMesh){const m=o.material;if(m&&(m.transparent||m.alphaTest>0)){m.transparent=false;m.alphaTest=.4;m.depthWrite=true}}});
+ const b=new THREE.Box3().setFromObject(root),sz=b.getSize(new THREE.Vector3()),k=height/sz.y,c=b.getCenter(new THREE.Vector3());
+ const unit=new THREE.Group();root.position.set(-c.x,-b.min.y,-c.z);unit.add(root);unit.scale.setScalar(k);
+ unit.traverse(o=>{if(o.isMesh)o.castShadow=o.receiveShadow=true});places.forEach(([x,y,z,ry])=>{const u=unit.clone();u.position.set(x-LW/2,z,y-LD/2);u.rotation.y=ry;lodge.add(u)})}).catch(e=>console.warn(file,e)))}
+lodgeProp('bookshelf.glb',2.3,[[8.4,.35,0,0],[9.4,.35,0,0],[19.3,.35,0,0],[20.3,.35,0,0],[7.95,6,0,Math.PI/2],[20.8,2.2,0,-Math.PI/2]]);
+lodgeProp('gramophone.glb',.75,[[5.6,.45,.9,Math.PI*.15]]);
+lodgeProp('vault.glb',2.35,[[7.42,4.8,0,-Math.PI/2]]);
+lodgeProp('piano.glb',1.3,[[26.2,1.2,.2,0]]);
+lodgeProp('chair.glb',1,[[23.5,5.5,0,Math.PI/2],[24.5,5.5,0,-Math.PI/2],[27.9,5.8,0,Math.PI/2],[28.9,5.8,0,-Math.PI/2],[22.6,19.2,0,Math.PI/2],[24.6,19.2,0,-Math.PI/2],[23.6,18.45,0,0],[23.6,19.95,0,Math.PI]]);
+lodgeProp('lantern.glb',.45,[[3.7,LD-.55,2.55,0],[7.2,LD-.55,2.55,0],[12.1,LD-.55,2.55,0],[18,LD-.55,2.55,0],[2.35,16.55,2.6,0],[5.4,16.55,2.6,0]]);
+function updateLodge(t){const f=1+Math.sin(t*9.7)*.06+Math.sin(t*4.3)*.05;hearths.forEach(h=>h.material.emissiveIntensity=3.5*f);lodgeLights[0].intensity=14*f;lodgeLights[3].intensity=6*f}
 
 // ---------- green canoe tied to a post on the island ----------
 const POST={x:3.2,z:292.5},CANOE={x:9.5,z:291,heading:-2.1};
