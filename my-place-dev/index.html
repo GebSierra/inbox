@@ -334,7 +334,7 @@ const spruceSpots=[];
   const lm=lakeMix(z),sh=shoreOf(x,z);
   if(lm>.5){if(sh<.18+fbm(x*.05,z*.05)*.08||inLodge(x,z,9))continue}
   else{if(d<15+fbm(z*.1,1)*4)continue;if(Math.abs(x)>200)continue;if(z>0&&z<50&&d<18)continue;if(z<8&&(a2S(x,z)<.14||(x>22&&x<112&&z<-22&&z>-175)))continue;if(Math.hypot(x-30,z+24)<24||echoClear(x,z)||Math.hypot(x-CAMP.x,z-CAMP.z)<10||Math.hypot(x-LASTSP.x,z-LASTSP.z)<15)continue;if(d<30&&rnd()<.35)continue}
-  if(slope(x,z)>1.35||mouthClear(x,z)||onAnyPath(x,z,4.5)||onPathW(x,z,8)||nearMarker(x,z,8)||lookoutClear(x,z))continue;if(Math.hypot(x-riverX(140)-9.5,z-140)<14)continue;
+  if(slope(x,z)>1.35||mouthClear(x,z)||onAnyPath(x,z,4.5)||onPathW(x,z,8)||onPathE(x,z,7.5)||nearMarker(x,z,8)||lookoutClear(x,z))continue;if(Math.hypot(x-riverX(140)-9.5,z-140)<14)continue;
   spruceSpots.push([x,z])}
  for(let i=0;i<7;i++){const a=rnd()*6.283,r=rnd()*5.5;spruceSpots.push([ISL.x+Math.cos(a)*r,ISL.z+Math.sin(a)*r])}
  // a dense, deep forest ring around the lake so the far shore reads as a wall of trees, not a fence
@@ -890,7 +890,7 @@ let gateRibbons=[],moose=null;
  const inst=(geo,mat,items,colorFn)=>{const im=new THREE.InstancedMesh(geo,mat,items.length);items.forEach((it,k)=>{o.position.set(it.x,it.y,it.z);o.rotation.set(it.rx||0,it.ry||0,it.rz||0);o.scale.set(it.sx,it.sy,it.sz);o.updateMatrix();im.setMatrixAt(k,o.matrix);if(colorFn){colorFn(col,k);im.setColorAt(k,col)}});im.castShadow=im.receiveShadow=true;scene.add(im);return im};
  const trail=[];for(let f=0;f<=1;f+=.004)trail.push(peAt(f));
  // mossy granite boulders lining the path, each with a moss cap
- const bl=[];trail.forEach((p,i)=>{if(i%3)return;const sd=rnd()<.5?-1:1,off=2.3+rnd()*1.6,x=p.x-p.tz*sd*off,z=p.z+p.tx*sd*off,r=.45+rnd()*.8;bl.push({x,y:H(x,z)-r*.35,z,ry:rnd()*6,sx:r*1.2,sy:r*.75,sz:r})});
+ const bl=[];trail.forEach((p,i)=>{if(i%3)return;const sd=rnd()<.5?-1:1,off=2.3+rnd()*1.6,x=p.x-p.tz*sd*off,z=p.z+p.tx*sd*off,r=.45+rnd()*.8;if(slope(x,z)>.8)return;bl.push({x,y:H(x,z)-r*.35,z,ry:rnd()*6,sx:r*1.2,sy:r*.75,sz:r})});
  const rg=rockGeo(4);inst(rg,graniteM,bl);inst(new THREE.SphereGeometry(1,10,6,0,6.283,0,1.1),mossM,bl.map(b=>({...b,y:b.y+b.sy*.18,sx:b.sx*.9,sy:b.sy*.42,sz:b.sz*.9})));
  // exposed roots forming steps where the trail is steepest
  const roots=[];trail.forEach((p,i)=>{const q=trail[Math.min(i+1,trail.length-1)],gr=Math.abs(H(q.x,q.z)-H(p.x,p.z))/Math.max(.1,Math.hypot(q.x-p.x,q.z-p.z));if(gr<.22||i%2)return;
