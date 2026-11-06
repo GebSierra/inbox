@@ -175,7 +175,7 @@ let terrain;
   let r=Math.max(1-sm(.68,.86,ny),1-sm(9,13,d));
   let l=sm(24,40,d+k*10)*(1-r);
   const lm=lakeMix(z),sh=shoreOf(x,z),r2=1-sm(.68,.86,ny),l2=sm(.25,.45,sh+k*.1)*(1-r2);
-  r+= (r2-r)*lm;l+=(l2-l)*lm;if(x>12&&x<96&&z>-26&&z<64){r*=.25;l=Math.max(l,.8)}if(z<2){r*=.4;l*=.25}let gr=Math.max(0,1-r-l);
+  r+= (r2-r)*lm;l+=(l2-l)*lm;if(z<2){r*=.4;l*=.25}let gr=Math.max(0,1-r-l);
   col.push(r,gr,l);bch.push(Math.max(lm*(1-sm(.1,.19,sh+k*.03)),(1-sm(2.5,5,Math.abs(z-FORD.z)))*(1-sm(14,22,Math.abs(x-riverX(FORD.z))))*.95,onPath(x,z,3.2)?(1-sm(1.4,3.2,Math.abs(x-pathX(z))+k))*.9:0,(1-sm(1.4,3.2,pwD(x,z)+k))*.9))}
  g.setAttribute('color',new THREE.Float32BufferAttribute(col,3));g.setAttribute('beach',new THREE.Float32BufferAttribute(bch,1));
  const mat=new THREE.MeshStandardMaterial({roughness:.95,envMapIntensity:.5,normalMap:tex('dark_rock_nor_gl.jpg'),normalScale:new THREE.Vector2(.8,.8)});
@@ -255,17 +255,17 @@ const U={t:{value:0}};
  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
  g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));g.setIndex(idx);
  const m=new THREE.ShaderMaterial({uniforms:THREE.UniformsUtils.merge([THREE.UniformsLib.fog,{t:U.t}]),fog:true,transparent:true,depthWrite:false,side:THREE.DoubleSide,
- vertexShader:`varying vec2 vUv;
+ vertexShader:`varying vec2 vUv;varying vec3 vWf;
  #include <fog_pars_vertex>
- void main(){vUv=uv;vec4 mvPosition=modelViewMatrix*vec4(position,1.);gl_Position=projectionMatrix*mvPosition;
+ void main(){vUv=uv;vWf=(modelMatrix*vec4(position,1.)).xyz;vec4 mvPosition=modelViewMatrix*vec4(position,1.);gl_Position=projectionMatrix*mvPosition;
  #include <fog_vertex>
  }`,
- fragmentShader:`${GN}uniform float t;varying vec2 vUv;
+ fragmentShader:`${GN}uniform float t;varying vec2 vUv;varying vec3 vWf;
  #include <fog_pars_fragment>
  void main(){float s=fb(vec2(vUv.x*14.,vUv.y*3.+t*2.6))*.7+fb(vec2(vUv.x*40.,vUv.y*6.+t*4.))*.5;
   float e=1.-smoothstep(.25+fb(vec2(vUv.y*4.,t*.5))*.2,.5,abs(vUv.x));
   float tier=smoothstep(.75,.95,sin(vUv.y*18.84+fb(vec2(vUv.x*6.,0.))*2.)*.5+.5);float a=e*smoothstep(.2-tier*.2,.7,s)*.95+e*.22+e*tier*.25;
-  gl_FragColor=vec4(vec3(.9,.93,.94)+s*.08,clamp(a,0.,1.));
+  gl_FragColor=vec4(vec3(.9,.93,.94)+s*.08,clamp(a,0.,1.)*smoothstep(.15,.55,abs(normalize(cameraPosition-vWf).z)));
   #include <tonemapping_fragment>
   #include <colorspace_fragment>
   #include <fog_fragment>
@@ -897,7 +897,7 @@ let gateRibbons=[],moose=null;
  inst(new THREE.CylinderGeometry(1,1.3,1,7),new THREE.MeshStandardMaterial({map:tex('spruce_bark.jpg',1),color:0x5a4836,roughness:.95}),roots);
  // ferns (bent frond cards), blueberry bushes with berries, white trillium along the edges
  const frond=canvasTex(128,256,(x,w,h)=>{x.strokeStyle='#3d5a22';x.lineWidth=3;x.beginPath();x.moveTo(w/2,h);x.lineTo(w/2,8);x.stroke();for(let y=20;y<h-6;y+=7){const L=(1-Math.abs(y-h*.55)/(h*.6))*w*.45;x.fillStyle=`rgb(${60+rnd()*25|0},${100+rnd()*35|0},${38+rnd()*15|0})`;x.beginPath();x.ellipse(w/2-L/2,y,L/2,3,-.25,0,6.3);x.ellipse(w/2+L/2,y,L/2,3,.25,0,6.3);x.fill()}});frond.colorSpace=THREE.SRGBColorSpace;
- const fp=[];for(let k=0;k<7;k++){const g=new THREE.PlaneGeometry(.35,1.1,1,4);g.translate(0,.55,0);const P=g.attributes.position;for(let i=0;i<P.count;i++){const y=P.getY(i);P.setZ(i,y*y*.45)}g.rotateX(-1.05);g.rotateY(k/7*6.283+rnd()*.3);fp.push(g)}
+ const fp=[];for(let k=0;k<7;k++){const g=new THREE.PlaneGeometry(.6,1.2,1,5);g.translate(0,.6,0);const P=g.attributes.position;for(let i=0;i<P.count;i++){const y=P.getY(i);P.setZ(i,y*y*.85)}g.rotateX(-.7);g.rotateY(k/7*6.283+rnd()*.3);fp.push(g)}
  const fern=mergeGeometries(fp);fern.computeVertexNormals();const fernM=new THREE.MeshStandardMaterial({map:frond,color:0x6f8060,alphaTest:.4,side:THREE.DoubleSide,roughness:.9});
  const ferns=[],berries=[],trill=[],bushes=[];trail.forEach((p,i)=>{for(let n=0;n<3;n++){const sd=rnd()<.5?-1:1,off=1.8+rnd()*4,x=p.x-p.tz*sd*off+(rnd()-.5)*2,z=p.z+p.tx*sd*off+(rnd()-.5)*2,y=H(x,z);const r=rnd();
   if(r<.45)ferns.push({x,y,z,ry:rnd()*6,sx:.8+rnd()*.6,sy:.8+rnd()*.6,sz:.8+rnd()*.6});else if(r<.65){bushes.push({v:0,x,y,z,ry:rnd()*6,s:.5+rnd()*.3});for(let b=0;b<6;b++)berries.push({x:x+(rnd()-.5)*.6,y:y+.2+rnd()*.3,z:z+(rnd()-.5)*.6,sx:.03,sy:.03,sz:.03})}
@@ -934,7 +934,7 @@ let gateRibbons=[],moose=null;
  mist(360,()=>{const p=peAt(rnd());return[p.x+(rnd()-.5)*22,H(p.x,p.z)+1+rnd()*6,p.z+(rnd()-.5)*22]},12,.07,3);}
 
 // ================= Area 2: the lake above the falls =================
-{const water=new THREE.Mesh(new THREE.PlaneGeometry(240,340),new THREE.MeshStandardMaterial({color:0x1a2426,roughness:.12,metalness:.15,envMapIntensity:.7}));
+{const water=new Reflector(new THREE.PlaneGeometry(240,340),{textureWidth:Math.round(innerWidth*.45),textureHeight:Math.round(innerHeight*.45),color:0x6f7f80});
  water.rotation.x=-Math.PI/2;water.position.set(0,WL,-166);scene.add(water);
  const graniteM=new THREE.MeshStandardMaterial({map:tex('dark_rock_diff.jpg',1),normalMap:tex('dark_rock_nor_gl.jpg'),color:0xd0ccc4,roughness:.85});
  // rounded granite outcrops framing the lip
@@ -955,16 +955,16 @@ let gateRibbons=[],moose=null;
   sticks.push({x,y,z,rx:rnd()*3,ry:rnd()*6,rz:rnd()*3,sx:.05+rnd()*.04,sy:1+rnd()*1.6,sz:.05+rnd()*.04})}
  inst(new THREE.CylinderGeometry(1,1,1,5),new THREE.MeshStandardMaterial({color:0x8a7e6e,roughness:1}),sticks,(c)=>{const k=.7+rnd()*.5;c.setRGB(k,k,k)});
  // moose standing knee-deep near the lodge, idling (head down to drink, ear flicks)
- moose=new THREE.Group();{const fur=new THREE.MeshStandardMaterial({color:0x3a2a1e,roughness:.95}),dark=new THREE.MeshStandardMaterial({color:0x241a12,roughness:.9}),ant=new THREE.MeshStandardMaterial({color:0xb8a888,roughness:.7});
+ moose=new THREE.Group();{const fur=new THREE.MeshStandardMaterial({color:0x3a2a1e,roughness:.95}),dark=new THREE.MeshStandardMaterial({color:0x241a12,roughness:.9}),ant=new THREE.MeshStandardMaterial({color:0x7a6248,roughness:.7});
   const body=new THREE.Mesh(new THREE.SphereGeometry(1,20,12),fur);body.scale.set(1.35,.75,.62);body.position.y=1.85;moose.add(body);
   const hump=new THREE.Mesh(new THREE.SphereGeometry(.6,12,8),fur);hump.position.set(.75,2.35,0);moose.add(hump);
   [[.85,.32],[.85,-.32],[-.95,.3],[-.95,-.3]].forEach(([x,z])=>{const l=new THREE.Mesh(new THREE.CylinderGeometry(.09,.07,1.45,8),dark);l.position.set(x,.75,z);moose.add(l)});
   const neck=new THREE.Group();neck.position.set(1.15,2.1,0);moose.add(neck);const nk=new THREE.Mesh(new THREE.CylinderGeometry(.28,.38,.9,10),fur);nk.rotation.z=-1.1;nk.position.set(.35,.1,0);neck.add(nk);
   const head=new THREE.Mesh(new THREE.BoxGeometry(.9,.38,.34),fur);head.position.set(.95,.05,0);head.rotation.z=-.5;neck.add(head);
   const muzzle=new THREE.Mesh(new THREE.SphereGeometry(.22,10,8),dark);muzzle.position.set(1.32,-.18,0);neck.add(muzzle);
-  [-1,1].forEach(sd=>{const a=new THREE.Mesh(new THREE.CircleGeometry(.85,12,0,2.4),ant);a.material.side=THREE.DoubleSide;a.position.set(.75,.35,sd*.25);a.rotation.set(sd*1.2,0,.3);neck.add(a);
+  [-1,1].forEach(sd=>{const a=new THREE.Mesh(new THREE.CircleGeometry(1.05,14,0,2.2),ant);a.material.side=THREE.DoubleSide;a.position.set(.75,.35,sd*.25);a.rotation.set(sd*1.2,0,.3);neck.add(a);
    const ear=new THREE.Mesh(new THREE.ConeGeometry(.08,.3,5),fur);ear.position.set(.7,.3,sd*.18);ear.rotation.x=sd*.6;neck.add(ear);(moose.userData.ears=moose.userData.ears||[]).push(ear)});
-  moose.userData.neck=neck;moose.position.set(10,WL-.55,-30);moose.rotation.y=.6;moose.traverse(m=>{if(m.isMesh)m.castShadow=true});scene.add(moose)}
+  moose.userData.neck=neck;moose.position.set(6,WL-.75,-33);moose.rotation.y=.6;moose.scale.setScalar(1.2);{const rp=new THREE.Mesh(new THREE.RingGeometry(1.4,1.6,40),new THREE.MeshBasicMaterial({color:0xcfd8d8,transparent:true,opacity:.35,depthWrite:false}));rp.rotation.x=-Math.PI/2;rp.position.set(6,WL+.03,-33);rp.scale.set(1.6,1,1);scene.add(rp);moose.userData.rip=rp}moose.traverse(m=>{if(m.isMesh)m.castShadow=true});scene.add(moose)}
  // tall golden-green meadow and wildflowers on the right shore
  const meadow=[],flowers=[];for(let i=0;i<6500;i++){const x=24+rnd()*86,z=-8-rnd()*166;if(a2S(x,z)<.08)continue;const y=H(x,z);if(i%3)meadow.push({v:Math.floor(rnd()*9),x,y,z,ry:rnd()*6,s:.6+rnd()*.6});else flowers.push({x,y:y+.3+rnd()*.25,z,sx:.028,sy:.028,sz:.028})}
  pending.push(GL.loadAsync(A+'grass2.glb').then(gl=>{const v=variants(gl);v.forEach(vv=>vv.parts.forEach(p=>{p.m=p.m.clone();p.m.color.setRGB(1.25,1.1,.55)}));scatter(v,meadow);
@@ -990,7 +990,7 @@ let gateRibbons=[],moose=null;
  {const logs=[];let k=0;for(let r=0;r<4;r++)for(let i=0;i<7-r;i++){logs.push({x:72,y:H(72,-96)+.22+r*.38,z:-96-2.3+i*.4+r*.2,rz:Math.PI/2,sx:.21,sy:5,sz:.21});k++}
   inst(new THREE.CylinderGeometry(1,1,1,12),new THREE.MeshStandardMaterial({map:tex('spruce_bark.jpg',1),color:0xa8a49c,roughness:.95}),logs)}
  // fall-coloured maples and birches mixed into the spruce around the shores
- const broad=[];for(let t=0;t<9000&&broad.length<320;t++){const x=(rnd()-.5)*280,z=-30-rnd()*280;if(a2S(x,z)<.18||Math.hypot(x-30,z+24)<28||(x>22&&x<112&&z<-22&&z>-175&&rnd()<.85)||slope(x,z)>1.2)continue;broad.push({x,z,h:6+rnd()*6,birch:rnd()<.35})}
+ const broad=[];for(let t=0;t<14000&&broad.length<620;t++){const x=(rnd()-.5)*280,z=-30-rnd()*280;if(a2S(x,z)<.18||Math.hypot(x-30,z+24)<28||(x>22&&x<112&&z<-22&&z>-175&&rnd()<.85)||slope(x,z)>1.2)continue;broad.push({x,z,h:6+rnd()*6,birch:rnd()<.35})}
  const trunkG=new THREE.CylinderGeometry(.12,.22,1,7);trunkG.translate(0,.5,0);
  const leafTex=canvasTex(256,256,(x,w,h)=>{for(let i=0;i<260;i++){const cx=w/2+(rnd()-.5)*w*.85*Math.sqrt(rnd()),cy=h/2+(rnd()-.5)*h*.85*Math.sqrt(rnd()),k=150+rnd()*105;x.fillStyle=`rgb(${k},${k},${k})`;x.save();x.translate(cx,cy);x.rotate(rnd()*6.3);x.beginPath();x.ellipse(0,0,7+rnd()*5,4+rnd()*3,0,0,6.3);x.fill();x.restore()}x.strokeStyle='rgba(60,45,30,.8)';x.lineWidth=2;for(let i=0;i<6;i++){x.beginPath();x.moveTo(w/2,h);x.lineTo(w/2+(rnd()-.5)*w*.8,h*.2+rnd()*h*.5);x.stroke()}});
  const cards=[];for(let i=0;i<46;i++){const g=new THREE.PlaneGeometry(1.1,1.1);const u=rnd()*6.283,v=Math.acos(2*rnd()-1),r=Math.cbrt(rnd());g.rotateX((rnd()-.5)*1.4);g.rotateY(rnd()*6.28);g.translate(Math.sin(v)*Math.cos(u)*r,Math.cos(v)*r*.85+.1,Math.sin(v)*Math.sin(u)*r);cards.push(g)}
