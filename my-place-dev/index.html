@@ -341,7 +341,7 @@ const spruceSpots=[];
   const lm=lakeMix(z),sh=shoreOf(x,z);
   if(lm>.5){if(sh<.18+fbm(x*.05,z*.05)*.08||inLodge(x,z,9))continue}
   else{if(d<15+fbm(z*.1,1)*4)continue;if(Math.abs(x)>200)continue;if(z>0&&z<50&&d<18)continue;if(z<8&&(a2S(x,z)<.14||(x>22&&x<112&&z<-22&&z>-175)))continue;if(Math.hypot(x-30,z+24)<24||echoClear(x,z)||Math.hypot(x-CAMP.x,z-CAMP.z)<10||Math.hypot(x-LASTSP.x,z-LASTSP.z)<15)continue;if(d<30&&rnd()<.35)continue}
-  if(slope(x,z)>((x>10&&x<100&&z>-30&&z<66)?2.6:2.2)||mouthClear(x,z)||onPathW(x,z,4.5)||onPathE(x,z,5.5)||onPathW(x,z,8)||nearMarker(x,z,8)||lookoutClear(x,z))continue;if(Math.hypot(x-riverX(140)-9.5,z-140)<14)continue;
+  if(slope(x,z)>((x>10&&x<100&&z>-30&&z<66)?2.6:2.2)||mouthClear(x,z)||onPathW(x,z,4.5)||onPathE(x,z,7)||onPathW(x,z,8)||nearMarker(x,z,8)||lookoutClear(x,z))continue;if(Math.hypot(x-riverX(140)-9.5,z-140)<14)continue;
   spruceSpots.push([x,z])}
  for(let i=0;i<7;i++){const a=rnd()*6.283,r=rnd()*5.5;spruceSpots.push([ISL.x+Math.cos(a)*r,ISL.z+Math.sin(a)*r])}
  // a dense, deep forest ring around the lake so the far shore reads as a wall of trees, not a fence
@@ -951,8 +951,8 @@ pending.push(GL.loadAsync(A+'grass2.glb').then(gl=>{const v=variants(gl);v.forEa
 // ---------- crisp worn-dirt ribbons along both trails, with roots drawn across ----------
 {const dirt=canvasTex(256,1024,(x,w,h)=>{x.fillStyle='#2a2016';x.fillRect(0,0,w,h);for(let i=0;i<3000;i++){const k=30+rnd()*50;x.fillStyle=`rgba(${k+15},${k+5},${k-5},${.3+rnd()*.5})`;x.fillRect(rnd()*w,rnd()*h,1+rnd()*3,1+rnd()*3)}
   for(let i=0;i<120;i++){const k=90+rnd()*60;x.fillStyle=`rgba(${k},${k*.8|0},${k*.6|0},.5)`;x.save();x.translate(rnd()*w,rnd()*h);x.rotate(rnd()*6);x.fillRect(0,0,6+rnd()*10,2+rnd()*3);x.restore()}
-  for(let r=0;r<14;r++){const y=rnd()*h;x.strokeStyle=`rgba(${60+rnd()*30|0},${42+rnd()*20|0},${28},.95)`;x.lineWidth=4+rnd()*6;x.beginPath();x.moveTo(-10,y);for(let t=0;t<=6;t++)x.lineTo(t*w/6,y+(rnd()-.5)*30+t*(rnd()-.5)*6);x.stroke();
-   x.strokeStyle='rgba(140,110,80,.35)';x.lineWidth=1.5;x.stroke()}
+  for(let r=0;r<14;r++){const y=rnd()*h;x.strokeStyle=`rgba(${38+rnd()*20|0},${28+rnd()*14|0},${20},.95)`;x.lineWidth=5+rnd()*7;x.lineCap='round';x.beginPath();x.moveTo(-10,y);const c1=y+(rnd()-.5)*60,c2=y+(rnd()-.5)*60;x.bezierCurveTo(w*.33,c1,w*.66,c2,w+10,y+(rnd()-.5)*40);x.stroke();
+   x.strokeStyle='rgba(95,75,55,.35)';x.lineWidth=1.5;x.stroke()}
   const g=x.createLinearGradient(0,0,w,0);g.addColorStop(0,'rgba(0,0,0,1)');g.addColorStop(.18,'rgba(0,0,0,0)');g.addColorStop(.82,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(0,0,0,1)');x.globalCompositeOperation='destination-out';x.fillStyle=g;x.fillRect(0,0,w,h)});
  dirt.wrapS=THREE.ClampToEdgeWrapping;
  const ribbon=(at,w)=>{const P=[],UV=[],I=[];let v=0,n=0;for(let f=0;f<=1.0001;f+=.0015){const p=at(Math.min(f,1)),nx=-p.tz,nz=p.tx;for(const sd of [-1,1]){const x=p.x+nx*sd*w/2,z=p.z+nz*sd*w/2;P.push(x,H(x,z)+.45,z);UV.push(sd<0?0:1,v)}const q=at(Math.min(f+.0015,1));v+=Math.hypot(q.x-p.x,q.z-p.z)/(w*4);n++}
