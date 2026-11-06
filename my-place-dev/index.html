@@ -105,7 +105,7 @@ PW.push(fromPlan(LW+4,LD/2),fromPlan(LW+3,LD+3),fromPlan(12,LD+3.5));
 const PWL=[0];for(let i=1;i<PW.length;i++)PWL.push(PWL[i-1]+Math.hypot(PW[i].x-PW[i-1].x,PW[i].z-PW[i-1].z));
 const pwAt=f=>{const L=f*PWL[PWL.length-1];let i=1;while(i<PW.length-1&&PWL[i]<L)i++;const a=PW[i-1],b=PW[i],t=Math.min(1,(L-PWL[i-1])/(PWL[i]-PWL[i-1])),dx=b.x-a.x,dz=b.z-a.z,l=Math.hypot(dx,dz);return {x:a.x+dx*t,z:a.z+dz*t,tx:dx/l,tz:dz/l}};
 const pwD=(x,z)=>{if(x>40||z<45)return 1e9;let m=1e9;for(let i=1;i<PW.length;i++)m=Math.min(m,segD(x,z,PW[i-1],PW[i]));return m};
-const onPathW=(x,z,w)=>pwD(x,z)<w,onAnyPath=(x,z,w)=>onPathW(x,z,w)||onPathE(x,z,w);
+const onPathW=(x,z,w)=>pwD(x,z)<w,onAnyPath=(x,z,w)=>onPathW(x,z,w)||onPathE(x,z,w*.6);
 const LASTSP={x:50,z:-4};const ECHO=peAt(.42);const echoClear=(x,z)=>segD(x,z,ECHO,{x:riverX(30),z:30})<7;
 const LOOKF=PWL[7]/PWL[PWL.length-1];
 function pwNear(x,z){let best=1e9,bs=0;for(let i=1;i<PW.length;i++){const a=PW[i-1],b=PW[i],vx=b.x-a.x,vz=b.z-a.z,l2=vx*vx+vz*vz,t=Math.max(0,Math.min(1,((x-a.x)*vx+(z-a.z)*vz)/l2)),d=Math.hypot(x-a.x-vx*t,z-a.z-vz*t);if(d<best){best=d;bs=PWL[i-1]+t*Math.sqrt(l2)}}return {d:best,s:bs}}
@@ -907,7 +907,7 @@ let gateRibbons=[],moose=null;
  const frond=canvasTex(128,256,(x,w,h)=>{x.strokeStyle='#3d5a22';x.lineWidth=3;x.beginPath();x.moveTo(w/2,h);x.lineTo(w/2,8);x.stroke();for(let y=20;y<h-6;y+=7){const L=(1-Math.abs(y-h*.55)/(h*.6))*w*.45;x.fillStyle=`rgb(${60+rnd()*25|0},${100+rnd()*35|0},${38+rnd()*15|0})`;x.beginPath();x.ellipse(w/2-L/2,y,L/2,3,-.25,0,6.3);x.ellipse(w/2+L/2,y,L/2,3,.25,0,6.3);x.fill()}});frond.colorSpace=THREE.SRGBColorSpace;
  const fp=[];for(let k=0;k<11;k++){const L=.7+rnd()*.5,g=new THREE.PlaneGeometry(.42,L,1,6);g.translate(0,L/2,0);const P=g.attributes.position;for(let i=0;i<P.count;i++){const y=P.getY(i);P.setZ(i,y*y*1.1)}g.rotateX(-1.1-rnd()*.3);g.rotateY(k/7*6.283+rnd()*.3);fp.push(g)}
  const fern=mergeGeometries(fp);fern.computeVertexNormals();const fernM=new THREE.MeshStandardMaterial({map:frond,color:0x5c6a52,alphaTest:.4,side:THREE.DoubleSide,roughness:.9});
- const ferns=[],berries=[],trill=[],bushes=[];trail.forEach((p,i)=>{for(let n=0;n<3;n++){const sd=rnd()<.5?-1:1,off=1.8+rnd()*4,x=p.x-p.tz*sd*off+(rnd()-.5)*2,z=p.z+p.tx*sd*off+(rnd()-.5)*2,y=H(x,z);const r=rnd();if(slope(x,z)>.9)continue;
+ const ferns=[],berries=[],trill=[],bushes=[];trail.forEach((p,i)=>{for(let n=0;n<6;n++){const sd=rnd()<.5?-1:1,off=1.6+rnd()*6,x=p.x-p.tz*sd*off+(rnd()-.5)*2,z=p.z+p.tx*sd*off+(rnd()-.5)*2,y=H(x,z);const r=rnd();if(slope(x,z)>.9)continue;
   if(r<.45)ferns.push({x,y,z,ry:rnd()*6,sx:.45+rnd()*.35,sy:.4+rnd()*.3,sz:.45+rnd()*.35});else if(r<.75){bushes.push({v:Math.floor(rnd()*9),x,y,z,ry:rnd()*6,s:.7+rnd()*.5});for(let b=0;b<6;b++)berries.push({x:x+(rnd()-.5)*.6,y:y+.2+rnd()*.3,z:z+(rnd()-.5)*.6,sx:.03,sy:.03,sz:.03})}
   else if(r<.8)trill.push({x,y:y+.05,z,ry:rnd()*6,sx:1,sy:1,sz:1})}});
  pending.push(GL.loadAsync(A+'grass2.glb').then(gl=>{const v=variants(gl);v.forEach(vv=>vv.parts.forEach(p=>{p.m=p.m.clone();p.m.color.setRGB(.55,.75,.45)}));scatter(v,ferns.map((f,i)=>({v:i,x:f.x,y:f.y-.02,z:f.z,ry:f.ry,s:.55+rnd()*.35})))}).catch(e=>console.warn(e)));inst(new THREE.SphereGeometry(1,6,4),new THREE.MeshStandardMaterial({color:0x1c2244,roughness:.3}),berries);
