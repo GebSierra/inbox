@@ -103,6 +103,7 @@ const pwD=(x,z)=>{if(x>40||z<45)return 1e9;let m=1e9;for(let i=1;i<PW.length;i++
 const onPathW=(x,z,w)=>pwD(x,z)<w,onAnyPath=(x,z,w)=>onPathW(x,z,w)||onPathE(x,z,w);
 const LASTSP={x:50,z:-4};const ECHO=peAt(.42);const echoClear=(x,z)=>segD(x,z,ECHO,{x:riverX(30),z:30})<7;
 const LOOKF=PWL[7]/PWL[PWL.length-1];
+function pwNear(x,z){let best=1e9,bs=0;for(let i=1;i<PW.length;i++){const a=PW[i-1],b=PW[i],vx=b.x-a.x,vz=b.z-a.z,l2=vx*vx+vz*vz,t=Math.max(0,Math.min(1,((x-a.x)*vx+(z-a.z)*vz)/l2)),d=Math.hypot(x-a.x-vx*t,z-a.z-vz*t);if(d<best){best=d;bs=PWL[i-1]+t*Math.sqrt(l2)}}return {d:best,s:bs}}
 const MARKERS=[...['boulder','mushroom','log','cone','rocker','snag'].map((k,i)=>[k,.1+i*(LOOKF-.15)/5,k==='log'?0:1]),['bench',LOOKF,0],...['cairn','nest'].map((k,i)=>[k,LOOKF+(i+1)*(.9-LOOKF)/3,i%2?1:-1]),['lantern',.95,1]].map(([k,f,sd])=>{const p=pwAt(f);
  let x=p.x-p.tz*sd*7.5,z=p.z+p.tx*sd*7.5,ry=Math.atan2(p.x-x,p.z-z);
  if(k==='log')ry=Math.atan2(p.tx,p.tz);
@@ -125,7 +126,7 @@ const mouthClear=(x,z)=>z>185&&z<300&&Math.abs(x-riverX(Math.min(z,262)))<26;
 const HC_X0=-300,HC_Z0=-362,HC_W=601,HC_D=884,HC=new Float32Array(HC_W*HC_D).fill(NaN);
 function Hg(i,j){const k=j*HC_W+i;let v=HC[k];if(v!==v)v=HC[k]=Hraw(HC_X0+i,HC_Z0+j);return v}
 function H(x,z){const fx=x-HC_X0,fz=z-HC_Z0;if(!(fx>=0&&fz>=0&&fx<HC_W-1&&fz<HC_D-1))return Hraw(x,z);const i=fx|0,j=fz|0,u=fx-i,v=fz-j;return (Hg(i,j)*(1-u)+Hg(i+1,j)*u)*(1-v)+(Hg(i,j+1)*(1-u)+Hg(i+1,j+1)*u)*v}
-function Hraw(x,z){const ld=lodgeDist(x,z);if(ld===0)return FLOOR;let h0=H0(x,z)+hill(x,z);if(x>8&&x<100&&z>-30&&z<68){if(peH0===null)peHeight(0);const R0=peH0+(peH1-peH0)*Math.min(1,Math.max(0,(58-z)/76))+fbm(x*.08,z*.08)*1.5,w=sm(8,22,x)*(1-sm(88,99,x))*sm(-30,-18,z)*(1-sm(58,67,z));h0+=(R0-h0)*w}{const q=peNear(x,z);if(q.d<14){const ph=peHeight(q.s);h0=ph+(h0-ph)*sm(1.4,14,q.d)}const dc=Math.hypot(x-CAMP.x,z-CAMP.z);if(dc<14){const ph=peHeight(PEL[3]);h0=ph+(h0-ph)*sm(9,14,dc)}}{const dl=Math.hypot(x-LOOK.x,z-LOOK.z);if(dl<11){if(lookH===null)lookH=H0(LOOK.x,LOOK.z)+hill(LOOK.x,LOOK.z);h0=lookH+(h0-lookH)*sm(5,11,dl)}}return ld>12?h0:PAD+(h0-PAD)*sm(0,12,ld)}
+function Hraw(x,z){const ld=lodgeDist(x,z);if(ld===0)return FLOOR;let h0=H0(x,z)+hill(x,z);if(x>8&&x<100&&z>-30&&z<68){if(peH0===null)peHeight(0);const R0=peH0+(peH1-peH0)*Math.min(1,Math.max(0,(58-z)/76))+fbm(x*.08,z*.08)*1.5,w=sm(8,22,x)*(1-sm(88,99,x))*sm(-30,-18,z)*(1-sm(58,67,z));h0+=(R0-h0)*w}if(x<10&&z>170&&z<262){const q=pwNear(x,z);if(q.s>PWL[7]&&q.d<12){if(lookH===null)lookH=H0(LOOK.x,LOOK.z)+hill(LOOK.x,LOOK.z);const f=(q.s-PWL[7])/(PWL[PWL.length-1]-PWL[7]),ph=lookH+(1.2-lookH)*Math.min(1,f*1.5);h0=ph+(h0-ph)*sm(1.5,12,q.d)}}{const q=peNear(x,z);if(q.d<14){const ph=peHeight(q.s);h0=ph+(h0-ph)*sm(1.4,14,q.d)}const dc=Math.hypot(x-CAMP.x,z-CAMP.z);if(dc<14){const ph=peHeight(PEL[3]);h0=ph+(h0-ph)*sm(9,14,dc)}}{const dl=Math.hypot(x-LOOK.x,z-LOOK.z);if(dl<11){if(lookH===null)lookH=H0(LOOK.x,LOOK.z)+hill(LOOK.x,LOOK.z);h0=lookH+(h0-lookH)*sm(5,11,dl)}}return ld>12?h0:PAD+(h0-PAD)*sm(0,12,ld)}
 function H0(x,z){const lm=lakeMix(z);let h;
  if(lm<=0)return G0(x,z);
  if(lm>=1)h=lakeH(x,z);else{const g=G0(x,z);h=g+(lakeH(x,z)-g)*lm}
@@ -249,7 +250,7 @@ const U={t:{value:0}};
 
 // ---------- waterfall ----------
 {const rows=120,cols=30,pos=[],uv=[],idx=[];
- for(let j=0;j<=rows;j++){const z=48-j*(52/rows);const width=16+sm(0,40,z)*14;
+ for(let j=0;j<=rows;j++){const z=48-j*(41/rows);const width=16+sm(0,40,z)*14;
   for(let i=0;i<=cols;i++){const s=i/cols-.5,x=riverX(z)+s*width;pos.push(x,H(x,z)+.9+ (1-Math.abs(s)*2)*1.2,z);uv.push(s,j/rows)}}
  for(let j=0;j<rows;j++)for(let i=0;i<cols;i++){const a=j*(cols+1)+i,b=a+cols+1;idx.push(a,b,a+1,b,b+1,a+1)}
  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
@@ -340,7 +341,7 @@ const spruceSpots=[];
  for(let t=0;t<20000&&spruceSpots.length<7400;t++){const a=rnd()*6.283,e=1.2+Math.pow(rnd(),.7)*.8,x=Math.cos(a)*LRX*e,z=LZ+Math.sin(a)*LRZ*e;
   if(z<255||inLodge(x,z,9)||mouthClear(x,z)||slope(x,z)>1.35||lookoutClear(x,z)||onAnyPath(x,z,4.5))continue;spruceSpots.push([x,z])}
  // forest around the upper lake, and the Last Spruce alone at the treeline
- for(let t=0;t<80000&&spruceSpots.length<14500;t++){const x=(rnd()-.5)*580,z=-60-rnd()*300;if(a2S(x,z)<.16||(x>22&&x<112&&z<-22&&z>-175)||slope(x,z)>1.7)continue;spruceSpots.push([x,z])}
+ for(let t=0;t<80000&&spruceSpots.length<14500;t++){const x=(rnd()-.5)*580,z=-60-rnd()*300;if(a2S(x,z)<.16||onPathE(x,z,5)||(x>22&&x<112&&z<-22&&z>-175)||slope(x,z)>1.7)continue;spruceSpots.push([x,z])}
  spruceSpots.push([LASTSP.x,LASTSP.z,2.4]);
  const fm=new THREE.MeshStandardMaterial({map:tex('spruce_branch.webp',1),normalMap:tex('spruce_branch_nor.jpg'),alphaTest:.42,side:THREE.DoubleSide,roughness:.9,envMapIntensity:.45,alphaToCoverage:true});
  fm.map.wrapS=fm.map.wrapT=THREE.ClampToEdgeWrapping;
@@ -397,7 +398,7 @@ pending.push(GL.loadAsync(A+'rock_outcrop.glb').then(gl=>{const vs=variants(gl);
  scatter(vs,spots.map(([dx,z,s])=>{const x=riverX(z)+dx;return {v:0,x,y:H(x,z)-.6,z,ry:rnd()*6.28,rx:(rnd()-.5)*.15,s,abs:1}}));
  // scanned granite stood on edge to form the falls' headwall, stepped up the cliff either side of the water
  const fxc=riverX(40),wall=[[-15,44,1,.55,.2],[17,45,2.5,.62,-.4],[-18,40,10,.48,.5],[16,41,12,.52,-.15],[-14,37,21,.52,.05],[18,38,23,.46,-.5],[-11,34,31,.42,.3],[13,35,34,.44,-.2]];
- scatter(vs,wall.map(([dx,z,y,s,ry])=>({v:0,x:fxc+dx,y,z,rx:-Math.PI/2+.2+(rnd()-.5)*.15,ry,rz:(rnd()-.5)*.3,s,abs:1})));
+
 }).catch(e=>console.warn(e)));
 
 // ---------- sky dome: clouds, sun, overcast toward the falls ----------
@@ -953,7 +954,7 @@ let gateRibbons=[],moose=null;
  // beaver lodge: a dome of stacked sticks on the right bank
  const BL={x:13,z:-40};const sticks=[];for(let i=0;i<420;i++){const u=rnd(),a=rnd()*6.283,ph=Math.acos(u),r=3.2;const x=BL.x+Math.cos(a)*Math.sin(ph)*r,z=BL.z+Math.sin(a)*Math.sin(ph)*r,y=WL-.4+Math.cos(ph)*r*.55;
   sticks.push({x,y,z,rx:rnd()*3,ry:rnd()*6,rz:rnd()*3,sx:.05+rnd()*.04,sy:1+rnd()*1.6,sz:.05+rnd()*.04})}
- inst(new THREE.CylinderGeometry(1,1,1,5),new THREE.MeshStandardMaterial({color:0x8a7e6e,roughness:1}),sticks,(c)=>{const k=.7+rnd()*.5;c.setRGB(k,k,k)});
+ inst(new THREE.CylinderGeometry(1,1,1,5),new THREE.MeshStandardMaterial({color:0x8a7e6e,roughness:1}),sticks,(c)=>{const k=.55+rnd()*.6,w=rnd();c.setRGB(k*(w<.4?1.05:w<.7?.8:.95),k*(w<.4?.95:w<.7?.68:.92),k*(w<.4?.85:w<.7?.5:.9))});
  // moose standing knee-deep near the lodge, idling (head down to drink, ear flicks)
  moose=new THREE.Group();{const fur=new THREE.MeshStandardMaterial({color:0x3a2a1e,roughness:.95}),dark=new THREE.MeshStandardMaterial({color:0x241a12,roughness:.9}),ant=new THREE.MeshStandardMaterial({color:0x7a6248,roughness:.7});
   const body=new THREE.Mesh(new THREE.SphereGeometry(1,20,12),fur);body.scale.set(1.35,.75,.62);body.position.y=1.85;moose.add(body);
