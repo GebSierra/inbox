@@ -916,7 +916,7 @@ let gateRibbons=[],moose=null;
  pending.push(GL.loadAsync(A+'bush.glb').then(gl=>scatter(variants(gl),bushes)).catch(e=>console.warn(e)));
  // The Leaning Gate: two spruce trunks leaning together over the trail, white cloth ribbons
  {const p=peAt(.24),nx=-p.tz,nz=p.tx,g=new THREE.Group(),y=H(p.x,p.z);g.position.set(p.x,y,p.z);g.rotation.y=Math.atan2(nx,nz);scene.add(g);
-  [-1,1].forEach(sd=>{const t=new THREE.Mesh(new THREE.CylinderGeometry(.22,.45,14,10),barkM);t.position.set(0,6.4,sd*2.2);t.rotation.x=sd*.32;t.castShadow=true;g.add(t)});
+  [-1,1].forEach(sd=>{const t=new THREE.Mesh(new THREE.CylinderGeometry(.22,.45,14,10),barkM);t.position.set(0,6.4,sd*1.0);t.rotation.x=-sd*.32;t.castShadow=true;g.add(t)});
   const rib=new THREE.MeshStandardMaterial({color:0xece8de,side:THREE.DoubleSide,roughness:.9,transparent:true,opacity:.9});gateRibbons=[];
   [[3.4,-.9],[4.1,-.5],[3.8,.6],[4.4,1],[3.2,.2]].forEach(([h,zz],i)=>{const r=new THREE.Mesh(new THREE.PlaneGeometry(.12,.9),rib);r.geometry.translate(0,-.45,0);r.position.set((i%2?.15:-.15),h+2.2,zz);g.add(r);gateRibbons.push(r)})}
  // The Echo Gap: a break in the trees looking back at the falls (trees are already cleared); a mossy log to stand on
