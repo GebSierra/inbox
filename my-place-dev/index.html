@@ -181,7 +181,7 @@ let terrain;
   let r=Math.max(1-sm(.68,.86,ny),1-sm(9,13,d));
   let l=sm(24,40,d+k*10)*(1-r);
   const lm=lakeMix(z),sh=shoreOf(x,z),r2=1-sm(.68,.86,ny),l2=sm(.25,.45,sh+k*.1)*(1-r2);
-  r+= (r2-r)*lm;l+=(l2-l)*lm;if(z<2){r*=.4;l*=.25}let gr=Math.max(0,1-r-l);
+  r+= (r2-r)*lm;l+=(l2-l)*lm;if(z<2){r*=.4;l*=.25}if(x>18&&x<96&&z>-26&&z<64){r*=.15;l=Math.max(l,.85)}let gr=Math.max(0,1-r-l);
   col.push(r,gr,l);bch.push(Math.max(lm*(1-sm(.1,.19,sh+k*.03)),(1-sm(2.5,5,Math.abs(z-FORD.z)))*(1-sm(14,22,Math.abs(x-riverX(FORD.z))))*.95,onPath(x,z,3.2)?(1-sm(1.4,3.2,Math.abs(x-pathX(z))+k))*.9:0,(1-sm(1.4,3.2,pwD(x,z)+k))*.9,(1-sm(.3,1.5,peNear(x,z).d+k*.8))*.7))}
  g.setAttribute('color',new THREE.Float32BufferAttribute(col,3));g.setAttribute('beach',new THREE.Float32BufferAttribute(bch,1));
  const mat=new THREE.MeshStandardMaterial({roughness:.95,envMapIntensity:.5,normalMap:tex('dark_rock_nor_gl.jpg'),normalScale:new THREE.Vector2(.8,.8)});
@@ -200,7 +200,7 @@ let terrain;
    .replace('#include <map_fragment>',`
     vec3 an=abs(normalize(vWN));an/=an.x+an.y+an.z;
     vec3 rock=texture2D(tR,vWP.zy*.08).rgb*an.x+texture2D(tR,vWP.xz*.08).rgb*an.y+texture2D(tR,vWP.xy*.08).rgb*an.z;
-    rock*=mix(.75,1.15,texture2D(tR,vWP.xz*.011).g);{float gz=smoothstep(78.,58.,vWP.z)*smoothstep(1.,4.,vWP.y)*(1.-smoothstep(20.,34.,abs(vWP.x-8.5)))*mix(1.,.35,smoothstep(.6,.85,abs(normalize(vWN).y)));float g=dot(rock,vec3(.33));vec3 gr=vec3(g)*vec3(1.04,1.,.95)*3.1;
+    rock*=mix(.75,1.15,texture2D(tR,vWP.xz*.011).g);{float gz=smoothstep(78.,58.,vWP.z)*smoothstep(1.,4.,vWP.y)*(1.-smoothstep(12.,20.,abs(vWP.x-8.5)))*mix(1.,.35,smoothstep(.6,.85,abs(normalize(vWN).y)));float g=dot(rock,vec3(.33));vec3 gr=vec3(g)*vec3(1.04,1.,.95)*3.1;
      gr=mix(gr,gr*vec3(1.14,1.,.8),smoothstep(.5,.75,texture2D(tR,vec2(vWP.x*.02,vWP.y*.004)).r)*.6);
      gr*=1.-smoothstep(.93,.99,texture2D(tR,vec2((vWP.x+vWP.z)*.05,vWP.y*.004)).g)*.75;
      gr*=mix(1.,.6,smoothstep(.62,.8,texture2D(tR,vec2(vWP.x*.04+vWP.z*.02,vWP.y*.11)).r));
