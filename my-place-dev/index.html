@@ -250,7 +250,7 @@ const U={t:{value:0}};
 
 // ---------- waterfall ----------
 {const rows=120,cols=30,pos=[],uv=[],idx=[];
- for(let j=0;j<=rows;j++){const z=48-j*(52/rows);const width=16+sm(0,40,z)*14;
+ for(let j=0;j<=rows;j++){const z=48-j*(41/rows);const width=16+sm(0,40,z)*14;
   for(let i=0;i<=cols;i++){const s=i/cols-.5,x=riverX(z)+s*width;pos.push(x,H(x,z)+.9+ (1-Math.abs(s)*2)*1.2,z);uv.push(s,j/rows)}}
  for(let j=0;j<rows;j++)for(let i=0;i<cols;i++){const a=j*(cols+1)+i,b=a+cols+1;idx.push(a,b,a+1,b,b+1,a+1)}
  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
