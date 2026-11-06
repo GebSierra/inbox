@@ -175,7 +175,7 @@ let terrain;
   let r=Math.max(1-sm(.68,.86,ny),1-sm(9,13,d));
   let l=sm(24,40,d+k*10)*(1-r);
   const lm=lakeMix(z),sh=shoreOf(x,z),r2=1-sm(.68,.86,ny),l2=sm(.25,.45,sh+k*.1)*(1-r2);
-  r+= (r2-r)*lm;l+=(l2-l)*lm;if(x>12&&x<96&&z>-26&&z<64){r*=.25;l=Math.max(l,.8)}let gr=Math.max(0,1-r-l);
+  r+= (r2-r)*lm;l+=(l2-l)*lm;if(x>12&&x<96&&z>-26&&z<64){r*=.25;l=Math.max(l,.8)}if(z<2){r*=.4;l*=.25}let gr=Math.max(0,1-r-l);
   col.push(r,gr,l);bch.push(Math.max(lm*(1-sm(.1,.19,sh+k*.03)),(1-sm(2.5,5,Math.abs(z-FORD.z)))*(1-sm(14,22,Math.abs(x-riverX(FORD.z))))*.95,onPath(x,z,3.2)?(1-sm(1.4,3.2,Math.abs(x-pathX(z))+k))*.9:0,(1-sm(1.4,3.2,pwD(x,z)+k))*.9))}
  g.setAttribute('color',new THREE.Float32BufferAttribute(col,3));g.setAttribute('beach',new THREE.Float32BufferAttribute(bch,1));
  const mat=new THREE.MeshStandardMaterial({roughness:.95,envMapIntensity:.5,normalMap:tex('dark_rock_nor_gl.jpg'),normalScale:new THREE.Vector2(.8,.8)});
@@ -202,7 +202,7 @@ let terrain;
      gr=mix(gr,vec3(.18,.33,.08),smoothstep(.5,.8,abs(normalize(vWN).y))*smoothstep(.45,.62,texture2D(tR,vWP.xz*.03).g)*.85);
      gr=mix(gr,gr*.45,(1.-smoothstep(3.,8.,abs(vWP.x-8.5)))*smoothstep(56.,40.,vWP.z)*.8);rock=mix(rock,gr,gz);}   /* fractured light-grey granite, lichen, moss on ledges, dark wet rock beside the falls */   /* lit grey headwall behind the falls */
     vec3 grass=texture2D(tG,vWP.xz*.12).rgb*mix(.8,1.1,texture2D(tG,vWP.xz*.013).g)*vec3(.62,.86,.5);
-    vec3 leaf=texture2D(tLf,vWP.xz*.14).rgb*.8;if(vWP.x>8.&&vWP.z<70.)leaf*=vec3(.62,.6,.56);
+    if(vWP.z<2.)grass*=vec3(1.18,1.05,.62);vec3 leaf=texture2D(tLf,vWP.xz*.14).rgb*.8;if(vWP.x>8.&&vWP.z<70.)leaf*=vec3(.62,.6,.56);
     vec3 sp=vSplat/max(.001,vSplat.r+vSplat.g+vSplat.b);
     // wet darkening near the waterline
     float wet=1.-smoothstep(.2,2.2,vWP.y);
@@ -340,7 +340,7 @@ const spruceSpots=[];
  for(let t=0;t<20000&&spruceSpots.length<7400;t++){const a=rnd()*6.283,e=1.2+Math.pow(rnd(),.7)*.8,x=Math.cos(a)*LRX*e,z=LZ+Math.sin(a)*LRZ*e;
   if(z<255||inLodge(x,z,9)||mouthClear(x,z)||slope(x,z)>1.35||lookoutClear(x,z)||onAnyPath(x,z,4.5))continue;spruceSpots.push([x,z])}
  // forest around the upper lake, and the Last Spruce alone at the treeline
- for(let t=0;t<60000&&spruceSpots.length<12500;t++){const x=(rnd()-.5)*560,z=-90-rnd()*270;if(a2S(x,z)<.16||(x>22&&x<112&&z<-22&&z>-175)||slope(x,z)>1.35)continue;spruceSpots.push([x,z])}
+ for(let t=0;t<80000&&spruceSpots.length<14500;t++){const x=(rnd()-.5)*580,z=-60-rnd()*300;if(a2S(x,z)<.16||(x>22&&x<112&&z<-22&&z>-175)||slope(x,z)>1.7)continue;spruceSpots.push([x,z])}
  spruceSpots.push([LASTSP.x,LASTSP.z,2.4]);
  const fm=new THREE.MeshStandardMaterial({map:tex('spruce_branch.webp',1),normalMap:tex('spruce_branch_nor.jpg'),alphaTest:.42,side:THREE.DoubleSide,roughness:.9,envMapIntensity:.45,alphaToCoverage:true});
  fm.map.wrapS=fm.map.wrapT=THREE.ClampToEdgeWrapping;
@@ -966,7 +966,7 @@ let gateRibbons=[],moose=null;
    const ear=new THREE.Mesh(new THREE.ConeGeometry(.08,.3,5),fur);ear.position.set(.7,.3,sd*.18);ear.rotation.x=sd*.6;neck.add(ear);(moose.userData.ears=moose.userData.ears||[]).push(ear)});
   moose.userData.neck=neck;moose.position.set(10,WL-.55,-30);moose.rotation.y=.6;moose.traverse(m=>{if(m.isMesh)m.castShadow=true});scene.add(moose)}
  // tall golden-green meadow and wildflowers on the right shore
- const meadow=[],flowers=[];for(let i=0;i<6500;i++){const x=24+rnd()*86,z=-8-rnd()*166;if(a2S(x,z)<.08)continue;const y=H(x,z);if(i%3)meadow.push({v:Math.floor(rnd()*9),x,y,z,ry:rnd()*6,s:.6+rnd()*.6});else flowers.push({x,y:y+.35+rnd()*.25,z,sx:.05,sy:.05,sz:.05})}
+ const meadow=[],flowers=[];for(let i=0;i<6500;i++){const x=24+rnd()*86,z=-8-rnd()*166;if(a2S(x,z)<.08)continue;const y=H(x,z);if(i%3)meadow.push({v:Math.floor(rnd()*9),x,y,z,ry:rnd()*6,s:.6+rnd()*.6});else flowers.push({x,y:y+.3+rnd()*.25,z,sx:.028,sy:.028,sz:.028})}
  pending.push(GL.loadAsync(A+'grass2.glb').then(gl=>{const v=variants(gl);v.forEach(vv=>vv.parts.forEach(p=>{p.m=p.m.clone();p.m.color.setRGB(1.25,1.1,.55)}));scatter(v,meadow);
   const marsh=[];for(let i=0;i<500;i++){const a=rnd()*6.283,x=2+Math.cos(a)*24*(.85+rnd()*.3),z=-32+Math.sin(a)*17*(.85+rnd()*.3);marsh.push({v:i,x,y:Math.max(H(x,z),WL-.3),z,ry:rnd()*6,s:.9+rnd()*.7})}scatter(variants(gl),marsh)}).catch(e=>console.warn(e)));
  const fcol=[[.95,.92,.85],[.95,.82,.25],[.62,.45,.85],[.95,.95,.95]];inst(new THREE.SphereGeometry(1,6,4),new THREE.MeshStandardMaterial({roughness:.7}),flowers,(c)=>{const f=fcol[Math.floor(rnd()*4)];c.setRGB(...f)});
