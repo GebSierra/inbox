@@ -147,13 +147,13 @@ let terrain;
     vec3 an=abs(normalize(vWN));an/=an.x+an.y+an.z;
     vec3 rock=texture2D(tR,vWP.zy*.08).rgb*an.x+texture2D(tR,vWP.xz*.08).rgb*an.y+texture2D(tR,vWP.xy*.08).rgb*an.z;
     rock*=mix(.75,1.15,texture2D(tR,vWP.xz*.011).g);
-    vec3 grass=texture2D(tG,vWP.xz*.12).rgb*mix(.8,1.1,texture2D(tG,vWP.xz*.013).g);
+    vec3 grass=texture2D(tG,vWP.xz*.12).rgb*mix(.8,1.1,texture2D(tG,vWP.xz*.013).g)*vec3(.62,.86,.5);
     vec3 leaf=texture2D(tLf,vWP.xz*.14).rgb*.8;
     vec3 sp=vSplat/max(.001,vSplat.r+vSplat.g+vSplat.b);
     // wet darkening near the waterline
     float wet=1.-smoothstep(.2,2.2,vWP.y);
     vec3 sand=texture2D(tS,vWP.xz*.18).rgb;sand=mix(vec3(dot(sand,vec3(.34))),sand,.4)*mix(.8,1.1,texture2D(tS,vWP.xz*.02).r);
-    vec3 base=(rock*sp.r+grass*sp.g+leaf*sp.b)*mix(1.,.55,wet);
+    vec3 base=(rock*sp.r+grass*sp.g+leaf*sp.b)*mix(1.,.55,wet);if(vWP.z<232.)sand*=vec3(.5,.44,.36);
     diffuseColor.rgb=mix(base,sand*mix(1.,.55,1.-smoothstep(-.6,.9,vWP.y)),vBeach);`)
    .replace('#include <normal_fragment_maps>','#if 0\n#include <normal_fragment_maps>\n#endif\n{vec3 mn=texture2D(normalMap,vWP.xz*.08).xyz*2.-1.;normal=normalize(normal+(vSplat.r*.9+.2)*vec3(mn.x,mn.y,0.)*normalScale.x*.5);}');};
  terrain=new THREE.Mesh(g,mat);scene.add(terrain);}
@@ -180,12 +180,12 @@ const U={t:{value:0}};
  }`,
  fragmentShader:`${GN}uniform float t;varying vec2 vUv;varying float vF;varying vec3 vW;
  #include <fog_pars_fragment>
- void main(){vec2 q=vec2(vUv.x*.35,vUv.y*.18-t*2.2);
-  float foam=fb(q+fb(q*1.7+t*.3))*1.1;foam+=fb(vec2(vUv.x*1.4,vUv.y*.9-t*7.))*.5;
-  float edge=smoothstep(4.,10.,abs(vUv.x));foam=smoothstep(.88,1.2,foam+edge*.25+(vUv.y<50.?.4:0.));
-  vec3 deep=vec3(.20,.26,.26),white=vec3(.93,.95,.95);
-  vec3 c=mix(deep,white,foam);vec3 n=normalize(cross(dFdx(vW),dFdy(vW)));
-  float spec=pow(max(dot(reflect(normalize(vW-cameraPosition),n),normalize(vec3(-.4,.8,.5))),0.),30.)*.4;
+ void main(){vec2 q=vec2(vUv.x*1.1,vUv.y*.35-t*3.);
+  float foam=fb(q+fb(q*1.7+t*.3))*1.1;foam+=fb(vec2(vUv.x*3.,vUv.y*.35-t*5.))*.5;
+  float edge=smoothstep(4.,10.,abs(vUv.x));foam=smoothstep(.55,.85,foam+edge*.25+(vUv.y<50.?.4:0.));
+  vec3 deep=vec3(.10,.15,.155),white=vec3(.78,.81,.83);
+  vec3 c=mix(deep,white,foam)*mix(.62,1.,smoothstep(.3,.7,vF));vec3 n=normalize(cross(dFdx(vW),dFdy(vW)));
+  vec3 V=normalize(vW-cameraPosition);float fr=pow(1.-max(-V.y,0.),5.);float spec=pow(max(dot(reflect(V,n),normalize(vec3(-.4,.8,.5))),0.),30.)*.4+fr*.25;
   float mouth=smoothstep(238.,262.,vUv.y+(fb(vec2(vUv.x*.18,vUv.y*.05+t*.05))-.5)*16.+abs(vUv.x)*.6);c=mix(c,deep*.6,mouth*.7);gl_FragColor=vec4(c+spec,1.-mouth);
   #include <tonemapping_fragment>
   #include <colorspace_fragment>
@@ -195,7 +195,7 @@ const U={t:{value:0}};
 
 // ---------- waterfall ----------
 {const rows=120,cols=30,pos=[],uv=[],idx=[];
- for(let j=0;j<=rows;j++){const z=48-j*(52/rows);const width=10+sm(0,40,z)*14;
+ for(let j=0;j<=rows;j++){const z=48-j*(52/rows);const width=16+sm(0,40,z)*14;
   for(let i=0;i<=cols;i++){const s=i/cols-.5,x=riverX(z)+s*width;pos.push(x,H(x,z)+.9+ (1-Math.abs(s)*2)*1.2,z);uv.push(s,j/rows)}}
  for(let j=0;j<rows;j++)for(let i=0;i<cols;i++){const a=j*(cols+1)+i,b=a+cols+1;idx.push(a,b,a+1,b,b+1,a+1)}
  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
@@ -230,11 +230,12 @@ function rockGeo(s){const g=new THREE.IcosahedronGeometry(1,3),p=g.attributes.po
  const add=(x,z,s,y,force)=>{if(!force&&(inLodge(x,z,3)||Math.hypot(x-riverX(140)-9.5,z-140)<5||onPath(x,z,2.5)||mouthClear(x,z)))return;const which=rnd()<.5?0:1;o.position.set(x,y??H(x,z)-s*.15,z);
   o.rotation.set(rnd()*.3,rnd()*6.28,rnd()*.3);o.scale.set(s*(.8+rnd()*.6),s*(.7+rnd()*.6),s*(.8+rnd()*.6));o.updateMatrix();
   const m=ms[which];if(k[which]>=N)return;m.setMatrixAt(k[which],o.matrix);const g=.75+rnd()*.45;c.setRGB(g,g,g*1.02);m.setColorAt(k[which]++,c)};
- for(let i=0;i<550;i++){const z=35+rnd()*215,side=rnd()<.5?-1:1,d=10+Math.pow(rnd(),1.4)*10;
+ for(let i=0;i<550;i++){const z=56+rnd()*194,side=rnd()<.5?-1:1,d=10+Math.pow(rnd(),1.4)*10;
   const x=riverX(z)+side*d;add(x,z,.4+rnd()*rnd()*2.4)}
- for(let i=0;i<50;i++){const z=40+rnd()*200,x=riverX(z)+(rnd()-.5)*14;add(x,z,.4+rnd()*1.1,-1.1)}
+ for(let i=0;i<220;i++){const z=56+rnd()*184,side=rnd()<.5?-1:1,x=riverX(z)+side*(8.5+rnd()*4);add(x,z,.8+rnd()*1.8,H(x,z)-.4)}
+ for(let i=0;i<70;i++){const z=56+rnd()*184,x=riverX(z)+(rnd()-.5)*14;add(x,z,.6+rnd()*1.1,-.75)}
  // hero boulders near start, right bank, like the video
- add(riverX(30)+8,30,5.5);add(riverX(22)+10,22,3);add(riverX(40)-11,40,3.5);
+ add(riverX(170)+11,170,3.2);add(riverX(150)-11,150,2.5);add(riverX(95)+10.5,95,2.2);
  for(let i=0;i<500;i++){const a=rnd()*6.283,e=1+.01+rnd()*.15;const x=Math.cos(a)*LRX*e,z=LZ+Math.sin(a)*LRZ*e;if(z>300||inLodge(x,z,3))continue;add(x,z,.08+rnd()*rnd()*.6)}
 {const L=Math.hypot(CW[1].x-CW[0].x,CW[1].z-CW[0].z),nx=-(CW[1].z-CW[0].z)/L,nz=(CW[1].x-CW[0].x)/L;
   // a natural rubble causeway: big flat-topped stones near the line, smaller ones scattered, some awash
@@ -279,7 +280,7 @@ const spruceSpots=[];
   const fol=new THREE.InstancedMesh(spruceGeo(v+1),fm,mine.length),tr=new THREE.InstancedMesh(tg,bm,mine.length);
   mine.forEach(([x,z],k)=>{const near=Math.abs(x-riverX(z))<45&&lakeMix(z)<.5;const s=(near?.75:.6)+rnd()*.5;
    o.position.set(x,H(x,z)-.3,z);o.rotation.set((rnd()-.5)*.04,rnd()*6.28,(rnd()-.5)*.04);o.scale.set(s*(.9+rnd()*.2),s,s*(.9+rnd()*.2));o.updateMatrix();
-   fol.setMatrixAt(k,o.matrix);tr.setMatrixAt(k,o.matrix);const q=rnd();c.setRGB(.55+q*.3,.62+q*.3,.55+q*.25);fol.setColorAt(k,c)});
+   fol.setMatrixAt(k,o.matrix);tr.setMatrixAt(k,o.matrix);const q=rnd();c.setRGB(.42+q*.25,.58+q*.3,.45+q*.2);fol.setColorAt(k,c)});
   fol.frustumCulled=tr.frustumCulled=false;scene.add(fol,tr)}}
 
 // ---------- bush spots (filled by the scanned shrub model) ----------
@@ -321,7 +322,7 @@ pending.push(GL.loadAsync(A+'grass2.glb').then(gl=>{const it=[];for(let t=0;t<30
   it.push({v:Math.floor(rnd()*9),x,y:H(x,z)-.03,z,ry:rnd()*6.28,s:.4+rnd()*.5,abs:0})}scatter(variants(gl),it.map(e=>({...e,s:e.s})))}).catch(e=>console.warn(e)));
 // scanned granite outcrops: banks and cliff foot
 pending.push(GL.loadAsync(A+'rock_outcrop.glb').then(gl=>{const vs=variants(gl);vs[0].parts.forEach(p=>{p.m.color.setRGB(.8,.8,.82)});
- const spots=[[16,140,.6],[-14,105,.5],[15,70,.55],[-18,50,.7],[19,50,.65],[-15,185,.45]];
+ const spots=[[16,140,.6],[-14,105,.5],[15,70,.55],[-15,185,.45]];
  scatter(vs,spots.map(([dx,z,s])=>{const x=riverX(z)+dx;return {v:0,x,y:H(x,z)-.6,z,ry:rnd()*6.28,rx:(rnd()-.5)*.15,s,abs:1}}))}).catch(e=>console.warn(e)));
 
 // ---------- sky dome: clouds, sun, overcast toward the falls ----------
@@ -735,9 +736,9 @@ function mist(count,spawn,size,alpha,rise){const pos=[],ph=[];for(let i=0;i<coun
  fragmentShader:`uniform sampler2D map;uniform float A;varying float vA;void main(){gl_FragColor=vec4(.92,.94,.95,texture2D(map,gl_PointCoord).a*A*vA);}`});
  const pts=new THREE.Points(g,m);pts.frustumCulled=false;scene.add(pts)}
 const fx=riverX(35);
-mist(700,()=>[fx+(rnd()-.5)*40,rnd()*20,28+rnd()*25],14,.22,45);             // base plume
-mist(500,()=>{const z=40-rnd()*38;return[riverX(z)+(rnd()-.5)*26,H(riverX(z),z)+rnd()*8,z]},12,.16,30); // face spray
-mist(500,()=>[(rnd()-.5)*300,40+rnd()*60,-50+rnd()*250],60,.07,20);          // valley cloud
+mist(220,()=>[fx+(rnd()-.5)*30,rnd()*5,30+rnd()*18],6,.06,18);             // base plume
+mist(160,()=>{const z=40-rnd()*30;return[riverX(z)+(rnd()-.5)*20,H(riverX(z),z)+rnd()*6,z]},8,.05,10); // face spray
+mist(300,()=>[(rnd()-.5)*300,95+rnd()*40,-50+rnd()*250],60,.03,15);          // valley cloud
 mist(400,()=>{const z=50+rnd()*190;return[riverX(z)+(rnd()-.5)*16,.5+rnd()*2,z]},5,.10,4); // river haze
 
 // ---------- post ----------
@@ -745,7 +746,7 @@ const composer=new EffectComposer(renderer);composer.addPass(new RenderPass(scen
 composer.addPass(new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),.12,.5,.9));composer.addPass(new OutputPass());
 
 // ---------- player & controls ----------
-const player={x:riverX(140)+10,z:140,yaw:.18,pitch:.04};window.__player=player;window.__LR=LR;window.__fromPlan=fromPlan;window.__dbg={H:(x,z)=>H(x,z),slope:(x,z)=>slope(x,z),walk:(x,z)=>walkable(x,z),CW,ISL};
+const player={x:riverX(140)+10,z:140,yaw:.18,pitch:.04};window.__player=player;window.__scene=scene;window.__cam=camera;window.__T=THREE;window.__LR=LR;window.__fromPlan=fromPlan;window.__dbg={H:(x,z)=>H(x,z),slope:(x,z)=>slope(x,z),walk:(x,z)=>walkable(x,z),CW,ISL};
 const keys={};addEventListener('keydown',e=>keys[e.code]=true);addEventListener('keyup',e=>keys[e.code]=false);
 const joy=document.getElementById('joy'),knob=document.getElementById('knob');let jv={x:0,y:0},jid=null;
 function joyMove(e){const r=joy.getBoundingClientRect();let dx=e.clientX-r.left-65,dy=e.clientY-r.top-65;const l=Math.hypot(dx,dy),m=45;if(l>m){dx*=m/l;dy*=m/l}
@@ -798,7 +799,7 @@ document.getElementById('start').onclick=()=>{
 Promise.allSettled(pending).then(()=>{const b=document.getElementById('start');b.disabled=false;b.textContent='Enter with sound'});
 
 // ---------- loop ----------
-const clock=new THREE.Clock();const GREY=new THREE.Color(0xaab3b4),HAZE=new THREE.Color(0xc7d3dc),WHITE=new THREE.Color(0xf0f2ee),WARM=new THREE.Color(0xffe2bd);
+const clock=new THREE.Clock();const GREY=new THREE.Color(0x98a2a3),HAZE=new THREE.Color(0xc7d3dc),WHITE=new THREE.Color(0xf0f2ee),WARM=new THREE.Color(0xffe2bd);
 // lying in the canoe: look up at the sky; any movement gets you back up on the island
 let inCanoe=false;const sitBtn=document.getElementById('sit');
 function enterCanoe(){fade.style.opacity=1;target=null;setTimeout(()=>{inCanoe=true;player.pitch=.85;player.yaw=CANOE.heading+Math.PI/2;sitBtn.hidden=false;fade.style.opacity=0},460)}
@@ -836,7 +837,7 @@ const tt=U.t.value,hx=(Math.sin(tt*.71)+Math.sin(tt*1.33+1.3)*.6+Math.sin(tt*2.9
   if(audio.fire)audio.fire.gain.value=fireOn?Math.min(1,5/(Math.hypot(player.x-FIRE.x,player.z-FIRE.z)+1))*.9:0}
  // weather: misty overcast in the gorge, clear and sunny at the lake
  const k=sm(160,248,player.z);
- scene.fog.color.lerpColors(GREY,HAZE,k);scene.fog.density=.0042+(.00045-.0042)*k;skyU.oc.value=.55*(1-k);
+ scene.fog.color.lerpColors(GREY,HAZE,k);scene.fog.density=.0019+(.00045-.0019)*k;skyU.oc.value=.55*(1-k);
  sun.intensity=.7+k*2.1;sun.color.lerpColors(WHITE,WARM,k);hemi.intensity=.55+k*.45;renderer.toneMappingExposure=1.05-k*.12;
  sky.position.copy(camera.position);
  if(FAST)renderer.render(scene,camera);else composer.render();requestAnimationFrame(frame)}
