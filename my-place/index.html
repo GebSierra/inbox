@@ -400,7 +400,7 @@ const logTex=canvasTex(512,512,(x,w,h)=>{const n=8,lh=h/n;for(let i=0;i<n;i++){c
   const g=x.createLinearGradient(0,y,0,y+lh);g.addColorStop(0,`rgb(${b*.55|0},${b*.38|0},${b*.22|0})`);g.addColorStop(.22,`rgb(${b},${b*.72|0},${b*.45|0})`);g.addColorStop(.6,`rgb(${b*.92|0},${b*.64|0},${b*.38|0})`);g.addColorStop(1,`rgb(${b*.42|0},${b*.28|0},${b*.16|0})`);
   x.fillStyle=g;x.fillRect(0,y,w,lh);for(let k=0;k<120;k++){x.fillStyle=`rgba(70,40,20,${rnd()*.12})`;x.fillRect(rnd()*w,y+lh*.15+rnd()*lh*.7,30+rnd()*120,1)}
   x.fillStyle='rgba(235,225,205,.5)';x.fillRect(0,y+lh-3,w,3)}});
-const plankTex=canvasTex(512,512,(x,w,h)=>{for(let i=0;i<10;i++){const y=i*h/10,b=120+rnd()*40;x.fillStyle=`rgb(${b},${b*.66|0},${b*.38|0})`;x.fillRect(0,y,w,h/10);
+const plankTex=canvasTex(512,512,(x,w,h)=>{for(let i=0;i<10;i++){const y=i*h/10,b=150+rnd()*40;x.fillStyle=`rgb(${b},${b*.8|0},${b*.6|0})`;x.fillRect(0,y,w,h/10);
   for(let k=0;k<80;k++){x.strokeStyle=`rgba(50,28,12,${.05+rnd()*.12})`;x.beginPath();const yy=y+rnd()*h/10;x.moveTo(rnd()*w,yy);x.lineTo(rnd()*w,yy+(rnd()-.5)*2);x.stroke()}
   x.fillStyle='rgba(30,16,8,.7)';x.fillRect(0,y,w,2);x.fillRect((i*137)%w,y,2,h/10);x.fillRect((i*137+260)%w,y,2,h/10)}});
 const plasterTex=canvasTex(256,256,(x,w,h)=>{x.fillStyle='#e9e1d2';x.fillRect(0,0,w,h);for(let k=0;k<900;k++){x.fillStyle=`rgba(${rnd()<.5?255:150},${rnd()<.5?245:140},${rnd()<.5?230:120},.05)`;x.fillRect(rnd()*w,rnd()*h,3+rnd()*8,3+rnd()*8)}});
@@ -746,7 +746,7 @@ const composer=new EffectComposer(renderer);composer.addPass(new RenderPass(scen
 composer.addPass(new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),.12,.5,.9));composer.addPass(new OutputPass());
 
 // ---------- player & controls ----------
-const player={x:riverX(140)+10,z:140,yaw:.18,pitch:.04};window.__player=player;window.__scene=scene;window.__cam=camera;window.__T=THREE;window.__LR=LR;window.__fromPlan=fromPlan;window.__dbg={H:(x,z)=>H(x,z),slope:(x,z)=>slope(x,z),walk:(x,z)=>walkable(x,z),CW,ISL};
+const player={x:riverX(140)+10,z:140,yaw:.18,pitch:.04};window.__player=player;window.__scene=scene;window.__fire=()=>FIRE;window.__cam=camera;window.__T=THREE;window.__LR=LR;window.__fromPlan=fromPlan;window.__dbg={H:(x,z)=>H(x,z),slope:(x,z)=>slope(x,z),walk:(x,z)=>walkable(x,z),CW,ISL};
 const keys={};addEventListener('keydown',e=>keys[e.code]=true);addEventListener('keyup',e=>keys[e.code]=false);
 const joy=document.getElementById('joy'),knob=document.getElementById('knob');let jv={x:0,y:0},jid=null;
 function joyMove(e){const r=joy.getBoundingClientRect();let dx=e.clientX-r.left-65,dy=e.clientY-r.top-65;const l=Math.hypot(dx,dy),m=45;if(l>m){dx*=m/l;dy*=m/l}
