@@ -138,7 +138,14 @@ let terrain;
   col.push(r,gr,l);bch.push(Math.max(lm*(1-sm(.1,.19,sh+k*.03)),(1-sm(2.5,5,Math.abs(z-FORD.z)))*(1-sm(14,22,Math.abs(x-riverX(FORD.z))))*.95,onPath(x,z,3.2)?(1-sm(1.4,3.2,Math.abs(x-pathX(z))+k))*.9:0))}
  g.setAttribute('color',new THREE.Float32BufferAttribute(col,3));g.setAttribute('beach',new THREE.Float32BufferAttribute(bch,1));
  const mat=new THREE.MeshStandardMaterial({roughness:.95,normalMap:tex('dark_rock_nor_gl.jpg'),normalScale:new THREE.Vector2(.8,.8)});
- const tS=tex('gravel_diff.jpg',1),tR=tex('dark_rock_diff.jpg',1),tG=tex('grass_ground_diff.jpg',1),tLf=tex('forest_leaves_02_diff.jpg',1);
+ const tS=canvasTex(1024,1024,(x,w,h)=>{x.fillStyle='#3d3a36';x.fillRect(0,0,w,h);
+  // packed lake-shore pebbles: each stone shaded like a lit dome, sitting in a dark gap
+  for(let pass=0;pass<2;pass++)for(let i=0;i<(pass?2600:900);i++){const cx=rnd()*w,cy=rnd()*h,r=pass?5+rnd()*11:12+rnd()*22,ry=r*(.6+rnd()*.35),rot=rnd()*3.14;
+   const tone=rnd(),g=95+tone*95,warm=rnd()<.35?18:rnd()<.5?-8:0;
+   for(const [ox,oy] of [[0,0],[w,0],[-w,0],[0,h],[0,-h]]){x.save();x.translate(cx+ox,cy+oy);x.rotate(rot);
+    x.fillStyle='rgba(20,18,16,.55)';x.beginPath();x.ellipse(1.5,2.5,r+1.5,ry+1.5,0,0,6.3);x.fill();
+    const gr=x.createRadialGradient(-r*.35,-ry*.4,r*.1,0,0,r);gr.addColorStop(0,`rgb(${g+40+warm},${g+36},${g+30-warm})`);gr.addColorStop(.7,`rgb(${g+warm},${g-3},${g-8-warm})`);gr.addColorStop(1,`rgb(${g*.6+warm|0},${g*.58|0},${g*.55-warm|0})`);
+    x.fillStyle=gr;x.beginPath();x.ellipse(0,0,r,ry,0,0,6.3);x.fill();x.restore()}}}),tR=tex('dark_rock_diff.jpg',1),tG=tex('grass_ground_diff.jpg',1),tLf=tex('forest_leaves_02_diff.jpg',1);
  mat.onBeforeCompile=s=>{Object.assign(s.uniforms,{tS:{value:tS},tR:{value:tR},tG:{value:tG},tLf:{value:tLf}});
   s.vertexShader=s.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 vWP;varying vec3 vWN;varying vec3 vSplat;varying float vBeach;attribute vec3 color;attribute float beach;')
    .replace('#include <begin_vertex>','#include <begin_vertex>\nvWP=(modelMatrix*vec4(position,1.)).xyz;vWN=normal;vSplat=color;vBeach=beach;');
@@ -152,9 +159,9 @@ let terrain;
     vec3 sp=vSplat/max(.001,vSplat.r+vSplat.g+vSplat.b);
     // wet darkening near the waterline
     float wet=1.-smoothstep(.2,2.2,vWP.y);
-    vec3 sand=texture2D(tS,vWP.xz*.18).rgb;sand=mix(vec3(dot(sand,vec3(.34))),sand,.4)*mix(.8,1.1,texture2D(tS,vWP.xz*.02).r);
+    vec3 sand=texture2D(tS,vWP.xz*.9).rgb*.75+texture2D(tS,vWP.xz*.23).rgb*.25;sand=sand*1.15*mix(.8,1.1,texture2D(tS,vWP.xz*.02).r);
     vec3 base=(rock*sp.r+grass*sp.g+leaf*sp.b)*mix(1.,.55,wet);if(vWP.z<232.)sand*=vec3(.5,.44,.36);
-    diffuseColor.rgb=mix(base,sand*mix(1.,.55,1.-smoothstep(-.6,.9,vWP.y)),vBeach);`)
+    diffuseColor.rgb=mix(base,sand*mix(1.,.45,1.-smoothstep(-.6,.55,vWP.y)),vBeach);`)
    .replace('#include <normal_fragment_maps>','#if 0\n#include <normal_fragment_maps>\n#endif\n{vec3 mn=texture2D(normalMap,vWP.xz*.08).xyz*2.-1.;normal=normalize(normal+(vSplat.r*.9+.2)*vec3(mn.x,mn.y,0.)*normalScale.x*.5);}');};
  terrain=new THREE.Mesh(g,mat);scene.add(terrain);}
 
@@ -225,7 +232,7 @@ function rockGeo(s){const g=new THREE.IcosahedronGeometry(1,3),p=g.attributes.po
   // facet the top like split granite
   const f=Math.max(v.x*.5+v.y,0);v.y-=f*.15;p.setXYZ(i,v.x,v.y,v.z)}g.computeVertexNormals();return g}
 {const geos=[rockGeo(1),rockGeo(9)],mat=new THREE.MeshStandardMaterial({map:tex('dark_rock_diff.jpg',1),normalMap:tex('dark_rock_nor_gl.jpg'),roughness:.6,metalness:0});
- const N=900;const ms=geos.map(g=>new THREE.InstancedMesh(g,mat,N));
+ const N=3800;const ms=geos.map(g=>new THREE.InstancedMesh(g,mat,N));
  const o=new THREE.Object3D(),c=new THREE.Color();let k=[0,0];
  const add=(x,z,s,y,force)=>{if(!force&&(inLodge(x,z,3)||Math.hypot(x-riverX(140)-9.5,z-140)<5||onPath(x,z,2.5)||mouthClear(x,z)))return;const which=rnd()<.5?0:1;o.position.set(x,y??H(x,z)-s*.15,z);
   o.rotation.set(rnd()*.3,rnd()*6.28,rnd()*.3);o.scale.set(s*(.8+rnd()*.6),s*(.7+rnd()*.6),s*(.8+rnd()*.6));o.updateMatrix();
@@ -233,10 +240,10 @@ function rockGeo(s){const g=new THREE.IcosahedronGeometry(1,3),p=g.attributes.po
  for(let i=0;i<550;i++){const z=56+rnd()*194,side=rnd()<.5?-1:1,d=10+Math.pow(rnd(),1.4)*10;
   const x=riverX(z)+side*d;add(x,z,.4+rnd()*rnd()*2.4)}
  for(let i=0;i<220;i++){const z=56+rnd()*184,side=rnd()<.5?-1:1,x=riverX(z)+side*(8.5+rnd()*4);add(x,z,.8+rnd()*1.8,H(x,z)-.4)}
- for(let i=0;i<70;i++){const z=56+rnd()*184,x=riverX(z)+(rnd()-.5)*14;add(x,z,.6+rnd()*1.1,-.75)}
+ for(let i=0;i<70;i++){const z=56+rnd()*184,x=riverX(z)+(rnd()-.5)*14;add(x,z,.9+rnd()*1.2,-.7)}
  // hero boulders near start, right bank, like the video
  add(riverX(170)+11,170,3.2);add(riverX(150)-11,150,2.5);add(riverX(95)+10.5,95,2.2);
- for(let i=0;i<500;i++){const a=rnd()*6.283,e=1+.01+rnd()*.15;const x=Math.cos(a)*LRX*e,z=LZ+Math.sin(a)*LRZ*e;if(z>300||inLodge(x,z,3))continue;add(x,z,.08+rnd()*rnd()*.6)}
+ for(let i=0;i<5200;i++){const a=i%2?-2.6+rnd()*2.1:rnd()*6.283,e=1+.005+Math.pow(rnd(),2.)*.12;const x=Math.cos(a)*LRX*e,z=LZ+Math.sin(a)*LRZ*e;if(z>300||inLodge(x,z,3))continue;const sz=.07+rnd()*rnd()*.4;add(x,z,sz,H(x,z)-sz*.35,1)}
 {const L=Math.hypot(CW[1].x-CW[0].x,CW[1].z-CW[0].z),nx=-(CW[1].z-CW[0].z)/L,nz=(CW[1].x-CW[0].x)/L;
   // a natural rubble causeway: big flat-topped stones near the line, smaller ones scattered, some awash
   for(let t=0;t<=L;t+=.9+rnd()*.5){const f=t/L,cx=CW[0].x+(CW[1].x-CW[0].x)*f,cz=CW[0].z+(CW[1].z-CW[0].z)*f,n=1+Math.floor(rnd()*3);
@@ -278,7 +285,7 @@ const spruceSpots=[];
  const VAR=3,o=new THREE.Object3D(),c=new THREE.Color();
  for(let v=0;v<VAR;v++){const mine=spruceSpots.filter((_,i)=>i%VAR===v);
   const fol=new THREE.InstancedMesh(spruceGeo(v+1),fm,mine.length),tr=new THREE.InstancedMesh(tg,bm,mine.length);
-  mine.forEach(([x,z],k)=>{const near=Math.abs(x-riverX(z))<45&&lakeMix(z)<.5;const s=(near?.75:.6)+rnd()*.5;
+  mine.forEach(([x,z],k)=>{const near=Math.abs(x-riverX(z))<45&&lakeMix(z)<.5;const s=(near?.7:.5)+Math.pow(rnd(),1.5)*.8;
    o.position.set(x,H(x,z)-.3,z);o.rotation.set((rnd()-.5)*.04,rnd()*6.28,(rnd()-.5)*.04);o.scale.set(s*(.9+rnd()*.2),s,s*(.9+rnd()*.2));o.updateMatrix();
    fol.setMatrixAt(k,o.matrix);tr.setMatrixAt(k,o.matrix);const q=rnd();c.setRGB(.42+q*.25,.58+q*.3,.45+q*.2);fol.setColorAt(k,c)});
   fol.frustumCulled=tr.frustumCulled=false;scene.add(fol,tr)}}
@@ -486,6 +493,12 @@ wall(26.02,16.2,26.02,LD,.16,LM.plaster,[[3.6,4.4,'d']]);
  [3.8,9.8,12.2,17,19.4,23.6,27.6].forEach(x=>{pcyl(.17,[x,0,WH-.1],[x,16.2,WH-.1],LM.beam);pcyl(.15,[x,.1,WH],[x,8.1,8.7],LM.beam);pcyl(.15,[x,16.1,WH],[x,8.1,8.7],LM.beam);pcyl(.12,[x,8.1,WH-.1],[x,8.1,8.7],LM.beam);
   pcyl(.1,[x,4,WH],[x,8.1,6.6],LM.beam);pcyl(.1,[x,12.2,WH],[x,8.1,6.6],LM.beam)});
  pcyl(.22,[0,8.1,8.75],[LW,8.1,8.75],LM.beam);[3.4,12.8].forEach(y=>pcyl(.14,[0,y,(WH+(9-WH)*(1-Math.abs(y-8.1)/8.8))-.2],[LW,y,(WH+(9-WH)*(1-Math.abs(y-8.1)/8.8))-.2],LM.beam));}
+// front entry gable over the steps (breaks up the long porch roof)
+{const cx=10.75,hw=2.3,y0=15.6,y1=LD+.6,eh=3.35,rh=5.6,sl=Math.hypot(hw+.3,rh-eh),an=Math.atan2(rh-eh,hw+.3);
+ [-1,1].forEach(sd=>{const m=new THREE.Mesh(new THREE.BoxGeometry(sl,.22,y1-y0),[LM.trim,LM.trim,LM.roof,LM.ceil,LM.trim,LM.trim]);m.position.set(cx-LW/2+sd*(hw+.3)/2,(eh+rh)/2+.1,(y0+y1)/2-LD/2);m.rotation.z=-sd*an;lodge.add(m)});
+ const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute([cx-hw-LW/2,eh,y1-.3-LD/2,cx+hw-LW/2,eh,y1-.3-LD/2,cx-LW/2,rh-.1,y1-.3-LD/2],3));g.setAttribute('uv',new THREE.Float32BufferAttribute([0,0,2,0,1,1],2));g.computeVertexNormals();
+ lodge.add(new THREE.Mesh(g,new THREE.MeshStandardMaterial({map:logTex,color:0xc8b8a4,roughness:.8,side:THREE.DoubleSide})));
+ pcyl(.14,[cx-hw,y1-.35,eh],[cx,y1-.35,rh-.1],LM.beam);pcyl(.14,[cx+hw,y1-.35,eh],[cx,y1-.35,rh-.1],LM.beam);pcyl(.12,[cx-hw,y1-.35,eh+.05],[cx+hw,y1-.35,eh+.05],LM.beam);pcyl(.1,[cx,y1-.35,eh+.05],[cx,y1-.35,rh-.15],LM.beam);}
 // porch: log posts, railing with a gap for the steps, rocking chairs
 {const posts=[.25,3.7,7.2,9.4,12.1,14.6,18,21];posts.forEach((x,i)=>{pcyl(.2,[x,LD-.25,0],[x,LD-.25,3.25],LOGS[i%3]);pcyl(.24,[x,LD-.25,0],[x,LD-.25,.2],LOGS[(i+1)%3])});pcyl(.16,[.25,16.4,0],[.25,16.4,3.6],LM.beam);
  const rail=(x1,y1,x2,y2)=>{pcyl(.08,[x1,y1,.95],[x2,y2,.95],LM.beam);pcyl(.05,[x1,y1,.45],[x2,y2,.45],LM.beam);const L=Math.hypot(x2-x1,y2-y1);for(let t=.14;t<L;t+=.14)pcyl(.03,[x1+(x2-x1)*t/L,y1+(y2-y1)*t/L,0],[x1+(x2-x1)*t/L,y1+(y2-y1)*t/L,.95],LM.beam);lodgeSegs.push({x1,y1,x2,y2,r:.3})};
@@ -613,7 +626,7 @@ const fireLight=new THREE.PointLight(0xff7a2e,0,16,1.6),fireLight2=new THREE.Poi
   sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nvarying vec3 fW;uniform vec3 fc;').replace('#include <map_fragment>','#include <map_fragment>\ndiffuseColor.rgb*=.85+.3*fract(sin(dot(floor(fW.xz*40.),vec2(12.9,78.2)))*43758.5);float soot=1.-smoothstep(.45,.85,length(fW.xz-fc.xz));diffuseColor.rgb*=mix(1.,.3,soot*smoothstep(.0,.3,fW.y-fc.y+.05)*.8);')};
  const tints=[0x7f7d78,0x8c8476,0x737a80,0x6a6864,0x938f86];
  for(let i=0;i<11;i++){const a=i/11*6.283+rnd()*.3,r=.8+rnd()*.12,sm2=stoneM.clone();sm2.color.set(tints[i%5]);sm2.onBeforeCompile=stoneM.onBeforeCompile;const st=new THREE.Mesh(sgs[i%3],sm2);
-  st.position.set(Math.cos(a)*r,-.03,Math.sin(a)*r);const k=.17+rnd()*.09;st.scale.set(k*(1+rnd()*.5),k*(.8+rnd()*.5),k*(1+rnd()*.4));st.rotation.set(rnd()*.4,rnd()*6.28,rnd()*.4);fireGroup.add(st)}
+  st.position.set(Math.cos(a)*r,-.08,Math.sin(a)*r);const k=.18+rnd()*.15;st.scale.set(k*(1+rnd()*.5),k*(.8+rnd()*.5),k*(1+rnd()*.4));st.rotation.set(rnd()*.4,rnd()*6.28,rnd()*.4);fireGroup.add(st)}
  // ash and ember bed
  const bed=new THREE.Mesh(new THREE.CircleGeometry(.72,48),new THREE.ShaderMaterial({uniforms:fireU,transparent:true,depthWrite:false,
   vertexShader:`varying vec2 vP;void main(){vP=position.xy;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
@@ -632,7 +645,7 @@ const fireLight=new THREE.PointLight(0xff7a2e,0,16,1.6),fireLight2=new THREE.Poi
  // split logs leaning into a teepee, charred toward the heart with glowing cracks
  const logM=new THREE.MeshStandardMaterial({map:tex('spruce_bark.jpg',1),normalMap:tex('spruce_bark_nor.jpg'),roughness:.95,color:0x7a6a5c});
  logM.onBeforeCompile=sh=>{Object.assign(sh.uniforms,{on:fireU.on,t:U.t});
-  sh.uniforms.fc={value:new THREE.Vector3(FIRE.x,0,FIRE.z)};sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nvarying float lH;varying vec2 lUv;uniform vec3 fc;').replace('#include <begin_vertex>','#include <begin_vertex>\n{vec3 w=(modelMatrix*vec4(transformed,1.)).xyz;lH=1.-smoothstep(.1,.42,length(w.xz-fc.xz));}lUv=uv;');
+  sh.uniforms.fc={value:new THREE.Vector3(FIRE.x,0,FIRE.z)};sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nvarying float lH;varying vec2 lUv;uniform vec3 fc;').replace('#include <begin_vertex>','#include <begin_vertex>\n{vec3 w=(modelMatrix*vec4(transformed,1.)).xyz;lH=1.-smoothstep(.15,.55,length(w.xz-fc.xz));}lUv=uv;');
   sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nuniform float on,t;uniform vec3 fc;varying float lH;varying vec2 lUv;\n'+GN)
    .replace('#include <map_fragment>','#include <map_fragment>\nfloat ch=smoothstep(.0,.6,lH);diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.03,.025,.022),ch*.95);')
    .replace('#include <emissivemap_fragment>','#include <emissivemap_fragment>\n{float k=smoothstep(.6,.72,fb(lUv*vec2(6.,22.)+vec2(0.,t*.04)));totalEmissiveRadiance+=vec3(1.5,.38,.05)*k*smoothstep(.45,.95,lH)*on*(.7+.3*sin(t*3.+lUv.x*20.))*.7;}')};
@@ -668,12 +681,12 @@ particles(18,new THREE.ShaderMaterial({uniforms:fireU,transparent:true,depthWrit
  vertexShader:`uniform float t,on;attribute float ph;attribute vec3 sd;varying float vA;void main(){float k=fract(ph+t*(.45+sd.y*.35));
   vec3 p=vec3(sd.x*.35,.3,sd.z*.35)+vec3(sin(t*3.+ph*40.)*.25*k+sd.x*k*.8,k*(2.2+sd.y*2.5),cos(t*2.6+ph*30.)*.25*k+sd.z*k*.8);
   vA=(1.-k)*on*step(.55,fract(ph*7.3+t*1.7));vec4 mv=modelViewMatrix*vec4(p,1.);gl_PointSize=max(1.,(1.+sd.y*1.5)*(1.-k*.5)*10./-mv.z)*on;gl_Position=projectionMatrix*mv;}`,
- fragmentShader:`varying float vA;void main(){float d=length(gl_PointCoord-.5);gl_FragColor=vec4(vec3(1.,.6,.2)*4.*vA*(1.-smoothstep(.15,.5,d)),1.);}`}));
+ fragmentShader:`varying float vA;void main(){float d=length(gl_PointCoord-.5);gl_FragColor=vec4(vec3(1.,.45,.12)*1.6*vA*(1.-smoothstep(.15,.5,d)),1.);}`}));
 particles(40,new THREE.ShaderMaterial({uniforms:{...fireU,map:{value:softTex()}},transparent:true,depthWrite:false,
  vertexShader:`uniform float t,on;attribute float ph;attribute vec3 sd;varying float vA;void main(){float k=fract(ph+t*.07);
   vec3 p=vec3(sd.x*.1,.75,sd.z*.1)+vec3(k*k*1.1+sin(t*.8+ph*9.)*.35*k+sd.x*k*.7,k*2.1,k*.5+cos(t*.6+ph*7.)*.3*k+sd.z*k*.6);
   vA=pow(1.-k,1.6)*smoothstep(.0,.08,k)*on*(.6+.4*sin(t*.9+ph*12.));vec4 mv=modelViewMatrix*vec4(p,1.);gl_PointSize=(.25+k*1.4)*170./-mv.z;gl_Position=projectionMatrix*mv;}`,
- fragmentShader:`uniform sampler2D map;varying float vA;void main(){gl_FragColor=vec4(vec3(.72,.75,.8),texture2D(map,gl_PointCoord).a*.16*vA);}`}));
+ fragmentShader:`uniform sampler2D map;varying float vA;void main(){gl_FragColor=vec4(vec3(.72,.75,.8),texture2D(map,gl_PointCoord).a*.3*vA);}`}));
 function setFire(on){fireOn=on;fireU.on.value=on?1:0;fireBtn.textContent=on?'Put out fire':'Light campfire';fireBtn.setAttribute('aria-pressed',on)}
 function updateFire(){if(!fireOn){fireLight.intensity=fireLight2.intensity=0;return}const t=U.t.value;
  const fl=1+Math.sin(t*11.3)*.12+Math.sin(t*17.9+1.)*.08+Math.sin(t*5.1)*.1;fireLight.intensity=1.6*fl;fireLight2.intensity=1.2*fl;fireLight.position.x=Math.sin(t*7.)*.06;
@@ -721,8 +734,8 @@ function updateEagle(t){const a=t*.045,cx=70,cz=600,r=140+Math.sin(t*.07)*25;
  eagle.userData.w[0].rotation.x=-flap;eagle.userData.w[1].rotation.x=flap}
 
 // ---------- driftwood on the beach ----------
-{const m=new THREE.MeshStandardMaterial({color:0x9a8c7c,roughness:.95,normalMap:tex('dark_rock_nor_gl.jpg')});
- [[-14,250,.35,7,.4],[8,249,.25,4.5,-.7],[-30,253,.2,3.5,1.1]].forEach(([x,z,r,l,a])=>{const g=new THREE.CylinderGeometry(r*.85,r,l,12,4);g.rotateZ(Math.PI/2);
+{const m=new THREE.MeshStandardMaterial({color:0xcfc6b8,roughness:.95,map:tex("spruce_bark.jpg",1),normalMap:tex("spruce_bark_nor.jpg")});
+ [[-1.35,1.06,.35,7,.4],[-1.78,1.07,.25,4.5,-.7],[-2.25,1.05,.2,3.5,1.1],[-1.1,1.08,.28,5,.2]].map(([an,e,r,l,a])=>[Math.cos(an)*LRX*e,LZ+Math.sin(an)*LRZ*e,r,l,a]).forEach(([x,z,r,l,a])=>{const g=new THREE.CylinderGeometry(r*.85,r,l,12,4);g.rotateZ(Math.PI/2);
   const w=new THREE.Mesh(g,m);w.position.set(x,H(x,z)+r*.7,z);w.rotation.y=a;scene.add(w)});}
 
 // ---------- mist & spray ----------
@@ -799,7 +812,7 @@ document.getElementById('start').onclick=()=>{
 Promise.allSettled(pending).then(()=>{const b=document.getElementById('start');b.disabled=false;b.textContent='Enter with sound'});
 
 // ---------- loop ----------
-const clock=new THREE.Clock();const GREY=new THREE.Color(0x98a2a3),HAZE=new THREE.Color(0xc7d3dc),WHITE=new THREE.Color(0xf0f2ee),WARM=new THREE.Color(0xffe2bd);
+const clock=new THREE.Clock();const GREY=new THREE.Color(0x98a2a3),HAZE=new THREE.Color(0xc7d3dc),WHITE=new THREE.Color(0xf0f2ee),WARM=new THREE.Color(0xffd29a);
 // lying in the canoe: look up at the sky; any movement gets you back up on the island
 let inCanoe=false;const sitBtn=document.getElementById('sit');
 function enterCanoe(){fade.style.opacity=1;target=null;setTimeout(()=>{inCanoe=true;player.pitch=.85;player.yaw=CANOE.heading+Math.PI/2;sitBtn.hidden=false;fade.style.opacity=0},460)}
