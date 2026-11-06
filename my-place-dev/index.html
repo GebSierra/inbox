@@ -208,7 +208,7 @@ let terrain;
      gr=mix(gr,vec3(.18,.33,.08),smoothstep(.5,.8,abs(normalize(vWN).y))*smoothstep(.45,.62,texture2D(tR,vWP.xz*.03).g)*.85);
      gr=mix(gr,gr*.45,(1.-smoothstep(3.,8.,abs(vWP.x-8.5)))*smoothstep(56.,40.,vWP.z)*.8);rock=mix(rock,gr,gz);}   /* fractured light-grey granite, lichen, moss on ledges, dark wet rock beside the falls */   /* lit grey headwall behind the falls */
     vec3 grass=texture2D(tG,vWP.xz*.12).rgb*mix(.8,1.1,texture2D(tG,vWP.xz*.013).g)*vec3(.62,.86,.5);
-    if(vWP.z<2.)grass*=vec3(1.18,1.05,.62);vec3 leaf=texture2D(tLf,vWP.xz*.14).rgb*.8;if(vWP.x>8.&&vWP.z<70.&&vWP.z>-30.)leaf*=vec3(.5,.47,.43);
+    if(vWP.z<2.)grass*=vec3(1.18,1.05,.62);vec3 leaf=(texture2D(tLf,vWP.zy*.14).rgb*an.x+texture2D(tLf,vWP.xz*.14).rgb*an.y+texture2D(tLf,vWP.xy*.14).rgb*an.z)*.8;if(vWP.x>8.&&vWP.z<70.&&vWP.z>-30.)leaf*=vec3(.52,.5,.45)*mix(1.,.8,an.x+an.z);
     vec3 sp=vSplat/max(.001,vSplat.r+vSplat.g+vSplat.b);
     // wet darkening near the waterline
     float wet=1.-smoothstep(.2,2.2,vWP.y);
@@ -899,7 +899,7 @@ let gateRibbons=[],moose=null;
  const rg=rockGeo(4);inst(rg,graniteM,bl);inst(new THREE.SphereGeometry(1,10,6,0,6.283,0,1.1),mossM,bl.map(b=>({...b,y:b.y+b.sy*.18,sx:b.sx*.9,sy:b.sy*.42,sz:b.sz*.9})));
  // exposed roots forming steps where the trail is steepest
  const roots=[];trail.forEach((p,i)=>{const q=trail[Math.min(i+1,trail.length-1)],gr=Math.abs(H(q.x,q.z)-H(p.x,p.z))/Math.max(.1,Math.hypot(q.x-p.x,q.z-p.z));if(gr<.22||i%2)return;
-  const a=Math.atan2(p.tx,p.tz)+(rnd()-.5)*.6;roots.push({x:p.x+(rnd()-.5)*.6,y:H(p.x,p.z)-.1,z:p.z+(rnd()-.5)*.6,ry:a,rz:Math.PI/2+(rnd()-.5)*.25,sx:.05+rnd()*.07,sy:.8+rnd()*1.6,sz:.05+rnd()*.05})});
+  const a=Math.atan2(p.tx,p.tz)+(rnd()-.5)*.6;roots.push({x:p.x+(rnd()-.5)*.6,y:H(p.x,p.z)-.16,z:p.z+(rnd()-.5)*.6,ry:a,rz:Math.PI/2+(rnd()-.5)*.25,sx:.05+rnd()*.07,sy:.8+rnd()*1.6,sz:.05+rnd()*.05})});
  inst(new THREE.CylinderGeometry(1,1.3,1,7),new THREE.MeshStandardMaterial({map:tex('spruce_bark.jpg',1),color:0x5a4836,roughness:.95}),roots);
  // ferns (bent frond cards), blueberry bushes with berries, white trillium along the edges
  const frond=canvasTex(128,256,(x,w,h)=>{x.strokeStyle='#3d5a22';x.lineWidth=3;x.beginPath();x.moveTo(w/2,h);x.lineTo(w/2,8);x.stroke();for(let y=20;y<h-6;y+=7){const L=(1-Math.abs(y-h*.55)/(h*.6))*w*.45;x.fillStyle=`rgb(${60+rnd()*25|0},${100+rnd()*35|0},${38+rnd()*15|0})`;x.beginPath();x.ellipse(w/2-L/2,y,L/2,3,-.25,0,6.3);x.ellipse(w/2+L/2,y,L/2,3,.25,0,6.3);x.fill()}});frond.colorSpace=THREE.SRGBColorSpace;
