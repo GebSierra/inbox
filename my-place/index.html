@@ -42,6 +42,7 @@ import {EffectComposer} from 'three/addons/postprocessing/EffectComposer.js';
 import {RenderPass} from 'three/addons/postprocessing/RenderPass.js';
 import {UnrealBloomPass} from 'three/addons/postprocessing/UnrealBloomPass.js';
 import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
+import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {RGBELoader} from 'three/addons/loaders/RGBELoader.js';
 import {Reflector} from 'three/addons/objects/Reflector.js';
@@ -420,22 +421,22 @@ const LM={
  plaster:new THREE.MeshStandardMaterial({map:plasterTex,roughness:.95,color:0xd9cfbf}),
  floor:new THREE.MeshStandardMaterial({map:plankTex,roughness:.4,color:0xe8c8a0}),
  porch:new THREE.MeshStandardMaterial({map:plankTex,roughness:.8,color:0xb8ab98}),
- ceil:new THREE.MeshStandardMaterial({map:logGrain,roughness:.7,color:0xc4b49c}),
+ ceil:new THREE.MeshStandardMaterial({map:plankTex,roughness:.7,color:0xc4a07a}),
  roof:new THREE.MeshStandardMaterial({map:roofTex,roughness:.85}),
- beam:new THREE.MeshStandardMaterial({map:logGrain,roughness:.85,color:0xb4a288}),
+ beam:new THREE.MeshStandardMaterial({map:logGrain,roughness:.85,color:0xb09068}),
  trim:new THREE.MeshStandardMaterial({color:0x5e5040,roughness:.7}),
- glass:new THREE.MeshStandardMaterial({color:0x5a6c72,roughness:.04,metalness:.5,transparent:true,opacity:.4,depthWrite:false,envMapIntensity:1.6}),
+ glass:new THREE.MeshStandardMaterial({color:0x8a9ea6,roughness:.04,metalness:.45,transparent:true,opacity:.24,depthWrite:false,envMapIntensity:1.6}),
  chink:new THREE.MeshStandardMaterial({color:0x2a2420,roughness:1}),
  stone:new THREE.MeshStandardMaterial({map:canvasTex(512,512,(x,w,h)=>{x.fillStyle='#3a3530';x.fillRect(0,0,w,h);for(let r=0;r<11;r++){let cx=-20+rnd()*20;while(cx<w){const sw=40+rnd()*60,sh=34+rnd()*14,g=120+rnd()*70;
    x.fillStyle=`rgb(${g},${g*.95|0},${g*.86|0})`;x.beginPath();x.ellipse(cx+sw/2,r*47+24+(rnd()-.5)*6,sw/2-3,sh/2-3,(rnd()-.5)*.2,0,6.3);x.fill();
    x.fillStyle='rgba(255,255,255,.12)';x.beginPath();x.ellipse(cx+sw/2-4,r*47+18,sw/3,sh/5,0,0,6.3);x.fill();cx+=sw}}}),normalMap:tex('dark_rock_nor_gl.jpg'),roughness:.95}),
- leather:new THREE.MeshStandardMaterial({color:0x6a3a20,roughness:.5}),
- wood:new THREE.MeshStandardMaterial({map:plankTex,color:0xa8784c,roughness:.55}),
+ leather:new THREE.MeshStandardMaterial({color:0x4a3222,roughness:.38,metalness:.05}),
+ wood:new THREE.MeshStandardMaterial({map:plankTex,color:0x9c8a74,roughness:.6}),
  dark:new THREE.MeshStandardMaterial({color:0x151210,roughness:.4}),
  brass:new THREE.MeshStandardMaterial({color:0xc8a050,roughness:.3,metalness:.9}),
  steel:new THREE.MeshStandardMaterial({color:0x8a8478,roughness:.45,metalness:.85}),
  glow:new THREE.MeshStandardMaterial({color:0x221408,emissive:0xff8a30,emissiveIntensity:3.5}),
- shade:new THREE.MeshStandardMaterial({color:0xf2dcae,emissive:0xffc070,emissiveIntensity:.9,side:THREE.DoubleSide})};
+ shade:new THREE.MeshStandardMaterial({color:0xf2dcae,emissive:0xffb060,emissiveIntensity:2.2,side:THREE.DoubleSide})};
 // box in plan space: (x,y) is the plan centre, z the bottom height above the floor
 function pbox(w,h,d,m,x,y,z,ry,uvs){const g=new THREE.BoxGeometry(w,h,d);if(uvs){const uv=g.attributes.uv;for(let i=0;i<uv.count;i++)uv.setXY(i,uv.getX(i)*uvs[0],uv.getY(i)*uvs[1])}
  const b=new THREE.Mesh(g,m);b.position.set(x-LW/2,z+h/2,y-LD/2);if(ry)b.rotation.y=ry;lodge.add(b);return b}
@@ -490,11 +491,10 @@ wall(26.02,16.2,26.02,LD,.16,LM.plaster,[[3.6,4.4,'d']]);
  const pr=Math.atan2(.9,5.2),pl=Math.hypot(.9,5.2);const pg=new THREE.BoxGeometry(LW+1,.2,pl);const pm=new THREE.Mesh(pg,[LM.trim,LM.trim,LM.roof,LM.ceil,LM.trim,LM.trim]);
  pm.position.set(0,(4.05+3.15)/2+.1,(16.2+21.4)/2-LD/2);pm.rotation.x=pr;lodge.add(pm);
  // exposed log trusses, ridge beam and purlins
- [3.8,9.8,12.2,17,19.4,23.6,27.6].forEach(x=>{pcyl(.17,[x,0,WH-.1],[x,16.2,WH-.1],LM.beam);pcyl(.15,[x,.1,WH],[x,8.1,8.7],LM.beam);pcyl(.15,[x,16.1,WH],[x,8.1,8.7],LM.beam);pcyl(.12,[x,8.1,WH-.1],[x,8.1,8.7],LM.beam);
-  pcyl(.1,[x,4,WH],[x,8.1,6.6],LM.beam);pcyl(.1,[x,12.2,WH],[x,8.1,6.6],LM.beam)});
+ [3.8,9.8,12.2,17,19.4,23.6,27.6].forEach(x=>{pcyl(.17,[x,0,WH-.1],[x,16.2,WH-.1],LM.beam);pcyl(.15,[x,.1,WH],[x,8.1,8.7],LM.beam);pcyl(.15,[x,16.1,WH],[x,8.1,8.7],LM.beam);pcyl(.12,[x,8.1,WH-.1],[x,8.1,8.7],LM.beam);});
  pcyl(.22,[0,8.1,8.75],[LW,8.1,8.75],LM.beam);[3.4,12.8].forEach(y=>pcyl(.14,[0,y,(WH+(9-WH)*(1-Math.abs(y-8.1)/8.8))-.2],[LW,y,(WH+(9-WH)*(1-Math.abs(y-8.1)/8.8))-.2],LM.beam));}
 // front entry gable over the steps (breaks up the long porch roof)
-{const cx=10.75,hw=2.3,y0=15.6,y1=LD+.6,eh=3.35,rh=5.6,sl=Math.hypot(hw+.3,rh-eh),an=Math.atan2(rh-eh,hw+.3);
+{const cx=10.75,hw=2.3,y0=16.45,y1=LD+.6,eh=3.35,rh=5.6,sl=Math.hypot(hw+.3,rh-eh),an=Math.atan2(rh-eh,hw+.3);
  [-1,1].forEach(sd=>{const m=new THREE.Mesh(new THREE.BoxGeometry(sl,.22,y1-y0),[LM.trim,LM.trim,LM.roof,LM.ceil,LM.trim,LM.trim]);m.position.set(cx-LW/2+sd*(hw+.3)/2,(eh+rh)/2+.1,(y0+y1)/2-LD/2);m.rotation.z=-sd*an;lodge.add(m)});
  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute([cx-hw-LW/2,eh,y1-.3-LD/2,cx+hw-LW/2,eh,y1-.3-LD/2,cx-LW/2,rh-.1,y1-.3-LD/2],3));g.setAttribute('uv',new THREE.Float32BufferAttribute([0,0,2,0,1,1],2));g.computeVertexNormals();
  lodge.add(new THREE.Mesh(g,new THREE.MeshStandardMaterial({map:logTex,color:0xa8a29a,roughness:.8,side:THREE.DoubleSide})));
@@ -516,16 +516,16 @@ function fireplace(x,y,face){lodgeSegs.push({x1:x-1.3,y1:y,x2:x+1.3,y2:y,r:.8});
  pbox(1.2,.95,.06,LM.dark,x,y+face*.56,.35);const g=pbox(1.,.55,.04,LM.glow,x,y+face*.6,.38);pbox(1.3,.08,.2,LM.dark,x,y+face*.58,1.28);pbox(2.9,.18,.3,LM.beam,x,y+face*.62,1.55);pbox(2.8,.12,.6,LM.stone,x,y+face*.8,0);return g}
 const hearths=[fireplace(14.4,.55,1),fireplace(14.4,8.1,1)];
 // furniture by room (simple first pass)
-function sofa(x,y,ry,w=2.3){const g=new THREE.Group();const add=(a,b,c,px,py,pz)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(a,b,c),LM.leather);m.position.set(px,py,pz);g.add(m)};
+function sofa(x,y,ry,w=2.3){const g=new THREE.Group();const add=(a,b,c,px,py,pz)=>{const m=new THREE.Mesh(new RoundedBoxGeometry(a,b,c,3,Math.min(a,b,c)*.32),LM.leather);m.position.set(px,py,pz);g.add(m)};
  add(w,.42,.95,0,.21,0);add(w,.55,.25,0,.6,-.36);add(.25,.6,.95,-w/2+.12,.3,0);add(.25,.6,.95,w/2-.12,.3,0);[-w/4,w/4].forEach(px=>add(w/2-.08,.14,.7,px,.49,.06));g.position.set(x-LW/2,0,y-LD/2);g.rotation.y=ry;lodge.add(g)}
 function chair(x,y,ry){sofa(x,y,ry,.95)}
 function table(x,y,w,d,h=.45){pbox(w,.08,d,LM.wood,x,y,h);[[-1,-1],[1,-1],[-1,1],[1,1]].forEach(([a,b])=>pbox(.08,h,.08,LM.wood,x+a*(w/2-.08),y+b*(d/2-.08),0))}
-function lamp(x,y,z=0,shade=.45){pcyl(.02,[x,y,z],[x,y,z+.55],LM.brass);const s=new THREE.Mesh(new THREE.CylinderGeometry(shade*.35,shade*.55,shade*.6,16,1,true),LM.shade);s.position.set(x-LW/2,z+.7,y-LD/2);lodge.add(s)}
+function lamp(x,y,z=0,shade=.45){const pl=new THREE.PointLight(0xffb066,2.5,4.5,1.6);pl.position.set(x-LW/2,z+.75,y-LD/2);lodge.add(pl);pcyl(.02,[x,y,z],[x,y,z+.55],LM.brass);const s=new THREE.Mesh(new THREE.CylinderGeometry(shade*.35,shade*.55,shade*.6,16,1,true),LM.shade);s.position.set(x-LW/2,z+.7,y-LD/2);lodge.add(s)}
 function rug(x,y,w,d,c){const m=new THREE.Mesh(new THREE.PlaneGeometry(w,d),new THREE.MeshStandardMaterial({color:c,roughness:1}));m.rotation.x=-Math.PI/2;m.position.set(x-LW/2,.02,y-LD/2);lodge.add(m)}
 // great room / cafe lounge
-rug(14.4,12.4,5,3.8,0x6e5a44);sofa(14.4,10.6,0);sofa(14.4,14.2,Math.PI);chair(12,12.4,Math.PI/2);chair(16.8,12.4,-Math.PI/2);table(14.4,12.4,1.6,.9);
+rug(14.4,12.4,5.4,4.2,0x3e3226);rug(14.4,12.4,4.8,3.6,0x8a7a62);sofa(14.4,10.6,0);sofa(14.4,14.2,Math.PI);chair(12,12.4,Math.PI/2);chair(16.8,12.4,-Math.PI/2);table(14.4,12.4,1.6,.9);
 pbox(.7,1.1,2.7,LM.wood,19.6,12.7,0,0,[1,1]);pbox(.9,.06,2.9,LM.wood,19.6,12.7,1.1);[11.6,12.4,13.2,14].forEach(y=>pcyl(.18,[18.9,y,0],[18.9,y,.75],LM.wood));
-lamp(11.2,9.2,0,.5);table(11.2,9.2,.5,.5,.6);lamp(11.2,9.2,.6);
+table(12.9,10.6,.55,.55,.6);lamp(12.9,10.6,.6);table(15.9,14.2,.55,.55,.6);lamp(15.9,14.2,.6);
 const BOOKS=[0x6a2a1e,0x2a3a50,0x3a4a2a,0x7a6040,0x4a2a3a].map(c=>new THREE.MeshStandardMaterial({color:c,roughness:.7}));
 // library & reading nook
 rug(14.4,3.6,4.6,3,0x5a3c2a);sofa(14.4,3.2,Math.PI);chair(12.2,4.6,Math.PI*.75);chair(16.6,4.6,-Math.PI*.75);table(14.4,4.4,1.3,.7);
@@ -547,7 +547,8 @@ pbox(1.6,.06,.8,LM.wood,28.4,18.3,.75);[[-.7,-.3],[.7,-.3],[-.7,.3],[.7,.3]].for
 {const c=new THREE.Group();const ring=new THREE.Mesh(new THREE.TorusGeometry(.6,.04,8,24),LM.dark);ring.rotation.x=Math.PI/2;c.add(ring);for(let i=0;i<6;i++){const s=new THREE.Mesh(new THREE.CylinderGeometry(.06,.09,.2,8),LM.shade);s.position.set(Math.cos(i)*.6,.12,Math.sin(i)*.6);c.add(s)}
  c.position.set(14.4-LW/2,5.2,12.4-LD/2);lodge.add(c);pcyl(.015,[14.4,12.4,5.2],[14.4,12.4,8.6],LM.dark)}
 Object.values(LM).forEach(m=>{if(m!==LM.glass)m.envMapIntensity=.18});LOGS.forEach(m=>m.envMapIntensity=.18);
-const lodgeLights=[[14.4,12.2,3.4,14],[14.4,3.6,3.2,10],[26.2,4.5,3.4,10],[14.4,9.2,1.2,6],[4,12,3,8],[23.5,12,3,8]].map(([x,y,z,i])=>{const l=new THREE.PointLight(0xffc488,i,13,1.4);l.position.set(x-LW/2,z,y-LD/2);lodge.add(l);return l});
+[10.1,14.4,18.7].forEach(x=>{const l=new THREE.PointLight(0xdfe8f0,4,9,1.6);l.position.set(x-LW/2,2.4,15.4-LD/2);lodge.add(l)});   /* skylight spilling in from the lake windows */
+const lodgeLights=[[14.4,12.2,3.4,6],[14.4,3.6,3.2,6],[26.2,4.5,3.4,6],[14.4,9.2,1.2,5],[4,12,3,4],[23.5,12,3,4]].map(([x,y,z,i])=>{const l=new THREE.PointLight(0xffc488,i,13,1.4);l.position.set(x-LW/2,z,y-LD/2);lodge.add(l);return l});
 {lodge.updateMatrixWorld(true);const inv=lodge.matrixWorld.clone().invert(),byMat=new Map(),kill=[];
  lodge.traverse(o=>{if(!o.isMesh||Array.isArray(o.material))return;const g=o.geometry.index?o.geometry.toNonIndexed():o.geometry.clone();
   if(!g.attributes.uv)g.setAttribute('uv',new THREE.Float32BufferAttribute(new Float32Array(g.attributes.position.count*2),2));
@@ -574,7 +575,7 @@ lodgeProp('vault.glb',2.35,[[7.42,4.8,0,-Math.PI/2]]);
 lodgeProp('piano.glb',1.3,[[26.2,1.2,.2,0]]);
 lodgeProp('chair.glb',1,[[23.5,5.5,0,Math.PI/2],[24.5,5.5,0,-Math.PI/2],[27.9,5.8,0,Math.PI/2],[28.9,5.8,0,-Math.PI/2],[22.6,19.2,0,Math.PI/2],[24.6,19.2,0,-Math.PI/2],[23.6,18.45,0,0],[23.6,19.95,0,Math.PI]]);
 lodgeProp('lantern.glb',.45,[[3.7,LD-.55,2.55,0],[7.2,LD-.55,2.55,0],[12.1,LD-.55,2.55,0],[18,LD-.55,2.55,0],[2.35,16.55,2.6,0],[5.4,16.55,2.6,0]]);
-function updateLodge(t){const f=1+Math.sin(t*9.7)*.06+Math.sin(t*4.3)*.05;hearths.forEach(h=>h.material.emissiveIntensity=3.5*f);lodgeLights[0].intensity=14*f;lodgeLights[3].intensity=6*f}
+function updateLodge(t){const f=1+Math.sin(t*9.7)*.06+Math.sin(t*4.3)*.05;hearths.forEach(h=>h.material.emissiveIntensity=3.5*f);lodgeLights[0].intensity=6*f;lodgeLights[3].intensity=5*f}
 
 // ---------- green canoe tied to a post on the island ----------
 const POST={x:3.2,z:292.5},CANOE={x:9.5,z:291,heading:-2.1};
