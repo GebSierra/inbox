@@ -337,11 +337,11 @@ function spruceGeo(seedV){const P=[],N=[],UV=[],I=[];let vi=0;const Ht=24,W=24;
  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(P,3));g.setAttribute('normal',new THREE.Float32BufferAttribute(N,3));
  g.setAttribute('uv',new THREE.Float32BufferAttribute(UV,2));g.setIndex(I);return g}
 const spruceSpots=[];
-{for(let tries=0;tries<120000&&spruceSpots.length<8800;tries++){const rg=tries%4===0,x=rg?14+rnd()*84:(rnd()-.5)*580,z=rg?-26+rnd()*92:-90+rnd()*600;const d=Math.abs(x-riverX(z));
+{for(let tries=0;tries<160000&&spruceSpots.length<10500;tries++){const rg=tries%4===0,x=rg?14+rnd()*84:(rnd()-.5)*580,z=rg?-26+rnd()*92:-90+rnd()*600;const d=Math.abs(x-riverX(z));
   const lm=lakeMix(z),sh=shoreOf(x,z);
   if(lm>.5){if(sh<.18+fbm(x*.05,z*.05)*.08||inLodge(x,z,9))continue}
   else{if(d<15+fbm(z*.1,1)*4)continue;if(Math.abs(x)>200)continue;if(z>0&&z<50&&d<18)continue;if(z<8&&(a2S(x,z)<.14||(x>22&&x<112&&z<-22&&z>-175)))continue;if(Math.hypot(x-30,z+24)<24||echoClear(x,z)||Math.hypot(x-CAMP.x,z-CAMP.z)<10||Math.hypot(x-LASTSP.x,z-LASTSP.z)<15)continue;if(d<30&&rnd()<.35)continue}
-  if(slope(x,z)>((x>10&&x<100&&z>-30&&z<66)?2.6:2.2)||mouthClear(x,z)||onPathW(x,z,4.5)||onPathE(x,z,6)||onPathW(x,z,8)||nearMarker(x,z,8)||lookoutClear(x,z))continue;if(Math.hypot(x-riverX(140)-9.5,z-140)<14)continue;
+  if(slope(x,z)>((x>10&&x<100&&z>-30&&z<66)?2.6:2.2)||mouthClear(x,z)||onPathW(x,z,4.5)||onPathE(x,z,3.2)||onPathW(x,z,8)||nearMarker(x,z,8)||lookoutClear(x,z))continue;if(Math.hypot(x-riverX(140)-9.5,z-140)<14)continue;
   spruceSpots.push([x,z])}
  for(let i=0;i<7;i++){const a=rnd()*6.283,r=rnd()*5.5;spruceSpots.push([ISL.x+Math.cos(a)*r,ISL.z+Math.sin(a)*r])}
  // a dense, deep forest ring around the lake so the far shore reads as a wall of trees, not a fence
@@ -907,7 +907,7 @@ let gateRibbons=[],moose=null;
  const frond=canvasTex(128,256,(x,w,h)=>{x.strokeStyle='#3d5a22';x.lineWidth=3;x.beginPath();x.moveTo(w/2,h);x.lineTo(w/2,8);x.stroke();for(let y=20;y<h-6;y+=7){const L=(1-Math.abs(y-h*.55)/(h*.6))*w*.45;x.fillStyle=`rgb(${60+rnd()*25|0},${100+rnd()*35|0},${38+rnd()*15|0})`;x.beginPath();x.ellipse(w/2-L/2,y,L/2,3,-.25,0,6.3);x.ellipse(w/2+L/2,y,L/2,3,.25,0,6.3);x.fill()}});frond.colorSpace=THREE.SRGBColorSpace;
  const fp=[];for(let k=0;k<11;k++){const L=.7+rnd()*.5,g=new THREE.PlaneGeometry(.42,L,1,6);g.translate(0,L/2,0);const P=g.attributes.position;for(let i=0;i<P.count;i++){const y=P.getY(i);P.setZ(i,y*y*1.1)}g.rotateX(-1.1-rnd()*.3);g.rotateY(k/7*6.283+rnd()*.3);fp.push(g)}
  const fern=mergeGeometries(fp);fern.computeVertexNormals();const fernM=new THREE.MeshStandardMaterial({map:frond,color:0x5c6a52,alphaTest:.4,side:THREE.DoubleSide,roughness:.9});
- const ferns=[],berries=[],trill=[],bushes=[];trail.forEach((p,i)=>{for(let n=0;n<6;n++){const sd=rnd()<.5?-1:1,off=1.6+rnd()*6,x=p.x-p.tz*sd*off+(rnd()-.5)*2,z=p.z+p.tx*sd*off+(rnd()-.5)*2,y=H(x,z);const r=rnd();if(slope(x,z)>.9)continue;
+ const ferns=[],berries=[],trill=[],bushes=[];trail.forEach((p,i)=>{for(let n=0;n<6;n++){const sd=rnd()<.5?-1:1,off=1.6+rnd()*6,x=p.x-p.tz*sd*off+(rnd()-.5)*2,z=p.z+p.tx*sd*off+(rnd()-.5)*2,y=H(x,z);const r=rnd();if(slope(x,z)>1.9)continue;
   if(r<.45)ferns.push({x,y,z,ry:rnd()*6,sx:.45+rnd()*.35,sy:.4+rnd()*.3,sz:.45+rnd()*.35});else if(r<.75){bushes.push({v:Math.floor(rnd()*9),x,y,z,ry:rnd()*6,s:.7+rnd()*.5});for(let b=0;b<6;b++)berries.push({x:x+(rnd()-.5)*.6,y:y+.2+rnd()*.3,z:z+(rnd()-.5)*.6,sx:.03,sy:.03,sz:.03})}
   else if(r<.8)trill.push({x,y:y+.05,z,ry:rnd()*6,sx:1,sy:1,sz:1})}});
  pending.push(GL.loadAsync(A+'grass2.glb').then(gl=>{const v=variants(gl);v.forEach(vv=>vv.parts.forEach(p=>{p.m=p.m.clone();p.m.color.setRGB(.55,.75,.45)}));scatter(v,ferns.map((f,i)=>({v:i,x:f.x,y:f.y-.02,z:f.z,ry:f.ry,s:.55+rnd()*.35})))}).catch(e=>console.warn(e)));inst(new THREE.SphereGeometry(1,6,4),new THREE.MeshStandardMaterial({color:0x1c2244,roughness:.3}),berries);
