@@ -943,7 +943,7 @@ let gateRibbons=[],moose=null;
  const inst=(geo,mat,items,colorFn)=>{const im=new THREE.InstancedMesh(geo,mat,items.length);items.forEach((it,k)=>{o.position.set(it.x,it.y,it.z);o.rotation.set(it.rx||0,it.ry||0,it.rz||0);o.scale.set(it.sx,it.sy,it.sz);o.updateMatrix();im.setMatrixAt(k,o.matrix);if(colorFn){colorFn(col,k,it);im.setColorAt(k,col)}});im.castShadow=im.receiveShadow=true;scene.add(im);return im};
  const pondPt=()=>{for(;;){const a=rnd()*6.283,r=Math.sqrt(rnd()),x=2+Math.cos(a)*24*r,z=-32+Math.sin(a)*17*r;if(a2S(x,z)<-.05)return [x,z]}};
  // lily pads and a few white blooms
- const pads=[];for(let i=0;i<160;i++){const [x,z]=pondPt();pads.push({x,y:WL+.02,z,rx:-Math.PI/2,rz:rnd()*6,sx:.3+rnd()*.25,sy:.3+rnd()*.25,sz:1})}
+ const pads=[];for(let i=0;i<160;i++){const [x,z]=pondPt();pads.push({x,y:WL+.02,z,rx:-Math.PI/2,rz:rnd()*6,sx:.13+rnd()*.14,sy:.13+rnd()*.14,sz:1});for(let c=0;c<3;c++)pads.push({x:x+(rnd()-.5)*1.2,y:WL+.02,z:z+(rnd()-.5)*1.2,rx:-Math.PI/2,rz:rnd()*6,sx:.1+rnd()*.12,sy:.1+rnd()*.12,sz:1})}
  inst(new THREE.CircleGeometry(1,14,.3,5.9),new THREE.MeshStandardMaterial({color:0x557a34,roughness:.6,side:THREE.DoubleSide}),pads,(c)=>c.setRGB(.8+rnd()*.4,.8+rnd()*.4,.8+rnd()*.2));
  inst(new THREE.SphereGeometry(1,8,5),new THREE.MeshStandardMaterial({color:0xf4f0f0,roughness:.6}),pads.filter((_,i)=>i%9===0).map(p=>({x:p.x,y:WL+.08,z:p.z,sx:.08,sy:.05,sz:.08})));
  // silver dead snags standing in the water
