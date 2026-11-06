@@ -951,7 +951,7 @@ pending.push(GL.loadAsync(A+'grass2.glb').then(gl=>{const v=variants(gl);v.forEa
 // ---------- crisp worn-dirt ribbons along both trails, with roots drawn across ----------
 {const dirt=canvasTex(256,1024,(x,w,h)=>{x.fillStyle='#2a2016';x.fillRect(0,0,w,h);for(let i=0;i<3000;i++){const k=30+rnd()*50;x.fillStyle=`rgba(${k+15},${k+5},${k-5},${.3+rnd()*.5})`;x.fillRect(rnd()*w,rnd()*h,1+rnd()*3,1+rnd()*3)}
   for(let i=0;i<260;i++){const k=60+rnd()*50;x.fillStyle=`rgba(${k},${k*.78|0},${k*.55|0},.35)`;x.save();x.translate(rnd()*w,rnd()*h);x.rotate(rnd()*6);x.fillRect(0,0,2+rnd()*5,1+rnd()*2);x.restore()}
-  for(let i=0;i<70;i++){x.fillStyle=`rgba(${70+rnd()*40|0},${70+rnd()*40|0},${65+rnd()*35|0},.8)`;x.beginPath();x.ellipse(rnd()*w,rnd()*h,2+rnd()*4,2+rnd()*3,0,0,6.3);x.fill()}
+  for(let i=0;i<70;i++){{const k=55+rnd()*35;x.fillStyle=`rgba(${k},${k*.95|0},${k*.88|0},.75)`};x.beginPath();x.ellipse(rnd()*w,rnd()*h,2+rnd()*4,2+rnd()*3,0,0,6.3);x.fill()}
   for(let r=0;r<14;r++){const y=rnd()*h;x.strokeStyle=`rgba(${30+rnd()*16|0},${22+rnd()*10|0},${16},.55)`;x.lineWidth=4+rnd()*5;x.lineCap='round';x.beginPath();x.moveTo(-10,y);const c1=y+(rnd()-.5)*60,c2=y+(rnd()-.5)*60;x.bezierCurveTo(w*.33,c1,w*.66,c2,w+10,y+(rnd()-.5)*40);x.stroke();
    x.strokeStyle='rgba(95,75,55,.35)';x.lineWidth=1.5;x.stroke()}
   const g=x.createLinearGradient(0,0,w,0);g.addColorStop(0,'rgba(0,0,0,1)');g.addColorStop(.18,'rgba(0,0,0,0)');g.addColorStop(.82,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(0,0,0,1)');x.globalCompositeOperation='destination-out';x.fillStyle=g;x.fillRect(0,0,w,h)});
@@ -964,7 +964,7 @@ pending.push(GL.loadAsync(A+'grass2.glb').then(gl=>{const v=variants(gl);v.forEa
  {const parts=[];for(let k=0;k<4;k++){const pts=[];for(let i=0;i<=6;i++){const t=i/6;pts.push(new THREE.Vector3((t-.5)*3.2,Math.sin(t*3.1)*.06+(rnd()-.5)*.05,(rnd()-.5)*.25+Math.sin(t*2+k)*.15))}
    const g=new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),16,.07,6);const P=g.attributes.position;for(let i=0;i<P.count;i++){const x=P.getX(i),f=.5+.5*Math.abs(x)/1.6;P.setY(i,P.getY(i)*f)}g.computeVertexNormals();parts.push(g)}
   const rm=new THREE.MeshStandardMaterial({map:tex('spruce_bark.jpg',1),color:0x4a3a2c,roughness:.9});const o=new THREE.Object3D();
-  parts.forEach((g,k)=>{const items=[];for(let f=.01;f<.99;f+=.012){if(rnd()<.45)continue;const p=peAt(f),q=peAt(f+.01),gr=Math.abs(H(q.x,q.z)-H(p.x,p.z))/Math.max(.1,Math.hypot(q.x-p.x,q.z-p.z));if(gr<.12||Math.floor(f*1000)%4!==k)continue;items.push(p)}
+  parts.forEach((g,k)=>{const items=[];for(let f=.01;f<.99;f+=.004){if(rnd()<.55)continue;const p=peAt(f),q=peAt(f+.01),gr=Math.abs(H(q.x,q.z)-H(p.x,p.z))/Math.max(.1,Math.hypot(q.x-p.x,q.z-p.z));if(Math.floor(f*1000)%4!==k)continue;items.push(p)}
    const im=new THREE.InstancedMesh(g,rm,items.length);items.forEach((p,i)=>{o.position.set(p.x,H(p.x,p.z)+.38,p.z);o.rotation.set(0,Math.atan2(p.tx,p.tz)+Math.PI/2+(rnd()-.5)*.5,0);o.scale.setScalar(.8+rnd()*.5);o.updateMatrix();im.setMatrixAt(i,o.matrix)});im.castShadow=im.receiveShadow=true;scene.add(im)})}}
 
 // ================= Area 2: the lake above the falls =================
