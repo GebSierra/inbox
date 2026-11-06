@@ -210,7 +210,7 @@ let terrain;
      gr=mix(gr,vec3(.18,.33,.08),smoothstep(.5,.8,abs(normalize(vWN).y))*smoothstep(.45,.62,texture2D(tR,vWP.xz*.03).g)*.85);
      gr=mix(gr,gr*.45,(1.-smoothstep(3.,8.,abs(vWP.x-8.5)))*smoothstep(56.,40.,vWP.z)*.8);rock=mix(rock,gr,gz);}   /* fractured light-grey granite, lichen, moss on ledges, dark wet rock beside the falls */   /* lit grey headwall behind the falls */
     vec3 grass=texture2D(tG,vWP.xz*.12).rgb*mix(.8,1.1,texture2D(tG,vWP.xz*.013).g)*vec3(.62,.86,.5);
-    if(vWP.z<2.)grass*=vec3(1.18,1.05,.62);vec3 leaf=(texture2D(tLf,vWP.zy*.14).rgb*an.x+texture2D(tLf,vWP.xz*.14).rgb*an.y+texture2D(tLf,vWP.xy*.14).rgb*an.z)*.8;if(vWP.x>8.&&vWP.z<70.&&vWP.z>-30.){leaf*=vec3(.52,.5,.45)*mix(1.,.8,an.x+an.z);leaf=mix(leaf,vec3(.13,.17,.07)*mix(.7,1.3,texture2D(tG,vWP.xz*.2).g),smoothstep(.5,.75,texture2D(tG,vWP.xz*.03).r)*.85);}
+    if(vWP.z<2.)grass*=vec3(1.18,1.05,.62);vec3 leaf=(texture2D(tLf,vWP.zy*.14).rgb*an.x+texture2D(tLf,vWP.xz*.14).rgb*an.y+texture2D(tLf,vWP.xy*.14).rgb*an.z)*.8;if(vWP.x>8.&&vWP.z<70.&&vWP.z>-30.){leaf*=vec3(.52,.5,.45)*mix(1.,.8,an.x+an.z);leaf=mix(leaf,vec3(.13,.17,.07)*mix(.7,1.3,texture2D(tG,vWP.xz*.2).g),smoothstep(.3,.6,texture2D(tG,vWP.xz*.03).g)*.85);}
     vec3 sp=vSplat/max(.001,vSplat.r+vSplat.g+vSplat.b);
     // wet darkening near the waterline
     float wet=1.-smoothstep(.2,2.2,vWP.y);
