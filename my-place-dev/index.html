@@ -885,7 +885,7 @@ mist(300,()=>[fx+(rnd()-.5)*30,rnd()*5,30+rnd()*18],7,.1,30);
 mist(160,()=>[fx+(rnd()-.5)*14,2+rnd()*6,34+rnd()*8],14,.05,55);
 mist(260,()=>[fx+(rnd()-.5)*22,rnd()*1.5,44+rnd()*14],9,.16,4);   // churning spray where the falls hits the river   // spray column rising off the plunge pool             // base plume
 mist(160,()=>{const z=40-rnd()*30;return[riverX(z)+(rnd()-.5)*20,H(riverX(z),z)+rnd()*6,z]},8,.05,10); // face spray
-mist(300,()=>[(rnd()-.5)*300,95+rnd()*40,-50+rnd()*250],60,.03,15);          // valley cloud
+mist(200,()=>[(rnd()-.5)*200,60+rnd()*25,45+rnd()*180],60,.03,10);          // valley cloud
 mist(400,()=>{const z=50+rnd()*190;return[riverX(z)+(rnd()-.5)*16,.5+rnd()*2,z]},5,.10,4); // river haze
 
 let gateRibbons=[],moose=null;
