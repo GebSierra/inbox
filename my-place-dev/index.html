@@ -84,7 +84,7 @@ const LOOK={x:-45,z:186};let lookH=null;
 const PE=[[22,54],[72,46],[26,34],[74,22],[28,10],[76,-2],[40,-16]].map(([x,z])=>({x,z}));
 const PEL=[0];for(let i=1;i<PE.length;i++)PEL.push(PEL[i-1]+Math.hypot(PE[i].x-PE[i-1].x,PE[i].z-PE[i-1].z));
 const peAt=f=>{const L=f*PEL[PEL.length-1];let i=1;while(i<PE.length-1&&PEL[i]<L)i++;const a=PE[i-1],b=PE[i],t=Math.min(1,(L-PEL[i-1])/(PEL[i]-PEL[i-1])),dx=b.x-a.x,dz=b.z-a.z,l=Math.hypot(dx,dz);return {x:a.x+dx*t,z:a.z+dz*t,tx:dx/l,tz:dz/l}};
-function peNear(x,z){if(x<12||x>86||z<-28||z>62)return {d:1e9,s:0};let best=1e9,bs=0;for(let i=1;i<PE.length;i++){const a=PE[i-1],b=PE[i],vx=b.x-a.x,vz=b.z-a.z,l2=vx*vx+vz*vz,t=Math.max(0,Math.min(1,((x-a.x)*vx+(z-a.z)*vz)/l2)),d=Math.hypot(x-a.x-vx*t,z-a.z-vz*t);if(d<best){best=d;bs=PEL[i-1]+t*Math.sqrt(l2)}}return {d:best,s:bs}}
+function peNear(x,z){if(x<0||x>98||z<-40||z>74)return {d:1e9,s:0};let best=1e9,bs=0;for(let i=1;i<PE.length;i++){const a=PE[i-1],b=PE[i],vx=b.x-a.x,vz=b.z-a.z,l2=vx*vx+vz*vz,t=Math.max(0,Math.min(1,((x-a.x)*vx+(z-a.z)*vz)/l2)),d=Math.hypot(x-a.x-vx*t,z-a.z-vz*t);if(d<best){best=d;bs=PEL[i-1]+t*Math.sqrt(l2)}}return {d:best,s:bs}}
 const onPathE=(x,z,w)=>peNear(x,z).d<w;
 let peH0=null,peH1=null;const peHeight=s=>{if(peH0===null){peH0=H0(PE[0].x,PE[0].z);peH1=H0(PE[PE.length-1].x,PE[PE.length-1].z)}const f=s/PEL[PEL.length-1];return peH0+(peH1-peH0)*f};
 const CAMP={x:86,z:22};
@@ -125,7 +125,7 @@ const mouthClear=(x,z)=>z>185&&z<300&&Math.abs(x-riverX(Math.min(z,262)))<26;
 const HC_X0=-300,HC_Z0=-362,HC_W=601,HC_D=884,HC=new Float32Array(HC_W*HC_D).fill(NaN);
 function Hg(i,j){const k=j*HC_W+i;let v=HC[k];if(v!==v)v=HC[k]=Hraw(HC_X0+i,HC_Z0+j);return v}
 function H(x,z){const fx=x-HC_X0,fz=z-HC_Z0;if(!(fx>=0&&fz>=0&&fx<HC_W-1&&fz<HC_D-1))return Hraw(x,z);const i=fx|0,j=fz|0,u=fx-i,v=fz-j;return (Hg(i,j)*(1-u)+Hg(i+1,j)*u)*(1-v)+(Hg(i,j+1)*(1-u)+Hg(i+1,j+1)*u)*v}
-function Hraw(x,z){const ld=lodgeDist(x,z);if(ld===0)return FLOOR;let h0=H0(x,z)+hill(x,z);{const q=peNear(x,z);if(q.d<4.5){const ph=peHeight(q.s);h0=ph+(h0-ph)*sm(1.4,4.5,q.d)}const dc=Math.hypot(x-CAMP.x,z-CAMP.z);if(dc<14){const ph=peHeight(PEL[3]);h0=ph+(h0-ph)*sm(9,14,dc)}}{const dl=Math.hypot(x-LOOK.x,z-LOOK.z);if(dl<11){if(lookH===null)lookH=H0(LOOK.x,LOOK.z)+hill(LOOK.x,LOOK.z);h0=lookH+(h0-lookH)*sm(5,11,dl)}}return ld>12?h0:PAD+(h0-PAD)*sm(0,12,ld)}
+function Hraw(x,z){const ld=lodgeDist(x,z);if(ld===0)return FLOOR;let h0=H0(x,z)+hill(x,z);{const q=peNear(x,z);if(q.d<14){const ph=peHeight(q.s);h0=ph+(h0-ph)*sm(1.4,14,q.d)}const dc=Math.hypot(x-CAMP.x,z-CAMP.z);if(dc<14){const ph=peHeight(PEL[3]);h0=ph+(h0-ph)*sm(9,14,dc)}}{const dl=Math.hypot(x-LOOK.x,z-LOOK.z);if(dl<11){if(lookH===null)lookH=H0(LOOK.x,LOOK.z)+hill(LOOK.x,LOOK.z);h0=lookH+(h0-lookH)*sm(5,11,dl)}}return ld>12?h0:PAD+(h0-PAD)*sm(0,12,ld)}
 function H0(x,z){const lm=lakeMix(z);let h;
  if(lm<=0)return G0(x,z);
  if(lm>=1)h=lakeH(x,z);else{const g=G0(x,z);h=g+(lakeH(x,z)-g)*lm}
@@ -197,7 +197,7 @@ let terrain;
     rock*=mix(.75,1.15,texture2D(tR,vWP.xz*.011).g);{float gz=smoothstep(78.,58.,vWP.z)*smoothstep(1.,4.,vWP.y);float g=dot(rock,vec3(.33));vec3 gr=vec3(g)*vec3(1.04,1.,.95)*3.1;
      gr=mix(gr,gr*vec3(1.14,1.,.8),smoothstep(.5,.75,texture2D(tR,vec2(vWP.x*.02,vWP.y*.004)).r)*.6);
      gr*=1.-smoothstep(.93,.99,texture2D(tR,vec2((vWP.x+vWP.z)*.05,vWP.y*.004)).g)*.75;
-     gr*=1.-smoothstep(.82,.95,fract(vWP.y*.09+texture2D(tR,vWP.xz*.01).r*.8))*.45;
+     gr*=mix(1.,.6,smoothstep(.62,.8,texture2D(tR,vec2(vWP.x*.04+vWP.z*.02,vWP.y*.11)).r));
      gr=mix(gr,vec3(.86,.87,.78),smoothstep(.82,.9,texture2D(tR,vWP.xy*.45).b)*.5);
      gr=mix(gr,vec3(.18,.33,.08),smoothstep(.5,.8,abs(normalize(vWN).y))*smoothstep(.45,.62,texture2D(tR,vWP.xz*.03).g)*.85);
      gr=mix(gr,gr*.35,(1.-smoothstep(5.,14.,abs(vWP.x-8.5)))*smoothstep(56.,40.,vWP.z)*.8);rock=mix(rock,gr,gz);}   /* fractured light-grey granite, lichen, moss on ledges, dark wet rock beside the falls */   /* lit grey headwall behind the falls */
@@ -264,7 +264,7 @@ const U={t:{value:0}};
  #include <fog_pars_fragment>
  void main(){float s=fb(vec2(vUv.x*14.,vUv.y*3.+t*2.6))*.7+fb(vec2(vUv.x*40.,vUv.y*6.+t*4.))*.5;
   float e=1.-smoothstep(.25+fb(vec2(vUv.y*4.,t*.5))*.2,.5,abs(vUv.x));
-  float tier=smoothstep(.75,.95,sin(vUv.y*18.84+fb(vec2(vUv.x*6.,0.))*2.)*.5+.5);float a=e*smoothstep(.2-tier*.2,.7,s)*.97+e*.42+e*tier*.3;
+  float tier=smoothstep(.75,.95,sin(vUv.y*18.84+fb(vec2(vUv.x*6.,0.))*2.)*.5+.5);float a=e*smoothstep(.2-tier*.2,.7,s)*.95+e*.22+e*tier*.25;
   gl_FragColor=vec4(vec3(.9,.93,.94)+s*.08,clamp(a,0.,1.));
   #include <tonemapping_fragment>
   #include <colorspace_fragment>
@@ -906,7 +906,7 @@ let gateRibbons=[],moose=null;
  {const parts=[];for(let k=0;k<3;k++){const l=new THREE.SphereGeometry(.09,6,4);l.scale(1,.12,.5);l.translate(0,.12,.06);l.rotateY(k*2.094);parts.push(l.toNonIndexed());const pe=new THREE.SphereGeometry(.05,6,4);pe.scale(1,.25,.6);pe.translate(0,.2,.04);pe.rotateY(k*2.094+1.05);parts.push(pe.toNonIndexed())}
   const stem=new THREE.CylinderGeometry(.006,.006,.2,4);stem.translate(0,.1,0);parts.push(stem.toNonIndexed());const tg=mergeGeometries(parts.map(g=>{g.deleteAttribute('uv');return g}));
   const cols=[];const pc=tg.attributes.position.count;for(let i=0;i<pc;i++){const y=tg.attributes.position.getY(i);cols.push(...(y>.17?[.95,.95,.92]:[.2,.4,.15]))}tg.setAttribute('color',new THREE.Float32BufferAttribute(cols,3));
-  inst(tg,new THREE.MeshStandardMaterial({vertexColors:true,roughness:.8}),trill.map(t=>({...t,sx:2.5,sy:2.5,sz:2.5})))}
+  inst(tg,new THREE.MeshStandardMaterial({vertexColors:true,roughness:.8}),trill.map(t=>({...t,sx:1.4,sy:1.4,sz:1.4})))}
  pending.push(GL.loadAsync(A+'bush.glb').then(gl=>scatter(variants(gl),bushes)).catch(e=>console.warn(e)));
  // The Leaning Gate: two spruce trunks leaning together over the trail, white cloth ribbons
  {const p=peAt(.24),nx=-p.tz,nz=p.tx,g=new THREE.Group(),y=H(p.x,p.z);g.position.set(p.x,y,p.z);g.rotation.y=Math.atan2(nx,nz);scene.add(g);
