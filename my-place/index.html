@@ -79,7 +79,7 @@ const fromPlan=(px,py)=>({x:CABIN.x+(px-LW/2)*LEX.x+(py-LD/2)*LEZ.x,z:CABIN.z+(p
 const lodgeDist=(x,z)=>{const p=toPlan(x,z);const dx=Math.max(0,-p.px,p.px-LW),dy=Math.max(0,-LDX-p.py,p.py-LD);return Math.hypot(dx,dy)};
 const inLodge=(x,z,m)=>lodgeDist(x,z)<m;
 // ---------- two trails from the falls to the lake: east bank to the island (pathX), west bank over the lookout hill to the lodge ----------
-const LOOK={x:-45,z:186};
+const LOOK={x:-45,z:186};let lookH=null;
 const hill=(x,z)=>24*Math.exp(-((x-LOOK.x)**2+(z-LOOK.z)**2)/2500)*sm(12,28,Math.abs(x-riverX(Math.min(z,262))))*(lakeMix(z)>0?sm(.02,.25,shoreOf(x,z)):1)*sm(6,40,lodgeDist(x,z));
 const PW=[[riverX(57)-16,57],[-14,72],[-22,92],[-32,114],[-41,136],[-48,158],[-49,173],[LOOK.x,LOOK.z],[-40,205],[-36,224]].map(([x,z])=>({x,z}));
 PW.push(fromPlan(LW+4,LD/2),fromPlan(LW+3,LD+3),fromPlan(12,LD+3.5));
@@ -88,10 +88,10 @@ const pwAt=f=>{const L=f*PWL[PWL.length-1];let i=1;while(i<PW.length-1&&PWL[i]<L
 const pwD=(x,z)=>{if(x>40||z<45)return 1e9;let m=1e9;for(let i=1;i<PW.length;i++)m=Math.min(m,segD(x,z,PW[i-1],PW[i]));return m};
 const onPathW=(x,z,w)=>pwD(x,z)<w,onAnyPath=(x,z,w)=>onPath(x,z,w)||onPathW(x,z,w);
 const LOOKF=PWL[7]/PWL[PWL.length-1];
-const MARKERS=[...['boulder','mushroom','log','cone','rocker','snag'].map((k,i)=>[k,.1+i*(LOOKF-.15)/5,k==='log'?0:1]),['bench',LOOKF,0],...['cairn','nest','paddle'].map((k,i)=>[k,LOOKF+(i+1)*(.9-LOOKF)/4,i%2?1:-1]),['lantern',.95,1]].map(([k,f,sd])=>{const p=pwAt(f);
+const MARKERS=[...['boulder','mushroom','log','cone','rocker','snag'].map((k,i)=>[k,.1+i*(LOOKF-.15)/5,k==='log'?0:1]),['bench',LOOKF,0],...['cairn','nest'].map((k,i)=>[k,LOOKF+(i+1)*(.9-LOOKF)/3,i%2?1:-1]),['lantern',.95,1]].map(([k,f,sd])=>{const p=pwAt(f);
  let x=p.x-p.tz*sd*7.5,z=p.z+p.tx*sd*7.5,ry=Math.atan2(p.x-x,p.z-z);
  if(k==='log')ry=Math.atan2(p.tx,p.tz);
- if(k==='lantern'){const c=fromPlan(LW+8,LD*.35);x=c.x;z=c.z;ry=Math.atan2(p.x-x,p.z-z)}
+ if(k==='lantern'){const c=fromPlan(LW+18,LD*.1);x=c.x;z=c.z;ry=Math.atan2(p.x-x,p.z-z)}
  if(k==='bench'){const dx=-5-LOOK.x,dz=300-LOOK.z,l=Math.hypot(dx,dz);x=LOOK.x+dx/l*4;z=LOOK.z+dz/l*4;ry=Math.atan2(dx,dz)}
  return {k,x,z,ry}});
 const nearMarker=(x,z,r)=>MARKERS.some(m=>Math.hypot(x-m.x,z-m.z)<r+(m.k==='log'?5:0));
@@ -106,7 +106,7 @@ function lakeH(x,z){const s=shoreOf(x,z);
 const FORD={z:247};const ISL={x:-6,z:297,r:10},CW=[{x:16,z:257},{x:-1,z:288}];
 const segD=(x,z,a,b)=>{const vx=b.x-a.x,vz=b.z-a.z,t=Math.max(0,Math.min(1,((x-a.x)*vx+(z-a.z)*vz)/(vx*vx+vz*vz)));return Math.hypot(x-a.x-vx*t,z-a.z-vz*t)};
 const mouthClear=(x,z)=>z>185&&z<300&&Math.abs(x-riverX(Math.min(z,262)))<26;
-function H(x,z){const ld=lodgeDist(x,z);if(ld===0)return FLOOR;const h0=H0(x,z)+hill(x,z);return ld>12?h0:PAD+(h0-PAD)*sm(0,12,ld)}
+function H(x,z){const ld=lodgeDist(x,z);if(ld===0)return FLOOR;let h0=H0(x,z)+hill(x,z);{const dl=Math.hypot(x-LOOK.x,z-LOOK.z);if(dl<11){if(lookH===null)lookH=H0(LOOK.x,LOOK.z)+hill(LOOK.x,LOOK.z);h0=lookH+(h0-lookH)*sm(5,11,dl)}}return ld>12?h0:PAD+(h0-PAD)*sm(0,12,ld)}
 function H0(x,z){const lm=lakeMix(z);let h;
  if(lm<=0)return G0(x,z);
  if(lm>=1)h=lakeH(x,z);else{const g=G0(x,z);h=g+(lakeH(x,z)-g)*lm}
@@ -684,7 +684,7 @@ function updateCanoe(t){const sw=Math.sin(t*.13)*.22,y=-.3+Math.sin(t*.9)*.025;
    g.add(M(new THREE.BoxGeometry(.12,12,.3),new THREE.MeshStandardMaterial({color:0x151210,roughness:1}),.62,8,.2,0,0,.02));
    [[4,1],[6.5,-1],[9,1.4],[11,-.8],[12.8,1]].forEach(([y,d])=>g.add(M(new THREE.CylinderGeometry(.06,.16,1.8,6),sm2,d*.6,y,0,0,0,d>0?-1.1:1.1)))},
   cairn:g=>{let y=0;[[2.3,0],[1.85,.2],[1.45,-.15],[1.05,.12],[.7,-.05]].forEach(([r,o],i)=>{const h=r*.6;g.add(M(stone(i*7),rockM,o,y+h*.9,o*.5,0,i,0,r,h,r*.9));y+=h*1.7})},
-  bench:g=>{const s=5,add=(w,h,d,x,y,z,rx=0)=>g.add(M(new THREE.BoxGeometry(w*s,h*s,d*s),woodM,x*s,y*s,z*s,rx));   // a giant lookout bench, seat 2.25 m up
+  bench:g=>{const s=1.15,add=(w,h,d,x,y,z,rx=0)=>g.add(M(new THREE.BoxGeometry(w*s,h*s,d*s),woodM,x*s,y*s,z*s,rx));   // a giant lookout bench, seat 2.25 m up
    for(let i=0;i<4;i++)add(1.9,.05,.1,0,.45,-.18+i*.12);for(let i=0;i<3;i++)add(1.9,.09,.04,0,.62+i*.14,-.3,-.15);
    [-.85,.85].forEach(x=>{add(.07,.45,.07,x,.22,.2);add(.07,.9,.07,x,.45,-.27,-.15);add(.06,.05,.5,x,.66,0)})},
   nest:g=>{g.add(M(new THREE.CylinderGeometry(1.9,2.2,2.2,18),barkM,0,1.1));g.add(M(new THREE.CircleGeometry(1.88,18),new THREE.MeshStandardMaterial({color:0xc9a676,roughness:.9}),0,2.21,0,-Math.PI/2));
