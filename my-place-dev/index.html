@@ -145,7 +145,7 @@ function G0(x,z){
  h+=fbm(x*.03,z*.03)*7*sm(15,45,d)+fbm(x*.15,z*.15)*1.3*sm(8,14,d);
  const c=sm(42,4,z);
  h+=c*(88+fbm(x*.06,z*.06)*12)-c*(1-sm(4,16,d))*5;
- if(z<8){const w=sm(8,-10,z);h+=(A2(x,z)-h)*w}
+ if(z<10){const w=sm(10,0,z);h+=(A2(x,z)-h)*w}
  return h;
 }
 const slope=(x,z)=>Math.hypot(H(x+1,z)-H(x-1,z),H(x,z+1)-H(x,z-1))/2;
@@ -935,7 +935,7 @@ let gateRibbons=[],moose=null;
 
 // ================= Area 2: the lake above the falls =================
 {const water=new Reflector(new THREE.PlaneGeometry(240,340),{textureWidth:Math.round(innerWidth*.45),textureHeight:Math.round(innerHeight*.45),color:0x6f7f80});
- water.rotation.x=-Math.PI/2;water.position.set(0,WL,-166);scene.add(water);
+ water.rotation.x=-Math.PI/2;water.position.set(0,WL,-169);water.scale.y=334/340;scene.add(water);
  const graniteM=new THREE.MeshStandardMaterial({map:tex('dark_rock_diff.jpg',1),normalMap:tex('dark_rock_nor_gl.jpg'),color:0xd0ccc4,roughness:.85});
  // rounded granite outcrops framing the lip
  [[-11,1,4],[13,-1,4.5]].forEach(([dx,z,s])=>{const x=riverX(z)+dx,m=new THREE.Mesh(rockGeo(dx>0?7:2),graniteM);m.position.set(x,H(x,z)-s*.3,z);m.scale.set(s,s*.55,s*.8);m.castShadow=m.receiveShadow=true;scene.add(m)});
