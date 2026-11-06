@@ -195,7 +195,7 @@ let terrain;
    .replace('#include <map_fragment>',`
     vec3 an=abs(normalize(vWN));an/=an.x+an.y+an.z;
     vec3 rock=texture2D(tR,vWP.zy*.08).rgb*an.x+texture2D(tR,vWP.xz*.08).rgb*an.y+texture2D(tR,vWP.xy*.08).rgb*an.z;
-    rock*=mix(.75,1.15,texture2D(tR,vWP.xz*.011).g);{float gz=smoothstep(78.,58.,vWP.z)*smoothstep(1.,4.,vWP.y);float g=dot(rock,vec3(.33));vec3 gr=vec3(g)*vec3(1.04,1.,.95)*3.1;
+    rock*=mix(.75,1.15,texture2D(tR,vWP.xz*.011).g);{float gz=smoothstep(78.,58.,vWP.z)*smoothstep(1.,4.,vWP.y)*(1.-smoothstep(20.,34.,abs(vWP.x-8.5)))*mix(1.,.35,smoothstep(.6,.85,abs(normalize(vWN).y)));float g=dot(rock,vec3(.33));vec3 gr=vec3(g)*vec3(1.04,1.,.95)*3.1;
      gr=mix(gr,gr*vec3(1.14,1.,.8),smoothstep(.5,.75,texture2D(tR,vec2(vWP.x*.02,vWP.y*.004)).r)*.6);
      gr*=1.-smoothstep(.93,.99,texture2D(tR,vec2((vWP.x+vWP.z)*.05,vWP.y*.004)).g)*.75;
      gr*=mix(1.,.6,smoothstep(.62,.8,texture2D(tR,vec2(vWP.x*.04+vWP.z*.02,vWP.y*.11)).r));
@@ -901,13 +901,13 @@ let gateRibbons=[],moose=null;
  const fp=[];for(let k=0;k<11;k++){const L=.7+rnd()*.5,g=new THREE.PlaneGeometry(.42,L,1,6);g.translate(0,L/2,0);const P=g.attributes.position;for(let i=0;i<P.count;i++){const y=P.getY(i);P.setZ(i,y*y*1.1)}g.rotateX(-1.1-rnd()*.3);g.rotateY(k/7*6.283+rnd()*.3);fp.push(g)}
  const fern=mergeGeometries(fp);fern.computeVertexNormals();const fernM=new THREE.MeshStandardMaterial({map:frond,color:0x5c6a52,alphaTest:.4,side:THREE.DoubleSide,roughness:.9});
  const ferns=[],berries=[],trill=[],bushes=[];trail.forEach((p,i)=>{for(let n=0;n<3;n++){const sd=rnd()<.5?-1:1,off=1.8+rnd()*4,x=p.x-p.tz*sd*off+(rnd()-.5)*2,z=p.z+p.tx*sd*off+(rnd()-.5)*2,y=H(x,z);const r=rnd();if(slope(x,z)>.9)continue;
-  if(r<.45)ferns.push({x,y,z,ry:rnd()*6,sx:.45+rnd()*.35,sy:.4+rnd()*.3,sz:.45+rnd()*.35});else if(r<.65){bushes.push({v:0,x,y,z,ry:rnd()*6,s:.5+rnd()*.3});for(let b=0;b<6;b++)berries.push({x:x+(rnd()-.5)*.6,y:y+.2+rnd()*.3,z:z+(rnd()-.5)*.6,sx:.03,sy:.03,sz:.03})}
+  if(r<.45)ferns.push({x,y,z,ry:rnd()*6,sx:.45+rnd()*.35,sy:.4+rnd()*.3,sz:.45+rnd()*.35});else if(r<.75){bushes.push({v:Math.floor(rnd()*9),x,y,z,ry:rnd()*6,s:.7+rnd()*.5});for(let b=0;b<6;b++)berries.push({x:x+(rnd()-.5)*.6,y:y+.2+rnd()*.3,z:z+(rnd()-.5)*.6,sx:.03,sy:.03,sz:.03})}
   else if(r<.8)trill.push({x,y:y+.05,z,ry:rnd()*6,sx:1,sy:1,sz:1})}});
- inst(fern,fernM,ferns);inst(new THREE.SphereGeometry(1,6,4),new THREE.MeshStandardMaterial({color:0x1c2244,roughness:.3}),berries);
+ pending.push(GL.loadAsync(A+'grass2.glb').then(gl=>{const v=variants(gl);v.forEach(vv=>vv.parts.forEach(p=>{p.m=p.m.clone();p.m.color.setRGB(.55,.75,.45)}));scatter(v,ferns.map((f,i)=>({v:i,x:f.x,y:f.y-.02,z:f.z,ry:f.ry,s:.55+rnd()*.35})))}).catch(e=>console.warn(e)));inst(new THREE.SphereGeometry(1,6,4),new THREE.MeshStandardMaterial({color:0x1c2244,roughness:.3}),berries);
  {const parts=[];for(let k=0;k<3;k++){const l=new THREE.SphereGeometry(.09,6,4);l.scale(1,.12,.5);l.translate(0,.12,.06);l.rotateY(k*2.094);parts.push(l.toNonIndexed());const pe=new THREE.SphereGeometry(.05,6,4);pe.scale(1,.25,.6);pe.translate(0,.2,.04);pe.rotateY(k*2.094+1.05);parts.push(pe.toNonIndexed())}
   const stem=new THREE.CylinderGeometry(.006,.006,.2,4);stem.translate(0,.1,0);parts.push(stem.toNonIndexed());const tg=mergeGeometries(parts.map(g=>{g.deleteAttribute('uv');return g}));
   const cols=[];const pc=tg.attributes.position.count;for(let i=0;i<pc;i++){const y=tg.attributes.position.getY(i);cols.push(...(y>.17?[.95,.95,.92]:[.2,.4,.15]))}tg.setAttribute('color',new THREE.Float32BufferAttribute(cols,3));
-  inst(tg,new THREE.MeshStandardMaterial({vertexColors:true,roughness:.8}),trill.map(t=>({...t,sx:1.4,sy:1.4,sz:1.4})))}
+  if(0)inst(tg,new THREE.MeshStandardMaterial({vertexColors:true,roughness:.8}),trill.map(t=>({...t,sx:1.4,sy:1.4,sz:1.4})))}
  pending.push(GL.loadAsync(A+'bush.glb').then(gl=>scatter(variants(gl),bushes)).catch(e=>console.warn(e)));
  // The Leaning Gate: two spruce trunks leaning together over the trail, white cloth ribbons
  {const p=peAt(.24),nx=-p.tz,nz=p.tx,g=new THREE.Group(),y=H(p.x,p.z);g.position.set(p.x,y,p.z);g.rotation.y=Math.atan2(nx,nz);scene.add(g);
