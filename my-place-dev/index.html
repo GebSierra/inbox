@@ -335,11 +335,11 @@ function spruceGeo(seedV){const P=[],N=[],UV=[],I=[];let vi=0;const Ht=24,W=24;
  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(P,3));g.setAttribute('normal',new THREE.Float32BufferAttribute(N,3));
  g.setAttribute('uv',new THREE.Float32BufferAttribute(UV,2));g.setIndex(I);return g}
 const spruceSpots=[];
-{for(let tries=0;tries<90000&&spruceSpots.length<6800;tries++){const x=(rnd()-.5)*580,z=-90+rnd()*600;const d=Math.abs(x-riverX(z));
+{for(let tries=0;tries<90000&&spruceSpots.length<6800;tries++){const rg=tries%4===0,x=rg?14+rnd()*84:(rnd()-.5)*580,z=rg?-26+rnd()*92:-90+rnd()*600;const d=Math.abs(x-riverX(z));
   const lm=lakeMix(z),sh=shoreOf(x,z);
   if(lm>.5){if(sh<.18+fbm(x*.05,z*.05)*.08||inLodge(x,z,9))continue}
   else{if(d<15+fbm(z*.1,1)*4)continue;if(Math.abs(x)>200)continue;if(z>0&&z<50&&d<18)continue;if(z<8&&(a2S(x,z)<.14||(x>22&&x<112&&z<-22&&z>-175)))continue;if(Math.hypot(x-30,z+24)<24||echoClear(x,z)||Math.hypot(x-CAMP.x,z-CAMP.z)<10||Math.hypot(x-LASTSP.x,z-LASTSP.z)<15)continue;if(d<30&&rnd()<.35)continue}
-  if(slope(x,z)>((x>10&&x<100&&z>-30&&z<66)?2.6:1.35)||mouthClear(x,z)||onAnyPath(x,z,4.5)||onPathW(x,z,8)||onPathE(x,z,7.5)||nearMarker(x,z,8)||lookoutClear(x,z))continue;if(Math.hypot(x-riverX(140)-9.5,z-140)<14)continue;
+  if(slope(x,z)>((x>10&&x<100&&z>-30&&z<66)?2.6:1.35)||mouthClear(x,z)||onPathW(x,z,4.5)||onPathE(x,z,3.2)||onPathW(x,z,8)||nearMarker(x,z,8)||lookoutClear(x,z))continue;if(Math.hypot(x-riverX(140)-9.5,z-140)<14)continue;
   spruceSpots.push([x,z])}
  for(let i=0;i<7;i++){const a=rnd()*6.283,r=rnd()*5.5;spruceSpots.push([ISL.x+Math.cos(a)*r,ISL.z+Math.sin(a)*r])}
  // a dense, deep forest ring around the lake so the far shore reads as a wall of trees, not a fence
