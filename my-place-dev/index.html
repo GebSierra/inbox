@@ -905,7 +905,7 @@ let gateRibbons=[],moose=null;
  
  // ferns (bent frond cards), blueberry bushes with berries, white trillium along the edges
  const frond=canvasTex(128,256,(x,w,h)=>{x.strokeStyle='#3d5a22';x.lineWidth=3;x.beginPath();x.moveTo(w/2,h);x.lineTo(w/2,8);x.stroke();for(let y=20;y<h-6;y+=7){const L=(1-Math.abs(y-h*.55)/(h*.6))*w*.45;x.fillStyle=`rgb(${60+rnd()*25|0},${100+rnd()*35|0},${38+rnd()*15|0})`;x.beginPath();x.ellipse(w/2-L/2,y,L/2,3,-.25,0,6.3);x.ellipse(w/2+L/2,y,L/2,3,.25,0,6.3);x.fill()}});frond.colorSpace=THREE.SRGBColorSpace;
- const fp=[];for(let k=0;k<11;k++){const L=.7+rnd()*.5,g=new THREE.PlaneGeometry(.42,L,1,6);g.translate(0,L/2,0);const P=g.attributes.position;for(let i=0;i<P.count;i++){const y=P.getY(i);P.setZ(i,y*y*1.1)}g.rotateX(-1.1-rnd()*.3);g.rotateY(k/7*6.283+rnd()*.3);fp.push(g)}
+ const fp=[];for(let k=0;k<14;k++){const L=.8+rnd()*.5,g=new THREE.PlaneGeometry(.5,L,2,8);g.translate(0,L/2,0);const P=g.attributes.position;for(let i=0;i<P.count;i++){const y=P.getY(i),xx=P.getX(i);P.setZ(i,y*y*.9+Math.abs(xx)*.25);P.setY(i,y-y*y*.35)}g.rotateX(-.95-rnd()*.25);g.rotateY(k/7*6.283+rnd()*.3);fp.push(g)}
  const fern=mergeGeometries(fp);fern.computeVertexNormals();const fernM=new THREE.MeshStandardMaterial({map:frond,color:0x5c6a52,alphaTest:.4,side:THREE.DoubleSide,roughness:.9});
  const ferns=[],berries=[],trill=[],bushes=[];trail.forEach((p,i)=>{for(let n=0;n<6;n++){const sd=rnd()<.5?-1:1,off=1.6+rnd()*6,x=p.x-p.tz*sd*off+(rnd()-.5)*2,z=p.z+p.tx*sd*off+(rnd()-.5)*2,y=H(x,z);const r=rnd();if(slope(x,z)>1.9)continue;
   if(r<.45)ferns.push({x,y,z,ry:rnd()*6,sx:.45+rnd()*.35,sy:.4+rnd()*.3,sz:.45+rnd()*.35});else if(r<.75){bushes.push({v:Math.floor(rnd()*9),x,y,z,ry:rnd()*6,s:.7+rnd()*.5});for(let b=0;b<6;b++)berries.push({x:x+(rnd()-.5)*.6,y:y+.2+rnd()*.3,z:z+(rnd()-.5)*.6,sx:.03,sy:.03,sz:.03})}
@@ -950,15 +950,22 @@ pending.push(GL.loadAsync(A+'grass2.glb').then(gl=>{const v=variants(gl);v.forEa
 
 // ---------- crisp worn-dirt ribbons along both trails, with roots drawn across ----------
 {const dirt=canvasTex(256,1024,(x,w,h)=>{x.fillStyle='#2a2016';x.fillRect(0,0,w,h);for(let i=0;i<3000;i++){const k=30+rnd()*50;x.fillStyle=`rgba(${k+15},${k+5},${k-5},${.3+rnd()*.5})`;x.fillRect(rnd()*w,rnd()*h,1+rnd()*3,1+rnd()*3)}
-  for(let i=0;i<120;i++){const k=90+rnd()*60;x.fillStyle=`rgba(${k},${k*.8|0},${k*.6|0},.5)`;x.save();x.translate(rnd()*w,rnd()*h);x.rotate(rnd()*6);x.fillRect(0,0,6+rnd()*10,2+rnd()*3);x.restore()}
-  for(let r=0;r<14;r++){const y=rnd()*h;x.strokeStyle=`rgba(${38+rnd()*20|0},${28+rnd()*14|0},${20},.95)`;x.lineWidth=5+rnd()*7;x.lineCap='round';x.beginPath();x.moveTo(-10,y);const c1=y+(rnd()-.5)*60,c2=y+(rnd()-.5)*60;x.bezierCurveTo(w*.33,c1,w*.66,c2,w+10,y+(rnd()-.5)*40);x.stroke();
+  for(let i=0;i<260;i++){const k=60+rnd()*50;x.fillStyle=`rgba(${k},${k*.78|0},${k*.55|0},.35)`;x.save();x.translate(rnd()*w,rnd()*h);x.rotate(rnd()*6);x.fillRect(0,0,2+rnd()*5,1+rnd()*2);x.restore()}
+  for(let i=0;i<70;i++){x.fillStyle=`rgba(${70+rnd()*40|0},${70+rnd()*40|0},${65+rnd()*35|0},.8)`;x.beginPath();x.ellipse(rnd()*w,rnd()*h,2+rnd()*4,2+rnd()*3,0,0,6.3);x.fill()}
+  for(let r=0;r<14;r++){const y=rnd()*h;x.strokeStyle=`rgba(${30+rnd()*16|0},${22+rnd()*10|0},${16},.55)`;x.lineWidth=4+rnd()*5;x.lineCap='round';x.beginPath();x.moveTo(-10,y);const c1=y+(rnd()-.5)*60,c2=y+(rnd()-.5)*60;x.bezierCurveTo(w*.33,c1,w*.66,c2,w+10,y+(rnd()-.5)*40);x.stroke();
    x.strokeStyle='rgba(95,75,55,.35)';x.lineWidth=1.5;x.stroke()}
   const g=x.createLinearGradient(0,0,w,0);g.addColorStop(0,'rgba(0,0,0,1)');g.addColorStop(.18,'rgba(0,0,0,0)');g.addColorStop(.82,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(0,0,0,1)');x.globalCompositeOperation='destination-out';x.fillStyle=g;x.fillRect(0,0,w,h)});
  dirt.wrapS=THREE.ClampToEdgeWrapping;
  const ribbon=(at,w)=>{const P=[],UV=[],I=[];let v=0,n=0;for(let f=0;f<=1.0001;f+=.0015){const p=at(Math.min(f,1)),nx=-p.tz,nz=p.tx;for(const sd of [-1,1]){const x=p.x+nx*sd*w/2,z=p.z+nz*sd*w/2;P.push(x,H(x,z)+.45,z);UV.push(sd<0?0:1,v)}const q=at(Math.min(f+.0015,1));v+=Math.hypot(q.x-p.x,q.z-p.z)/(w*4);n++}
   for(let i=0;i<n-1;i++){const a=i*2;I.push(a,a+2,a+1,a+1,a+2,a+3)}const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(P,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(UV,2));g.setIndex(I);g.computeVertexNormals();
   const m=new THREE.Mesh(g,new THREE.MeshStandardMaterial({map:dirt,transparent:true,depthWrite:false,roughness:1,side:THREE.DoubleSide,polygonOffset:true,polygonOffsetFactor:-4,polygonOffsetUnits:-40}));m.receiveShadow=true;m.renderOrder=1;scene.add(m)};
- ribbon(peAt,2.2);ribbon(pwAt,2.4);}
+ ribbon(peAt,2.2);ribbon(pwAt,2.4);
+ // 3D roots: tapered, bent, half-buried, crossing the ridge trail where it climbs
+ {const parts=[];for(let k=0;k<4;k++){const pts=[];for(let i=0;i<=6;i++){const t=i/6;pts.push(new THREE.Vector3((t-.5)*3.2,Math.sin(t*3.1)*.06+(rnd()-.5)*.05,(rnd()-.5)*.25+Math.sin(t*2+k)*.15))}
+   const g=new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),16,.07,6);const P=g.attributes.position;for(let i=0;i<P.count;i++){const x=P.getX(i),f=.5+.5*Math.abs(x)/1.6;P.setY(i,P.getY(i)*f)}g.computeVertexNormals();parts.push(g)}
+  const rm=new THREE.MeshStandardMaterial({map:tex('spruce_bark.jpg',1),color:0x4a3a2c,roughness:.9});const o=new THREE.Object3D();
+  parts.forEach((g,k)=>{const items=[];for(let f=.01;f<.99;f+=.012){if(rnd()<.45)continue;const p=peAt(f),q=peAt(f+.01),gr=Math.abs(H(q.x,q.z)-H(p.x,p.z))/Math.max(.1,Math.hypot(q.x-p.x,q.z-p.z));if(gr<.12||Math.floor(f*1000)%4!==k)continue;items.push(p)}
+   const im=new THREE.InstancedMesh(g,rm,items.length);items.forEach((p,i)=>{o.position.set(p.x,H(p.x,p.z)+.38,p.z);o.rotation.set(0,Math.atan2(p.tx,p.tz)+Math.PI/2+(rnd()-.5)*.5,0);o.scale.setScalar(.8+rnd()*.5);o.updateMatrix();im.setMatrixAt(i,o.matrix)});im.castShadow=im.receiveShadow=true;scene.add(im)})}}
 
 // ================= Area 2: the lake above the falls =================
 {const water=new Reflector(new THREE.PlaneGeometry(240,340),{textureWidth:Math.round(innerWidth*.45),textureHeight:Math.round(innerHeight*.45),color:0x6f7f80});
