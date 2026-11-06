@@ -116,6 +116,7 @@ const MARKERS=[...['boulder','mushroom','log','cone','rocker','snag'].map((k,i)=
  if(k==='bench'){const dx=-5-LOOK.x,dz=300-LOOK.z,l=Math.hypot(dx,dz);x=LOOK.x+dx/l*4;z=LOOK.z+dz/l*4;ry=Math.atan2(dx,dz)}
  return {k,x,z,ry}});
 const nearMarker=(x,z,r)=>MARKERS.some(m=>Math.hypot(x-m.x,z-m.z)<r+(m.k==='log'?5:0));
+let mkPads=null;
 const lookoutClear=(x,z)=>Math.hypot(x-LOOK.x,z-LOOK.z)<6||(z>LOOK.z+4&&segD(x,z,LOOK,{x:-5,z:300})<12&&pwD(x,z)>9);
 // woodland trail from the gorge to the beach, along the east bank
 const pathX=z=>riverX(Math.min(z,235))+13+Math.sin(z*.035)*4+sm(200,248,z)*(20-riverX(235)-13);
@@ -131,7 +132,8 @@ const mouthClear=(x,z)=>z>185&&z<300&&Math.abs(x-riverX(Math.min(z,262)))<26;
 const HC_X0=-300,HC_Z0=-362,HC_W=601,HC_D=884,HC=new Float32Array(HC_W*HC_D).fill(NaN);
 function Hg(i,j){const k=j*HC_W+i;let v=HC[k];if(v!==v)v=HC[k]=Hraw(HC_X0+i,HC_Z0+j);return v}
 function H(x,z){const fx=x-HC_X0,fz=z-HC_Z0;if(!(fx>=0&&fz>=0&&fx<HC_W-1&&fz<HC_D-1))return Hraw(x,z);const i=fx|0,j=fz|0,u=fx-i,v=fz-j;return (Hg(i,j)*(1-u)+Hg(i+1,j)*u)*(1-v)+(Hg(i,j+1)*(1-u)+Hg(i+1,j+1)*u)*v}
-function Hraw(x,z){const ld=lodgeDist(x,z);if(ld===0)return FLOOR;let h0=H0(x,z)+hill(x,z);if(x>8&&x<100&&z>-30&&z<68){const R0=ridgeSurf(x,z)+fbm(x*.08,z*.08)*1.2,w=sm(8,22,x)*(1-sm(88,99,x))*sm(-30,-18,z)*(1-sm(58,67,z));h0+=(R0-h0)*w}if(x<10&&z>170&&z<262){const q=pwNear(x,z);if(q.s>PWL[7]&&q.d<12){if(lookH===null)lookH=H0(LOOK.x,LOOK.z)+hill(LOOK.x,LOOK.z);const f=(q.s-PWL[7])/(PWL[PWL.length-1]-PWL[7]),ph=lookH+(1.2-lookH)*Math.min(1,f*1.5);h0=ph+(h0-ph)*sm(1.5,12,q.d)}}{const q=peNear(x,z);if(q.d<5){const ph=peHeight(q.s);h0=ph+(h0-ph)*sm(1.4,5,q.d)}const dc=Math.hypot(x-CAMP.x,z-CAMP.z);if(dc<14){const ph=peHeight(PEL[3]);h0=ph+(h0-ph)*sm(9,14,dc)}}{const dl=Math.hypot(x-LOOK.x,z-LOOK.z);if(dl<11){if(lookH===null)lookH=H0(LOOK.x,LOOK.z)+hill(LOOK.x,LOOK.z);h0=lookH+(h0-lookH)*sm(5,11,dl)}}return ld>12?h0:PAD+(h0-PAD)*sm(0,12,ld)}
+function Hraw(x,z){const ld=lodgeDist(x,z);if(ld===0)return FLOOR;let h0=H0(x,z)+hill(x,z);if(x>8&&x<100&&z>-30&&z<68){const R0=ridgeSurf(x,z)+fbm(x*.08,z*.08)*1.2,w=sm(8,22,x)*(1-sm(88,99,x))*sm(-30,-18,z)*(1-sm(58,67,z));h0+=(R0-h0)*w}if(x<10&&x>-90&&z>50&&z<262){if(!mkPads)mkPads=MARKERS.map(m=>({x:m.x,z:m.z,r:m.k==='log'?8:m.k==='bench'?0:6.5,h:H0(m.x,m.z)+hill(m.x,m.z)}));for(const m of mkPads){const dm=Math.hypot(x-m.x,z-m.z);if(m.r&&dm<m.r+5)h0=m.h+(h0-m.h)*sm(m.r,m.r+5,dm)}}
+ if(x<10&&z>170&&z<262){const q=pwNear(x,z);if(q.s>PWL[7]&&q.d<12){if(lookH===null)lookH=H0(LOOK.x,LOOK.z)+hill(LOOK.x,LOOK.z);const f=(q.s-PWL[7])/(PWL[PWL.length-1]-PWL[7]),ph=lookH+(1.2-lookH)*Math.min(1,f*1.5);h0=ph+(h0-ph)*sm(1.5,12,q.d)}}{const q=peNear(x,z);if(q.d<5){const ph=peHeight(q.s);h0=ph+(h0-ph)*sm(1.4,5,q.d)}const dc=Math.hypot(x-CAMP.x,z-CAMP.z);if(dc<14){const ph=peHeight(PEL[3]);h0=ph+(h0-ph)*sm(9,14,dc)}}{const dl=Math.hypot(x-LOOK.x,z-LOOK.z);if(dl<11){if(lookH===null)lookH=H0(LOOK.x,LOOK.z)+hill(LOOK.x,LOOK.z);h0=lookH+(h0-lookH)*sm(5,11,dl)}}return ld>12?h0:PAD+(h0-PAD)*sm(0,12,ld)}
 function H0(x,z){const lm=lakeMix(z);let h;
  if(lm<=0)return G0(x,z);
  if(lm>=1)h=lakeH(x,z);else{const g=G0(x,z);h=g+(lakeH(x,z)-g)*lm}
@@ -214,7 +216,7 @@ let terrain;
     float wet=1.-smoothstep(.2,2.2,vWP.y);
     vec3 sand=texture2D(tS,vWP.xz*.9).rgb*.75+texture2D(tS,vWP.xz*.23).rgb*.25;sand=sand*1.15*mix(.8,1.1,texture2D(tS,vWP.xz*.02).r);
     vec3 base=(rock*sp.r+grass*sp.g+leaf*sp.b)*mix(1.,.55,wet);if(vWP.z<232.)sand*=vec3(.5,.44,.36);
-    if(vWP.x>8.&&vWP.z<70.&&vWP.z>-30.&&vWP.y>2.)sand=vec3(.11,.085,.06)*mix(.7,1.2,texture2D(tLf,vWP.xz*.3).r);diffuseColor.rgb=mix(base,sand*mix(1.,.45,1.-smoothstep(-.6,.55,vWP.y)),vBeach);`)
+    if(vWP.y>2.5)sand=vec3(.11,.085,.06)*mix(.7,1.2,texture2D(tLf,vWP.xz*.3).r);diffuseColor.rgb=mix(base,sand*mix(1.,.45,1.-smoothstep(-.6,.55,vWP.y)),vBeach);`)
    .replace('#include <normal_fragment_maps>','#if 0\n#include <normal_fragment_maps>\n#endif\n{vec3 mn=texture2D(normalMap,vWP.xz*.08).xyz*2.-1.;normal=normalize(normal+(vSplat.r*.9+.2)*vec3(mn.x,mn.y,0.)*normalScale.x*.5);}');};
  terrain=new THREE.Mesh(g,mat);scene.add(terrain);}
 
