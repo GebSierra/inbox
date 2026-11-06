@@ -883,7 +883,7 @@ mist(400,()=>{const z=50+rnd()*190;return[riverX(z)+(rnd()-.5)*16,.5+rnd()*2,z]}
 let gateRibbons=[],moose=null;
 // ================= Area 1: the Spruce Ridge Trail =================
 {const graniteM=new THREE.MeshStandardMaterial({map:tex('dark_rock_diff.jpg',1),normalMap:tex('dark_rock_nor_gl.jpg'),roughness:.85});graniteM.color.setRGB(2.1,2.1,2.0);
- const mossM=new THREE.MeshStandardMaterial({color:0x4a6a24,roughness:1});
+ const mossM=new THREE.MeshStandardMaterial({color:0x34481c,roughness:1,map:tex('grass_ground_diff.jpg',1)});
  const barkM=new THREE.MeshStandardMaterial({map:tex('spruce_bark.jpg',1),normalMap:tex('spruce_bark_nor.jpg'),color:0x8a7a6a,roughness:.95});
  const o=new THREE.Object3D(),col=new THREE.Color();
  const inst=(geo,mat,items,colorFn)=>{const im=new THREE.InstancedMesh(geo,mat,items.length);items.forEach((it,k)=>{o.position.set(it.x,it.y,it.z);o.rotation.set(it.rx||0,it.ry||0,it.rz||0);o.scale.set(it.sx,it.sy,it.sz);o.updateMatrix();im.setMatrixAt(k,o.matrix);if(colorFn){colorFn(col,k);im.setColorAt(k,col)}});im.castShadow=im.receiveShadow=true;scene.add(im);return im};
@@ -899,7 +899,7 @@ let gateRibbons=[],moose=null;
  const frond=canvasTex(128,256,(x,w,h)=>{x.strokeStyle='#3d5a22';x.lineWidth=3;x.beginPath();x.moveTo(w/2,h);x.lineTo(w/2,8);x.stroke();for(let y=20;y<h-6;y+=7){const L=(1-Math.abs(y-h*.55)/(h*.6))*w*.45;x.fillStyle=`rgb(${60+rnd()*25|0},${100+rnd()*35|0},${38+rnd()*15|0})`;x.beginPath();x.ellipse(w/2-L/2,y,L/2,3,-.25,0,6.3);x.ellipse(w/2+L/2,y,L/2,3,.25,0,6.3);x.fill()}});frond.colorSpace=THREE.SRGBColorSpace;
  const fp=[];for(let k=0;k<11;k++){const L=.7+rnd()*.5,g=new THREE.PlaneGeometry(.42,L,1,6);g.translate(0,L/2,0);const P=g.attributes.position;for(let i=0;i<P.count;i++){const y=P.getY(i);P.setZ(i,y*y*1.1)}g.rotateX(-1.1-rnd()*.3);g.rotateY(k/7*6.283+rnd()*.3);fp.push(g)}
  const fern=mergeGeometries(fp);fern.computeVertexNormals();const fernM=new THREE.MeshStandardMaterial({map:frond,color:0x6f8060,alphaTest:.4,side:THREE.DoubleSide,roughness:.9});
- const ferns=[],berries=[],trill=[],bushes=[];trail.forEach((p,i)=>{for(let n=0;n<3;n++){const sd=rnd()<.5?-1:1,off=1.8+rnd()*4,x=p.x-p.tz*sd*off+(rnd()-.5)*2,z=p.z+p.tx*sd*off+(rnd()-.5)*2,y=H(x,z);const r=rnd();
+ const ferns=[],berries=[],trill=[],bushes=[];trail.forEach((p,i)=>{for(let n=0;n<3;n++){const sd=rnd()<.5?-1:1,off=1.8+rnd()*4,x=p.x-p.tz*sd*off+(rnd()-.5)*2,z=p.z+p.tx*sd*off+(rnd()-.5)*2,y=H(x,z);const r=rnd();if(slope(x,z)>.9)continue;
   if(r<.45)ferns.push({x,y,z,ry:rnd()*6,sx:.8+rnd()*.6,sy:.8+rnd()*.6,sz:.8+rnd()*.6});else if(r<.65){bushes.push({v:0,x,y,z,ry:rnd()*6,s:.5+rnd()*.3});for(let b=0;b<6;b++)berries.push({x:x+(rnd()-.5)*.6,y:y+.2+rnd()*.3,z:z+(rnd()-.5)*.6,sx:.03,sy:.03,sz:.03})}
   else if(r<.8)trill.push({x,y:y+.05,z,ry:rnd()*6,sx:1,sy:1,sz:1})}});
  inst(fern,fernM,ferns);inst(new THREE.SphereGeometry(1,6,4),new THREE.MeshStandardMaterial({color:0x1c2244,roughness:.3}),berries);
