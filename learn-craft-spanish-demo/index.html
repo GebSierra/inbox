@@ -198,7 +198,7 @@ spots.forEach(([x,z,r],i)=>herd.push(sheep4(x,z,r,rnd(.78,.95),{happy:i%3===0,ho
 // lambs in pasture
 
 // dog
-const dog=new THREE.Group();dog.position.set(4.6,0,11.8);dog.rotation.y=-1.0;dog.scale.setScalar(1.45);S.add(dog);
+const dog=new THREE.Group();dog.position.set(4.6,0,-25);dog.rotation.y=-.6;dog.scale.setScalar(1.45);S.add(dog);
 {const DOG=M(0xb3834f),LIGHT=M(0xead6b8);const b=mesh(ico1,DOG,0,.62,0,dog);b.scale.set(.3,.29,.4);const ch=mesh(ico1,LIGHT,0,.6,.3,dog);ch.scale.set(.15,.18,.12);
  const h=new THREE.Group();h.position.set(0,.98,.36);dog.add(h);const sk=mesh(ico1,DOG,0,0,0,h);sk.scale.set(.23,.21,.22);const sn=mesh(ico1,LIGHT,0,-.06,.2,h);sn.scale.set(.12,.09,.16);
  mesh(new THREE.SphereGeometry(.04,6,4),eyeMat,0,-.02,.36,h);for(const s of[-1,1]){mesh(new THREE.SphereGeometry(.03,6,4),eyeMat,s*.08,.05,.17,h);const e=mesh(new THREE.ConeGeometry(.07,.2,4),DOG,s*.11,.2,-.02,h);e.rotation.z=s*-.2}
