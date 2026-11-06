@@ -131,7 +131,6 @@ function barn(side){const{W,H,L,Z0}=BARN;const B=new THREE.Group();B.position.x=
   const r=texBox(len+.04,.14,L+.9,[sm,sm,sm,sm,sm,sm][0],(a+c)/2,(b+d)/2+.07,zc-.0,B);r.rotation.z=Math.atan2(d-b,c-a);
   const g=r.geometry,uv=g.attributes.uv;// remap top face uv along length
   for(let k=0;k<uv.count;k++)uv.setXY(k,uv.getX(k),uv.getY(k));}
- box(.06,H-.3,L-.4,M(0x2a1a12),0,H/2,zc,B);
  // ridge cap
  texBox(2.5,.12,L+.95,M(0x5e4f40),0,H+2.56,zc,B);
  // interior back-lighting: warm dim point
@@ -188,7 +187,7 @@ const herd=[];
 const sing=singer(-3.1,10.0,.35);herd.push(sing);
 const ram=sheep4(3.7,9.7,-Math.PI/2+.95,1.6,{horns:true,happy:false,bigEye:true});herd.push(ram);
 // mug held up to the ram's mouth
-{const fl=ram.userData.legs[1];fl.visible=false;
+{const fl=ram.userData.legs[1];;
  const mug=new THREE.Group();ram.userData.head.add(mug);mug.position.set(-.5,-.44,.58);mug.rotation.set(-.2,0,-1.0);
  const beer=new THREE.MeshStandardMaterial({color:col(0xe0901c),emissive:col(0x9a5200),emissiveIntensity:.45,transparent:true,opacity:.78,roughness:.08,metalness:.1});
  mesh(new THREE.CylinderGeometry(.21,.19,.46,14),beer,0,0,0,mug);mug.scale.setScalar(1.12);
@@ -206,7 +205,9 @@ const ram=sheep4(3.7,9.7,-Math.PI/2+.95,1.6,{horns:true,happy:false,bigEye:true}
  ram.userData.mug=mug;ram.userData.neck.position.y+=.14;ram.userData.neck.position.z+=.05;const nk=mesh(ico1,woolMat,0,-.1,0,ram.userData.neck);nk.scale.set(.3,.36,.3);ram.userData.drops=drops}
 // barn sheep (looking out of windows / standing inside)
 const spots=[];for(const side of[-1,1])for(let i=0;i<5;i++)spots.push([side*rnd(4.2,5.6),BARN.Z0-2-i*rnd(5,6.5),side>0?-Math.PI/2+rnd(-.5,.5):Math.PI/2+rnd(-.5,.5)]);
-spots.forEach(([x,z,r],i)=>herd.push(sheep4(x,z,r,rnd(.78,.95),{happy:i%3===0,horns:x>0})));
+const glow=new Map();spots.forEach(([x,z,r],i)=>{const a=sheep4(x,z,r,rnd(.78,.95),{happy:i%3===0,horns:x>0});
+ a.traverse(o=>{if(o.isMesh&&o.material&&!Array.isArray(o.material)){if(!glow.has(o.material)){const m=o.material.clone();m.emissive=m.color.clone().multiplyScalar(.45);glow.set(o.material,m)}o.material=glow.get(o.material)}});herd.push(a)});
+for(const sd of[-1,1])for(let k=0;k<3;k++){const pl=new THREE.PointLight(0xffe2b8,.9,14,1.5);pl.position.set(sd*4.8,2.4,BARN.Z0-5-k*10);S.add(pl)}
 // lambs in pasture
 
 // dog
