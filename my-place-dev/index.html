@@ -246,7 +246,7 @@ const U={t:{value:0}};
   vec3 deep=vec3(.10,.15,.155),white=vec3(.7,.74,.76);
   vec3 c=mix(deep,white,foam)*mix(.62,1.,smoothstep(.3,.7,vF));c=mix(c,deep*.8,wk*.75);vec3 n=normalize(cross(dFdx(vW),dFdy(vW)));
   vec3 V=normalize(vW-cameraPosition);float fr=pow(1.-max(-V.y,0.),5.);float spec=pow(max(dot(reflect(V,n),normalize(vec3(-.4,.8,.5))),0.),30.)*.4+fr*.25;
-  float mouth=smoothstep(238.,262.,vUv.y+(fb(vec2(vUv.x*.18,vUv.y*.05+t*.05))-.5)*16.+abs(vUv.x)*.6);c=mix(c,deep*.6,mouth*.7);gl_FragColor=vec4(c+spec,1.-mouth);
+  float mouth=smoothstep(238.,262.,vUv.y+(fb(vec2(vUv.x*.18,vUv.y*.05+t*.05))-.5)*16.+abs(vUv.x)*.6);c=mix(c,deep*.6,mouth*.7);gl_FragColor=vec4(c+spec,(1.-mouth)*(1.-smoothstep(9.,12.5,abs(vUv.x))*smoothstep(225.,250.,vUv.y)));
   #include <tonemapping_fragment>
   #include <colorspace_fragment>
   #include <fog_fragment>
