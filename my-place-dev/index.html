@@ -910,7 +910,12 @@ let gateRibbons=[],moose=null;
  const ferns=[],berries=[],trill=[],bushes=[];trail.forEach((p,i)=>{for(let n=0;n<6;n++){const sd=rnd()<.5?-1:1,off=1.6+rnd()*6,x=p.x-p.tz*sd*off+(rnd()-.5)*2,z=p.z+p.tx*sd*off+(rnd()-.5)*2,y=H(x,z);const r=rnd();if(slope(x,z)>1.9)continue;
   if(r<.45)ferns.push({x,y,z,ry:rnd()*6,sx:.45+rnd()*.35,sy:.4+rnd()*.3,sz:.45+rnd()*.35});else if(r<.75){bushes.push({v:Math.floor(rnd()*9),x,y,z,ry:rnd()*6,s:.7+rnd()*.5});for(let b=0;b<6;b++)berries.push({x:x+(rnd()-.5)*.6,y:y+.2+rnd()*.3,z:z+(rnd()-.5)*.6,sx:.03,sy:.03,sz:.03})}
   else if(r<.8)trill.push({x,y:y+.05,z,ry:rnd()*6,sx:1,sy:1,sz:1})}});
-  for(let i=0;i<3500;i++){const x=10+rnd()*88,z=-28+rnd()*94;if(onPathE(x,z,1.6)||slope(x,z)>2.4)continue;ferns.push({x,y:H(x,z)-.05,z,ry:rnd()*6,sx:.45+rnd()*.4,sy:.4+rnd()*.35,sz:.45+rnd()*.4})}
+  // tall straight dark trunks framing the trail (crowns high above, like old-growth spruce)
+ {const tr=[],cr=[];trail.forEach((p,i)=>{if(i%4)return;const sd=rnd()<.5?-1:1,off=3.2+rnd()*3.5,x=p.x-p.tz*sd*off,z=p.z+p.tx*sd*off;if(onPathE(x,z,2.8))return;const h=18+rnd()*10,r=.28+rnd()*.2,y=H(x,z)-.3,lean=(rnd()-.5)*.08;
+  tr.push({x,y:y+h/2,z,rx:lean,rz:(rnd()-.5)*.08,sx:r,sy:h,sz:r});cr.push({x,y:y+h*.86,z,ry:rnd()*6,sx:h*.12,sy:h*.25,sz:h*.12})});
+  inst(new THREE.CylinderGeometry(.75,1,1,9),new THREE.MeshStandardMaterial({map:tex('spruce_bark.jpg',1),normalMap:tex('spruce_bark_nor.jpg'),color:0x5a4a3c,roughness:.95}),tr);
+  inst(new THREE.ConeGeometry(1,1,8),new THREE.MeshStandardMaterial({color:0x1e2c1c,roughness:1}),cr)}
+ for(let i=0;i<3500;i++){const x=10+rnd()*88,z=-28+rnd()*94;if(onPathE(x,z,1.6)||slope(x,z)>2.4)continue;ferns.push({x,y:H(x,z)-.05,z,ry:rnd()*6,sx:.45+rnd()*.4,sy:.4+rnd()*.35,sz:.45+rnd()*.4})}
 pending.push(GL.loadAsync(A+'grass2.glb').then(gl=>{const v=variants(gl);v.forEach(vv=>vv.parts.forEach(p=>{p.m=p.m.clone();p.m.color.setRGB(.55,.75,.45)}));scatter(v,ferns.map((f,i)=>({v:i,x:f.x,y:f.y-.02,z:f.z,ry:f.ry,s:.55+rnd()*.35})))}).catch(e=>console.warn(e)));inst(new THREE.SphereGeometry(1,6,4),new THREE.MeshStandardMaterial({color:0x1c2244,roughness:.3}),berries);
  {const parts=[];for(let k=0;k<3;k++){const l=new THREE.SphereGeometry(.09,6,4);l.scale(1,.12,.5);l.translate(0,.12,.06);l.rotateY(k*2.094);parts.push(l.toNonIndexed());const pe=new THREE.SphereGeometry(.05,6,4);pe.scale(1,.25,.6);pe.translate(0,.2,.04);pe.rotateY(k*2.094+1.05);parts.push(pe.toNonIndexed())}
   const stem=new THREE.CylinderGeometry(.006,.006,.2,4);stem.translate(0,.1,0);parts.push(stem.toNonIndexed());const tg=mergeGeometries(parts.map(g=>{g.deleteAttribute('uv');return g}));
