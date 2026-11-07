@@ -20,6 +20,24 @@
   #knob{position:absolute;left:35px;top:35px;width:40px;height:40px;border-radius:50%;background:rgba(244,234,214,.9)}
   #help{position:fixed;left:16px;top:14px;font-size:12px;color:var(--ink);background:rgba(244,234,214,.75);padding:6px 10px;border-radius:8px}
   @media (pointer:fine){#joy{display:none}}
+  #howbtn{position:fixed;right:calc(130px + env(safe-area-inset-right,0px));top:calc(14px + env(safe-area-inset-top,0px));font:inherit;font-size:15px;background:var(--paper);color:var(--ink);border:1px solid #c9b48f;border-radius:8px;padding:9px 14px;cursor:pointer}
+  #tut{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:center;padding:0 max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));pointer-events:none;z-index:5}
+  #tut .card{pointer-events:auto;background:rgba(244,234,214,.97);color:var(--ink);border:1px solid #c9b48f;border-radius:14px;box-shadow:0 10px 30px rgba(40,25,10,.3);padding:16px 18px;max-width:560px;width:100%;max-height:58vh;overflow:auto}
+  #tut .step{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--terra)}
+  #tut h2{font-size:21px;margin:4px 0 8px;text-wrap:balance}
+  #tut p{margin:0 0 8px;line-height:1.45;font-size:15.5px}
+  #tut .ex{border-left:3px solid var(--terra);padding:6px 10px;background:rgba(184,88,58,.07);font-style:italic}
+  #tut a{color:var(--terra)}
+  #tut .vt{font-size:15px;background:#fffaf0;border:1px solid #e3d3b4;border-radius:8px;padding:8px 10px}
+  #tut small{color:#7a6a58;font-style:normal}
+  #tut .row{display:flex;gap:8px;align-items:center;margin-top:10px}
+  #tut .sp{flex:1}
+  #tut button{font:inherit;font-size:15px;border-radius:8px;padding:10px 16px;cursor:pointer;border:1px solid var(--terra);background:var(--terra);color:#fff8ee}
+  #tut button.ghost{background:transparent;color:var(--ink);border-color:#c9b48f}
+  #tut button:focus-visible,#nav button:focus-visible,#mapbtn:focus-visible,#howbtn:focus-visible{outline:3px solid #3f6f9a;outline-offset:2px}
+  #tut svg{display:block;margin:4px auto 8px;max-width:100%}
+  body.tutorial #nav,body.tutorial #joy,body.tutorial #help{display:none}
+  @media (max-width:600px){#howbtn{right:auto;left:calc(16px + env(safe-area-inset-left,0px));padding:12px 14px}#tut h2{font-size:18px}#tut p{font-size:14.5px}}
   @media (max-width:600px){#help{display:none}#hud{top:calc(64px + env(safe-area-inset-top,0px));padding:6px 12px}#hud .s{font-size:14px}#hud .z{font-size:10px}#nav button,#mapbtn{padding:12px 16px;font-size:16px}}
   *{-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
 </style>
@@ -28,6 +46,15 @@
 <div id="hud"><div class="z">Colossae</div><div class="s">Walk to the city gate</div></div>
 <div id="help">WASD / arrows to walk · drag to look · double-click to go there · N / P jump stations</div>
 <button id="mapbtn">Dollhouse</button>
+<button id="howbtn" aria-label="How it works">How it works</button>
+<div id="tut" hidden>
+  <div class="card">
+    <div class="step" id="tutStep"></div>
+    <h2 id="tutTitle"></h2>
+    <div id="tutBody"></div>
+    <div class="row"><button id="tutSkip" class="ghost">Skip tutorial</button><span class="sp"></span><button id="tutBack" class="ghost">Back</button><button id="tutNext">Next</button></div>
+  </div>
+</div>
 <div id="nav"><button id="prev">◀ Prev</button><button id="next">Next ▶</button></div>
 <div id="joy"><div id="knob"></div></div>
 <script type="importmap">{"imports":{"three":"./three.module.js","three/addons/":"./addons/"}}</script>
@@ -596,8 +623,9 @@ function frame() {
   else { M.roof.visible = M.roofDk.visible = true; if (mapbtn.textContent !== 'Dollhouse') mapbtn.textContent = 'Dollhouse'; camera.position.set(player.x, groundY(player.x, player.z) + 1.7, player.z); camera.rotation.set(0, 0, 0); camera.rotation.order = 'YXZ'; camera.rotation.y = player.yaw; camera.rotation.x = player.pitch; }
   // HUD: nearest station
   const fpx = player.x - Math.sin(player.yaw) * 5.5, fpz = player.z - Math.cos(player.yaw) * 5.5;
-  let best = null, bd = 1e9; for (const st of STATIONS) { const d = Math.hypot(st.x - fpx, st.z - fpz); if (d < bd) { bd = d; best = st; } for (const lc of st.loci) { lc.gem.rotation.y = t; lc.gem.position.y = lc.gy + .65 + Math.sin(t * 2 + lc.x) * .07; } }
-  if (best && bd < 9 && !overview) { hudZ.textContent = `Chapter ${best.ch} · ${ZONE[best.ch - 1]} · Room ${best.room}`; let nl = best.loci[0], nd = 1e9; for (const lc of best.loci) { const d = Math.hypot(lc.x - player.x, lc.z - player.z); if (d < nd) { nd = d; nl = lc; } } hudS.textContent = nd < 1.2 ? `${best.name} · verse ${best.ch}:${nl.v} (${nl.where})` : `${best.name} — ${best.text}`; idx = STATIONS.indexOf(best); }
+  let best = null, bd = 1e9; for (const st of STATIONS) { const d = Math.hypot(st.x - fpx, st.z - fpz); if (d < bd) { bd = d; best = st; } for (const [li, lc] of st.loci.entries()) { lc.gem.rotation.y = t; lc.gem.position.y = lc.gy + .65 + Math.sin(t * 2 + lc.x) * .07;
+    const on = tutLocus !== null && st === STATIONS[0] && (tutLocus === 'all' || tutLocus === li); const sc = on ? 1.9 + Math.sin(t * 5) * .25 : 1; lc.gem.scale.setScalar(sc); } }
+  if (best && bd < 9 && !overview) { hudZ.textContent = `Chapter ${best.ch} · ${ZONE[best.ch - 1]} · Room ${best.room}`; let nl = best.loci[0], nd = 1e9; for (const lc of best.loci) { const d = Math.hypot(lc.x - player.x, lc.z - player.z); if (d < nd) { nd = d; nl = lc; } } hudS.textContent = nd < 1.2 ? `${best.name} · verse ${best.ch}:${nl.v} (${nl.where})${VTEXT[best.ch + ':' + nl.v] ? ' — “' + VTEXT[best.ch + ':' + nl.v] + '”' : ''}` : `${best.name} — ${best.text}`; idx = STATIONS.indexOf(best); }
   else { hudZ.textContent = 'Colossae'; hudS.textContent = overview ? 'Dollhouse — drag to turn, pinch/scroll to zoom, double-tap to step in' : 'Walk the path, or press Next'; }
   if (window.__fixed) { const [x, y, z, lx, ly, lz] = window.__fixed; camera.position.set(x, y, z); camera.lookAt(lx, ly, lz); }
   if (useAO) composer.render(); else renderer.render(scene, camera);
@@ -608,6 +636,47 @@ function frame() {
 STATIONS.forEach(st => st.loci.forEach(lc => { lc.gy = groundY(lc.x, lc.z); lc.base.position.y = lc.gy + .08; lc.label.position.y = lc.gy + 1.15; }));
 addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.fov = fovFor(camera.aspect); camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight); });
 window.__cam = (x, y, z, lx, ly, lz) => { overview = false; tween = null; window.__fixed = [x, y, z, lx, ly, lz]; };
+// ---- tutorial: the LTM method, demonstrated on the first square (Colossians 1:1-5) ----
+const ESV = 'https://www.esv.org/Colossians+1/';
+const ORDER_SVG = `<svg viewBox="0 0 220 150" width="220" height="150" role="img" aria-label="Square of five spots: 1 near-left, 2 far-left, 3 far-right, 4 near-right, 5 centre">
+  <rect x="50" y="14" width="120" height="96" fill="none" stroke="#b8583a" stroke-width="2" stroke-dasharray="5 4"/>
+  <path d="M60 100 L60 26 L160 26 L160 100" fill="none" stroke="#3b2a1c" stroke-width="1.5" marker-end="url(#ah)"/>
+  <defs><marker id="ah" viewBox="0 0 8 8" refX="6" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#3b2a1c"/></marker></defs>
+  ${[[50, 110, 1], [50, 14, 2], [170, 14, 3], [170, 110, 4], [110, 62, 5]].map(([x, y, n]) => `<circle cx="${x}" cy="${y}" r="13" fill="#f0c46a" stroke="#3b2a1c"/><text x="${x}" y="${y + 5}" text-anchor="middle" font-size="14" font-family="Georgia" font-weight="bold" fill="#3b2a1c">${n}</text>`).join('')}
+  <text x="110" y="142" text-anchor="middle" font-size="12" font-family="Georgia" fill="#3b2a1c">you stand here, facing the room</text></svg>`;
+const TUT = [
+  { t: 'Welcome to Colossae', b: `<p>This town is a memory palace for the book of Colossians. Each chapter is a district, each stall or room holds five verses, and every verse has its own spot on the ground.</p><p>Want a short walk-through of how to use it?</p>`, next: 'Show me' },
+  { t: 'First, the foundation', b: `<p>Locations don't replace memorizing. They lock in what you've already started to learn.</p><p>Before you place a verse, read it aloud <b>10 to 20 times</b> until you can say it roughly from memory. Then tie it to a spot here to finish the job.</p><p><a href="${ESV}" target="_blank" rel="noopener">Open Colossians 1 (ESV) on esv.org</a></p>` },
+  { t: 'Every room is a square', b: `${ORDER_SVG}<p>Stand facing a room. Its five verses always sit in the same order: <b>1</b> near-left, <b>2</b> far-left, <b>3</b> far-right, <b>4</b> near-right, then <b>5</b> in the centre. That's clockwise, finishing in the middle.</p>`, go: 0 },
+  { t: 'Verse 1:1 · near-left corner', b: `<p>Say Colossians 1:1 a few times. Now give it a picture on the near-left spot. Make it bigger than life: funny, moving, emotional.</p><p class="ex">For example, you could picture Paul slamming down a huge royal seal ("by the will of God") while young Timothy, his arm around Paul, beams like a proud little brother.</p>`, locus: 0 },
+  { t: 'Verse 1:2 · far-left corner', b: `<p>Next, Colossians 1:2 on the far-left spot.</p><p class="ex">For example, you could picture a dove of peace crash-landing onto an enormous gift box of grace, addressed in giant letters "To the saints at Colossae."</p>`, locus: 1 },
+  { t: 'Verse 1:3 · far-right corner', b: `<p>Your turn. Read 1:3 until you have it, then make your own picture on the far-right spot. The stranger and more vivid it is, the better it sticks. Use whatever makes sense to you.</p>`, locus: 2 },
+  { t: 'Verse 1:4 · near-right corner', b: `<p>Same again for 1:4 on the near-right spot. Give your image movement or emotion. Make something happen.</p>`, locus: 3 },
+  { t: 'Verse 1:5 · centre', b: `<p>Finally, 1:5 goes in the centre of the square.</p>`, locus: 4 },
+  { t: 'Walk it back', b: `<p>Look away from the screen. Walk the square in your mind: near-left, far-left, far-right, near-right, centre. At each spot, see your picture and say the verse.</p><p>If one is fuzzy, read it again and make its picture louder.</p>`, locus: 'all' },
+  { t: 'Every room works the same way', b: `<p>Press <b>Next</b> to walk to the next room, or double-tap anywhere to go there. Use <b>Dollhouse</b> to see the whole town at once.</p>`, next: 'Start the tour' },
+];
+let tutI = -1, tutLocus = null, VTEXT = {};
+fetch('./verses.json').then(r => r.ok ? r.json() : {}).then(j => { VTEXT = j || {}; if (tutI >= 0) tutShow(tutI); }).catch(() => {});
+const vq = ref => VTEXT[ref] ? `<p class="vt">“${VTEXT[ref]}” <small>(Colossians ${ref}, ESV)</small></p>` : '';
+const tutEl = document.getElementById('tut');
+const store = { get: k => { try { return localStorage.getItem(k); } catch (e) { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} } };
+function tutShow(i) {
+  tutI = i; const st = TUT[i]; tutEl.hidden = false; document.body.classList.add('tutorial');
+  document.getElementById('tutStep').textContent = `How it works · ${i + 1} of ${TUT.length}`;
+  document.getElementById('tutTitle').textContent = st.t; document.getElementById('tutBody').innerHTML = (typeof st.locus === 'number' ? vq(`1:${st.locus + 1}`) : '') + st.b;
+  document.getElementById('tutNext').textContent = st.next || 'Next';
+  document.getElementById('tutBack').hidden = i === 0;
+  if (st.go !== undefined || st.locus !== undefined) { if (idx !== 0) { idx = -1; go(1); } }
+  tutLocus = st.locus ?? null;
+}
+function tutEnd() { tutEl.hidden = true; document.body.classList.remove('tutorial'); tutLocus = null; tutI = -1; store.set('colossae-tut-done', '1'); }
+document.getElementById('tutNext').onclick = () => tutI < TUT.length - 1 ? tutShow(tutI + 1) : tutEnd();
+document.getElementById('tutBack').onclick = () => tutShow(Math.max(0, tutI - 1));
+document.getElementById('tutSkip').onclick = tutEnd;
+document.getElementById('howbtn').onclick = () => tutShow(0);
+if (!store.get('colossae-tut-done') && !new URLSearchParams(location.search).has('notut')) tutShow(0);
+
 // ---- merge static scenery into one draw call per material (big win on phones) ----
 {
   scene.updateMatrixWorld(true);
