@@ -917,7 +917,7 @@ let gateRibbons=[],moose=null;
   tr.push({x,y:y+h/2,z,rx:lean,rz:(rnd()-.5)*.08,sx:r,sy:h,sz:r});cr.push({x,y:y+h*.86,z,ry:rnd()*6,sx:h*.12,sy:h*.25,sz:h*.12})});
   inst(new THREE.CylinderGeometry(.75,1,1,9),new THREE.MeshStandardMaterial({map:tex('spruce_bark.jpg',1),normalMap:tex('spruce_bark_nor.jpg'),color:0x5a4a3c,roughness:.95}),tr);
 }
- for(let i=0;i<3500;i++){const x=10+rnd()*88,z=-28+rnd()*94;if(onPathE(x,z,1.6)||slope(x,z)>2.4)continue;ferns.push({x,y:H(x,z)-.05,z,ry:rnd()*6,sx:.45+rnd()*.4,sy:.4+rnd()*.35,sz:.45+rnd()*.4})}
+ for(let i=0;i<5000;i++){const x=10+rnd()*88,z=-28+rnd()*94;if(onPathE(x,z,1.6)||slope(x,z)>8)continue;ferns.push({x,y:H(x,z)-.05,z,ry:rnd()*6,sx:.45+rnd()*.4,sy:.4+rnd()*.35,sz:.45+rnd()*.4})}
 pending.push(GL.loadAsync(A+'grass2.glb').then(gl=>{const v=variants(gl);v.forEach(vv=>vv.parts.forEach(p=>{p.m=p.m.clone();p.m.color.setRGB(.55,.75,.45)}));scatter(v,ferns.map((f,i)=>({v:i,x:f.x,y:f.y-.02,z:f.z,ry:f.ry,s:.55+rnd()*.35})))}).catch(e=>console.warn(e)));
  inst(fern,fernM,ferns.filter((_,i)=>i%3===0).map(f=>({...f,sx:f.sx*1.4,sy:f.sy*.9,sz:f.sx*1.4})));inst(new THREE.SphereGeometry(1,6,4),new THREE.MeshStandardMaterial({color:0x1c2244,roughness:.3}),berries);
  {const parts=[];for(let k=0;k<3;k++){const l=new THREE.SphereGeometry(.09,6,4);l.scale(1,.12,.5);l.translate(0,.12,.06);l.rotateY(k*2.094);parts.push(l.toNonIndexed());const pe=new THREE.SphereGeometry(.05,6,4);pe.scale(1,.25,.6);pe.translate(0,.2,.04);pe.rotateY(k*2.094+1.05);parts.push(pe.toNonIndexed())}
