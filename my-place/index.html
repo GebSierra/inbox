@@ -132,7 +132,7 @@ const mouthClear=(x,z)=>z>185&&z<300&&Math.abs(x-riverX(Math.min(z,262)))<26;
 const HC_X0=-300,HC_Z0=-362,HC_W=601,HC_D=884,HC=new Float32Array(HC_W*HC_D).fill(NaN);
 function Hg(i,j){const k=j*HC_W+i;let v=HC[k];if(v!==v)v=HC[k]=Hraw(HC_X0+i,HC_Z0+j);return v}
 function H(x,z){const fx=x-HC_X0,fz=z-HC_Z0;if(!(fx>=0&&fz>=0&&fx<HC_W-1&&fz<HC_D-1))return Hraw(x,z);const i=fx|0,j=fz|0,u=fx-i,v=fz-j;return (Hg(i,j)*(1-u)+Hg(i+1,j)*u)*(1-v)+(Hg(i,j+1)*(1-u)+Hg(i+1,j+1)*u)*v}
-function Hraw(x,z){const ld=lodgeDist(x,z);if(ld===0)return FLOOR;let h0=H0(x,z)+hill(x,z);if(x>8&&x<100&&z>-30&&z<68){const R0=ridgeSurf(x,z)+fbm(x*.08,z*.08)*1.2,w=sm(8,22,x)*(1-sm(88,99,x))*sm(-30,-18,z)*(1-sm(58,67,z));h0+=(R0-h0)*w}if(x<10&&x>-90&&z>50&&z<262){if(!mkPads)mkPads=MARKERS.map(m=>({x:m.x,z:m.z,r:m.k==='log'?8:m.k==='bench'?0:6.5,h:(()=>{let b=null;for(let f=0;f<1;f+=.004){const q=pwAt(f),d=Math.hypot(q.x-m.x,q.z-m.z);if(!b||d<b.d)b={d,q}}return H0(b.q.x,b.q.z)+hill(b.q.x,b.q.z)})()}));for(const m of mkPads){const dm=Math.hypot(x-m.x,z-m.z);if(m.r&&dm<m.r+10)h0=m.h+(h0-m.h)*sm(m.r-1.5,m.r+10,dm)}}
+function Hraw(x,z){const ld=lodgeDist(x,z);if(ld===0)return FLOOR;let h0=H0(x,z)+hill(x,z);if(x>8&&x<100&&z>-30&&z<68){const R0=ridgeSurf(x,z)+fbm(x*.08,z*.08)*1.2,w=sm(8,22,x)*(1-sm(88,99,x))*sm(-30,-18,z)*(1-sm(58,67,z));h0+=(R0-h0)*w}if(x<10&&x>-90&&z>50&&z<262){if(!mkPads)mkPads=MARKERS.map(m=>({x:m.x,z:m.z,r:m.k==='log'?5:m.k==='bench'?0:6.5,h:(()=>{let b=null;for(let f=0;f<1;f+=.004){const q=pwAt(f),d=Math.hypot(q.x-m.x,q.z-m.z);if(!b||d<b.d)b={d,q}}return H0(b.q.x,b.q.z)+hill(b.q.x,b.q.z)})()}));for(const m of mkPads){const dm=Math.hypot(x-m.x,z-m.z);const bw=m.r===5?26:10;if(m.r&&dm<m.r+bw)h0=m.h+(h0-m.h)*sm(m.r-1.5,m.r+bw,dm)}}
  if(x<10&&z>170&&z<262){const q=pwNear(x,z);if(q.s>PWL[7]&&q.d<12){if(lookH===null)lookH=H0(LOOK.x,LOOK.z)+hill(LOOK.x,LOOK.z);const f=(q.s-PWL[7])/(PWL[PWL.length-1]-PWL[7]),ph=lookH+(1.2-lookH)*Math.min(1,f*1.5);h0=ph+(h0-ph)*sm(1.5,12,q.d)}}{const q=peNear(x,z);if(q.d<10){const ph=peHeight(q.s);h0=ph+(h0-ph)*sm(2.6,10,q.d)}const dc=Math.hypot(x-CAMP.x,z-CAMP.z);if(dc<14){const ph=peHeight(PEL[3]);h0=ph+(h0-ph)*sm(9,14,dc)}}{const dl=Math.hypot(x-LOOK.x,z-LOOK.z);if(dl<11){if(lookH===null)lookH=H0(LOOK.x,LOOK.z)+hill(LOOK.x,LOOK.z);h0=lookH+(h0-lookH)*sm(5,11,dl)}}return ld>12?h0:PAD+(h0-PAD)*sm(0,12,ld)}
 function H0(x,z){const lm=lakeMix(z);let h;
  if(lm<=0)return G0(x,z);
@@ -721,7 +721,7 @@ function updateCanoe(t){const sw=Math.sin(t*.13)*.22,y=-.3+Math.sin(t*.9)*.025;
    g.add(M(new THREE.BoxGeometry(.12,12,.3),new THREE.MeshStandardMaterial({color:0x151210,roughness:1}),.62,8,.2,0,0,.02));
    [[4,1],[6.5,-1],[9,1.4],[11,-.8],[12.8,1]].forEach(([y,d])=>g.add(M(new THREE.CylinderGeometry(.06,.16,1.8,6),sm2,d*.6,y,0,0,0,d>0?-1.1:1.1)))},
   cairn:g=>{let y=0;[[2.3,0],[1.85,.2],[1.45,-.15],[1.05,.12],[.7,-.05]].forEach(([r,o],i)=>{const h=r*.6;g.add(M(stone(i*7),rockM,o,y+h*.9,o*.5,0,i,0,r,h,r*.9));y+=h*1.7})},
-  bigbench:g=>{const b=new THREE.Group();build.bench(b);b.scale.setScalar(1.4);g.add(b)},
+  bigbench:g=>{const b=new THREE.Group();build.bench(b);b.scale.setScalar(2.2);g.add(b)},
   fire:g=>{g.userData.fire=1},
   bench:g=>{const s=1.15,add=(w,h,d,x,y,z,rx=0)=>g.add(M(new THREE.BoxGeometry(w*s,h*s,d*s),woodM,x*s,y*s,z*s,rx));   // a giant lookout bench, seat 2.25 m up
    for(let i=0;i<4;i++)add(1.9,.05,.1,0,.45,-.18+i*.12);for(let i=0;i<3;i++)add(1.9,.09,.04,0,.62+i*.14,-.3,-.15);
@@ -826,7 +826,7 @@ function updateFire(){if(!fireOn){fireLight.intensity=fireLight2.intensity=0;ret
  const fl=1+Math.sin(t*11.3)*.12+Math.sin(t*17.9+1.)*.08+Math.sin(t*5.1)*.1;fireLight.intensity=1.6*fl;fireLight2.intensity=1.2*fl;fireLight.position.x=Math.sin(t*7.)*.06;
  flame.quaternion.copy(camera.quaternion);flame.rotation.set(0,Math.atan2(camera.position.x-flame.position.x,camera.position.z-flame.position.z),0)}
 
-{const m=MARKERS.find(m=>m.k==='fire');if(m){const c=fireGroup.clone(true);c.position.set(m.x,H(m.x,m.z)-.1,m.z);c.scale.setScalar(3);scene.add(c)}}
+{const m=MARKERS.find(m=>m.k==='fire');if(m){const c=fireGroup.clone(true);c.position.set(m.x,H(m.x,m.z)-.1,m.z);c.scale.setScalar(3);const on={value:1};c.traverse(o=>{const p=o.geometry&&o.geometry.parameters;if(p&&p.radiusTop===.2&&p.height===1.6)o.visible=false;if(o.material&&o.material.uniforms&&o.material.uniforms.on){o.material=o.material.clone();o.material.uniforms.on=on;o.material.uniforms.t=U.t}if(o.isPointLight)o.intensity=Math.max(o.intensity,8)});scene.add(c)}}
 // ---------- fish leaping in the lake ----------
 const fishes=(()=>{const g=new THREE.SphereGeometry(1,14,8);g.scale(.28,.07,.055);
  const tail=new THREE.ConeGeometry(.06,.12,4);tail.rotateZ(Math.PI/2);tail.scale(1,1,.25);tail.translate(-.32,0,0);
