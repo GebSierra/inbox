@@ -160,7 +160,7 @@ const slope=(x,z)=>Math.hypot(H(x+1,z)-H(x-1,z),H(x,z+1)-H(x,z-1))/2;
 
 // ---------- renderer ----------
 const renderer=new THREE.WebGLRenderer({antialias:true});
-const FAST=/[?&]fast/.test(location.search);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.setPixelRatio(FAST?1:Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);
+const FAST=/[?&]fast/.test(location.search);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;const PHONE=matchMedia('(pointer:coarse)').matches;renderer.setPixelRatio(FAST?1:Math.min(devicePixelRatio,PHONE?1.5:2));renderer.setSize(innerWidth,innerHeight);
 renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
 document.body.prepend(renderer.domElement);
 const scene=new THREE.Scene();
@@ -1120,7 +1120,7 @@ document.getElementById('start').onclick=()=>{
   loop('lake.mp3').then(g=>audio.lake=g);loop('campfire.mp3').then(g=>audio.fire=g)}catch(e){}
  const t=document.getElementById('title');t.style.opacity=0;setTimeout(()=>t.hidden=true,2600)};
 
-let worldReady=false;Promise.allSettled(pending).then(()=>{worldReady=true;renderer.shadowMap.autoUpdate=false;renderer.shadowMap.needsUpdate=true;   /* the sun never moves: draw shadows once */const b=document.getElementById('start');b.disabled=false;b.textContent='Enter with sound'});
+let worldReady=false;Promise.allSettled(pending).then(async()=>{try{await renderer.compileAsync(scene,camera)}catch(e){}worldReady=true;   /* prepare every surface during the loading screen so the first walk doesn't stutter */renderer.shadowMap.autoUpdate=false;renderer.shadowMap.needsUpdate=true;   /* the sun never moves: draw shadows once */const b=document.getElementById('start');b.disabled=false;b.textContent='Enter with sound'});
 
 // ---------- loop ----------
 const clock=new THREE.Clock();const GREY=new THREE.Color(0x98a2a3),HAZE=new THREE.Color(0xb4c6d4),WHITE=new THREE.Color(0xf0f2ee),WARM=new THREE.Color(0xffd29a);
@@ -1164,7 +1164,7 @@ const tt=U.t.value,hx=(Math.sin(tt*.71)+Math.sin(tt*1.33+1.3)*.6+Math.sin(tt*2.9
  scene.fog.color.lerpColors(GREY,HAZE,k);scene.fog.density=.0019+(.0006-.0019)*k;skyU.oc.value=.3*(1-k);
  sun.intensity=1.8+k*2.3;sun.color.lerpColors(WHITE,WARM,k);hemi.intensity=.85-k*.5;renderer.toneMappingExposure=1.05-k*.12;
  sky.position.copy(camera.position);
- if(!worldReady){}else if(FAST)renderer.render(scene,camera);else composer.render();   /* draw nothing behind the loading screen */requestAnimationFrame(frame)}
+ if(!worldReady){}else if(FAST||PHONE)renderer.render(scene,camera);else composer.render();   /* draw nothing behind the loading screen */requestAnimationFrame(frame)}
 frame();
 addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);composer.setSize(innerWidth,innerHeight)});
 </script>
