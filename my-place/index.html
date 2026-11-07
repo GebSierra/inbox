@@ -727,11 +727,11 @@ function updateCanoe(t){const sw=Math.sin(t*.13)*.22,y=-.3+Math.sin(t*.9)*.025;
    const wm=new THREE.MeshStandardMaterial({map:wt,color:0x8e877c,roughness:.95,bumpMap:wt,bumpScale:3});
    const tg=new THREE.CylinderGeometry(.5,1,11,22,40,true),P=tg.attributes.position,v=new THREE.Vector3();
    for(let i=0;i<P.count;i++){v.fromBufferAttribute(P,i);const a=Math.atan2(v.z,v.x),k=1+fbm(a*1.6,v.y*.25,3)*.18+Math.max(0,-v.y-3.5)*.25*(1+Math.sin(a*5)*.6);const bend=Math.pow((v.y+5.5)/11,2)*.6;P.setXYZ(i,v.x*k+bend,v.y,v.z*k)}tg.computeVertexNormals();
-   g.add(M(tg,wm,0,5.5));const ash=new THREE.Mesh(new THREE.CircleGeometry(2.8,24),new THREE.MeshStandardMaterial({color:0x221c17,roughness:1,transparent:true,opacity:.85}));ash.rotation.x=-Math.PI/2;ash.position.y=.25;g.add(ash);
-   const sp=new THREE.MeshStandardMaterial({color:0xd8ccb4,roughness:.9}),chr=new THREE.MeshStandardMaterial({color:0x1c1612,roughness:1});
-   for(let i=0;i<11;i++){const a=i/11*6.283+rnd()*.4,h=.8+rnd()*3.2,r=.1+rnd()*.16,c=new THREE.ConeGeometry(r,h,4);c.translate(0,h/2,0);const o=M(c,i%4?sp:chr,.6+Math.cos(a)*.38,10.85,Math.sin(a)*.38);const t=.25+rnd()*.55;o.rotation.set(Math.sin(a)*t,0,-Math.cos(a)*t);g.add(o)}
+   g.add(M(tg,wm,0,5.5));const ash=new THREE.Mesh(new THREE.CircleGeometry(2.8,24),new THREE.MeshStandardMaterial({color:0x221c17,roughness:1,transparent:true,opacity:.85}));ash.rotation.x=-Math.PI/2;ash.position.y=.5;g.add(ash);
+   const sp=new THREE.MeshStandardMaterial({color:0xa49884,roughness:.9}),stb=new THREE.MeshStandardMaterial({map:wt,color:0x6e675d,roughness:1}),chr=new THREE.MeshStandardMaterial({color:0x1c1612,roughness:1});
+   for(let i=0;i<11;i++){const a=i/11*6.283+rnd()*.4,h=.6+rnd()*2,r=.12+rnd()*.18,c=new THREE.ConeGeometry(r,h,4);c.translate(0,h/2,0);const o=M(c,i%4?sp:chr,.6+Math.cos(a)*.38,10.85,Math.sin(a)*.38);const t=.1+rnd()*.35;o.rotation.set(Math.sin(a)*t,0,-Math.cos(a)*t);g.add(o)}
    g.add(M(new THREE.CylinderGeometry(.45,.52,.3,10),chr,.6,10.9));
-   for(let i=0;i<9;i++){const y=3+i*.85+rnd()*.5,a=i*2.4+rnd(),l=.9+rnd()*1,rr=1-(y/11)*.5,b=new THREE.CylinderGeometry(.05,.17,l,6);b.translate(0,l/2,0);const o=M(b,sp,Math.cos(a)*rr*.9+(y/11)**2*.6,y,Math.sin(a)*rr*.9);o.rotation.set(0,-a,-(1.2+rnd()*.5));g.add(o)}},
+   for(let i=0;i<9;i++){const y=3+i*.85+rnd()*.5,a=i*2.4+rnd(),l=.9+rnd()*1,rr=1-(y/11)*.5,b=new THREE.CylinderGeometry(.05,.17,l,6);b.translate(0,l/2,0);const o=M(b,stb,Math.cos(a)*rr*.9+(y/11)**2*.6,y,Math.sin(a)*rr*.9);o.rotation.set(0,-a,-(1.9+rnd()*.4));g.add(o)}},
   cairn:g=>{let y=0;[[2.3,0],[1.85,.2],[1.45,-.15],[1.05,.12],[.7,-.05]].forEach(([r,o],i)=>{const h=r*.6;g.add(M(stone(i*7),rockM,o,y+h*.9,o*.5,0,i,0,r,h,r*.9));y+=h*1.7})},
   bigbench:g=>{const b=new THREE.Group();build.bench(b);b.scale.setScalar(2.2);g.add(b)},
   fire:g=>{g.userData.fire=1},
