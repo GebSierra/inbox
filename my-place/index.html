@@ -717,11 +717,21 @@ function updateCanoe(t){const sw=Math.sin(t*.13)*.22,y=-.3+Math.sin(t*.9)*.025;
    add(.6,.05,.55,0,.45,0);for(let i=0;i<5;i++)add(.07,.75,.04,-.24+i*.12,.86,-.28,-.18);add(.62,.08,.06,0,1.24,-.35,-.18);
    [-.29,.29].forEach(x=>{add(.05,.42,.05,x,.24,.2);add(.05,.42,.05,x,.24,-.2);add(.07,.05,.6,x,.68,0);add(.05,.24,.05,x,.57,.24)});
    [-.29,.29].forEach(x=>add(.05,.06,.95,x,.03,0))},
-  snag:g=>{const sm2=new THREE.MeshStandardMaterial({map:logGrain,color:0xc9c2b4,roughness:.9});g.add(M(new THREE.CylinderGeometry(.3,.85,15,12),sm2,0,7.5));   // a lightning-split white dead tree
-   g.add(M(new THREE.ConeGeometry(.32,3.2,6),sm2,-.25,16.3,0,0,0,.35));g.add(M(new THREE.ConeGeometry(.28,2.4,6),sm2,.3,15.8,0,0,0,-.45));
-   const ch=new THREE.MeshStandardMaterial({color:0x14110e,roughness:1});for(let i=0;i<26;i++){const y=1.5+i*.5,a=i*.32,rr=.85-(y/15)*.55+.02;g.add(M(new THREE.BoxGeometry(.22,.62,.08),ch,Math.cos(a)*rr,y,Math.sin(a)*rr,0,-a+Math.PI/2,0))}
-   g.add(M(new THREE.CylinderGeometry(.88,1.05,1.6,12),ch,0,.8));[[-.25,17.6,.35],[.3,16.8,-.45]].forEach(([x,y,z])=>g.add(M(new THREE.ConeGeometry(.12,1.1,5),ch,x,y,0,0,0,z)));
-   [[4,1],[6.5,-1],[9,1.4],[11,-.8],[12.8,1]].forEach(([y,d])=>g.add(M(new THREE.CylinderGeometry(.06,.16,1.8,6),sm2,d*.6,y,0,0,0,d>0?-1.1:1.1)))},
+  snag:g=>{   // a lightning-struck dead spruce: silver weathered wood, a charred spiral scar, burnt base, shattered top
+   const wt=canvasTex(256,1024,(x,w,h)=>{x.fillStyle='#bdb6aa';x.fillRect(0,0,w,h);
+    for(let i=0;i<900;i++){const k=150+rnd()*70|0;x.fillStyle=`rgba(${k},${k-6},${k-16},${.15+rnd()*.3})`;x.fillRect(rnd()*w,rnd()*h,1+rnd()*2,20+rnd()*120)}
+    for(let i=0;i<40;i++){x.fillStyle='rgba(60,52,44,.35)';x.fillRect(rnd()*w,rnd()*h,1,30+rnd()*160)}
+    for(let y=0;y<h;y+=2){const f=1-y/h,c=((f*1.35+.15)%1)*w,ww=14+Math.sin(y*.05)*6+rnd()*6;for(const o of [-w,0,w]){x.fillStyle='rgba(22,17,13,.95)';x.fillRect(c+o-ww/2,y,ww,2);x.fillStyle='rgba(120,80,50,.6)';x.fillRect(c+o-ww/2-3-rnd()*3,y,3,2);x.fillRect(c+o+ww/2,y,2+rnd()*3,2)}}
+    const g=x.createLinearGradient(0,h,0,h*.8);g.addColorStop(0,'rgba(18,14,11,1)');g.addColorStop(.5,'rgba(25,19,15,.7)');g.addColorStop(1,'rgba(25,19,15,0)');x.fillStyle=g;x.fillRect(0,h*.8,w,h*.2);
+    for(let i=0;i<60;i++){x.fillStyle='rgba(20,15,12,.6)';x.fillRect(rnd()*w,h*(.8+rnd()*.2),2+rnd()*6,4+rnd()*20)}});
+   const wm=new THREE.MeshStandardMaterial({map:wt,roughness:.95,bumpMap:wt,bumpScale:2});
+   const tg=new THREE.CylinderGeometry(.34,.95,15,22,40,true),P=tg.attributes.position,v=new THREE.Vector3();
+   for(let i=0;i<P.count;i++){v.fromBufferAttribute(P,i);const a=Math.atan2(v.z,v.x),k=1+fbm(a*1.6,v.y*.25,3)*.18+Math.max(0,-v.y-5)*.08*(1+Math.sin(a*5)*.5);P.setXYZ(i,v.x*k,v.y,v.z*k)}tg.computeVertexNormals();
+   g.add(M(tg,wm,0,7.5));
+   const sp=new THREE.MeshStandardMaterial({color:0xd8ccb4,roughness:.9}),chr=new THREE.MeshStandardMaterial({color:0x1c1612,roughness:1});
+   for(let i=0;i<9;i++){const a=i/9*6.283+rnd()*.4,h=.5+rnd()*2.4,r=.07+rnd()*.12,c=new THREE.ConeGeometry(r,h,4);c.translate(0,h/2,0);g.add(M(c,i%3?sp:chr,Math.cos(a)*.24,14.9,Math.sin(a)*.24,(rnd()-.5)*.3,0,(rnd()-.5)*.3))}
+   g.add(M(new THREE.CylinderGeometry(.3,.36,.25,10),chr,0,14.95));
+   for(let i=0;i<7;i++){const y=4.5+i*1.4+rnd(),a=rnd()*6.283,l=.4+rnd()*.8,rr=.95-(y/15)*.6,b=new THREE.CylinderGeometry(.035,.11,l,5);b.translate(0,l/2,0);const o=M(b,sp,Math.cos(a)*rr*.9,y,Math.sin(a)*rr*.9);o.rotation.set(0,-a,-(1.2+rnd()*.5));g.add(o)}},
   cairn:g=>{let y=0;[[2.3,0],[1.85,.2],[1.45,-.15],[1.05,.12],[.7,-.05]].forEach(([r,o],i)=>{const h=r*.6;g.add(M(stone(i*7),rockM,o,y+h*.9,o*.5,0,i,0,r,h,r*.9));y+=h*1.7})},
   bigbench:g=>{const b=new THREE.Group();build.bench(b);b.scale.setScalar(2.2);g.add(b)},
   fire:g=>{g.userData.fire=1},
