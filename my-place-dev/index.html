@@ -964,8 +964,8 @@ pending.push(GL.loadAsync(A+'grass2.glb').then(gl=>{const v=variants(gl);v.forEa
  {const parts=[];for(let k=0;k<4;k++){const pts=[];for(let i=0;i<=6;i++){const t=i/6;pts.push(new THREE.Vector3((t-.5)*3.2,Math.sin(t*3.1)*.06+(rnd()-.5)*.05,(rnd()-.5)*.25+Math.sin(t*2+k)*.15))}
    const g=new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),16,.07,6);const P=g.attributes.position;for(let i=0;i<P.count;i++){const x=P.getX(i),f=.5+.5*Math.abs(x)/1.6;P.setY(i,P.getY(i)*f)}g.computeVertexNormals();parts.push(g)}
   const rm=new THREE.MeshStandardMaterial({map:tex('spruce_bark.jpg',1),color:0x4a3a2c,roughness:.9});const o=new THREE.Object3D();
-  parts.forEach((g,k)=>{const items=[];for(let f=.01;f<.99;f+=.004){if(rnd()<.55)continue;const p=peAt(f),q=peAt(f+.01),gr=Math.abs(H(q.x,q.z)-H(p.x,p.z))/Math.max(.1,Math.hypot(q.x-p.x,q.z-p.z));if(Math.floor(f*1000)%4!==k)continue;items.push(p)}
-   const im=new THREE.InstancedMesh(g,rm,items.length);items.forEach((p,i)=>{o.position.set(p.x,H(p.x,p.z)+.38,p.z);o.rotation.set(0,Math.atan2(p.tx,p.tz)+Math.PI/2+(rnd()-.5)*.5,0);o.scale.setScalar(.8+rnd()*.5);o.updateMatrix();im.setMatrixAt(i,o.matrix)});im.castShadow=im.receiveShadow=true;scene.add(im)})}}
+  parts.forEach((g,k)=>{const items=[];let ii=0;for(let f=.01;f<.99;f+=.004){ii++;if(rnd()<.55)continue;const p=peAt(f),q=peAt(f+.01),gr=Math.abs(H(q.x,q.z)-H(p.x,p.z))/Math.max(.1,Math.hypot(q.x-p.x,q.z-p.z));if(ii%4!==k)continue;items.push(p)}
+   const im=new THREE.InstancedMesh(g,rm,items.length);items.forEach((p,i)=>{o.position.set(p.x,H(p.x,p.z)+.47,p.z);o.rotation.set(0,Math.atan2(p.tx,p.tz)+Math.PI/2+(rnd()-.5)*.5,0);o.scale.setScalar(.8+rnd()*.5);o.updateMatrix();im.setMatrixAt(i,o.matrix)});im.castShadow=im.receiveShadow=true;im.renderOrder=2;scene.add(im)})}}
 
 // ================= Area 2: the lake above the falls =================
 {const water=new Reflector(new THREE.PlaneGeometry(240,340),{textureWidth:Math.round(innerWidth*.45),textureHeight:Math.round(innerHeight*.45),color:0x6f7f80});
