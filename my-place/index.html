@@ -109,7 +109,7 @@ const onPathW=(x,z,w)=>pwD(x,z)<w,onAnyPath=(x,z,w)=>onPathW(x,z,w)||onPathE(x,z
 const LASTSP={x:50,z:-4};const ECHO=peAt(.42);const echoClear=(x,z)=>segD(x,z,ECHO,{x:riverX(30),z:30})<7;
 const LOOKF=PWL[7]/PWL[PWL.length-1];
 function pwNear(x,z){let best=1e9,bs=0;for(let i=1;i<PW.length;i++){const a=PW[i-1],b=PW[i],vx=b.x-a.x,vz=b.z-a.z,l2=vx*vx+vz*vz,t=Math.max(0,Math.min(1,((x-a.x)*vx+(z-a.z)*vz)/l2)),d=Math.hypot(x-a.x-vx*t,z-a.z-vz*t);if(d<best){best=d;bs=PWL[i-1]+t*Math.sqrt(l2)}}return {d:best,s:bs}}
-const MARKERS=[...['boulder','mushroom','log','cone','rocker','snag'].map((k,i)=>[k,.1+i*(LOOKF-.15)/5,k==='log'?0:1]),['bench',LOOKF,0],...['cairn','nest'].map((k,i)=>[k,LOOKF+(i+1)*(.9-LOOKF)/3,i%2?1:-1]),['lantern',.95,1]].map(([k,f,sd])=>{const p=pwAt(f);
+const MARKERS=[...['boulder','bigbench','fire','log','cone','snag'].map((k,i)=>[k,.1+i*(LOOKF-.15)/5,k==='log'?0:1]),['bench',LOOKF,0],...['cairn','nest'].map((k,i)=>[k,LOOKF+(i+1)*(.9-LOOKF)/3,i%2?1:-1]),['lantern',.95,1]].map(([k,f,sd])=>{const p=pwAt(f);
  let x=p.x-p.tz*sd*7.5,z=p.z+p.tx*sd*7.5,ry=Math.atan2(p.x-x,p.z-z);
  if(k==='log')ry=Math.atan2(p.tx,p.tz);
  if(k==='lantern'){const c=fromPlan(LW+18,LD*.1);x=c.x;z=c.z;ry=Math.atan2(p.x-x,p.z-z)}
@@ -341,7 +341,7 @@ const spruceSpots=[];
   const lm=lakeMix(z),sh=shoreOf(x,z);
   if(lm>.5){if(sh<.18+fbm(x*.05,z*.05)*.08||inLodge(x,z,9))continue}
   else{if(d<15+fbm(z*.1,1)*4)continue;if(Math.abs(x)>200)continue;if(z>0&&z<50&&d<18)continue;if(z<8&&(a2S(x,z)<.14||(x>22&&x<112&&z<-22&&z>-175)))continue;if(Math.hypot(x-30,z+24)<24||echoClear(x,z)||Math.hypot(x-CAMP.x,z-CAMP.z)<10||Math.hypot(x-LASTSP.x,z-LASTSP.z)<15)continue;if(d<30&&rnd()<.35)continue}
-  if(slope(x,z)>((x>10&&x<100&&z>-30&&z<66)?2.6:2.2)||mouthClear(x,z)||onPathW(x,z,4.5)||onPathE(x,z,7)||onPathW(x,z,8)||nearMarker(x,z,8)||lookoutClear(x,z))continue;if(Math.hypot(x-riverX(140)-9.5,z-140)<14)continue;
+  if(slope(x,z)>((x>10&&x<100&&z>-30&&z<66)?2.6:2.2)||mouthClear(x,z)||onPathW(x,z,4.5)||onPathE(x,z,7)||onPathW(x,z,8)||nearMarker(x,z,11)||lookoutClear(x,z))continue;if(Math.hypot(x-riverX(140)-9.5,z-140)<14)continue;
   spruceSpots.push([x,z])}
  for(let i=0;i<7;i++){const a=rnd()*6.283,r=rnd()*5.5;spruceSpots.push([ISL.x+Math.cos(a)*r,ISL.z+Math.sin(a)*r])}
  // a dense, deep forest ring around the lake so the far shore reads as a wall of trees, not a fence
@@ -721,6 +721,8 @@ function updateCanoe(t){const sw=Math.sin(t*.13)*.22,y=-.3+Math.sin(t*.9)*.025;
    g.add(M(new THREE.BoxGeometry(.12,12,.3),new THREE.MeshStandardMaterial({color:0x151210,roughness:1}),.62,8,.2,0,0,.02));
    [[4,1],[6.5,-1],[9,1.4],[11,-.8],[12.8,1]].forEach(([y,d])=>g.add(M(new THREE.CylinderGeometry(.06,.16,1.8,6),sm2,d*.6,y,0,0,0,d>0?-1.1:1.1)))},
   cairn:g=>{let y=0;[[2.3,0],[1.85,.2],[1.45,-.15],[1.05,.12],[.7,-.05]].forEach(([r,o],i)=>{const h=r*.6;g.add(M(stone(i*7),rockM,o,y+h*.9,o*.5,0,i,0,r,h,r*.9));y+=h*1.7})},
+  bigbench:g=>{const b=new THREE.Group();build.bench(b);b.scale.setScalar(1.4);g.add(b)},
+  fire:g=>{g.userData.fire=1},
   bench:g=>{const s=1.15,add=(w,h,d,x,y,z,rx=0)=>g.add(M(new THREE.BoxGeometry(w*s,h*s,d*s),woodM,x*s,y*s,z*s,rx));   // a giant lookout bench, seat 2.25 m up
    for(let i=0;i<4;i++)add(1.9,.05,.1,0,.45,-.18+i*.12);for(let i=0;i<3;i++)add(1.9,.09,.04,0,.62+i*.14,-.3,-.15);
    [-.85,.85].forEach(x=>{add(.07,.45,.07,x,.22,.2);add(.07,.9,.07,x,.45,-.27,-.15);add(.06,.05,.5,x,.66,0)})},
@@ -824,6 +826,7 @@ function updateFire(){if(!fireOn){fireLight.intensity=fireLight2.intensity=0;ret
  const fl=1+Math.sin(t*11.3)*.12+Math.sin(t*17.9+1.)*.08+Math.sin(t*5.1)*.1;fireLight.intensity=1.6*fl;fireLight2.intensity=1.2*fl;fireLight.position.x=Math.sin(t*7.)*.06;
  flame.quaternion.copy(camera.quaternion);flame.rotation.set(0,Math.atan2(camera.position.x-flame.position.x,camera.position.z-flame.position.z),0)}
 
+{const m=MARKERS.find(m=>m.k==='fire');if(m){const c=fireGroup.clone(true);c.position.set(m.x,H(m.x,m.z)-.1,m.z);c.scale.setScalar(3);scene.add(c)}}
 // ---------- fish leaping in the lake ----------
 const fishes=(()=>{const g=new THREE.SphereGeometry(1,14,8);g.scale(.28,.07,.055);
  const tail=new THREE.ConeGeometry(.06,.12,4);tail.rotateZ(Math.PI/2);tail.scale(1,1,.25);tail.translate(-.32,0,0);
