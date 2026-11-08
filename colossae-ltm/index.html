@@ -178,7 +178,7 @@ const TEX = {
     let ry = 0; while (ry < w) { const rh = R(22, 40); let cx = -R(0, 30); while (cx < w) { const ww = R(24, 56); { const v = R(195, 245); x.fillStyle = `rgb(${v | 0},${v * .95 | 0},${v * .86 | 0})`; }
       x.beginPath(); x.moveTo(cx + R(1, 4), ry + R(1, 4)); x.lineTo(cx + ww - R(1, 4), ry + R(1, 4)); x.lineTo(cx + ww - R(1, 4), ry + rh - R(1, 4)); x.lineTo(cx + R(1, 4), ry + rh - R(1, 4)); x.fill();
       if (rnd() < .15) { x.strokeStyle = 'rgba(90,70,50,.35)'; x.beginPath(); x.moveTo(cx + R(5, ww), ry + 3); x.lineTo(cx + R(5, ww), ry + rh - 3); x.stroke(); } cx += ww; } ry += rh; }
-    speck(x, 800, '80,60,40', .18, w); }, .25),
+    speck(x, 800, '80,60,40', .18, w); }, .5),
 };
 TEX.wood = canvasTex(256, (x, w) => { x.fillStyle = '#e8e8e8'; x.fillRect(0, 0, w, w);
   for (let pl = 0; pl < 4; pl++) { const y0 = pl * 64; x.fillStyle = `rgb(${R(215, 250) | 0},${R(215, 250) | 0},${R(215, 250) | 0})`; x.fillRect(0, y0, w, 64);
@@ -476,7 +476,11 @@ const GZ = 78;
     box(.9, 1.6, .2, 'dark', 0, 6, 3.02, g); };
   tower(-6.5); tower(6.5);
   box(7, 3, 6, 'stone', 0, 6.5, GZ); for (let i = -2; i <= 2; i++) box(.9, .9, .9, 'stoneDk', i * 1.5, 9.5, GZ + 2.5);
-  const arch = add(new THREE.TorusGeometry(3.5, .55, 6, 12, Math.PI), 'stoneDk', 0, 6.4, GZ + 3); arch.rotation.z = 0;
+  { const gy0 = heightAt(0, GZ), sh = new THREE.Shape(); sh.moveTo(-3.5, 0); sh.lineTo(3.5, 0); sh.lineTo(3.5, 6.6); sh.lineTo(-3.5, 6.6); sh.lineTo(-3.5, 0);
+    const hole = new THREE.Path(); hole.moveTo(-3.3, 0); hole.lineTo(-3.3, 3.2); hole.absarc(0, 3.2, 3.3, Math.PI, 0, true); hole.lineTo(3.3, 0); hole.lineTo(-3.3, 0); sh.holes.push(hole);
+    const vg = new THREE.ExtrudeGeometry(sh, { depth: 6, bevelEnabled: false, curveSegments: 14 }); vg.translate(0, 0, -3); add(vg, 'stone', 0, gy0, GZ);
+    for (const zz of [GZ + 3.02, GZ - 3.02]) { for (let k = 0; k <= 10; k++) { const a = Math.PI * k / 10; const v = box(.55, .75, .2, 'stoneDk', Math.cos(a) * 3.55, gy0 + 3.2 + Math.sin(a) * 3.55 - .37, zz); v.rotation.z = a - Math.PI / 2; } }
+    box(.9, .7, .25, 'marble', 0, gy0 + 6.75, GZ + 3.05); }
   stoneWall(-9.5, GZ, -70, GZ - 10, 4); stoneWall(-70, GZ - 10, -70, -40, 4); stoneWall(-70, -40, 46, -40, 4);
   stoneWall(9.5, GZ, 46, GZ - 10, 4); stoneWall(46, GZ - 10, 46, 8, 4); stoneWall(46, -4, 46, -40, 4);
 }
@@ -875,7 +879,7 @@ const BZ = 2, BX = RIVER_X(BZ);
   const g = new THREE.Group(); g.position.set(BX, 0, BZ); scene.add(g);
   const deckY = 1.1;
   box(26, .6, 4.5, 'stone', 0, deckY, 0, g);
-  for (const s of [-1, 1]) { box(26, .95, .4, 'stoneDk', 0, deckY + .6, s * 2.1, g); box(26.2, .16, .6, 'marble', 0, deckY + 1.55, s * 2.1, g); }
+  for (const s of [-1, 1]) { box(26, 1.15, .45, 'stoneDk', 0, deckY + .6, s * 2.1, g); box(26.2, .18, .62, 'marble', 0, deckY + 1.75, s * 2.1, g); for (let i = -12; i <= 12; i += 3) box(.6, 1.45, .6, 'stone', i, deckY + .6, s * 2.1, g); }
   for (const x of [-3.7, 3.7]) { const fo = add(new THREE.TorusGeometry(2.1, .28, 4, 14), mat('foam', '#f4fbf8', { roughness: .4 }), x, -1.66, 0, g); fo.rotation.x = Math.PI / 2; fo.scale.set(.75, 1.25, 1); fo.castShadow = false; }
   for (const x of [-11, -3.7, 3.7, 11]) { box(2.2, deckY + 4.5, 4.4, 'stone', x, -4.5, 0, g); box(2.6, .35, 4.6, 'stoneDk', x, -1.8, 0, g);
     if (Math.abs(x) < 5) for (const s of [-1, 1]) { const cw = add(new THREE.CylinderGeometry(1.55, 1.55, 3.2, 3), 'stone', x, -2.9, s * 2.6, g); cw.rotation.y = s > 0 ? Math.PI / 2 : -Math.PI / 2; cw.scale.z = .7; } }
