@@ -1059,13 +1059,13 @@ pending.push(GL.loadAsync(A+'grass2.glb').then(gl=>{const v=variants(gl);v.forEa
   inst(new THREE.CylinderGeometry(1,1,1,12),new THREE.MeshStandardMaterial({map:tex('spruce_bark.jpg',1),color:0xa8a49c,roughness:.95}),logs)}
  // fall-coloured maples and birches mixed into the spruce around the shores
  const broad=[];for(let t=0;t<14000&&broad.length<620;t++){const x=(rnd()-.5)*280,z=-30-rnd()*280;if(a2S(x,z)<.18||Math.hypot(x-30,z+24)<28||(x>22&&x<112&&z<-22&&z>-175&&rnd()<.85)||slope(x,z)>1.2)continue;broad.push({x,z,h:6+rnd()*6,birch:rnd()<.35})}
- for(let t=0;t<4000&&broad.length<760;t++){const a=rnd()*6.283,e=1.06+rnd()*.2,x=Math.cos(a)*LRX*e,z=LZ+Math.sin(a)*LRZ*e;if(Math.sin(a)<-.2||inLodge(x,z,8)||slope(x,z)>1.4)continue;broad.push({x,z,h:6+rnd()*9,birch:rnd()<.3})}   // hardwoods breaking up the main lake's treeline
+ for(let c=0;c<26;c++){const a=-.2+rnd()*3.5,e=1.08+rnd()*.25,cx=Math.cos(a)*LRX*e,cz=LZ+Math.sin(a)*LRZ*e;if(Math.sin(a)<-.2)continue;const n=2+Math.floor(rnd()*7);for(let k=0;k<n;k++){const x=cx+(rnd()-.5)*12,z=cz+(rnd()-.5)*10;if(inLodge(x,z,8)||slope(x,z)>1.4||shoreOf(x,z)<.08)continue;broad.push({x,z,h:7+rnd()*11,birch:rnd()<.25})}}   // hardwoods breaking up the main lake's treeline
  const trunkG=new THREE.CylinderGeometry(.12,.22,1,7);trunkG.translate(0,.5,0);
  const leafTex=canvasTex(256,256,(x,w,h)=>{for(let i=0;i<260;i++){const cx=w/2+(rnd()-.5)*w*.85*Math.sqrt(rnd()),cy=h/2+(rnd()-.5)*h*.85*Math.sqrt(rnd()),k=150+rnd()*105;x.fillStyle=`rgb(${k},${k},${k})`;x.save();x.translate(cx,cy);x.rotate(rnd()*6.3);x.beginPath();x.ellipse(0,0,7+rnd()*5,4+rnd()*3,0,0,6.3);x.fill();x.restore()}x.strokeStyle='rgba(60,45,30,.8)';x.lineWidth=2;for(let i=0;i<6;i++){x.beginPath();x.moveTo(w/2,h);x.lineTo(w/2+(rnd()-.5)*w*.8,h*.2+rnd()*h*.5);x.stroke()}});
  const cards=[];for(let i=0;i<46;i++){const g=new THREE.PlaneGeometry(1.1,1.1);const u=rnd()*6.283,v=Math.acos(2*rnd()-1),r=Math.cbrt(rnd());g.rotateX((rnd()-.5)*1.4);g.rotateY(rnd()*6.28);g.translate(Math.sin(v)*Math.cos(u)*r,Math.cos(v)*r*.85+.1,Math.sin(v)*Math.sin(u)*r);cards.push(g)}
  const crownG=mergeGeometries(cards);
  inst(trunkG,new THREE.MeshStandardMaterial({roughness:.9}),broad.map(b=>({x:b.x,y:H(b.x,b.z)-.2,z:b.z,sx:1,sy:b.h*.6,sz:1})),(c,k,it)=>broad[k].birch?c.setRGB(.9,.88,.84):c.setRGB(.32,.26,.2));
- const fall=[[.78,.36,.1],[.85,.6,.14],[.55,.22,.1],[.35,.45,.18],[.9,.72,.25]];
+ const fall=[[.6,.27,.08],[.66,.46,.12],[.45,.18,.08],[.3,.38,.15],[.7,.55,.2]];
  inst(crownG,new THREE.MeshStandardMaterial({map:leafTex,alphaTest:.45,side:THREE.DoubleSide,roughness:.85}),broad.map(b=>({x:b.x,y:H(b.x,b.z)+b.h*.62,z:b.z,ry:rnd()*6,sx:b.h*.32,sy:b.h*.3,sz:b.h*.32})),(c,k)=>c.setRGB(...fall[k%5]));
  // rounded green mountains behind the upper lake, fading into haze
  {const M=(x,z)=>{let m=0;for(const [cx,cz,h,r] of [[-220,-720,260,230],[60,-800,330,260],[320,-700,230,210],[-40,-620,160,170],[200,-600,150,160]])m+=h*Math.exp(-((x-cx)**2+(z-cz)**2)/(r*r));return m+fbm(x*.01,z*.01)*18};
