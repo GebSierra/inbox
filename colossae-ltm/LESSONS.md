@@ -156,3 +156,11 @@ Things that looked broken and were easy to fix:
   the GitHub Pages URL and the preview.
 - Ask for their memorization method early. It changes the whole layout.
 - Keep their repo tidy: one subfolder per project (`inbox/colossae-ltm/`).
+
+## 9. Later lessons
+- Put goods *inside* crates by measuring where the model's own goods sit (cluster their vertices into crates), not by guessing coordinates.
+- Canvas wall/floor textures meant to span a wall once must not use world-space UV tiling, or panels repeat every metre.
+- Camera moves in headless tests: drive them by wall-clock time, not by frame count (test browsers run at 1–2 fps).
+- Statues: shape first (lathe robe + capsule limbs), carved folds, painted marble with veins/streaks, darkened creases, smooth shading, base joined to feet.
+- Ask the person for AI-generated reference renders per room; they are the clearest brief.
+- Use a cheaper sub-agent for self-contained modules (statue.js) so the main thread stays on integration.
