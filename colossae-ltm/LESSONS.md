@@ -14,6 +14,11 @@ mistakes are not repeated.
 - **The rooms in a zone also run clockwise.** Start at the bottom-left room nearest
   the entrance, go up the left side, then come back down the right side.
   (The first build went left-right-left-right across the street. That was wrong.)
+- A room does not have to be a building. The city gate and the town well both work
+  well as rooms. Not all five spots need a distinct object (a guard, a pot, a torch,
+  a spear rack and a seal in the ground is plenty).
+- Let the person place the rooms. A quick sketch over a bird's-eye screenshot
+  ("1 here, 2 here…") settles the layout faster than any description.
 - One zone per chapter, five verses per room. Work out the room counts from the verse
   counts first. Colossians: 29, 23, 25 and 18 verses give 6, 5, 5 and 4 rooms.
 - Rote first, location second. The tutorial should say: read each verse aloud
@@ -25,6 +30,10 @@ mistakes are not repeated.
 
 ## 2. Show less text
 
+- The status box should say only "Chapter 1" and the verse range. No room names.
+- Hide the controls hint once the person starts moving.
+- Floating signs or panels above stalls only block the view. Leave them out.
+- Give the hovering markers their own on/off toggle, as well as the verse numbers.
 - Individual verse-number labels are clutter. Turn them **off by default** with a
   toggle. Keep a single banner per room ("1:1–5") and a small marker on each object.
 - Keep the top status line to one short line. A big panel covers what you're looking
@@ -95,6 +104,21 @@ Things that looked broken and were easy to fix:
 - Thin terrain grids hiding a river. The valley must be wider than a couple of grid cells.
 - Labels drawn huge in front of everything. Draw them in their own pass, small, and
   fade them with distance.
+
+### Making heavy downloaded models phone-friendly
+
+- Don't reject a big model on file size alone. The 410 MB "game-ready" market stall
+  became 4 MB and still looked great:
+  1. Delete the parts that don't fit the setting (here, meat and sausages) by
+     removing their meshes from the glTF.
+  2. Run `gltf-transform prune`, `weld`, then `simplify --ratio 0.25` and again at 0.5.
+  3. Run `gltf-transform resize --width 512 --height 512`, then `webp --quality 80`.
+- Sketchfab downloads often use the old `KHR_materials_pbrSpecularGlossiness`
+  material, which three.js no longer reads, so the model renders grey. Convert
+  the diffuse texture to `pbrMetallicRoughness.baseColorTexture`.
+- Mark big imported models as "don't merge". Merging copies their geometry for
+  every instance. Unmerged clones share it.
+- CC BY models need credit. Put credits behind a small "i" button, not on screen.
 
 ## 6. Engineering gotchas
 
