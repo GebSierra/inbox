@@ -221,8 +221,8 @@ const WATER_T = { value: 0 };
     if (k) continue;
     const x = RIVER_X(z) + s * 10.2; const top = Math.max(-1.5, heightAt(x + s * 2.5, z));
     for (let t = 0; t < 3; t++) { const r = R(1.1, 1.4) - t * .25; const yy = -1.75 + (top + 1.75) * t / 3;
-      const ang = Math.atan(9 * .035 * Math.cos(z * .035) + 6 * .011 * Math.cos(z * .011 + 1)); const ring = add(new THREE.BoxGeometry(r * 1.5, .42, 3.6), 'travertine', x + s * t * 1.1, yy, z); ring.rotation.y = ang;
-      const pool = add(new THREE.BoxGeometry(r * 1.2, .05, 3.2), M.pool ??= new THREE.MeshStandardMaterial({ color: '#c5ebe6', roughness: .1, flatShading: true }), x + s * t * 1.1, yy + .21, z); pool.rotation.y = ang; pool.castShadow = false; }
+      const ang = Math.atan(9 * .035 * Math.cos(z * .035) + 6 * .011 * Math.cos(z * .011 + 1)); if (rnd() < .3) continue; const ring = add(new THREE.BoxGeometry(r * 1.05, .3, R(2.2, 3.2)), 'travertine', x + s * t * 1.1, yy, z); ring.rotation.y = ang;
+      const pool = add(new THREE.BoxGeometry(r * .8, .05, 2), M.pool ??= new THREE.MeshStandardMaterial({ color: '#c5ebe6', roughness: .1, flatShading: true }), x + s * t * 1.1, yy + .21, z); pool.rotation.y = ang; pool.castShadow = false; }
   }
 }
 // mountains
@@ -298,21 +298,25 @@ function stripeTex(a, b, n) {
   for (let i = 0; i < n; i++) { x.fillStyle = i % 2 ? b : a; x.fillRect(i * 128 / n, 0, 128 / n + 1, 8); }
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
 }
-function stall(x, z, face, cloth, goods) {
+function stall(x, z, face, cloth, goods, style = 'awning') {
   const g = new THREE.Group(); g.position.set(x, heightAt(x, z), z); g.rotation.y = face; scene.add(g);
-  for (const [a, b] of [[-1.8, -1.2], [1.8, -1.2], [-1.8, 1.2], [1.8, 1.2]]) box(.16, b > 0 ? 3.1 : 3.7, .16, 'wood', a, 0, b, g);
+  if (style !== 'tent') for (const [a, b] of [[-1.8, -1.2], [1.8, -1.2], [-1.8, 1.2], [1.8, 1.2]]) box(.16, b > 0 ? 3.1 : 3.7, .16, 'wood', a, 0, b, g);
   const awn = add(new THREE.BoxGeometry(4.3, .08, 3.2), typeof cloth === 'string'
     ? new THREE.MeshStandardMaterial({ color: cloth, flatShading: true, roughness: 1 })
     : new THREE.MeshStandardMaterial({ map: cloth, roughness: 1 }), 0, 2.95, 0, g);
   awn.visible = false;
   const cg = new THREE.PlaneGeometry(4.5, 3.6, 6, 4); const cp = cg.attributes.position;
   for (let i = 0; i < cp.count; i++) { const u = cp.getX(i) / 2.25, v = cp.getY(i) / 1.8; cp.setZ(i, -(1 - u * u) * .18 * (1 - v * v) - .0); }
-  cg.computeVertexNormals(); const can = add(cg, awn.material, 0, 3.45, .1, g); can.rotation.x = -Math.PI / 2 + .5; can.material.side = THREE.DoubleSide; can.material.emissive = can.material.map ? new THREE.Color('#5a4a3a') : new THREE.Color(can.material.color).multiplyScalar(.35); if (can.material.map) can.material.emissiveMap = can.material.map;
-  for (let i = 0; i < 9; i++) { const f = add(new THREE.ConeGeometry(.26, .45, 3), awn.material, -2 + i * .5, 2.62, 1.72, g); f.rotation.x = Math.PI; f.rotation.y = Math.PI / 6; }
+  cg.computeVertexNormals(); const can = add(cg, awn.material, 0, 3.45, .1, g); if (style !== 'awning') can.visible = false; can.rotation.x = -Math.PI / 2 + .5; can.material.side = THREE.DoubleSide; can.material.emissive = can.material.map ? new THREE.Color('#5a4a3a') : new THREE.Color(can.material.color).multiplyScalar(.35); if (can.material.map) can.material.emissiveMap = can.material.map;
+  if (style === 'awning' || style === 'cart') for (let i = 0; i < 9; i++) { const f = add(new THREE.ConeGeometry(.26, .45, 3), awn.material, -2 + i * .5, 2.62, 1.72, g); f.rotation.x = Math.PI; f.rotation.y = Math.PI / 6; }
+  if (style === 'cart') { can.visible = true; for (const sx of [-1, 1]) { const w = add(new THREE.CylinderGeometry(.75, .75, .14, 14), 'wood', sx * 2.05, .75, .2, g); w.rotation.z = Math.PI / 2; const hub = add(new THREE.CylinderGeometry(.14, .14, .2, 8), 'dark', sx * 2.12, .75, .2, g); hub.rotation.z = Math.PI / 2; }
+    for (const sx of [-1, 1]) { const h = box(.1, .1, 2.4, 'woodLt', sx * .6, .9, 2.2, g); h.rotation.x = -.12; } box(3.8, .5, 2.6, 'woodLt', 0, .55, -.1, g); }
+  if (style === 'tent') { const tm = awn.material; for (const sz of [-1, 1]) { const pl = add(new THREE.PlaneGeometry(4.6, 2.2), tm, 0, 3.05, sz * .95, g); pl.rotation.x = sz * -1.05 + (sz > 0 ? 0 : 0); pl.rotation.x = sz > 0 ? -1.05 : 1.05 - Math.PI; pl.material.side = THREE.DoubleSide; }
+    for (const sx of [-2.1, 2.1]) { box(.12, 4.1, .12, 'wood', sx, 0, 0, g); } box(4.5, .1, .1, 'wood', 0, 4.0, 0, g); for (const sx of [-1, 1]) { const r = box(.03, 2.4, .03, 'dark', sx * 2.3, 0, 2.1, g); r.rotation.x = -.5; } }
+  if (style === 'roof') { can.visible = false; const rf = box(4.6, .18, 3.6, 'roof', 0, 3.2, .1, g); rf.rotation.x = .3; box(4.7, .22, .25, 'roofTrim', 0, 2.75, 1.75, g); box(4.2, .3, .2, 'wood', 0, 2.6, 1.3, g); for (const sx of [-1, 1]) box(.06, 2.7, 3, 'woodLt', sx * 1.85, 0, -.1, g).visible = false; }
   box(3.6, .12, 1.3, 'woodLt', 0, 1, .7, g); box(.12, 1, .12, 'wood', -1.6, 0, 1.2, g); box(.12, 1, .12, 'wood', 1.6, 0, 1.2, g);
   goods(g);
   box(3.6, .1, .7, 'woodLt', 0, 1.6, -1, g); 
-  for (let i = 0; i < 2; i++) cyl(.4, .3, .5, 8, 'basket', R(-1.6, 1.6), 0, R(1.6, 2), g);
   return g;
 }
 const fruit = (g, c) => { for (let i = -1; i <= 1; i++) { cyl(.45, .35, .35, 7, 'basket', i * 1.1, 1.12, .7, g); for (let k = 0; k < 5; k++) add(new THREE.IcosahedronGeometry(.16, 0), mat('f' + c, c), i * 1.1 + R(-.2, .2), 1.55, .7 + R(-.2, .2), g); } };
@@ -384,7 +388,8 @@ const M1 = [
   [7, 40, -Math.PI / 2, tex2, g => { cyl(.5, .55, .5, 10, 'woodLt', -1, 1.12, .7, g); for (let i = 0; i < 4; i++) cyl(.32, .18, .22, 8, 'clay', .2 + i * .45, 1.12, .7, g); }],
 ];
 M1.forEach(r => r[4] = () => {});
-M1.forEach(([x, z, f, c, gd]) => stall(x, z, f, c, gd));
+const STYLE = ['awning', 'roof', 'tent', 'cart', 'roof', 'awning'];   // by M1 index
+M1.forEach(([x, z, f, c, gd], i) => stall(x, z, f, c, gd, STYLE[i]));
 // prop kit (local coords inside a stall group; returns the top height)
 var P; P = {
   basket: (g, x, y, z, c, n = 12) => { cyl(.42, .32, .32, 8, 'basket', x, y, z, g); for (let i = 0; i < n; i++) add(new THREE.IcosahedronGeometry(.11, 0), mat('f' + c, c), x + R(-.25, .25), y + .36 + R(0, .14), z + R(-.25, .25), g); return y + .55; },
@@ -447,7 +452,8 @@ Object.assign(P, {
 mat('cork', '#c9a564');
 // a "room" laid out as a square of five objects, seen from the viewer side:
 // 1 near-left, 2 far-left, 3 far-right, 4 near-right, 5 centre
-function vignette({ x, z, viewer, props, dais = 'stone', spread = [1.6, 1.15], centre, rug = '#9a4a3a', minY = -99 }) {
+function vignette({ x, z, viewer, props, dais = 'stone', spread = [1.6, 1.15], centre, rug = '#9a4a3a', minY = -99, big = 1.35 }) {
+  spread = [spread[0] * (1 + (big - 1) * .55), spread[1] * (1 + (big - 1) * .55)];
   const y = Math.max(minY, heightAt(x, z)); const g = new THREE.Group(); g.position.set(x, y, z); g.rotation.y = Math.atan2(viewer[0] - x, viewer[1] - z); scene.add(g);
   let base = 0;
   if (dais === 'stone') { box(spread[0] * 2 + 1.2, 2.6, spread[1] * 2 + 1.2, 'stone', 0, -2.3, 0, g); box(spread[0] * 2 + 1.35, .1, spread[1] * 2 + 1.35, 'marble', 0, .25, 0, g); base = .35; }
@@ -456,14 +462,15 @@ function vignette({ x, z, viewer, props, dais = 'stone', spread = [1.6, 1.15], c
   g.updateMatrixWorld(true);
   return props.map(([fn, what], i) => {
     const [lx, lz] = [LOCAL[i][0] * spread[0], LOCAL[i][1] * spread[1]];
-    const top = i === 4 && centre ? centre.top - y : fn(g, lx, base, lz);
-    const w = g.localToWorld(new THREE.Vector3(lx, top, lz)); return { x: w.x, y: w.y, z: w.z, what: i === 4 && centre ? centre.what : what };
+    let w;
+    if (i === 4 && centre) w = g.localToWorld(new THREE.Vector3(lx, centre.top - y, lz));
+    else { const sg = new THREE.Group(); sg.position.set(lx, base, lz); sg.scale.setScalar(big); g.add(sg); const top = fn(sg, 0, 0, 0); sg.updateMatrixWorld(true); w = sg.localToWorld(new THREE.Vector3(0, top, 0)); } return { x: w.x, y: w.y, z: w.z, what: i === 4 && centre ? centre.what : what };
   });
 }
 const VIA = {};
 function room(ch, n, name, x, z, viewer, opts) {
   const custom = vignette({ x, z, viewer, ...opts });
-  station(ch, n, name, x, z, [x - (viewer[0] - x), 0, z - (viewer[1] - z)], custom);
+  station(ch, n, name, x, z, [x - (viewer[0] - x), 0, z - (viewer[1] - z)], custom); STATIONS[STATIONS.length - 1].back = Math.min(5.8, Math.max(3.6, Math.hypot(viewer[0] - x, viewer[1] - z) * .85));
 }
 const H_NEAR = 1.12, H_FAR = 1.7;
 const LOCAL = [[-1, 1], [-1, -1], [1, -1], [1, 1], [0, 0]];   // near-left, far-left, far-right, near-right, centre   // counter top, back shelf top
@@ -494,8 +501,7 @@ MARKET.forEach((m, i) => {
 }
 // market clutter: crates, sacks, straw, pigeons, a sleeping dog, lamps
 for (const [x, z] of [[-4.6, 61], [4.6, 60.5], [-4.6, 49], [4.8, 48.5], [-4.6, 37.5], [4.6, 37]]) {
-  const y = heightAt(x, z); box(.8, .6, .8, 'woodLt', x, y, z).rotation.y = R(-.4, .4); if (rnd() > .4) box(.6, .45, .6, 'wood', x + R(-.2, .2), y + .6, z + R(-.2, .2)).rotation.y = R(0, 1);
-  const sk = add(new THREE.IcosahedronGeometry(.42, 0), 'sack', x + R(.6, 1), y + .35, z + R(-1.2, -.6)); sk.scale.set(1, 1.25, 1);
+  const y = heightAt(x, z);
   for (let i = 0; i < 3; i++) { const st = box(R(.4, .9), .03, .05, 'straw', x + R(-1.5, 1.5), y + .02, z + R(-2, 2)); st.rotation.y = R(0, 3); }
 }
 for (let i = 0; i < 0; i++) { const x = R(-2.5, 2.5), z = R(34, 70), y = heightAt(x, z); const pg = new THREE.Group(); pg.position.set(x, y, z); pg.rotation.y = R(0, 6); scene.add(pg);
@@ -567,10 +573,16 @@ const HX = 32, HZ = 2;
   W(HX - 11, HZ + 10, HX - 1.4, HZ + 10); W(HX + 1.4, HZ + 10, HX + 11, HZ + 10);
   W(HX - 11, HZ - 10, HX + 11, HZ - 10); W(HX - 11, HZ - 10, HX - 11, HZ + 10); W(HX + 11, HZ - 10, HX + 11, HZ + .6); W(HX + 11, HZ + 3.4, HX + 11, HZ + 10); box(.7, 2.9, .2, 'wallTrim', HX + 11.2, y0, HZ + .5); box(.7, 2.9, .2, 'wallTrim', HX + 11.2, y0, HZ + 3.5); box(.8, .4, 3.4, 'wallTrim', HX + 11.2, y0 + 2.8, HZ + 2); box(.45, 4.2, 2.8, 'wall', HX + 11, y0 + 3, HZ + 2); 
   // inner partitions (rooms around atrium)
-  W(HX - 11, HZ + 4, HX - 5, HZ + 4, 1.0); W(HX + 5, HZ + 4, HX + 11, HZ + 4, 1.0);
-  W(HX - 11, HZ - 4, HX - 5, HZ - 4, 1.0); W(HX + 5, HZ - 4, HX + 11, HZ - 4, 1.0);
-  W(HX - 5, HZ + 4, HX - 5, HZ + 1.5, 1.0); W(HX + 5, HZ + 4, HX + 5, HZ + 1.5, 1.0);
-  W(HX - 5, HZ - 4, HX - 5, HZ - 1.5, 1.0); W(HX + 5, HZ - 4, HX + 5, HZ - 1.5, 1.0);
+  
+  
+  for (const sx of [-1, 1]) for (const sz of [-1, 1]) { cyl(.26, .3, 3.6, 10, 'marble', HX + sx * 5, y0, HZ + sz * 4); box(.7, .25, .7, 'wallTrim', HX + sx * 5, y0 + 3.4, HZ + sz * 4); box(.7, .2, .7, 'wallTrim', HX + sx * 5, y0, HZ + sz * 4); }
+  for (const sz of [-1, 1]) for (const sx of [-1, 1]) box(6, .3, .4, 'wallTrim', HX + sx * 8, y0 + 3.3, HZ + sz * 4);
+  // frescoes on the back wall of each room: red panels, black dado, ochre border (Pompeian style)
+  for (const [fx, fz, c] of [[-8, 9.74, '#9a3324'], [-8, -9.74, '#2f5a4a'], [0, -9.74, '#9a3324'], [8, -9.74, '#b8862a'], [8, 9.74, '#2f4f7a']]) { const s2 = Math.sign(fz);
+    box(5.6, 1, .06, mat('dado', '#2a2420'), HX + fx, y0, HZ + fz - s2 * .02); box(5.6, 1.9, .06, mat('fr' + c, c), HX + fx, y0 + 1, HZ + fz - s2 * .02); box(5.6, .14, .08, mat('frb', '#d9b45a'), HX + fx, y0 + 2.9, HZ + fz - s2 * .03);
+    for (const k of [-1.5, 0, 1.5]) box(.9, 1.2, .07, mat('frIn', '#efe2c4'), HX + fx + k, y0 + 1.35, HZ + fz - s2 * .04); }
+  
+  
   // roof rims (open interior so the rooms are visible from above), tiled roofs on side wings
   // inward-sloping tiled roofs around an open atrium (compluvium)
   const lean = (cx, cz, w, d, ax, dir) => { const m = box(w, .3, d, 'roof', cx, y0 + 7.7, cz); if (ax === 'x') m.rotation.x = dir * .22; else m.rotation.z = dir * .22; };
@@ -596,11 +608,11 @@ const HX = 32, HZ = 2;
   box(4, .45, 3, 'stone', HX, y0, HZ); box(3.4, .05, 2.4, new THREE.MeshStandardMaterial({ color: '#7fd6d2', roughness: .15 }), HX, y0 + .42, HZ);
 }
 // five rooms, clockwise from the front-left as you enter: loom room, bedroom, dining room, kitchen, shrine
-room(3, 1, 'Loom Room', HX - 8, HZ + 7, [HX - 8, HZ + 1], { dais: 'rug', rug: '#3f6f9a', spread: [1.5, 1.1], props: [[P.loom, 'loom'], [P.bolts, 'cloth bolts'], [P.chest, 'sewing chest'], [P.wool, 'basket of wool'], [P.spindle, 'spindle stool']] });
-room(3, 2, 'Bedroom', HX - 8, HZ - 7, [HX - 8, HZ - 1], { dais: 'rug', rug: '#7a3b6a', spread: [1.5, 1.1], props: [[P.bed, 'bed'], [P.cradle, 'baby’s cradle'], [P.lamps, 'lamp stand'], [P.basin, 'washbasin'], [P.rack, 'clothes rack']] });
-room(3, 3, 'Dining Room', HX, HZ - 7, [HX, HZ - 1], { dais: 'rug', rug: '#9a4a3a', spread: [1.6, 1.1], props: [[P.couch, 'dining couch'], [P.lyre, 'lyre'], [(g, x, y, z) => P.basket(g, x, y, z, '#b07a3a', 8), 'bread basket'], [P.cups, 'tray of cups'], [P.table, 'fruit table']] });
-room(3, 4, 'Kitchen', HX + 8, HZ - 7, [HX + 8, HZ - 1], { dais: 'none', spread: [1.5, 1.1], props: [[P.kiln, 'bread oven'], [P.herbStand, 'hanging herbs'], [P.sack, 'sack of flour'], [P.bowlStack, 'stack of bowls'], [P.pot, 'stew pot']] });
-room(3, 5, 'Household Shrine', HX + 8, HZ + 7, [HX + 8, HZ + 1], { dais: 'rug', rug: '#c79a3a', spread: [1.5, 1.1], props: [[P.tripod, 'incense tripod'], [P.scrolls, 'scroll shelf'], [P.lamps, 'oil lamps'], [P.bigJar, 'water jar'], [P.shrine, 'little shrine']] });
+room(3, 1, 'Loom Room', HX - 8, HZ + 7, [HX - 8, HZ + 2.6], { dais: 'rug', rug: '#3f6f9a', spread: [1.5, 1.1], props: [[P.loom, 'loom'], [P.bolts, 'cloth bolts'], [P.chest, 'sewing chest'], [P.wool, 'basket of wool'], [P.spindle, 'spindle stool']] });
+room(3, 2, 'Bedroom', HX - 8, HZ - 7, [HX - 8, HZ - 2.6], { dais: 'rug', rug: '#7a3b6a', spread: [1.5, 1.1], props: [[P.bed, 'bed'], [P.cradle, 'baby’s cradle'], [P.lamps, 'lamp stand'], [P.basin, 'washbasin'], [P.rack, 'clothes rack']] });
+room(3, 3, 'Dining Room', HX, HZ - 7, [HX, HZ - 2.6], { dais: 'rug', rug: '#9a4a3a', spread: [1.6, 1.1], props: [[P.couch, 'dining couch'], [P.lyre, 'lyre'], [(g, x, y, z) => P.basket(g, x, y, z, '#b07a3a', 8), 'bread basket'], [P.cups, 'tray of cups'], [P.table, 'fruit table']] });
+room(3, 4, 'Kitchen', HX + 8, HZ - 7, [HX + 8, HZ - 2.6], { dais: 'none', spread: [1.5, 1.1], props: [[P.kiln, 'bread oven'], [P.herbStand, 'hanging herbs'], [P.sack, 'sack of flour'], [P.bowlStack, 'stack of bowls'], [P.pot, 'stew pot']] });
+room(3, 5, 'Household Shrine', HX + 8, HZ + 7, [HX + 8, HZ + 2.6], { dais: 'rug', rug: '#c79a3a', spread: [1.5, 1.1], props: [[P.tripod, 'incense tripod'], [P.scrolls, 'scroll shelf'], [P.lamps, 'oil lamps'], [P.bigJar, 'water jar'], [P.shrine, 'little shrine']] });
 // note: last room of zone 3 servant's area is next to kitchen; walk continues east
 drape(43, HZ - 2, RIVER_X(2) - 16, HZ + 2, 'path');
 
@@ -640,7 +652,7 @@ room(4, 3, 'The Milestone', BX + 30, BZ + 8.2, [BX + 30, BZ + 2.4], { dais: 'low
 room(4, 4, 'Waystation Porch', BX + 42, BZ - 3.2, [BX + 42, BZ + 1.4], { dais: 'low', spread: [1.5, .9], props: [[P.tablets, 'stack of letters'], [P.scrolls, 'scroll shelf'], [P.lamps, 'lantern stand']] });
 
 // ---------- town filler: more houses, trees, walls, sheep ----------
-const occupied = (x, z) => (Math.abs(x) < 20 && z > -16 && z < 85) || (x > 18 && x < 46 && Math.abs(z - 2) < 13) || Math.abs(x - RIVER_X(z)) < 20 || (x > BX && x < BX + 65 && Math.abs(z - 2) < 14);
+const occupied = (x, z) => (x > -4 && x < 47 && z > 10 && z < 24) || (Math.abs(x) < 20 && z > -16 && z < 85) || (x > 18 && x < 46 && Math.abs(z - 2) < 13) || Math.abs(x - RIVER_X(z)) < 20 || (x > BX && x < BX + 65 && Math.abs(z - 2) < 14);
 const placed = []; for (let i = 0; i < 160; i++) { const x = R(-64, 40), z = R(-34, 70); if (placed.some(([a, b]) => Math.hypot(a - x, b - z) < 9.5)) continue; if (occupied(x, z) || Math.hypot(x, z - 60) < 18) continue; placed.push([x, z]); house(x, z, R(6, 9), R(6, 8), rnd() > .6 ? 2 : 1, Math.round(R(0, 3)) * Math.PI / 2 + R(-.08, .08)); if (rnd() > .5) tree(x + R(5, 6) * (rnd() > .5 ? 1 : -1), z + R(-3, 3), R(.7, 1)); else if (rnd() > .5) cypress(x + 5.5, z + R(-3, 3), .8); }
 for (let i = 0; i < 160; i++) { const x = R(-140, 200), z = R(-150, 160); if (occupied(x, z)) continue; if (Math.hypot(x - 15, z - 15) < 55 && rnd() < .7) continue; tree(x, z, R(.8, 1.2)); }
 for (let i = 0; i < 26; i++) { const x = R(-90, 150), z = R(-110, 120); if (!occupied(x, z)) cypress(x, z, R(.8, 1.2)); }
@@ -725,7 +737,7 @@ let idx = -1, tween = null, overview = false; const doll = { theta: -.45, phi: .
 function go(d) { const from = idx; idx = Math.max(0, Math.min(STATIONS.length - 1, idx + d)); const s = STATIONS[idx];
   const key = d > 0 ? `${s.ch}.${s.room}` : (STATIONS[from] ? `${STATIONS[from].ch}.${STATIONS[from].room}` : ''); let path = (VIA[key] || []).slice(); if (d < 0) path.reverse(); if (from === idx) path = [];
   const yaw = Math.atan2(-(s.look[0] - s.x), -(s.look[2] - s.z));
-  const back = s.banner ? 5.6 : 6.2; tween = { x: s.x + Math.sin(yaw) * back, z: s.z + Math.cos(yaw) * back, yaw, pitch: s.banner ? -0.14 : -0.38, path }; overview = false; }
+  const back = s.back || (s.banner ? 6 : 6.2); tween = { x: s.x + Math.sin(yaw) * back, z: s.z + Math.cos(yaw) * back, yaw, pitch: s.banner ? (s.ch === 1 ? -0.12 : -0.24) : -0.38, path }; overview = false; }
 document.getElementById('next').onclick = () => go(1); document.getElementById('prev').onclick = () => go(-1);
 const mapbtn = document.getElementById('mapbtn');
 mapbtn.onclick = () => { overview = !overview; tween = null; if (overview) { doll.target.set(player.x, 0, player.z - 20); doll.theta = player.yaw; doll.dist = 110; doll.userTilt = false; } mapbtn.textContent = overview ? 'Walk' : 'Bird’s-eye'; };
@@ -764,9 +776,10 @@ function frame() {
   if (best && bd < 9 && !overview) { hudZ.textContent = `Chapter ${best.ch} · ${ZONE[best.ch - 1]} · Room ${best.room}`; let nl = best.loci[0], nd = 1e9; for (const lc of best.loci) { const d = Math.hypot(lc.x - player.x, lc.z - player.z); if (d < nd) { nd = d; nl = lc; } } hudS.textContent = nd < (nl.fy !== undefined ? 2.2 : 1.2) ? `${best.name} · verse ${best.ch}:${nl.v} (${nl.where})${VTEXT[best.ch + ':' + nl.v] ? ' — “' + VTEXT[best.ch + ':' + nl.v] + '”' : ''}` : `${best.name} — ${best.text}`; idx = STATIONS.indexOf(best); }
   else { hudZ.textContent = 'Colossae'; hudS.textContent = overview ? (MOBILE ? 'Drag to fly · pinch for height · twist to turn · double-tap to land' : 'Drag to fly · scroll for height · right-drag to turn · double-click to land') : 'Walk the path, or press Next'; }
   if (window.__fixed) { const [x, y, z, lx, ly, lz] = window.__fixed; camera.position.set(x, y, z); camera.lookAt(lx, ly, lz); }
+  birdFrame(dt, t);
   if (useAO) composer.render(); else renderer.render(scene, camera);
   for (const st of STATIONS) for (const lc of st.loci) { const L = lc.label, d = camera.position.distanceTo(L.position); L.visible = overview ? d < 60 : d < 14; L.material.opacity = overview ? 1 : Math.min(1, (14 - d) / 4); const k = lc.fy !== undefined ? .7 : .9; if (overview) L.scale.set(d * .022, d * .011, 1); else L.scale.set(k, k / 2, 1); }
-  for (const z of ZONES) { z.visible = overview; if (overview) { const d = camera.position.distanceTo(z.position); z.scale.set(d * .16, d * .05, 1); z.material.opacity = Math.min(1, Math.max(.35, (d - 15) / 40)); } }
+  for (const z of ZONES) { z.visible = overview; if (overview) { const d = camera.position.distanceTo(z.position); { const k = camera.aspect < 1 ? 1.7 : 1; z.scale.set(d * .16 * k, d * .05 * k, 1); } z.material.opacity = Math.min(1, Math.max(.35, (d - 15) / 40)); } }
   for (const st of STATIONS) if (st.banner) { const d = camera.position.distanceTo(st.banner.position); st.banner.visible = d < (overview ? 160 : 60); if (overview) st.banner.scale.set(d * .04, d * .02, 1); else st.banner.scale.set(2, 1, 1); }
   renderer.autoClear = false; renderer.render(labelScene, camera); renderer.autoClear = true; window.__calls = renderer.info.render.calls; requestAnimationFrame(frame);
 }
@@ -845,6 +858,33 @@ if (!store.get('colossae-tut-done') && !new URLSearchParams(location.search).has
   for (const { m, cast, list } of groups.values()) { const merged = mergeGeometries(list, false); if (!merged) continue;
     const mesh = new THREE.Mesh(merged, m); mesh.castShadow = cast; mesh.receiveShadow = true; mesh.matrixAutoUpdate = false; scene.add(mesh); }
   const empties = []; scene.traverse(o => { if (o.isGroup && !o.children.length) empties.push(o); }); empties.forEach(o => o.parent && o.parent.remove(o));
+}
+// ---- the bird you fly as in bird's-eye view ----
+const bird = new THREE.Group(); scene.add(bird); bird.visible = false;
+{ const white = new THREE.MeshStandardMaterial({ color: '#f4f1ea', flatShading: true, roughness: .8 }), grey = new THREE.MeshStandardMaterial({ color: '#b9b4ab', flatShading: true }), beak = new THREE.MeshStandardMaterial({ color: '#e0a03a', flatShading: true });
+  const body = new THREE.Mesh(new THREE.IcosahedronGeometry(.3, 0), white); body.scale.set(.75, .6, 1.5); bird.add(body);
+  const head = new THREE.Mesh(new THREE.IcosahedronGeometry(.16, 0), white); head.position.set(0, .1, -.45); bird.add(head);
+  const bk = new THREE.Mesh(new THREE.ConeGeometry(.05, .16, 4), beak); bk.rotation.x = -Math.PI / 2; bk.position.set(0, .08, -.62); bird.add(bk);
+  const tail = new THREE.Mesh(new THREE.ConeGeometry(.16, .4, 3), grey); tail.rotation.x = Math.PI / 2; tail.scale.set(1.4, 1, .25); tail.position.set(0, .02, .52); bird.add(tail);
+  bird.userData.wings = [-1, 1].map(sd => { const w = new THREE.Group(); w.position.set(sd * .18, .08, -.05); bird.add(w);
+    const sh = new THREE.Shape(); sh.moveTo(0, -.18); sh.lineTo(sd * .95, .02); sh.lineTo(sd * .7, .2); sh.lineTo(0, .2);
+    const m = new THREE.Mesh(new THREE.ShapeGeometry(sh), new THREE.MeshStandardMaterial({ color: '#efebe2', flatShading: true, side: THREE.DoubleSide })); m.rotation.x = -Math.PI / 2; w.add(m);
+    const tip = new THREE.Mesh(new THREE.ShapeGeometry((() => { const t = new THREE.Shape(); t.moveTo(sd * .7, .2); t.lineTo(sd * .95, .02); t.lineTo(sd * 1.1, .14); return t; })()), new THREE.MeshStandardMaterial({ color: '#6d6a66', side: THREE.DoubleSide })); tip.rotation.x = -Math.PI / 2; w.add(tip);
+    w.userData.sd = sd; return w; });
+  bird.traverse(o => { if (o.isMesh) { o.castShadow = false; o.userData.dyn = 1; } });
+}
+let birdT = 0, lastTheta = 0, bank = 0, takeoff = 0;
+function birdFrame(dt, t) {
+  if (!overview) { bird.visible = false; takeoff = 0; return; }
+  bird.visible = true; takeoff = Math.min(1, takeoff + dt * .8);
+  const fwd = new THREE.Vector3(); camera.getWorldDirection(fwd); const up = new THREE.Vector3(0, 1, 0).applyQuaternion(camera.quaternion);
+  const dist = 5 + 2 * (1 - takeoff); const p = camera.position.clone().addScaledVector(fwd, dist).addScaledVector(up, -1.25 - (1 - takeoff) * 2);
+  bird.position.copy(p);
+  let turn = doll.theta - lastTheta; turn = Math.atan2(Math.sin(turn), Math.cos(turn)); lastTheta = doll.theta; bank += (Math.max(-.6, Math.min(.6, turn * 25)) - bank) * Math.min(1, dt * 4);
+  bird.quaternion.copy(camera.quaternion); bird.rotateX(.25); bird.rotateZ(bank);
+  const glide = (Math.sin(t * .7) + 1) / 2 > .65; const fl = glide ? .15 : Math.sin(t * 11) * .75;   // flap, with the odd glide
+  for (const w of bird.userData.wings) w.rotation.z = w.userData.sd * fl;
+  bird.position.y += Math.sin(t * 11) * (glide ? 0 : .04);
 }
 frame();
 window.__ready = true;
