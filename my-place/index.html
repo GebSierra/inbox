@@ -100,14 +100,14 @@ function A2(x,z){const s=a2S(x,z)+fbm(x*.04,z*.04)*.06;let h;if(s<0){const deep=
  else h=WL+.25+Math.min(s,1.2)*4.5+Math.max(0,s-1)*7+fbm(x*.03,z*.03)*1.8;
  return h+Math.max(0,Math.abs(x)-115)*.55+Math.max(0,-310-z)*.7}
 const hill=(x,z)=>24*Math.exp(-((x-LOOK.x)**2+(z-LOOK.z)**2)/2500)*sm(12,28,Math.abs(x-riverX(Math.min(z,262))))*(lakeMix(z)>0?sm(.02,.25,shoreOf(x,z)):1)*sm(6,40,lodgeDist(x,z));
-const PW=[[riverX(57)-16,57],[-14,72],[-22,92],[-32,114],[-41,136],[-48,158],[-49,173],[LOOK.x,LOOK.z],[-40,205],[-36,224]].map(([x,z])=>({x,z}));
+const PW=[[riverX(57)-16,57],[-14,72],[-12.5,82],[-22,92],[-29.5,102],[-32,114],[-34,125],[-41,136],[-49,147],[-48,158],[-49,173],[LOOK.x,LOOK.z],[-40,205],[-36,224]].map(([x,z])=>({x,z}));const LOOKI=11;
 PW.push(fromPlan(LW+4,LD/2),fromPlan(LW+3,LD+3),fromPlan(12,LD+3.5));
 const PWL=[0];for(let i=1;i<PW.length;i++)PWL.push(PWL[i-1]+Math.hypot(PW[i].x-PW[i-1].x,PW[i].z-PW[i-1].z));
 const pwAt=f=>{const L=f*PWL[PWL.length-1];let i=1;while(i<PW.length-1&&PWL[i]<L)i++;const a=PW[i-1],b=PW[i],t=Math.min(1,(L-PWL[i-1])/(PWL[i]-PWL[i-1])),dx=b.x-a.x,dz=b.z-a.z,l=Math.hypot(dx,dz);return {x:a.x+dx*t,z:a.z+dz*t,tx:dx/l,tz:dz/l}};
 const pwD=(x,z)=>{if(x>40||z<45)return 1e9;let m=1e9;for(let i=1;i<PW.length;i++)m=Math.min(m,segD(x,z,PW[i-1],PW[i]));return m};
 const onPathW=(x,z,w)=>pwD(x,z)<w,onAnyPath=(x,z,w)=>onPathW(x,z,w)||onPathE(x,z,w*.6);
 const LASTSP={x:50,z:-4};const ECHO=peAt(.42);const echoClear=(x,z)=>segD(x,z,ECHO,{x:riverX(30),z:30})<7;
-const LOOKF=PWL[7]/PWL[PWL.length-1];
+const LOOKF=PWL[LOOKI]/PWL[PWL.length-1];
 function pwNear(x,z){let best=1e9,bs=0;for(let i=1;i<PW.length;i++){const a=PW[i-1],b=PW[i],vx=b.x-a.x,vz=b.z-a.z,l2=vx*vx+vz*vz,t=Math.max(0,Math.min(1,((x-a.x)*vx+(z-a.z)*vz)/l2)),d=Math.hypot(x-a.x-vx*t,z-a.z-vz*t);if(d<best){best=d;bs=PWL[i-1]+t*Math.sqrt(l2)}}return {d:best,s:bs}}
 const MARKERS=[...['boulder','bigbench','fire','log','cone','snag'].map((k,i)=>[k,.1+i*(LOOKF-.15)/5,k==='log'?0:1]),['bench',LOOKF,0],...['cairn','nest'].map((k,i)=>[k,LOOKF+(i+1)*(.9-LOOKF)/3,i%2?1:-1]),['lantern',.95,1]].map(([k,f,sd])=>{const p=pwAt(f);
  let x=p.x-p.tz*sd*7.5,z=p.z+p.tx*sd*7.5,ry=Math.atan2(p.x-x,p.z-z);
@@ -134,7 +134,7 @@ const HC_X0=-300,HC_Z0=-362,HC_W=601,HC_D=884,HC=new Float32Array(HC_W*HC_D).fil
 function Hg(i,j){const k=j*HC_W+i;let v=HC[k];if(v!==v)v=HC[k]=Hraw(HC_X0+i,HC_Z0+j);return v}
 function H(x,z){const fx=x-HC_X0,fz=z-HC_Z0;if(!(fx>=0&&fz>=0&&fx<HC_W-1&&fz<HC_D-1))return Hraw(x,z);const i=fx|0,j=fz|0,u=fx-i,v=fz-j;return (Hg(i,j)*(1-u)+Hg(i+1,j)*u)*(1-v)+(Hg(i,j+1)*(1-u)+Hg(i+1,j+1)*u)*v}
 function Hraw(x,z){const ld=lodgeDist(x,z);if(ld===0)return FLOOR;let h0=H0(x,z)+hill(x,z);if(x>8&&x<100&&z>-30&&z<68){const R0=ridgeSurf(x,z)+fbm(x*.08,z*.08)*1.2,w=sm(8,22,x)*(1-sm(88,99,x))*sm(-30,-18,z)*(1-sm(58,67,z));h0+=(R0-h0)*w}{const dc=Math.hypot(x-CAMP.x,z-CAMP.z);if(dc<40){const ch=peHeight(PEL[3]);h0=ch+(h0-ch)*sm(12,40,dc)*.7}}if(x<10&&x>-90&&z>50&&z<262){if(!mkPads)mkPads=MARKERS.map(m=>({x:m.x,z:m.z,r:m.k==='log'?5:m.k==='bench'?0:6.5,h:(()=>{let b=null;for(let f=0;f<1;f+=.004){const q=pwAt(f),d=Math.hypot(q.x-m.x,q.z-m.z);if(!b||d<b.d)b={d,q}}return H0(b.q.x,b.q.z)+hill(b.q.x,b.q.z)})()}));for(const m of mkPads){const dm=Math.hypot(x-m.x,z-m.z);const bw=m.r===5?26:10;if(m.r&&dm<m.r+bw)h0=m.h+(h0-m.h)*sm(m.r-1.5,m.r+bw,dm)}}
- if(x<10&&z>170&&z<262){const q=pwNear(x,z);if(q.s>PWL[7]&&q.d<12){if(lookH===null)lookH=H0(LOOK.x,LOOK.z)+hill(LOOK.x,LOOK.z);const f=(q.s-PWL[7])/(PWL[PWL.length-1]-PWL[7]),ph=lookH+(1.2-lookH)*Math.min(1,f*1.5);h0=ph+(h0-ph)*sm(1.5,12,q.d)}}{const q=peNear(x,z);if(q.d<10){const ph=peHeight(q.s);h0=ph+(h0-ph)*sm(2.6,10,q.d)}const dc=Math.hypot(x-CAMP.x,z-CAMP.z);if(dc<14){const ph=peHeight(PEL[3]);h0=ph+(h0-ph)*sm(9,14,dc)}}{const dl=Math.hypot(x-LOOK.x,z-LOOK.z);if(dl<11){if(lookH===null)lookH=H0(LOOK.x,LOOK.z)+hill(LOOK.x,LOOK.z);h0=lookH+(h0-lookH)*sm(5,11,dl)}}return ld>12?h0:PAD+(h0-PAD)*sm(0,12,ld)}
+ if(x<10&&z>170&&z<262){const q=pwNear(x,z);if(q.s>PWL[LOOKI]&&q.d<12){if(lookH===null)lookH=H0(LOOK.x,LOOK.z)+hill(LOOK.x,LOOK.z);const f=(q.s-PWL[LOOKI])/(PWL[PWL.length-1]-PWL[LOOKI]),ph=lookH+(1.2-lookH)*Math.min(1,f*1.5);h0=ph+(h0-ph)*sm(1.5,12,q.d)}}{const q=peNear(x,z);if(q.d<10){const ph=peHeight(q.s);h0=ph+(h0-ph)*sm(2.6,10,q.d)}const dc=Math.hypot(x-CAMP.x,z-CAMP.z);if(dc<14){const ph=peHeight(PEL[3]);h0=ph+(h0-ph)*sm(9,14,dc)}}{const dl=Math.hypot(x-LOOK.x,z-LOOK.z);if(dl<11){if(lookH===null)lookH=H0(LOOK.x,LOOK.z)+hill(LOOK.x,LOOK.z);h0=lookH+(h0-lookH)*sm(5,11,dl)}}return ld>12?h0:PAD+(h0-PAD)*sm(0,12,ld)}
 function H0(x,z){const lm=lakeMix(z);let h;
  if(lm<=0)return G0(x,z);
  if(lm>=1)h=lakeH(x,z);else{const g=G0(x,z);h=g+(lakeH(x,z)-g)*lm}
