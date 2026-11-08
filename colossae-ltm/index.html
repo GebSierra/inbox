@@ -21,6 +21,10 @@
   #help{position:fixed;left:16px;top:14px;font-size:12px;color:var(--ink);background:rgba(244,234,214,.75);padding:6px 10px;border-radius:8px}
   @media (pointer:fine){#joy{display:none}}
   #howbtn{position:fixed;right:calc(130px + env(safe-area-inset-right,0px));top:calc(14px + env(safe-area-inset-top,0px));font:inherit;font-size:15px;background:var(--paper);color:var(--ink);border:1px solid #c9b48f;border-radius:8px;padding:9px 14px;cursor:pointer}
+  #numbtn{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));font:inherit;font-size:13px;background:rgba(244,234,214,.92);color:var(--ink);border:1px solid #c9b48f;border-radius:999px;padding:8px 14px;cursor:pointer}
+  #numbtn[aria-pressed=true]{background:var(--terra);color:#fff8ee;border-color:var(--terra)}
+  body.tutorial #numbtn{display:none}
+  @media (max-width:600px){#numbtn{left:auto;transform:none;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(76px + env(safe-area-inset-bottom,0px))}}
   #tut{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:center;padding:0 max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));pointer-events:none;z-index:5}
   [hidden]{display:none!important}
   #tut .card{pointer-events:auto;background:rgba(244,234,214,.97);color:var(--ink);border:1px solid #c9b48f;border-radius:14px;box-shadow:0 10px 30px rgba(40,25,10,.3);padding:16px 18px;max-width:560px;width:100%;max-height:58vh;overflow:auto}
@@ -48,6 +52,7 @@
 <div id="help">WASD / arrows to walk · drag to look · double-click to go there · N / P jump stations</div>
 <button id="mapbtn">Bird’s-eye</button>
 <button id="howbtn" aria-label="How it works">How it works</button>
+<button id="numbtn" aria-pressed="false">Verse numbers: off</button>
 <div id="tut" hidden>
   <div class="card">
     <div class="step" id="tutStep"></div>
@@ -434,7 +439,7 @@ var P; P = {
   bolts: (g, x, y, z) => { ['#7a3b6a', '#3f6f9a', '#c94a3a', '#e0b44a'].forEach((c, i) => { const b = add(new THREE.CylinderGeometry(.12, .12, .8, 8), mat('w' + c, c), x, y + .12 + (i % 2) * .22 + (i > 1 ? .22 : 0), z + (i % 2 ? .13 : -.13), g); b.rotation.z = Math.PI / 2; }); return y + .7; },
   wool: (g, x, y, z) => { cyl(.4, .32, .35, 8, 'basket', x, y, z, g); for (let i = 0; i < 5; i++) add(new THREE.IcosahedronGeometry(.17, 0), 'wool', x + R(-.2, .2), y + .4, z + R(-.2, .2), g); return y + .6; },
   loom: (g, x, y, z) => { for (const s of [-1, 1]) box(.07, 1.5, .07, 'wood', x + s * .45, y, z, g); box(1, .07, .07, 'wood', x, y + 1.45, z, g); box(.8, 1.1, .02, mat('loomcloth', '#9a4a3a'), x, y + .3, z, g); for (let i = 0; i < 6; i++) add(new THREE.SphereGeometry(.05, 5, 3), 'clay', x - .35 + i * .14, y + .2, z + .05, g); return y + 1.55; },
-  scrolls: (g, x, y, z) => { box(.8, .7, .3, 'wood', x, y, z, g); for (let r = 0; r < 2; r++) for (let i = 0; i < 4; i++) { const s = add(new THREE.CylinderGeometry(.07, .07, .3, 6), 'wool', x - .27 + i * .18, y + .15 + r * .3, z + .05, g); s.rotation.x = Math.PI / 2; } return y + .75; },
+  scrolls: (g, x, y, z) => { box(.9, .05, .35, 'wood', x, y, z, g); box(.9, .05, .35, 'wood', x, y + .36, z, g); for (const sx of [-.43, .43]) box(.04, .72, .35, 'wood', x + sx, y, z, g); for (let r = 0; r < 2; r++) for (let i = 0; i < 4; i++) { const s = add(new THREE.CylinderGeometry(.06, .06, .62, 8), mat('papyrus', '#e8d6a8'), x + R(-.05, .05), y + .11 + r * .36 + i * .0, z - .1 + i * .07, g); s.rotation.z = Math.PI / 2 + R(-.08, .08); s.position.y += (i % 2) * .1; for (const e of [-1, 1]) { const k = add(new THREE.CylinderGeometry(.025, .025, .06, 6), 'wood', s.position.x + e * .34, s.position.y, s.position.z, g); k.rotation.z = Math.PI / 2; } } return y + .78; },
   desk: (g, x, y, z) => { const sh = add(new THREE.PlaneGeometry(.6, .4), mat('papyrus', '#e8d6a8', { side: THREE.DoubleSide }), x, y + .02, z, g); sh.rotation.x = -Math.PI / 2; cyl(.06, .07, .12, 7, 'dark', x + .25, y, z - .1, g); const q = box(.02, .35, .02, 'wool', x + .25, y + .1, z - .1, g); q.rotation.z = .4; return y + .4; },
   tablets: (g, x, y, z) => { for (let i = 0; i < 4; i++) box(.4, .05, .3, i % 2 ? 'woodLt' : 'wood', x + R(-.03, .03), y + i * .05, z, g).rotation.y = R(-.2, .2); box(.36, .01, .26, mat('wax', '#3a2c22'), x, y + .2, z, g); return y + .3; },
   lamps: (g, x, y, z) => { box(.05, 1.2, .05, 'dark', x, y, z, g); box(.6, .04, .04, 'dark', x, y + 1.18, z, g); for (const s of [-1, 0, 1]) { box(.01, .25, .01, 'dark', x + s * .27, y + .95, z, g); add(new THREE.SphereGeometry(.09, 6, 4), mat('lamp', '#e2b062', { emissive: '#a86a1a', emissiveIntensity: .6 }), x + s * .27, y + .9, z, g); } return y + 1.25; },
@@ -516,7 +521,7 @@ function vignette({ x, z, viewer, props, dais = 'stone', spread = [1.6, 1.15], c
 const VIA = {};
 function room(ch, n, name, x, z, viewer, opts) {
   const custom = vignette({ x, z, viewer, ...opts });
-  station(ch, n, name, x, z, [x - (viewer[0] - x), 0, z - (viewer[1] - z)], custom); STATIONS[STATIONS.length - 1].back = Math.min(5.8, Math.max(3.6, Math.hypot(viewer[0] - x, viewer[1] - z) * .85));
+  station(ch, n, name, x, z, [x - (viewer[0] - x), 0, z - (viewer[1] - z)], custom); STATIONS[STATIONS.length - 1].back = Math.min(5.8, Math.max(4.6, Math.hypot(viewer[0] - x, viewer[1] - z) * 1.1));
 }
 const H_NEAR = 1.12, H_FAR = 1.7;
 const LOCAL = [[-1, 1], [-1, -1], [1, -1], [1, 1], [0, 0]];   // near-left, far-left, far-right, near-right, centre   // counter top, back shelf top
@@ -732,7 +737,7 @@ function person(x, z, rot, tunic = '#c9a46a', opts = {}) {
   const MER = [['#7a3b6a', 0, 1], ['#3f6f9a', 1, 2], ['#e8dcc4', 2, 3], ['#9a5a3a', 0, 0], ['#c43a2e', 1, 1], ['#5a4a6a', 2, 2]];
   M1.forEach(([sx, sz, face], i) => { const [c, sk, hr] = MER[i]; const ox = -2.75, oz = .9, lx = sx + ox * Math.cos(face) + oz * Math.sin(face), lz = sz - ox * Math.sin(face) + oz * Math.cos(face); person(lx, lz, face - .5, c, { skin: sk, hair: hr, armsUp: i % 3 === 0 }); });
   // people in the street and around town
-  const P0 = [[1.2, 56, 2.8, '#d9c39a', { carry: 'jar', veil: '#e8dcc4', skin: 1 }], [-1.6, 47, .3, '#8a5a3a', { cloak: '#5a3a2a', hair: 3 }], [2, 33, -2.4, '#3f6f9a', { carry: 'basket', skin: 2 }],
+  const P0 = [[3.3, 56, 2.8, '#d9c39a', { carry: 'jar', veil: '#e8dcc4', skin: 1 }], [-3.3, 47, .3, '#8a5a3a', { cloak: '#5a3a2a', hair: 3 }], [3.3, 33, -2.4, '#3f6f9a', { carry: 'basket', skin: 2 }],
     [-3, 6, 1, '#efe6d4', { cloak: '#9a2a2a', hair: 3 }], [3.5, 12, -2, '#e8dcc4', { armsUp: true }], [-6, 11, .4, '#c79a3a', { veil: '#3f6f9a', skin: 2 }],
     [HX + 2.5, HZ + 1, 2.2, '#9a4a3a', { veil: '#e0b44a', skin: 2 }], [HX + 1, HZ + 13, 0, '#5a6a3a', {}], [BX + 2, BZ + .8, 1.57, '#8a6a4a', { cloak: '#6a4a2a', carry: 'basket' }], [BX + 40, BZ - 1, 3.4, '#5a4a3a', { hair: 1 }],
     [-12, 30, 1.2, '#c9a46a', { carry: 'jar', veil: '#c43a2e' }], [20, 40, 2, '#7a8a5a', {}], [-22, 62, -1, '#a8714c', { cloak: '#3a4a6a' }]];
@@ -832,6 +837,9 @@ joy.addEventListener('pointerdown', e => { jid = e.pointerId; joy.setPointerCapt
 joy.addEventListener('pointermove', e => { if (e.pointerId !== jid) return; const r = joy.getBoundingClientRect(); let dx = e.clientX - r.left - 55, dy = e.clientY - r.top - 55; const d = Math.hypot(dx, dy); if (d > 45) { dx *= 45 / d; dy *= 45 / d; } jv = { x: dx / 45, y: dy / 45 }; knob.style.transform = `translate(${dx}px,${dy}px)`; tween = null; });
 joy.addEventListener('pointerup', () => { jid = null; jv = { x: 0, y: 0 }; knob.style.transform = ''; });
 
+let showNums = false; try { showNums = localStorage.getItem('colossae-nums') === '1'; } catch (e) {}
+const numbtn = document.getElementById('numbtn'); const syncNum = () => { numbtn.textContent = `Verse numbers: ${showNums ? 'on' : 'off'}`; numbtn.setAttribute('aria-pressed', showNums); };
+numbtn.onclick = () => { showNums = !showNums; syncNum(); try { localStorage.setItem('colossae-nums', showNums ? '1' : '0'); } catch (e) {} }; syncNum();
 let idx = -1, tween = null, overview = false; const doll = { theta: -.45, phi: .95, dist: 150, target: new THREE.Vector3(28, 0, 22) };
 function go(d) { const from = idx; idx = Math.max(0, Math.min(STATIONS.length - 1, idx + d)); const s = STATIONS[idx];
   const key = d > 0 ? `${s.ch}.${s.room}` : (STATIONS[from] ? `${STATIONS[from].ch}.${STATIONS[from].room}` : ''); let path = (VIA[key] || []).slice(); if (d < 0) path.reverse(); if (from === idx) path = [];
@@ -881,7 +889,7 @@ function frame() {
   if (window.__fixed) { const [x, y, z, lx, ly, lz] = window.__fixed; camera.position.set(x, y, z); camera.lookAt(lx, ly, lz); }
   birdFrame(dt, t);
   if (useAO) composer.render(); else renderer.render(scene, camera);
-  for (const st of STATIONS) for (const lc of st.loci) { const L = lc.label, d = camera.position.distanceTo(L.position); L.visible = overview ? d < 60 : d < 14; L.material.opacity = overview ? 1 : Math.min(1, (14 - d) / 4); const k = lc.fy !== undefined ? .7 : .9; if (overview) L.scale.set(d * .022, d * .011, 1); else L.scale.set(k, k / 2, 1); }
+  for (const st of STATIONS) for (const lc of st.loci) { const L = lc.label, d = camera.position.distanceTo(L.position); L.visible = (showNums || (tutLocus !== null && st === STATIONS[0])) && (overview ? d < 60 : d < 14); L.material.opacity = overview ? 1 : Math.min(1, (14 - d) / 4); const k = lc.fy !== undefined ? .7 : .9; if (overview) L.scale.set(d * .022, d * .011, 1); else L.scale.set(k, k / 2, 1); }
   for (const z of ZONES) { z.visible = overview; if (overview) { const d = camera.position.distanceTo(z.position); { const k = camera.aspect < 1 ? 1.7 : 1; z.scale.set(d * .16 * k, d * .05 * k, 1); } z.material.opacity = Math.min(1, Math.max(.35, (d - 15) / 40)); } }
   for (const st of STATIONS) if (st.banner) { const d = camera.position.distanceTo(st.banner.position); st.banner.visible = d < (overview ? 160 : 60); if (overview) st.banner.scale.set(d * .04, d * .02, 1); else st.banner.scale.set(2, 1, 1); }
   renderer.autoClear = false; renderer.render(labelScene, camera); renderer.autoClear = true; window.__calls = renderer.info.render.calls; requestAnimationFrame(frame);
