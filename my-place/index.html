@@ -947,7 +947,7 @@ let gateRibbons=[],moose=null;
 pending.push(GL.loadAsync(A+'grass2.glb').then(gl=>{const v=variants(gl);v.forEach(vv=>vv.parts.forEach(p=>{p.m=p.m.clone();p.m.color.setRGB(.55,.75,.45)}));scatter(v,ferns.map((f,i)=>({v:i,x:f.x,y:f.y-.02,z:f.z,ry:f.ry,s:.55+rnd()*.35})))}).catch(e=>console.warn(e)));
  {const fw=ferns.filter((_,i)=>i%7===0);   /* fireweed: tall stems with magenta flower spikes */
   inst(new THREE.CylinderGeometry(.012,.02,1,4).translate(0,.5,0),new THREE.MeshStandardMaterial({color:0x4a5a2a,roughness:1}),fw.map(f=>({x:f.x,y:f.y,z:f.z,sx:1,sy:.8+f.sx,sz:1,rx:(rnd()-.5)*.15,rz:(rnd()-.5)*.15})));
-  inst(new THREE.ConeGeometry(.07,.38,6).translate(0,.19,0),new THREE.MeshStandardMaterial({color:0xb4366e,roughness:.8}),fw.map(f=>({x:f.x,y:f.y+.8+f.sx-.15,z:f.z,sx:1,sy:1,sz:1})));}inst(new THREE.SphereGeometry(1,6,4),new THREE.MeshStandardMaterial({color:0x1c2244,roughness:.3}),berries);
+  inst(new THREE.ConeGeometry(.04,.32,5).translate(0,.16,0),new THREE.MeshStandardMaterial({color:0x7a3452,roughness:1}),fw.map(f=>({x:f.x,y:f.y+.8+f.sx-.15,z:f.z,sx:1,sy:1,sz:1})));}inst(new THREE.SphereGeometry(1,6,4),new THREE.MeshStandardMaterial({color:0x1c2244,roughness:.3}),berries);
  {const parts=[];for(let k=0;k<3;k++){const l=new THREE.SphereGeometry(.09,6,4);l.scale(1,.12,.5);l.translate(0,.12,.06);l.rotateY(k*2.094);parts.push(l.toNonIndexed());const pe=new THREE.SphereGeometry(.05,6,4);pe.scale(1,.25,.6);pe.translate(0,.2,.04);pe.rotateY(k*2.094+1.05);parts.push(pe.toNonIndexed())}
   const stem=new THREE.CylinderGeometry(.006,.006,.2,4);stem.translate(0,.1,0);parts.push(stem.toNonIndexed());const tg=mergeGeometries(parts.map(g=>{g.deleteAttribute('uv');return g}));
   const cols=[];const pc=tg.attributes.position.count;for(let i=0;i<pc;i++){const y=tg.attributes.position.getY(i);cols.push(...(y>.17?[.95,.95,.92]:[.2,.4,.15]))}tg.setAttribute('color',new THREE.Float32BufferAttribute(cols,3));
@@ -963,7 +963,7 @@ pending.push(GL.loadAsync(A+'grass2.glb').then(gl=>{const v=variants(gl);v.forEa
  // The Woodcutters' Camp: firepit, rusted saw on a stump, small cabin with a table set for three
  {const y=peHeight(PEL[3]),g=new THREE.Group();g.position.set(CAMP.x,y,CAMP.z);g.rotation.y=-Math.PI/2;scene.add(g);
   for(let i=0;i<10;i++){const a=i/10*6.283,st=new THREE.Mesh(rg,graniteM);st.position.set(Math.cos(a)*.7,.05,Math.sin(a)*.7);st.scale.set(.2,.14,.2);g.add(st)}
-  const ash=new THREE.Mesh(new THREE.CircleGeometry(.6,20),new THREE.MeshStandardMaterial({color:0x4a4642,roughness:1}));ash.rotation.x=-Math.PI/2;ash.position.y=.03;g.add(ash);
+  const ash=new THREE.Mesh(new THREE.CircleGeometry(.6,20),new THREE.MeshStandardMaterial({color:0x26221e,roughness:1,map:tex('grass_ground_diff.jpg',1)}));ash.rotation.x=-Math.PI/2;ash.position.y=.03;g.add(ash);
   {const sg=new THREE.Group();sg.position.set(2.6,0,1.2);sg.rotation.y=.4;g.add(sg);   // a log on two sawbucks, half cut through, the old crosscut saw still standing in the kerf
    const wd=new THREE.MeshStandardMaterial({map:logGrain,color:0x8a7c68,roughness:1});
    [-.85,.85].forEach(x=>[-1,1].forEach(sd=>{const l=new THREE.Mesh(new THREE.BoxGeometry(.08,1.05,.08),wd);l.position.set(x,.42,0);l.rotation.x=sd*.5;sg.add(l)}));
