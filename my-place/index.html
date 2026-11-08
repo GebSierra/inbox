@@ -346,6 +346,7 @@ const spruceSpots=[];
   spruceSpots.push([x,z])}
  for(let i=0;i<7;i++){const a=rnd()*6.283,r=rnd()*5.5;spruceSpots.push([ISL.x+Math.cos(a)*r,ISL.z+Math.sin(a)*r])}
  for(let i=0;i<140;i++){const a=rnd()*6.283,r=14+rnd()*22,x=CAMP.x+3+Math.cos(a)*r,z=CAMP.z+Math.sin(a)*r;if(onPathE(x,z,4.5)||slope(x,z)>9)continue;spruceSpots.push([x,z])}   // forest closing round the woodcutters' clearing
+ for(let i=0;i<500;i++){const x=94+rnd()*40,z=-8+rnd()*60;if(onPathE(x,z,4.5)||slope(x,z)>12)continue;spruceSpots.push([x,z])}   // forest climbing the valley wall behind the clearing
  // a dense, deep forest ring around the lake so the far shore reads as a wall of trees, not a fence
  for(let t=0;t<20000&&spruceSpots.length<7400;t++){const a=rnd()*6.283,e=1.2+Math.pow(rnd(),.7)*.8,x=Math.cos(a)*LRX*e,z=LZ+Math.sin(a)*LRZ*e;
   if(z<255||inLodge(x,z,9)||mouthClear(x,z)||slope(x,z)>1.35||lookoutClear(x,z)||onAnyPath(x,z,4.5))continue;spruceSpots.push([x,z])}
