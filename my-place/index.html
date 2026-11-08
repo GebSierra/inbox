@@ -426,7 +426,7 @@ const sky=new THREE.Mesh(new THREE.SphereGeometry(1900,48,24),new THREE.ShaderMa
   float cov=smoothstep(.40,.70,c)*smoothstep(0.,.14,d.y);
   vec3 cl=mix(vec3(.45,.47,.55),vec3(1.,.93,.82),smoothstep(.48,.85,c))+vec3(1.,.7,.4)*pow(sd,2.)*.6;
   col=mix(col,cl,cov*.92);
-  float o=max(clamp(oc+smoothstep(.2,-.5,d.z)*.75*oc*1.8,0.,1.),.42);   // heavier cloud over the gorge and falls
+  float o=max(clamp(oc+smoothstep(.2,-.5,d.z)*.75*oc*1.8,0.,1.),.58);   // heavier cloud over the gorge and falls
   col=mix(col,fogC*mix(.95,1.08,fb(cu*1.5)),o);
   gl_FragColor=vec4(col,1.);
   #include <tonemapping_fragment>
@@ -1020,6 +1020,9 @@ pending.push(GL.loadAsync(A+'grass2.glb').then(gl=>{const v=variants(gl);v.forEa
    if(rnd()<.05){const sd=rnd()<.5?-1:1,off=3.5+rnd()*5,x=p.x-p.tz*sd*off,z=p.z+p.tx*sd*off;if(!nearMarker(x,z,6)&&!onPathW(x,z,3))lg.push({x,y:H(x,z)+.12,z,ry:rnd()*6,rz:Math.PI/2,sx:.28+rnd()*.15,sy:3+rnd()*4,sz:.28+rnd()*.15})}}
   pending.push(GL.loadAsync(A+'grass2.glb').then(gl=>{const v=variants(gl);v.forEach(vv=>vv.parts.forEach(q=>{q.m=q.m.clone();q.m.color.setRGB(.6,.72,.42)}));scatter(v,it)}).catch(e=>console.warn(e)));
   {const im=new THREE.InstancedMesh(new THREE.CylinderGeometry(1,1,1,10),new THREE.MeshStandardMaterial({map:tex('spruce_bark.jpg',1),normalMap:tex('spruce_bark_nor.jpg'),color:0x6a6052,roughness:1}),lg.length),o=new THREE.Object3D();lg.forEach((l,i)=>{o.position.set(l.x,l.y,l.z);o.rotation.set(0,l.ry,l.rz,'YXZ');o.scale.set(l.sx,l.sy,l.sz);o.updateMatrix();im.setMatrixAt(i,o.matrix)});im.castShadow=im.receiveShadow=true;scene.add(im)}}   // Lodge trail: grass clumps thinning off the path, fallen logs on the slope
+ {const st=[],br=[];for(let f=.02;f<.6;f+=.0025){const p=pwAt(f);const sd=rnd()<.5?-1:1,off=2+rnd()*12,x=p.x-p.tz*sd*off,z=p.z+p.tx*sd*off;if(nearMarker(x,z,4)||onPathW(x,z,1.6))continue;if(rnd()<.5){const s2=.15+Math.pow(rnd(),2)*.7;st.push({x,y:H(x,z)-s2*.3,z,ry:rnd()*6,sx:s2*1.3,sy:s2*.7,sz:s2})}else br.push({x,y:H(x,z)+.05,z,ry:rnd()*6,rz:Math.PI/2,sx:.04+rnd()*.03,sy:.8+rnd()*1.6,sz:.04})}
+  const o=new THREE.Object3D(),put=(geo,mat,a)=>{const im=new THREE.InstancedMesh(geo,mat,a.length);a.forEach((t,i)=>{o.position.set(t.x,t.y,t.z);o.rotation.set(0,t.ry,t.rz||0,'YXZ');o.scale.set(t.sx,t.sy,t.sz);o.updateMatrix();im.setMatrixAt(i,o.matrix)});im.castShadow=im.receiveShadow=true;scene.add(im)};
+  put(rockGeo(31),new THREE.MeshStandardMaterial({map:tex('dark_rock_diff.jpg',1),color:0xb8b2a6,roughness:.95}),st);put(new THREE.CylinderGeometry(.7,1,1,5),new THREE.MeshStandardMaterial({color:0x4e4034,roughness:1}),br)}   // stones and fallen branches in the moss
  // 3D roots: tapered, bent, half-buried, crossing the ridge trail where it climbs
  {const parts=[];for(let k=0;k<4;k++){const pts=[];for(let i=0;i<=6;i++){const t=i/6;pts.push(new THREE.Vector3((t-.5)*2.2,Math.sin(t*Math.PI)*.34-.24+(rnd()-.5)*.03,(rnd()-.5)*.25+Math.sin(t*2+k)*.15))}
    const g=new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),16,.085,7);const P=g.attributes.position;for(let i=0;i<P.count;i++){const x=P.getX(i),f=.35+.4*Math.abs(x)/1.6;P.setY(i,P.getY(i)*f);P.setZ(i,P.getZ(i)*1.3)}g.computeVertexNormals();parts.push(g)}
