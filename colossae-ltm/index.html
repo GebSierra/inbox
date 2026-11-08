@@ -494,7 +494,7 @@ const M1 = [
 ];
 M1.forEach(r => r[4] = () => {});
 const STYLE = ['roof', 'awning', 'awning', 'cart', 'tent', 'roof'];   // by M1 index
-M1.forEach(([x, z, f, c, gd], i) => { if (i === 2 || i === 3) return; if (i === 1 && MODELS.gstall) return; stall(x, z, f, c, gd, STYLE[i]); });
+M1.forEach(([x, z, f, c, gd], i) => { if (i === 2 || i === 3) return; if (MODELS.gstall && (i === 0 || i === 1 || i === 4 || i === 5)) return; stall(x, z, f, c, gd, STYLE[i]); });
 // prop kit (local coords inside a stall group; returns the top height)
 var P; P = {
   basket: (g, x, y, z, c, n = 12) => { cyl(.42, .32, .32, 8, 'basket', x, y, z, g); for (let i = 0; i < n; i++) add(new THREE.IcosahedronGeometry(.11, 0), mat('f' + c, c), x + R(-.25, .25), y + .36 + R(0, .14), z + R(-.25, .25), g); return y + .55; },
@@ -630,12 +630,40 @@ const MARKET = [
   station(1, 1, 'City Gate', 0, GZ, [0, 0, GZ - 10], [at(-2.3, 2.4, 1.6, 'gate guard'), at(-2.4, -2.4, 1.4, 'big pot'), at(2.4, -2.4, 2.75, 'burning torch'), at(2.4, 2.4, 2.4, 'rack of spears'), at(0, 0, .15, 'Roman seal')]);
   STATIONS[STATIONS.length - 1].back = 5.5;
 }
+// game-ready stall frame for the other trades: own awning colour, own goods in the crates
+const GSTALL = {
+  'Fig Seller': { tint: '#c79ad8', props: [[(g, x, y, z) => P.figBowl(g, x, y, z), -1.15, .43, 1.42, 'bowl of figs'], [(g, x, y, z) => P.scale(g, x, y, z), -1.35, 1.24, .3, 'hanging scales'], [(g, x, y, z) => P.honey(g, x, y, z), 1.35, 1.24, .3, 'honey jar'], [(g, x, y, z) => P.sack(g, x, y, z), 1.15, .43, 1.42, 'sack of grain'], [(g, x, y, z) => P.basket(g, x, y, z, '#5b2a5c', 14), .45, 1.24, .3, 'basket of figs']], fill: '#5b2a5c' },
+  'Scribe’s Table': { tint: '#9ab8e0', props: [[(g, x, y, z) => P.desk(g, x, y, z), -1.15, .43, 1.42, 'papyrus and quill'], [(g, x, y, z) => P.scrolls(g, x, y, z), -1.35, 1.24, .3, 'scroll shelf'], [(g, x, y, z) => P.bigJar(g, x, y, z, mat('inkJar', '#2a2a3a', { roughness: .35 }), .42), 1.35, 1.24, .3, 'big ink jar'], [(g, x, y, z) => P.tablets(g, x, y, z), 1.15, .43, 1.42, 'wax tablets'], [(g, x, y, z) => P.chest(g, x, y, z), .45, 1.24, .3, 'coin chest']], fill: null },
+  'The Potter': { tint: '#b8d098', props: [[(g, x, y, z) => P.bowlStack(g, x, y, z), -1.15, .43, 1.42, 'stack of bowls'], [(g, x, y, z) => P.jarPyramid(g, x, y, z), -1.35, 1.24, .3, 'pyramid of jars'], [(g, x, y, z) => P.clay(g, x, y, z), 1.35, 1.24, .3, 'lump of wet clay'], [(g, x, y, z) => P.wheel(g, x, y, z), 1.25, 0, 1.95, 'potter’s wheel'], [(g, x, y, z) => P.bigJar(g, x, y, z, 'clay', .55), .45, 1.24, .3, 'painted jar']], fill: null },
+};
+// height of the stall's own surface (crate, counter) under a local x,z
+function surfaceY(g, x, z, fallback) { const rc = new THREE.Raycaster(), from = g.localToWorld(new THREE.Vector3(x, 1.9, z));
+  rc.set(from, new THREE.Vector3(0, -1, 0)); rc.far = 1.9; const meshes = []; g.children[0].traverse(o => { if (o.isMesh && o.visible && !(o.material.name || '').includes('Cloth')) meshes.push(o); });
+  const h = rc.intersectObjects(meshes, false)[0]; return h ? g.worldToLocal(h.point.clone()).y + .02 : fallback; }
+function gstallFrame(sx, sz, face, tint) {
+  const g = new THREE.Group(); g.position.set(sx, heightAt(sx, sz), sz); g.rotation.y = face; scene.add(g);
+  const c = MODELS.gstall.clone(true); c.scale.setScalar(1.35);
+  c.traverse(o => { if (!o.isMesh) return; o.userData.dyn = 1; const n = o.material.name || '';
+    if (n.includes('FruitVeg')) o.visible = false;
+    else if (n.includes('Cloth')) { o.material = o.material.clone(); o.material.color = new THREE.Color(tint).lerp(new THREE.Color('#ffffff'), .35); o.material.emissive = new THREE.Color(tint).multiplyScalar(.12); } });
+  g.add(c); const pl = new THREE.PointLight('#ffd9a8', 7, 6.5, 1.3); pl.position.set(0, 2.4, 1.3); g.add(pl); box(3.4, 1.2, 2.9, 'dark', 0, 0, -.1, g).visible = false; return g; }
 MARKET.forEach((m, i) => {
+  if (GSTALL[m.name] && MODELS.gstall) {
+    const [sx, sz, face] = M1[m.at], cfg = GSTALL[m.name], g = gstallFrame(sx, sz, face, cfg.tint);
+    ({ 'Fig Seller': () => { P.basket(g, -2.35, 0, 1.6, '#5b2a4c'); P.basket(g, 2.35, 0, 1.6, '#e0b44a'); P.barrel(g, 2.5, 0, -1.1); },
+       'Scribe’s Table': () => { P.chest(g, 2.4, 0, 1.5); box(.5, .9, .5, 'woodLt', -2.35, 0, 1.4, g); P.scrolls(g, -2.35, .9, 1.4); },
+       'The Potter': () => { for (let k = 0; k < 5; k++) amph(g, -2.6 + (k % 3) * .45, 1.4 + (k > 2 ? .5 : 0), .7); P.kiln(g, 2.5, 0, -.6); } })[m.name]();
+    // fill the empty middle crates so nothing looks bare
+    g.updateMatrixWorld(true);
+    for (let [fx, fy, fz] of [[0, .43, 1.42], [-.45, 1.24, .3]]) { if (fy > .9) fy = surfaceY(g, fx, fz, fy); if (cfg.fill) for (let n = 0; n < 9; n++) add(new THREE.IcosahedronGeometry(.1, 1), mat('f' + cfg.fill + 's', cfg.fill, { flatShading: false, roughness: .5 }), fx + R(-.25, .25), fy + R(0, .1), fz + R(-.2, .2), g);
+      else if (m.name === 'Scribe’s Table') for (let n = 0; n < 4; n++) { const sc = add(new THREE.CylinderGeometry(.05, .05, .4, 8), mat('papyrus', '#e8d6a8'), fx + R(-.2, .2), fy + .05 + n * .06, fz, g); sc.rotation.z = Math.PI / 2; sc.rotation.y = R(-.5, .5); }
+      else for (let n = 0; n < 3; n++) { const jg = new THREE.Group(); jg.position.set(fx - .25 + n * .25, fy, fz); g.add(jg); amph(jg, 0, 0, .3); } }
+    g.updateMatrixWorld(true);
+    const L = cfg.props.map(([fn, x, y, z, what]) => { let top; if (y > .9) { y = surfaceY(g, x, z, y); const sg = new THREE.Group(); sg.position.set(x, y, z); sg.scale.setScalar(1.55); g.add(sg); top = y + fn(sg, 0, 0, 0) * 1.55; } else top = fn(g, x, y, z); const w = g.localToWorld(new THREE.Vector3(x, top, z)); return { x: w.x, y: w.y, z: w.z, what }; });
+    station(1, i + 2, m.name, sx, sz, [sx + Math.sign(sx) * 6, 2, sz], L); return; }
   if (m.name === 'Pomegranates' && MODELS.gstall) {   // the game-ready fruit stall (BlackMike, CC BY 4.0)
-    const [sx, sz, face] = M1[m.at], g = new THREE.Group(); g.position.set(sx, heightAt(sx, sz), sz); g.rotation.y = face; scene.add(g);
-    const k = 1.35, c = MODELS.gstall.clone(true); c.scale.setScalar(k); c.traverse(o => { if (o.isMesh) o.userData.dyn = 1; }); g.add(c);
+    const [sx, sz, face] = M1[m.at], k = 1.35, g = gstallFrame(sx, sz, face, '#ffffff'); g.children[0].traverse(o => { if (o.isMesh && (o.material.name || '').includes('FruitVeg')) o.visible = true; });
     P.basket(g, -2.35, 0, 1.6, '#c43a2e'); P.basket(g, 2.35, 0, 1.6, '#e0b44a');
-    box(3.6 * k / 1.35 * .95, 1.2, 2.9, 'dark', 0, 0, -.1, g).visible = false;   // keeps you from walking through it
     g.updateMatrixWorld(true);
     const L = [[-.85, .2, 1.05, 'crate of limes'], [-1.05, .95, 0, 'crate of oranges'], [1.05, .95, 0, 'crate of potatoes'], [.85, .2, 1.05, 'crate of lemons'], [.35, .95, 0, 'crate of olives']]
       .map(([x, y, z, what]) => { const w = g.localToWorld(new THREE.Vector3(x * k, y * k + .1, z * k)); return { x: w.x, y: w.y, z: w.z, what }; });
