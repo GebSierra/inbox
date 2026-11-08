@@ -345,7 +345,7 @@ const spruceSpots=[];
   if(slope(x,z)>((x>10&&x<100&&z>-30&&z<66)?2.6:2.2)||mouthClear(x,z)||onPathW(x,z,4.5)||onPathE(x,z,7)||onPathW(x,z,8)||nearMarker(x,z,11)||lookoutClear(x,z))continue;if(Math.hypot(x-riverX(140)-9.5,z-140)<14)continue;
   spruceSpots.push([x,z])}
  for(let i=0;i<7;i++){const a=rnd()*6.283,r=rnd()*5.5;spruceSpots.push([ISL.x+Math.cos(a)*r,ISL.z+Math.sin(a)*r])}
- for(let i=0;i<60;i++){const a=rnd()*6.283,r=10.5+rnd()*14,x=CAMP.x+Math.cos(a)*r,z=CAMP.z+Math.sin(a)*r;if(onPathE(x,z,4.5)||slope(x,z)>4)continue;spruceSpots.push([x,z])}   // forest closing round the woodcutters' clearing
+ for(let i=0;i<70;i++){const a=rnd()*6.283,r=9+rnd()*16,x=CAMP.x+5.5+Math.cos(a)*r,z=CAMP.z+Math.sin(a)*r;if(onPathE(x,z,4.5)||slope(x,z)>4||Math.hypot(x-CAMP.x,z-CAMP.z)<12)continue;spruceSpots.push([x,z])}   // forest closing round the woodcutters' clearing
  // a dense, deep forest ring around the lake so the far shore reads as a wall of trees, not a fence
  for(let t=0;t<20000&&spruceSpots.length<7400;t++){const a=rnd()*6.283,e=1.2+Math.pow(rnd(),.7)*.8,x=Math.cos(a)*LRX*e,z=LZ+Math.sin(a)*LRZ*e;
   if(z<255||inLodge(x,z,9)||mouthClear(x,z)||slope(x,z)>1.35||lookoutClear(x,z)||onAnyPath(x,z,4.5))continue;spruceSpots.push([x,z])}
