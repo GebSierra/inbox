@@ -775,9 +775,9 @@ const fireLight=new THREE.PointLight(0xff7a2e,0,16,1.6),fireLight2=new THREE.Poi
   fragmentShader:`${GN}uniform float on,t;varying vec2 vP;void main(){float r=length(vP)/.72;
    float ash=fb(vP*7.)*.55+fb(vP*26.)*.45;vec3 c=mix(vec3(.28,.27,.26),vec3(.58,.57,.55),smoothstep(.25,.75,ash));
    float cr=smoothstep(.62,.75,fb(vP*14.+vec2(0.,t*.05)))*(1.-smoothstep(.15,.7,r));float pulse=.75+.25*sin(t*2.3+fb(vP*6.)*9.);
-   c=mix(c,vec3(.04,.035,.03),cr*.8);c+=vec3(1.2,.3,.04)*cr*pulse*on*.9*(1.-smoothstep(.0,.45,r));
+   c=mix(c,vec3(.04,.035,.03),cr*.8);c+=vec3(1.6,.4,.05)*cr*pulse*on*2.2*(1.-smoothstep(.0,.55,r));
    gl_FragColor=vec4(c,1.-smoothstep(.6,1.,r+fb(vP*6.)*.25));}`}));
- bed.rotation.x=-Math.PI/2;bed.position.y=.045;fireGroup.add(bed);
+ bed.rotation.x=-Math.PI/2;bed.position.y=.09;fireGroup.add(bed);
  {const mg=new THREE.SphereGeometry(.62,24,8,0,6.283,0,1.1);mg.scale(1,.18,1);const mound=new THREE.Mesh(mg,new THREE.MeshStandardMaterial({color:0x6f6c68,roughness:1}));mound.position.y=-.07;fireGroup.add(mound)}
  const scorch=new THREE.Mesh(new THREE.RingGeometry(.75,1.45,48),new THREE.ShaderMaterial({transparent:true,depthWrite:false,vertexShader:`varying vec2 vP;void main(){vP=position.xy;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
   fragmentShader:`${GN}varying vec2 vP;void main(){float r=length(vP);gl_FragColor=vec4(vec3(.05,.045,.04),(1.-smoothstep(.8,1.45,r+fb(vP*5.)*.3))*.55);}`}));
@@ -824,11 +824,11 @@ particles(18,new THREE.ShaderMaterial({uniforms:fireU,transparent:true,depthWrit
   vec3 p=vec3(sd.x*.35,.3,sd.z*.35)+vec3(sin(t*3.+ph*40.)*.25*k+sd.x*k*.8,k*(2.2+sd.y*2.5),cos(t*2.6+ph*30.)*.25*k+sd.z*k*.8);
   vA=(1.-k)*on*step(.55,fract(ph*7.3+t*1.7));vec4 mv=modelViewMatrix*vec4(p,1.);gl_PointSize=max(1.,(1.+sd.y*1.5)*(1.-k*.5)*10./-mv.z)*on;gl_Position=projectionMatrix*mv;}`,
  fragmentShader:`varying float vA;void main(){float d=length(gl_PointCoord-.5);gl_FragColor=vec4(vec3(1.,.45,.12)*1.6*vA*(1.-smoothstep(.15,.5,d)),1.);}`}));
-particles(40,new THREE.ShaderMaterial({uniforms:{...fireU,map:{value:softTex()}},transparent:true,depthWrite:false,
+particles(90,new THREE.ShaderMaterial({uniforms:{...fireU,map:{value:softTex()}},transparent:true,depthWrite:false,
  vertexShader:`uniform float t,on;attribute float ph;attribute vec3 sd;varying float vA;void main(){float k=fract(ph+t*.07);
-  vec3 p=vec3(sd.x*.1,.75,sd.z*.1)+vec3(k*k*1.1+sin(t*.8+ph*9.)*.35*k+sd.x*k*.7,k*2.1,k*.5+cos(t*.6+ph*7.)*.3*k+sd.z*k*.6);
-  vA=pow(1.-k,1.6)*smoothstep(.0,.08,k)*on*(.6+.4*sin(t*.9+ph*12.));vec4 mv=modelViewMatrix*vec4(p,1.);gl_PointSize=(.25+k*1.4)*170./-mv.z;gl_Position=projectionMatrix*mv;}`,
- fragmentShader:`uniform sampler2D map;varying float vA;void main(){gl_FragColor=vec4(vec3(.72,.75,.8),texture2D(map,gl_PointCoord).a*.3*vA);}`}));
+  vec3 p=vec3(sd.x*.1,.75,sd.z*.1)+vec3(k*k*1.6+sin(t*.8+ph*9.)*.5*k+sd.x*k*1.,k*4.,k*.5+cos(t*.6+ph*7.)*.3*k+sd.z*k*.6);
+  vA=pow(1.-k,1.6)*smoothstep(.0,.08,k)*on*(.6+.4*sin(t*.9+ph*12.));vec4 mv=modelViewMatrix*vec4(p,1.);gl_PointSize=(.35+k*2.6)*170./-mv.z;gl_Position=projectionMatrix*mv;}`,
+ fragmentShader:`uniform sampler2D map;varying float vA;void main(){gl_FragColor=vec4(vec3(.62,.64,.68),texture2D(map,gl_PointCoord).a*.42*vA);}`}));
 // real fires in the lodge hearths, built from the campfire's flame layers
 hearthSpots.forEach(([x,y,face])=>{const g=new THREE.Group();g.position.set(x-LW/2,.36,Ywarp(y+face*.55)-LD/2);
  flame.children.forEach((q,i)=>{const m=q.material.clone();m.uniforms.on={value:1};m.uniforms.t=U.t;m.uniforms.seed={value:q.material.uniforms.seed.value+3.3};m.uniforms.hot=q.material.uniforms.hot;const f=new THREE.Mesh(q.geometry,m);f.position.copy(q.position);f.position.z=-i*.05;f.scale.set(1.15,.85,1);g.add(f)});
