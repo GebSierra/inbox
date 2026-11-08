@@ -1026,7 +1026,7 @@ pending.push(GL.loadAsync(A+'grass2.glb').then(gl=>{const v=variants(gl);v.forEa
   const muzzle=new THREE.Mesh(new THREE.SphereGeometry(.22,10,8),dark);muzzle.position.set(1.32,-.18,0);neck.add(muzzle);
   [-1,1].forEach(sd=>{const a=new THREE.Mesh(new THREE.CircleGeometry(1.05,14,0,2.2),ant);a.material.side=THREE.DoubleSide;a.position.set(.75,.35,sd*.25);a.rotation.set(sd*1.2,0,.3);neck.add(a);
    const ear=new THREE.Mesh(new THREE.ConeGeometry(.08,.3,5),fur);ear.position.set(.7,.3,sd*.18);ear.rotation.x=sd*.6;neck.add(ear);(moose.userData.ears=moose.userData.ears||[]).push(ear)});
-  moose.userData.neck=neck;moose.position.set(6,WL-.75,-33);moose.rotation.y=.6;moose.scale.setScalar(1.2);{const rp=new THREE.Mesh(new THREE.RingGeometry(1.4,1.6,40),new THREE.MeshBasicMaterial({color:0xcfd8d8,transparent:true,opacity:.35,depthWrite:false}));rp.rotation.x=-Math.PI/2;rp.position.set(6,WL+.03,-33);rp.scale.set(1.6,1,1);scene.add(rp);moose.userData.rip=rp}moose.traverse(m=>{if(m.isMesh)m.castShadow=true});scene.add(moose);
+  moose.userData.neck=neck;moose.position.set(7,WL-.95,-27);moose.rotation.y=.9;moose.scale.setScalar(1.75);{const rp=new THREE.Mesh(new THREE.RingGeometry(1.4,1.6,40),new THREE.MeshBasicMaterial({color:0xcfd8d8,transparent:true,opacity:.35,depthWrite:false}));rp.rotation.x=-Math.PI/2;rp.position.set(6,WL+.03,-33);rp.scale.set(1.6,1,1);scene.add(rp);moose.userData.rip=rp}moose.traverse(m=>{if(m.isMesh)m.castShadow=true});scene.add(moose);
   // the real moose model replaces the placeholder body once it loads
   pending.push(GL.loadAsync(A+'moose.glb').then(gl=>{const r=gl.scene;const b=new THREE.Box3().setFromObject(r),sz=b.getSize(new THREE.Vector3()),c=b.getCenter(new THREE.Vector3());
    const k=2.3/sz.y,long=sz.x>sz.z;r.position.set(-c.x,-b.min.y,-c.z);const w=new THREE.Group();w.add(r);w.scale.setScalar(k/1.2);if(!long)w.rotation.y=Math.PI/2;
@@ -1110,7 +1110,7 @@ cv.addEventListener('pointerdown',e=>{const now=performance.now();
   if(hit){target={x:hit.point.x,z:hit.point.z};ring.style.left=e.clientX+'px';ring.style.top=e.clientY+'px';ring.style.transition='none';ring.style.opacity=1;ring.style.transform='scale(.6)';
    requestAnimationFrame(()=>{ring.style.transition='opacity .7s,transform .7s';ring.style.opacity=0;ring.style.transform='scale(1.6)'})}
   lastTap.t=0}else lastTap={t:now,x:e.clientX,y:e.clientY}});
-const PLACES={falls:{x:riverX(60)+16,z:60,yaw:.05,pitch:.18},trail:{x:PE[0].x,z:PE[0].z,yaw:Math.atan2(-(PE[1].x-PE[0].x),-(PE[1].z-PE[0].z)),pitch:.05},upper:{x:40,z:-16,yaw:1.17,pitch:-.05},
+const PLACES={falls:{x:riverX(60)+16,z:60,yaw:.05,pitch:.18},trail:{x:PE[0].x,z:PE[0].z,yaw:Math.atan2(-(PE[1].x-PE[0].x),-(PE[1].z-PE[0].z)),pitch:.05},upper:{x:4,z:-8,yaw:.05,pitch:-.05},
  lake:{x:24,z:249,yaw:3.14,pitch:.03},cabin:{...fromPlan(11,LD+7),yaw:0,pitch:.06}};
 PLACES.cabin.yaw=Math.atan2(-(CABIN.x-PLACES.cabin.x),-(CABIN.z-PLACES.cabin.z));
 PLACES.island={x:ISL.x+2,z:ISL.z-5,yaw:Math.atan2(-(CANOE.x-ISL.x-2),-(CANOE.z-ISL.z+5)),pitch:-.05};
