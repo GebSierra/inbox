@@ -760,7 +760,7 @@ function updateCanoe(t){const sw=Math.sin(t*.13)*.22,y=-.3+Math.sin(t*.9)*.025;
    L.add(M(new THREE.ConeGeometry(1,.7,4),ironM,0,1.25,0,0,Math.PI/4));L.add(M(new THREE.BoxGeometry(1.25,.12,1.25),ironM,0,-.95));
    L.add(M(new THREE.BoxGeometry(1.1,1.6,1.1),new THREE.MeshStandardMaterial({color:0x3a2a10,emissive:0xffa040,emissiveIntensity:2.2,transparent:true,opacity:.85})));
    const pl=new THREE.PointLight(0xffb060,14,26,1.6);L.add(pl);g.add(L)}};
- MARKERS.forEach(m=>{const g=new THREE.Group();build[m.k](g);g.position.set(m.x,H(m.x,m.z)-.15,m.z);g.rotation.y=m.ry;scene.add(g)});}
+ MARKERS.forEach(m=>{const g=new THREE.Group();build[m.k](g);g.position.set(m.x,meshH(m.x,m.z)-.15,m.z);g.rotation.y=m.ry;if(m.k==='cone'){const c=g.children[0].parent;g.children.slice().forEach(ch=>{if(ch.geometry&&ch.geometry.type==='BoxGeometry'&&ch.position.y<.1)return;ch.rotation.z+=1.25;ch.position.y+=1.25;ch.position.x+=.4})}scene.add(g)});}
 
 // ---------- campfire beside the cabin (stones, charred logs, ember bed, layered flame, sparks, smoke) ----------
 let campLogM;let fireOn=false;const FIRE=fromPlan(7,LD+4.2);
