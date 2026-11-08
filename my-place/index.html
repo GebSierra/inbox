@@ -738,7 +738,7 @@ function updateCanoe(t){const sw=Math.sin(t*.13)*.22,y=-.3+Math.sin(t*.9)*.025;
    g.add(M(new THREE.CylinderGeometry(.45,.52,.3,10),chr,.6,10.9));
    for(let i=0;i<9;i++){const y=3+i*.85+rnd()*.5,a=i*2.4+rnd(),l=.9+rnd()*1,rr=1-(y/11)*.5,b=new THREE.ConeGeometry(.22,l,6);b.translate(0,l/2,0);const o=M(b,stb,Math.cos(a)*rr*.9+(y/11)**2*.6,y,Math.sin(a)*rr*.9);o.rotation.set(0,-a,-(1.9+rnd()*.4));g.add(o)}},
   cairn:g=>{let y=0;[[2.3,0],[1.85,.2],[1.45,-.15],[1.05,.12],[.7,-.05]].forEach(([r,o],i)=>{const h=r*.6;g.add(M(stone(i*7),rockM,o,y+h*.9,o*.5,0,i,0,r,h,r*.9));y+=h*1.7})},
-  bigbench:g=>{const b=new THREE.Group();build.bench(b);b.scale.setScalar(2.2);g.add(b)},
+  bigbench:g=>{const b=new THREE.Group();build.bench(b);b.scale.setScalar(1.25);g.add(b)},
   fire:g=>{g.userData.fire=1},
   bench:g=>{const s=1.15,add=(w,h,d,x,y,z,rx=0)=>g.add(M(new THREE.BoxGeometry(w*s,h*s,d*s),woodM,x*s,y*s,z*s,rx));   // a giant lookout bench, seat 2.25 m up
    for(let i=0;i<4;i++)add(1.9,.05,.1,0,.45,-.18+i*.12);for(let i=0;i<3;i++)add(1.9,.09,.04,0,.62+i*.14,-.3,-.15);
