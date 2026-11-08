@@ -99,6 +99,8 @@ const KIT = {}, KMAT = {};
       g.scene.traverse(o => { if (o.isMesh) { const m = o.material; KMAT[m.name] ??= m; o.material = KMAT[m.name]; o.castShadow = o.receiveShadow = true; } }); KIT[n] = g.scene; }))); }
   catch (e) { console.warn('kit failed to load, using simple houses', e); }
 }
+// Roman stucco instead of northern timber framing: trim becomes pale stone, plaster warmer
+if (KMAT.MI_WoodTrim) { const trim = KMAT.MI_WoodTrim; trim.color = new THREE.Color('#e8dcc4'); trim.map = null; trim.needsUpdate = true; }
 const MODELS = {};
 try { await Promise.all(['stall', 'table', 'gstall'].map(m => new GLTFLoader().loadAsync(`./models/${m}/scene.${m === 'gstall' ? 'glb' : 'gltf'}`).then(g => { g.scene.updateMatrixWorld(true); g.scene.traverse(o => { if (o.isMesh) { o.castShadow = o.receiveShadow = true; if (o.material.map) o.material.map.anisotropy = 4; } }); MODELS[m] = g.scene; }))); }
 catch (e) { console.warn('models failed to load', e); }
@@ -367,8 +369,8 @@ function kitHouse(x, z, w, d, floors, rot) {
     if (kind === 'door') kitPiece('Door_1_Round', g, px - .53 * Math.cos(ry), f * H, pz + .53 * Math.sin(ry), ry);
     if (f === 1 && si === 0 && i === 0 && rnd() < .5) kitPiece('Balcony_Simple_Straight', g, px, f * H, pz, ry);
     if (f === 0 && kind === 'plain' && rnd() < .35) kitPiece(['Prop_Vine2', 'Prop_Vine4', 'Prop_Vine6'][(rnd() * 3) | 0], g, px, 0, pz, ry); } });
-  kitPiece(roof, g, 0, H * floors, 0, 0);
-  if (rnd() < .45) kitPiece('Prop_Chimney', g, W / 4, H * floors + .8, -D / 5, 0);
+  { const rf = kitPiece(roof, g, 0, H * floors, 0, 0); if (rf) rf.scale.y = .42; }
+  
   return g;
 }
 function house(x, z, w, d, floors = 1, rot = 0) {
@@ -453,7 +455,7 @@ function station(ch, room, name, x, z, look, custom) {
       const gem = add(new THREE.OctahedronGeometry(.13, 0), stationMat, c.x, c.y + .35, c.z); gem.castShadow = false; gem.userData.dyn = 1;
       const l = label(`${ch}:${v}`); l.position.set(c.x, c.y + .7, c.z); l.scale.set(.7, .35, 1); labelScene.add(l);
       loci.push({ v, x: c.x, z: c.z, fy: c.y, base: null, gem, label: l, where: `${CORNER[i]} · ${c.what}` }); });
-    const ban = label(`${ch}:${v0}–${v1}`); ban.position.set(x, heightAt(x, z) + 4.4, z); ban.scale.set(2, 1, 1); labelScene.add(ban);
+    const ban = label(`${ch}:${v0}–${v1}`); ban.position.set(x, heightAt(x, z) + 4.4, z); ban.scale.set(1.2, .6, 1); labelScene.add(ban);
     STATIONS.push({ ch, room, name, x, z, look, loci, banner: ban, text: `Colossians ${ch}:${v0}–${v1}` }); return; }
   spots.forEach(([f, r], i) => { const v = v0 + i; if (v > v1) return;
     const lx = x + fx * f * h + rx * r * h, lz = z + fz * f * h + rz * r * h, y = heightAt(lx, lz);
@@ -632,9 +634,9 @@ const MARKET = [
 }
 // game-ready stall frame for the other trades: own awning colour, own goods in the crates
 const GSTALL = {
-  'Fig Seller': { tint: '#c79ad8', props: [[(g, x, y, z) => P.figBowl(g, x, y, z), -1.15, .43, 1.42, 'bowl of figs'], [(g, x, y, z) => P.scale(g, x, y, z), -1.35, 1.24, .3, 'hanging scales'], [(g, x, y, z) => P.honey(g, x, y, z), 1.35, 1.24, .3, 'honey jar'], [(g, x, y, z) => P.sack(g, x, y, z), 1.15, .43, 1.42, 'sack of grain'], [(g, x, y, z) => P.basket(g, x, y, z, '#5b2a5c', 14), .45, 1.24, .3, 'basket of figs']], fill: '#5b2a5c' },
-  'Scribe’s Table': { tint: '#9ab8e0', props: [[(g, x, y, z) => P.desk(g, x, y, z), -1.15, .43, 1.42, 'papyrus and quill'], [(g, x, y, z) => P.scrolls(g, x, y, z), -1.35, 1.24, .3, 'scroll shelf'], [(g, x, y, z) => P.bigJar(g, x, y, z, mat('inkJar', '#2a2a3a', { roughness: .35 }), .42), 1.35, 1.24, .3, 'big ink jar'], [(g, x, y, z) => P.tablets(g, x, y, z), 1.15, .43, 1.42, 'wax tablets'], [(g, x, y, z) => P.chest(g, x, y, z), .45, 1.24, .3, 'coin chest']], fill: null },
-  'The Potter': { tint: '#b8d098', props: [[(g, x, y, z) => P.bowlStack(g, x, y, z), -1.15, .43, 1.42, 'stack of bowls'], [(g, x, y, z) => P.jarPyramid(g, x, y, z), -1.35, 1.24, .3, 'pyramid of jars'], [(g, x, y, z) => P.clay(g, x, y, z), 1.35, 1.24, .3, 'lump of wet clay'], [(g, x, y, z) => P.wheel(g, x, y, z), 1.25, 0, 1.95, 'potter’s wheel'], [(g, x, y, z) => P.bigJar(g, x, y, z, 'clay', .55), .45, 1.24, .3, 'painted jar']], fill: null },
+  'Fig Seller': { tint: '#7a3b6a', props: [[(g, x, y, z) => P.figBowl(g, x, y, z), -1.15, .43, 1.42, 'bowl of figs'], [(g, x, y, z) => P.scale(g, x, y, z), -1.35, 1.24, .3, 'hanging scales'], [(g, x, y, z) => P.honey(g, x, y, z), 1.35, 1.24, .3, 'honey jar'], [(g, x, y, z) => P.sack(g, x, y, z), 1.15, .43, 1.42, 'sack of grain'], [(g, x, y, z) => P.basket(g, x, y, z, '#5b2a5c', 14), .45, 1.24, .3, 'basket of figs']], fill: '#5b2a5c' },
+  'Scribe’s Table': { tint: '#3f6f9a', props: [[(g, x, y, z) => P.desk(g, x, y, z), -1.15, .43, 1.42, 'papyrus and quill'], [(g, x, y, z) => P.scrolls(g, x, y, z), -1.35, 1.24, .3, 'scroll shelf'], [(g, x, y, z) => P.bigJar(g, x, y, z, mat('inkJar', '#2a2a3a', { roughness: .35 }), .42), 1.35, 1.24, .3, 'big ink jar'], [(g, x, y, z) => P.tablets(g, x, y, z), 1.15, .43, 1.42, 'wax tablets'], [(g, x, y, z) => P.chest(g, x, y, z), .45, 1.24, .3, 'coin chest']], fill: null },
+  'The Potter': { tint: '#d9a640', props: [[(g, x, y, z) => P.bowlStack(g, x, y, z), -1.15, .43, 1.42, 'stack of bowls'], [(g, x, y, z) => P.jarPyramid(g, x, y, z), -1.35, 1.24, .3, 'pyramid of jars'], [(g, x, y, z) => P.clay(g, x, y, z), 1.35, 1.24, .3, 'lump of wet clay'], [(g, x, y, z) => P.wheel(g, x, y, z), 1.25, 0, 1.95, 'potter’s wheel'], [(g, x, y, z) => P.bigJar(g, x, y, z, 'clay', .55), .45, 1.24, .3, 'painted jar']], fill: null },
 };
 // height of the stall's own surface (crate, counter) under a local x,z
 function surfaceY(g, x, z, fallback) { const rc = new THREE.Raycaster(), from = g.localToWorld(new THREE.Vector3(x, 1.9, z));
@@ -645,8 +647,9 @@ function gstallFrame(sx, sz, face, tint) {
   const c = MODELS.gstall.clone(true); c.scale.setScalar(1.35);
   c.traverse(o => { if (!o.isMesh) return; o.userData.dyn = 1; const n = o.material.name || '';
     if (n.includes('FruitVeg')) o.visible = false;
-    else if (n.includes('Cloth')) { o.material = o.material.clone(); o.material.color = new THREE.Color(tint).lerp(new THREE.Color('#ffffff'), .35); o.material.emissive = new THREE.Color(tint).multiplyScalar(.12); } });
-  g.add(c); const pl = new THREE.PointLight('#ffd9a8', 7, 6.5, 1.3); pl.position.set(0, 2.4, 1.3); g.add(pl); box(3.4, 1.2, 2.9, 'dark', 0, 0, -.1, g).visible = false; return g; }
+    else if (n.includes('Wood')) { const k = 'gw' + n; if (!KMAT[k]) { KMAT[k] = o.material.clone(); const t = TEX.wood.clone(); t.repeat.set(3, 3); t.needsUpdate = true; KMAT[k].map = t; KMAT[k].aoMap = null; KMAT[k].color = new THREE.Color(n.includes('Dark') ? '#8a5c3a' : '#b88a5c'); KMAT[k].needsUpdate = true; } o.material = KMAT[k]; }
+    else if (n.includes('Cloth') && tint !== '#ffffff') { o.material = o.material.clone(); o.material.map = null; o.material.color = new THREE.Color(tint); o.material.roughness = .95; o.material.needsUpdate = true; } });
+  g.add(c); const pl = new THREE.PointLight('#ffd9a8', 4, 6.5, 1.3); pl.position.set(0, 2.4, 1.3); g.add(pl); box(3.4, 1.2, 2.9, 'dark', 0, 0, -.1, g).visible = false; return g; }
 MARKET.forEach((m, i) => {
   if (GSTALL[m.name] && MODELS.gstall) {
     const [sx, sz, face] = M1[m.at], cfg = GSTALL[m.name], g = gstallFrame(sx, sz, face, cfg.tint);
@@ -1081,7 +1084,7 @@ function frame() {
   if (useAO) composer.render(); else renderer.render(scene, camera);
   for (const st of STATIONS) for (const lc of st.loci) { const L = lc.label, d = camera.position.distanceTo(L.position); L.visible = (showNums || (tutLocus !== null && st === STATIONS[0])) && (overview ? d < 60 : d < 14); L.material.opacity = overview ? 1 : Math.min(1, (14 - d) / 4); const k = lc.fy !== undefined ? .7 : .9; if (overview) L.scale.set(d * .022, d * .011, 1); else L.scale.set(k, k / 2, 1); }
   for (const z of ZONES) { z.visible = overview; if (overview) { const d = camera.position.distanceTo(z.position); { const k = camera.aspect < 1 ? 1.7 : 1; z.scale.set(d * .16 * k, d * .05 * k, 1); } z.material.opacity = Math.min(1, Math.max(.35, (d - 15) / 40)); } }
-  for (const st of STATIONS) if (st.banner) { const d = camera.position.distanceTo(st.banner.position); st.banner.visible = d < (overview ? 160 : 60); if (overview) st.banner.scale.set(d * .04, d * .02, 1); else st.banner.scale.set(2, 1, 1); }
+  for (const st of STATIONS) if (st.banner) { const d = camera.position.distanceTo(st.banner.position); st.banner.visible = d < (overview ? 160 : 60); if (overview) st.banner.scale.set(d * .04, d * .02, 1); else st.banner.scale.set(1.2, .6, 1); }
   renderer.autoClear = false; renderer.render(labelScene, camera); renderer.autoClear = true; window.__calls = renderer.info.render.calls; requestAnimationFrame(frame);
 }
 // fix station plinths that sit on the bridge deck
