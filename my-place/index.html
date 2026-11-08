@@ -341,11 +341,11 @@ const spruceSpots=[];
 {for(let tries=0;tries<160000&&spruceSpots.length<10500;tries++){const rg=tries%4===0,x=rg?14+rnd()*84:(rnd()-.5)*580,z=rg?-26+rnd()*92:-90+rnd()*600;const d=Math.abs(x-riverX(z));
   const lm=lakeMix(z),sh=shoreOf(x,z);
   if(lm>.5){if(sh<.18+fbm(x*.05,z*.05)*.08||inLodge(x,z,9))continue}
-  else{if(d<15+fbm(z*.1,1)*4)continue;if(Math.abs(x)>200)continue;if(z>0&&z<50&&d<18)continue;if(z<8&&(a2S(x,z)<.14||(x>22&&x<112&&z<-22&&z>-175)))continue;if(Math.hypot(x-30,z+24)<24||echoClear(x,z)||Math.hypot(x-CAMP.x,z-CAMP.z)<10||Math.hypot(x-LASTSP.x,z-LASTSP.z)<15)continue;if(d<30&&rnd()<.35)continue}
+  else{if(d<15+fbm(z*.1,1)*4)continue;if(Math.abs(x)>200)continue;if(z>0&&z<50&&d<18)continue;if(z<8&&(a2S(x,z)<.14||(x>22&&x<112&&z<-22&&z>-175)))continue;if(Math.hypot(x-30,z+24)<24||echoClear(x,z)||Math.hypot(x-CAMP.x-3,z-CAMP.z)<17||Math.hypot(x-LASTSP.x,z-LASTSP.z)<15)continue;if(d<30&&rnd()<.35)continue}
   if(slope(x,z)>((x>10&&x<100&&z>-30&&z<66)?2.6:2.2)||mouthClear(x,z)||onPathW(x,z,4.5)||onPathE(x,z,7)||onPathW(x,z,8)||nearMarker(x,z,11)||lookoutClear(x,z))continue;if(Math.hypot(x-riverX(140)-9.5,z-140)<14)continue;
   spruceSpots.push([x,z])}
  for(let i=0;i<7;i++){const a=rnd()*6.283,r=rnd()*5.5;spruceSpots.push([ISL.x+Math.cos(a)*r,ISL.z+Math.sin(a)*r])}
- for(let i=0;i<70;i++){const a=rnd()*6.283,r=9+rnd()*16,x=CAMP.x+5.5+Math.cos(a)*r,z=CAMP.z+Math.sin(a)*r;if(onPathE(x,z,4.5)||slope(x,z)>4||Math.hypot(x-CAMP.x,z-CAMP.z)<12)continue;spruceSpots.push([x,z])}   // forest closing round the woodcutters' clearing
+ for(let i=0;i<70;i++){const a=rnd()*6.283,r=17+rnd()*16,x=CAMP.x+3+Math.cos(a)*r,z=CAMP.z+Math.sin(a)*r;if(onPathE(x,z,4.5)||slope(x,z)>4)continue;spruceSpots.push([x,z])}   // forest closing round the woodcutters' clearing
  // a dense, deep forest ring around the lake so the far shore reads as a wall of trees, not a fence
  for(let t=0;t<20000&&spruceSpots.length<7400;t++){const a=rnd()*6.283,e=1.2+Math.pow(rnd(),.7)*.8,x=Math.cos(a)*LRX*e,z=LZ+Math.sin(a)*LRZ*e;
   if(z<255||inLodge(x,z,9)||mouthClear(x,z)||slope(x,z)>1.35||lookoutClear(x,z)||onAnyPath(x,z,4.5))continue;spruceSpots.push([x,z])}
