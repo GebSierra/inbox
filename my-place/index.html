@@ -916,7 +916,8 @@ mist(260,()=>[fx+(rnd()-.5)*22,rnd()*1.5,44+rnd()*14],9,.16,4);   // churning sp
 mist(220,()=>[fx+(rnd()-.5)*26,rnd()*3,40+rnd()*16],16,.13,14);   // dense glowing base cloud
 mist(160,()=>{const z=40-rnd()*30;return[riverX(z)+(rnd()-.5)*20,H(riverX(z),z)+rnd()*6,z]},8,.05,10); // face spray
 mist(200,()=>[(rnd()-.5)*200,60+rnd()*25,45+rnd()*180],60,.03,10);
-mist(260,()=>[(rnd()-.5)*280,1+rnd()*5,LZ+30+rnd()*80],30,.06,3);   // low mist lying along the far shore          // valley cloud
+mist(260,()=>[(rnd()-.5)*280,1+rnd()*5,LZ+30+rnd()*80],30,.06,3);   // low mist lying along the far shore
+mist(220,()=>{const z=60+rnd()*90;return[riverX(z)+(rnd()-.5)*50,8+rnd()*40,z]},34,.05,8);   // haze hanging in the gorge so the far cliffs fade          // valley cloud
 mist(400,()=>{const z=50+rnd()*190;return[riverX(z)+(rnd()-.5)*16,.5+rnd()*2,z]},5,.10,4); // river haze
 
 let gateRibbons=[],moose=null;
