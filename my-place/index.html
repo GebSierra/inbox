@@ -800,8 +800,8 @@ const fireLight=new THREE.PointLight(0xff7a2e,0,16,1.6),fireLight2=new THREE.Poi
  const benchM=new THREE.MeshStandardMaterial({map:tex('spruce_bark.jpg',1),normalMap:tex('spruce_bark_nor.jpg'),roughness:1,color:0x8a7a6a});
  [[1.9,.3],[-1.6,2.2]].forEach(([dx,a])=>{const b=new THREE.Mesh(new THREE.CylinderGeometry(.2,.22,1.6,12),benchM);b.rotation.set(0,a,Math.PI/2);b.position.set(dx,.2,dx*.4);fireGroup.add(b)});}
 // flame: three camera-facing layers of animated noise shaped into tongues
-const flame=new THREE.Group();flame.position.set(FIRE.x,H(FIRE.x,FIRE.z)+.12,FIRE.z);flame.scale.set(1.25,1.7,1.25);scene.add(flame);
-[[1.15,.9,0.,1.],[.9,.7,3.7,1.15],[.55,.42,7.1,1.5]].forEach(([h,w,seed,hot])=>{
+const flame=new THREE.Group();flame.position.set(FIRE.x,H(FIRE.x,FIRE.z)+.12,FIRE.z);flame.scale.set(1.45,1.8,1.45);scene.add(flame);
+[[1.15,.9,0.,1.,0],[.9,.7,3.7,1.15,0],[.55,.42,7.1,1.5,0],[.8,.55,11.3,.9,-.24],[.75,.5,15.9,.9,.26],[.5,.4,21.,1.1,.1]].forEach(([h,w,seed,hot,ox])=>{
  const m=new THREE.ShaderMaterial({uniforms:{...fireU,seed:{value:seed},hot:{value:hot}},transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,side:THREE.DoubleSide,
   vertexShader:`varying vec2 vU;void main(){vU=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
   fragmentShader:`${GN}uniform float on,t,seed,hot;varying vec2 vU;
@@ -814,7 +814,7 @@ const flame=new THREE.Group();flame.position.set(FIRE.x,H(FIRE.x,FIRE.z)+.12,FIR
    float i=body*rise*tongues*on;
    vec3 col=mix(vec3(.6,.06,.0),vec3(1.,.35,.04),smoothstep(.05,.35,i));col=mix(col,vec3(1.,.72,.25),smoothstep(.35,.7,i));col=mix(col,vec3(1.,.85,.55),smoothstep(.75,1.,i)*(1.-p.y)*.6);
    col=mix(col,vec3(1.,.42,.08),.35);gl_FragColor=vec4(col*min(1.,i*1.6)*hot*3.,min(1.,i*1.7));}`});
- const q=new THREE.Mesh(new THREE.PlaneGeometry(w,h),m);q.position.y=h/2;flame.add(q)});
+ const q=new THREE.Mesh(new THREE.PlaneGeometry(w,h),m);q.position.set(ox,h/2,ox*.3);flame.add(q)});
 // sparks and smoke
 function particles(n,mat){const g=new THREE.BufferGeometry();const ph=new Float32Array(n),sd=new Float32Array(n*3);for(let i=0;i<n;i++){ph[i]=rnd();sd[i*3]=rnd()-.5;sd[i*3+1]=rnd();sd[i*3+2]=rnd()-.5}
  g.setAttribute('position',new THREE.Float32BufferAttribute(new Float32Array(n*3),3));g.setAttribute('ph',new THREE.BufferAttribute(ph,1));g.setAttribute('sd',new THREE.BufferAttribute(sd,3));
