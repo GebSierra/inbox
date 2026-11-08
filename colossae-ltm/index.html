@@ -11,11 +11,15 @@
   #hud{position:fixed;left:50%;top:calc(12px + env(safe-area-inset-top,0px));transform:translateX(-50%);background:rgba(244,234,214,.92);color:var(--ink);
        border:1px solid #c9b48f;border-radius:10px;padding:8px 16px;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.18);
        max-width:calc(100vw - 32px);pointer-events:none}
+  #hud{transition:opacity .6s}
+  #hud.gone{opacity:0}
   #hud .z{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--terra)}
   #hud .s{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   @media (min-width:601px){#hud{max-width:calc(100vw - 420px)}}
   @media (max-width:1000px){#help{display:none}}
   #hud{padding:5px 14px!important}
+  #hud{transition:opacity .6s}
+  #hud.gone{opacity:0}
   #hud .z{font-size:10px!important}
   #nav{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));display:flex;gap:8px}
   #nav button,#mapbtn{font:inherit;font-size:15px;background:var(--paper);color:var(--ink);border:1px solid #c9b48f;border-radius:8px;padding:9px 14px;cursor:pointer}
@@ -60,7 +64,7 @@
 </style>
 </head>
 <body>
-<div id="hud"><div class="z">Colossae</div><div class="s">Walk to the city gate</div></div>
+<div id="hud" class="gone"><div class="z">Colossae</div><div class="s">Walk to the city gate</div></div>
 <div id="help">WASD / arrows to walk · drag to look · double-click to go there · N / P jump stations</div>
 <button id="mapbtn">Bird’s-eye</button>
 <button id="howbtn" aria-label="How it works">How it works</button>
@@ -443,7 +447,7 @@ function label(text) {
   const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: t, depthTest: false, transparent: true })); s.scale.set(1.5, .75, 1); return s;
 }
 const VERSES = [29, 23, 25, 18];
-const ZONE = ['The Market Street', 'The Temple Courtyard', 'The Family House', 'The Bridge & Road'];
+const ZONE = ['The Market',  'The Temple Courtyard', 'The Family House', 'The Bridge & Road'];
 function station(ch, room, name, x, z, look, custom) {
   const v0 = (room - 1) * 5 + 1, v1 = Math.min(room * 5, VERSES[ch - 1]);
   // five loci on a square, as seen standing in front facing the scene:
@@ -1049,7 +1053,7 @@ document.getElementById('next').onclick = () => go(1); document.getElementById('
 const mapbtn = document.getElementById('mapbtn');
 mapbtn.onclick = () => { overview = !overview; tween = null; if (overview) { doll.target.set(player.x, 0, player.z - 20); doll.theta = player.yaw; doll.dist = 110; doll.userTilt = false; } mapbtn.textContent = overview ? 'Walk' : 'Bird’s-eye'; };
 
-const hudZ = document.querySelector('#hud .z'), hudS = document.querySelector('#hud .s');
+const hud = document.getElementById('hud'), hudZ = document.querySelector('#hud .z'), hudS = document.querySelector('#hud .s');
 const clock = new THREE.Clock(); const perf = { n: 0, sum: 0 };
 function groundY(x, z) {
   let y = heightAt(x, z);
@@ -1085,8 +1089,9 @@ function frame() {
   const fpx = player.x - Math.sin(player.yaw) * 5.5, fpz = player.z - Math.cos(player.yaw) * 5.5;
   let best = null, bd = 1e9; for (const st of STATIONS) { const d = Math.hypot(st.x - fpx, st.z - fpz); if (d < bd) { bd = d; best = st; } for (const [li, lc] of st.loci.entries()) { lc.gem.rotation.y = t; lc.gem.position.y = lc.gy + .65 + Math.sin(t * 2 + lc.x) * .07;
     const on = tutLocus !== null && st === STATIONS[0] && (tutLocus === 'all' || tutLocus === li); const sc = on ? 1.9 + Math.sin(t * 5) * .25 : 1; lc.gem.scale.setScalar(sc); lc.gem.visible = showGems || on; } }
-  if (best && bd < 9 && !overview) { hudZ.textContent = `Chapter ${best.ch}`; let nl = best.loci[0], nd = 1e9; for (const lc of best.loci) { const d = Math.hypot(lc.x - player.x, lc.z - player.z); if (d < nd) { nd = d; nl = lc; } } hudS.textContent = best.text; idx = STATIONS.indexOf(best); }
-  else { hudZ.textContent = 'Colossae'; hudS.textContent = overview ? (MOBILE ? 'Drag to fly · pinch for height · twist to turn · double-tap to land' : 'Drag to fly · scroll for height · right-drag to turn · double-click to land') : 'Walk the path, or press Next'; }
+  if (best && bd < 9 && !overview && best.ch !== window.__lastCh) { window.__lastCh = best.ch; hudZ.textContent = `Chapter ${best.ch}`; hudS.textContent = ZONE[best.ch - 1]; hud.classList.remove('gone'); clearTimeout(window.__hudT); window.__hudT = setTimeout(() => hud.classList.add('gone'), 5000); }
+  if (best && bd < 9 && !overview) { let nl = best.loci[0], nd = 1e9; for (const lc of best.loci) { const d = Math.hypot(lc.x - player.x, lc.z - player.z); if (d < nd) { nd = d; nl = lc; } }  idx = STATIONS.indexOf(best); }
+  else if (false) { hudZ.textContent = 'Colossae'; hudS.textContent = overview ? (MOBILE ? 'Drag to fly · pinch for height · twist to turn · double-tap to land' : 'Drag to fly · scroll for height · right-drag to turn · double-click to land') : 'Walk the path, or press Next'; }
   if (window.__fixed) { const [x, y, z, lx, ly, lz] = window.__fixed; camera.position.set(x, y, z); camera.lookAt(lx, ly, lz); }
   birdFrame(dt, t);
   if (useAO) composer.render(); else renderer.render(scene, camera);
