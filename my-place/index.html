@@ -444,15 +444,15 @@ sky.frustumCulled=false;sky.renderOrder=-1;scene.add(sky);
   sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nuniform sampler2D rt;varying vec3 mW;varying vec3 mN;\n'+GN).replace('#include <map_fragment>',`
    vec3 n=normalize(mN);vec3 an=abs(n);an/=an.x+an.y+an.z;
    vec3 rock=(texture2D(rt,mW.zy*.012).rgb*an.x+texture2D(rt,mW.xz*.012).rgb*an.y+texture2D(rt,mW.xy*.012).rgb*an.z);
-   rock=mix(vec3(dot(rock,vec3(.33))),rock,.35)*vec3(.95,.97,1.05)*1.25;
+   rock=mix(vec3(dot(rock,vec3(.33))),rock,.35)*vec3(.95,.97,1.05)*.8;
    rock*=mix(.7,1.15,fb(mW.xz*.01));
    float nz=fb(mW.xz*.006);
-   float tree=(1.-smoothstep(105.+nz*70.,135.+nz*70.,mW.y))*smoothstep(.55,.75,n.y);
+   float tree=(1.-smoothstep(190.+nz*70.,240.+nz*70.,mW.y))*smoothstep(.35,.6,n.y);
    vec3 forest=vec3(.028,.05,.038)*mix(.7,1.2,fb(mW.xz*.05));
    float snowLine=330.+nz*60.;
    float snow=smoothstep(snowLine-10.,snowLine+20.,mW.y)*smoothstep(.42,.68,n.y+fb(mW.xz*.03)*.25);
    snow=max(snow,smoothstep(snowLine+60.,snowLine+110.,mW.y)*smoothstep(.2,.45,n.y)*.85);
-   diffuseColor.rgb=mix(mix(rock,forest,tree),vec3(.9,.92,.97),snow);diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.6,.68,.76),.38);`)};
+   diffuseColor.rgb=mix(mix(rock,forest,tree),vec3(.9,.92,.97),snow);diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.42,.5,.56),.3);`)};
  scene.add(new THREE.Mesh(g,mm));}
 
 // ---------- the lake: live mirror reflections with drifting ripples ----------
