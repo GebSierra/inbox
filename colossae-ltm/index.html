@@ -29,6 +29,10 @@
   #numbtn[aria-pressed=true]{background:var(--terra);color:#fff8ee;border-color:var(--terra)}
   body.tutorial #numbtn{display:none}
   @media (max-width:600px){#numbtn{left:auto;transform:none;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(76px + env(safe-area-inset-bottom,0px))}}
+  #infobtn{position:fixed;right:calc(14px + env(safe-area-inset-right,0px));bottom:calc(64px + env(safe-area-inset-bottom,0px));width:24px;height:24px;border-radius:50%;border:1px solid #c9b48f;background:rgba(244,234,214,.7);color:#7a6a58;font:italic 13px Georgia;cursor:pointer;opacity:.7;padding:0}
+  #credits{position:fixed;right:calc(14px + env(safe-area-inset-right,0px));bottom:calc(94px + env(safe-area-inset-bottom,0px));max-width:280px;background:rgba(244,234,214,.97);color:var(--ink);border:1px solid #c9b48f;border-radius:10px;padding:10px 12px;font-size:12px;line-height:1.45;z-index:6}
+  #credits a{color:var(--terra)}
+  @media (max-width:600px){#infobtn{bottom:calc(132px + env(safe-area-inset-bottom,0px))}#credits{bottom:calc(162px + env(safe-area-inset-bottom,0px))}}
   #tut{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:center;padding:0 max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));pointer-events:none;z-index:5}
   [hidden]{display:none!important}
   #tut .card{pointer-events:auto;background:rgba(244,234,214,.97);color:var(--ink);border:1px solid #c9b48f;border-radius:14px;box-shadow:0 10px 30px rgba(40,25,10,.3);padding:16px 18px;max-width:560px;width:100%;max-height:58vh;overflow:auto}
@@ -57,6 +61,8 @@
 <button id="mapbtn">Bird’s-eye</button>
 <button id="howbtn" aria-label="How it works">How it works</button>
 <button id="numbtn" aria-pressed="false">Verse numbers: off</button>
+<button id="infobtn" aria-label="Credits">i</button>
+<div id="credits" hidden><b>Credits</b><br>Medieval Village MegaKit by Quaternius (CC0).<br><a href="https://sketchfab.com/3d-models/low-poly-traditional-market-stall-83f6b14a28094a5ab5f8396ea6f4c1e9" target="_blank" rel="noopener">Low Poly Traditional Market Stall</a> by Nisa Nurul Azizah, CC BY 4.0.<br><a href="https://sketchfab.com/3d-models/modular-medieval-table-08dd395a346a440ba85e8b3b46ab3672" target="_blank" rel="noopener">Modular Medieval Table</a> by GameWorldStudio, CC BY 4.0.<br>Scripture quotations from the ESV® Bible, © Crossway.</div>
 <div id="tut" hidden>
   <div class="card">
     <div class="step" id="tutStep"></div>
@@ -75,6 +81,29 @@ import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { GTAOPass } from 'three/addons/postprocessing/GTAOPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+// ---- Medieval Village MegaKit (Quaternius, CC0): building pieces loaded before the town is built ----
+THREE.Cache.enabled = true;
+const KIT = {}, KMAT = {};
+{ const names = ['Wall_Plaster_Straight', 'Wall_Plaster_Window_Wide_Round', 'Wall_Plaster_Window_Thin_Round', 'Wall_Plaster_Door_Round', 'Wall_UnevenBrick_Straight', 'Wall_UnevenBrick_Window_Wide_Round', 'Wall_UnevenBrick_Door_Round',
+    'Roof_RoundTiles_4x4', 'Roof_RoundTiles_4x6', 'Roof_RoundTiles_4x8', 'Roof_RoundTiles_6x4', 'Roof_RoundTiles_6x6', 'Roof_RoundTiles_6x8', 'Roof_RoundTiles_8x8', 'Roof_RoundTiles_8x10',
+    'WindowShutters_Wide_Round_Open', 'WindowShutters_Thin_Round_Open', 'WindowShutters_Wide_Round_Closed', 'Window_Wide_Round1', 'Window_Thin_Round1', 'Door_1_Round', 'Balcony_Simple_Straight',
+    'Prop_Crate', 'Prop_Wagon', 'Prop_Chimney', 'Prop_Vine2', 'Prop_Vine4', 'Prop_Vine6', 'Corner_Exterior_Brick'];
+  const loader = new GLTFLoader(); const el = document.querySelector('#hud .s'); let done = 0;
+  try { await Promise.all(names.map(n => loader.loadAsync('./kit/' + n + '.gltf').then(g => { done++; if (el) el.textContent = `Building Colossae… ${Math.round(done / names.length * 100)}%`;
+      g.scene.traverse(o => { if (o.isMesh) { const m = o.material; KMAT[m.name] ??= m; o.material = KMAT[m.name]; o.castShadow = o.receiveShadow = true; } }); KIT[n] = g.scene; }))); }
+  catch (e) { console.warn('kit failed to load, using simple houses', e); }
+}
+const MODELS = {};
+try { await Promise.all(['stall', 'table'].map(m => new GLTFLoader().loadAsync(`./models/${m}/scene.gltf`).then(g => { g.scene.updateMatrixWorld(true); g.scene.traverse(o => { if (o.isMesh) { o.castShadow = o.receiveShadow = true; if (o.material.map) o.material.map.anisotropy = 4; } }); MODELS[m] = g.scene; }))); }
+catch (e) { console.warn('models failed to load', e); }
+// clone named parts of a model, keeping their layout, re-centred so the bottom-centre sits at the origin
+function part(model, names, scale = 1) {
+  const src = MODELS[model]; if (!src) return null; const wrap = new THREE.Group(), inner = new THREE.Group(); wrap.add(inner);
+  for (const n of [].concat(names)) { const o = src.getObjectByName(n); if (!o) continue; const c = o.clone(true); o.matrixWorld.decompose(c.position, c.quaternion, c.scale); inner.add(c); }
+  inner.updateMatrixWorld(true); const b = new THREE.Box3().setFromObject(inner), ctr = b.getCenter(new THREE.Vector3());
+  inner.position.set(-ctr.x, -b.min.y, -ctr.z); wrap.scale.setScalar(scale); wrap.userData.h = (b.max.y - b.min.y) * scale; return wrap; }
+function placePart(g, model, names, x, y, z, scale = 1, ry = 0) { const w = part(model, names, scale); if (!w) return null; w.position.set(x, y, z); w.rotation.y = ry; g.add(w); return y + w.userData.h; }
 
 // ---------- deterministic random ----------
 let seed = 7; const rnd = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
@@ -312,7 +341,33 @@ function gableRoof(w, d, h, m, x, y, z, rot = 0, p = scene) {
   return r;
 }
 const WALLS = ['#f7efe0', '#f2e2c2', '#ecd3a8', '#f4e8d8', '#e8cfae'].map((c, i) => { const m = new THREE.MeshStandardMaterial({ color: c, flatShading: true, roughness: .9 }); m.map = null; return m; });
+const PLASTER = ['#ffffff', '#f3e3c4', '#f0d6b4', '#fbefe2'];
+function kitMat(name, tint) { if (!tint || tint === '#ffffff') return KMAT[name]; const k = name + tint; if (!KMAT[k]) { KMAT[k] = KMAT[name].clone(); KMAT[k].color = new THREE.Color(tint); } return KMAT[k]; }
+function kitPiece(name, parent, x, y, z, ry, tint) { const src = KIT[name]; if (!src) return null; const o = src.clone(true); o.position.set(x, y, z); o.rotation.y = ry; if (tint) o.traverse(m => { if (m.isMesh && m.material.name === 'MI_Plaster') m.material = kitMat('MI_Plaster', tint); }); parent.add(o); return o; }
+function kitHouse(x, z, w, d, floors, rot) {
+  let nx = Math.max(2, Math.min(4, Math.round(w / 2))), nz = Math.max(2, Math.min(5, Math.round(d / 2)));
+  if (nx < 4 && nz > 4) nz = 4; if (nx === 4 && nz < 4) nz = 4; if (nx === 3 && nz === 2) nz = 2;
+  const roof = KIT[`Roof_RoundTiles_${nx * 2}x${nz * 2}`] ? `Roof_RoundTiles_${nx * 2}x${nz * 2}` : 'Roof_RoundTiles_4x4'; if (roof === 'Roof_RoundTiles_4x4') { nx = 2; nz = 2; }
+  const W = nx * 2, D = nz * 2, H = 3.12, brick = rnd() < .22, tint = PLASTER[(rnd() * PLASTER.length) | 0];
+  const g = new THREE.Group(); g.position.set(x, heightAt(x, z) - .05, z); g.rotation.y = rot; scene.add(g);
+  box(W - .5, H * floors - .2, D - .5, 'dark', 0, 0, 0, g);   // solid core so you never see through a doorway
+  const wall = (kind) => brick ? ({ plain: 'Wall_UnevenBrick_Straight', wide: 'Wall_UnevenBrick_Window_Wide_Round', thin: 'Wall_UnevenBrick_Window_Wide_Round', door: 'Wall_UnevenBrick_Door_Round' })[kind] : ({ plain: 'Wall_Plaster_Straight', wide: 'Wall_Plaster_Window_Wide_Round', thin: 'Wall_Plaster_Window_Thin_Round', door: 'Wall_Plaster_Door_Round' })[kind];
+  const sides = [[nx, 0, D / 2 - .09, 0], [nx, 0, -D / 2 + .09, Math.PI], [nz, -W / 2 + .09, 0, -Math.PI / 2], [nz, W / 2 - .09, 0, Math.PI / 2]];
+  sides.forEach(([n, ox, oz, ry], si) => { for (let f = 0; f < floors; f++) for (let i = 0; i < n; i++) {
+    const t = -n + 1 + 2 * i, px = ry === 0 || ry === Math.PI ? t * (ry === 0 ? 1 : -1) : ox, pz = ry === 0 || ry === Math.PI ? oz : t * (ry > 0 ? -1 : 1);
+    const isDoor = si === 0 && f === 0 && i === Math.floor(n / 2); const r = rnd(); const kind = isDoor ? 'door' : (r < .35 ? 'plain' : f ? 'thin' : 'wide');
+    kitPiece(wall(kind), g, px, f * H, pz, ry, brick ? null : tint);
+    if (kind === 'wide') { kitPiece('Window_Wide_Round1', g, px, f * H, pz, ry); kitPiece(rnd() < .7 ? 'WindowShutters_Wide_Round_Open' : 'WindowShutters_Wide_Round_Closed', g, px, f * H, pz, ry); }
+    if (kind === 'thin') { kitPiece('Window_Thin_Round1', g, px, f * H, pz, ry); kitPiece('WindowShutters_Thin_Round_Open', g, px, f * H, pz, ry); }
+    if (kind === 'door') kitPiece('Door_1_Round', g, px - .53 * Math.cos(ry), f * H, pz + .53 * Math.sin(ry), ry);
+    if (f === 1 && si === 0 && i === 0 && rnd() < .5) kitPiece('Balcony_Simple_Straight', g, px, f * H, pz, ry);
+    if (f === 0 && kind === 'plain' && rnd() < .35) kitPiece(['Prop_Vine2', 'Prop_Vine4', 'Prop_Vine6'][(rnd() * 3) | 0], g, px, 0, pz, ry); } });
+  kitPiece(roof, g, 0, H * floors, 0, 0);
+  if (rnd() < .45) kitPiece('Prop_Chimney', g, W / 4, H * floors + .8, -D / 5, 0);
+  return g;
+}
 function house(x, z, w, d, floors = 1, rot = 0) {
+  if (KIT.Wall_Plaster_Straight) return kitHouse(x, z, w, d, floors, rot);
   const g = new THREE.Group(); g.position.set(x, heightAt(x, z) - .2, z); g.rotation.y = rot; scene.add(g);
   const h = 3.4 * floors; const wm = WALLS[(rnd() * WALLS.length) | 0]; wm.map = TEX.plaster;
   box(w, h, d, wm, 0, 0, 0, g); if (floors === 1 && rnd() > .5) { box(w * .45, 3.2, d * .6, wm, -w * .2, h, -d * .15, g); gableRoof(w * .45, d * .6, 1.4, 'roofDk', -w * .2, h + 3.2, -d * .15, 0, g); } box(w + .2, .35, d + .2, 'wallTrim', 0, 0, 0, g);
@@ -481,7 +536,8 @@ P.chest = (g, x, y, z) => { box(.7, .4, .45, 'wood', x, y, z, g); const lid = ad
 P.bucket = (g, x, y, z) => { add(new THREE.LatheGeometry([[0, 0], [.2, 0], [.25, .42], [.24, .44], [0, .44]].map(([a, b]) => new THREE.Vector2(a, b)), 14), 'wood', x, y, z, g); for (const h of [.08, .34]) { const t = add(new THREE.TorusGeometry(h > .2 ? .245 : .21, .016, 4, 16), mat('iron', '#3c3a38', { metalness: .4, roughness: .6 }), x, y + h, z, g); t.rotation.x = Math.PI / 2; }
   cyl(.22, .22, .02, 14, mat('dyeBlue', '#2f5f9a', { roughness: .2 }), x, y + .38, z, g); const hd = add(new THREE.TorusGeometry(.24, .012, 4, 12, Math.PI), mat('iron', '#3c3a38'), x, y + .44, z, g); hd.rotation.z = .3; return y + .7; };
 P.bolts = (g, x, y, z) => { ['#7a3b6a', '#3f6f9a', '#e0b44a'].forEach((c, i) => { const b = add(new THREE.CylinderGeometry(.13, .13, .9, 12), mat('w' + c, c), x, y + .13 + i * .25, z, g); b.rotation.z = Math.PI / 2; for (const e of [-1, 1]) { const cap = add(new THREE.CircleGeometry(.13, 12), mat('wE' + c, new THREE.Color(c).multiplyScalar(.7).getStyle()), x + e * .451, y + .13 + i * .25, z, g); cap.rotation.y = e * Math.PI / 2; } }); return y + .8; };
-const _basket = P.basket; P.basket = (g, x, y, z, c, n = 12) => { const t = _basket(g, x, y, z, c, n); const rim = add(new THREE.TorusGeometry(.42, .03, 5, 16), 'basket', x, y + .32, z, g); rim.rotation.x = Math.PI / 2; return t; };
+const _basket = P.basket; P.basket = (g, x, y, z, c, n = 12) => {
+  if (MODELS.stall) { const top = placePart(g, 'stall', 'Cylinder133', x, y, z, .62, R(0, 6)); for (let i = 0; i < n; i++) add(new THREE.IcosahedronGeometry(.1, 1), mat('f' + c + 's', c, { flatShading: false, roughness: .5 }), x + R(-.18, .18), top - .06 + R(0, .1), z + R(-.18, .18), g); return top + .1; } const t = _basket(g, x, y, z, c, n); const rim = add(new THREE.TorusGeometry(.42, .03, 5, 16), 'basket', x, y + .32, z, g); rim.rotation.x = Math.PI / 2; return t; };
 Object.assign(P, {
   bed: (g, x, y, z) => { box(1, .4, 1.7, 'woodLt', x, y, z, g); box(.9, .2, 1.6, 'wool', x, y + .4, z, g); box(.7, .15, .35, mat('pillow', '#e8dcc4'), x, y + .6, z - .6, g); box(.93, .07, .9, mat('blanket', '#3f6f9a'), x, y + .6, z + .3, g); return y + .75; },
   cradle: (g, x, y, z) => { box(.55, .35, .85, 'wood', x, y + .14, z, g); for (const s of [-1, 1]) { const r = box(.08, .1, 1, 'woodLt', x + s * .22, y, z, g); } box(.45, .1, .5, mat('babyblanket', '#e0b44a'), x, y + .49, z + .1, g); return y + .65; },
@@ -548,7 +604,6 @@ const MARKET = [
 MARKET.forEach((m, i) => {
   const [sx, sz, face] = M1[m.at];
   const g = new THREE.Group(); g.position.set(sx, heightAt(sx, sz), sz); g.rotation.y = face; scene.add(g);
-  P.sign(g, m.sign);
   ({ 'Fig Seller': () => { P.basket(g, -2.35, 0, 1.6, '#5b2a4c'); P.basket(g, 2.35, 0, 1.6, '#e0b44a'); P.barrel(g, 2.5, 0, -1.1); },
      'Wool Dyer': () => { P.bucket(g, -2.3, 0, 1.6); P.vat(g, 2.4, 0, 1.4, '#9a2a2a'); for (let k = 0; k < 3; k++) P.barrel(g, 2.5, 0, -1.2 + k * .7); },
      'Scribe’s Table': () => { P.chest(g, 2.4, 0, 1.5); box(.5, .9, .5, 'woodLt', -2.35, 0, 1.4, g); P.scrolls(g, -2.35, .9, 1.4); },
@@ -718,7 +773,15 @@ const HX = 32, HZ = 2;
 // five rooms, clockwise from the front-left as you enter: loom room, bedroom, dining room, kitchen, shrine
 room(3, 1, 'Loom Room', HX - 8, HZ + 7, [HX - 8, HZ + 2.6], { minY: heightAt(HX, HZ) + .22, dais: 'none', rug: '#3f6f9a', spread: [1.5, 1.1], props: [[P.loom, 'loom'], [P.bolts, 'cloth bolts'], [P.chest, 'sewing chest'], [P.wool, 'basket of wool'], [P.spindle, 'spindle stool']] });
 room(3, 2, 'Bedroom', HX - 8, HZ - 7, [HX - 8, HZ - 2.6], { minY: heightAt(HX, HZ) + .22, dais: 'none', rug: '#7a3b6a', spread: [1.5, 1.1], props: [[P.bed, 'bed'], [P.cradle, 'baby’s cradle'], [P.lamps, 'lamp stand'], [P.basin, 'washbasin'], [P.rack, 'clothes rack']] });
-room(3, 3, 'Dining Room', HX, HZ - 7, [HX, HZ - 2.6], { minY: heightAt(HX, HZ) + .22, dais: 'none', rug: '#9a4a3a', spread: [1.6, 1.1], props: [[P.couch, 'dining couch'], [P.lyre, 'lyre'], [(g, x, y, z) => P.basket(g, x, y, z, '#b07a3a', 8), 'bread basket'], [P.cups, 'tray of cups'], [P.table, 'fruit table']] });
+if (MODELS.table) { const yy = heightAt(HX, HZ) + .22, g = new THREE.Group(); g.position.set(HX, yy, HZ - 7); g.rotation.y = Math.PI / 2; g.scale.setScalar(.68); scene.add(g);
+  const keep = ['medieval_Table_4', 'medieval_chair_2', 'medieval_chair001_19', 'medieval_chair003_21', 'medieval_chair004_22', 'medieval_fruit_bowl_12', 'medieval_Apple001_31', 'medieval_Apple002_32', 'medieval_Apple003_33', 'medieval_Apple004_34', 'medieval_Apple005_35', 'medieval_Apple006_36', 'medieval_Apple007_37', 'medieval_pear001_41', 'medieval_pear002_42', 'medieval_pear003_43', 'wine_jug_28', 'medieval_candle_7', 'Circle001_6', 'medieval_dish_30', 'medieval_mug_13', 'medieval_mug001_15', 'medieval_water_jar001_27', 'Medieval_Knife002_25'];
+  for (const n of keep) { const o = MODELS.table.getObjectByName(n); if (!o) continue; const c = o.clone(true); o.matrixWorld.decompose(c.position, c.quaternion, c.scale); g.add(c); } g.updateMatrixWorld(true);
+  const at = n => { const o = g.getObjectByName(n); const b = new THREE.Box3().setFromObject(o); const c = b.getCenter(new THREE.Vector3()); return { x: c.x, y: b.max.y, z: c.z }; };
+  const L = [['medieval_chair_2', 'carved chair'], ['medieval_fruit_bowl_12', 'bowl of apples and pears'], ['wine_jug_28', 'wine jug'], ['medieval_dish_30', 'plate of food'], ['medieval_candle_7', 'candle']].map(([n, w]) => ({ ...at(n), what: w }));
+  // order the five by the viewer's clockwise rule: near-left, far-left, far-right, near-right, centre
+  { const cen = L.pop(), q = L.sort((a, b) => b.z - a.z), near = q.slice(0, 2).sort((a, b) => a.x - b.x), far = q.slice(2).sort((a, b) => a.x - b.x); L.length = 0; L.push(near[0], far[0], far[1], near[1], cen); }
+  station(3, 3, 'Dining Room', HX, HZ - 7, [HX, 0, HZ - 7 - 4.4], L); STATIONS[STATIONS.length - 1].back = 5.2; }
+else room(3, 3, 'Dining Room', HX, HZ - 7, [HX, HZ - 2.6], { minY: heightAt(HX, HZ) + .22, dais: 'none', rug: '#9a4a3a', spread: [1.6, 1.1], props: [[P.couch, 'dining couch'], [P.lyre, 'lyre'], [(g, x, y, z) => P.basket(g, x, y, z, '#b07a3a', 8), 'bread basket'], [P.cups, 'tray of cups'], [P.table, 'fruit table']] });
 room(3, 4, 'Kitchen', HX + 8, HZ - 7, [HX + 8, HZ - 2.6], { minY: heightAt(HX, HZ) + .22, dais: 'none', spread: [1.5, 1.1], props: [[P.kiln, 'bread oven'], [P.herbStand, 'hanging herbs'], [P.sack, 'sack of flour'], [P.bowlStack, 'stack of bowls'], [P.pot, 'stew pot']] });
 room(3, 5, 'Household Shrine', HX + 8, HZ + 7, [HX + 8, HZ + 2.6], { minY: heightAt(HX, HZ) + .22, dais: 'none', rug: '#c79a3a', spread: [1.5, 1.1], props: [[P.tripod, 'incense tripod'], [P.scrolls, 'scroll shelf'], [P.lamps, 'oil lamps'], [P.bigJar, 'water jar'], [P.shrine, 'little shrine']] });
 // note: last room of zone 3 servant's area is next to kitchen; walk continues east
@@ -755,11 +818,12 @@ const BZ = 2, BX = RIVER_X(BZ);
   // cart & milestone
   box(2.4, .5, 1.4, 'woodLt', wx + 7, heightAt(wx + 7, wz) + .6, wz + 4); for (const s of [-1, 1]) { const w = add(new THREE.CylinderGeometry(.6, .6, .15, 10), 'wood', wx + 7, heightAt(wx + 7, wz) + .6, wz + 4 + s * .8); w.rotation.x = Math.PI / 2; }
 }
-room(4, 1, 'Fishermen’s Landing', BX - 13.5, BZ + 8.5, [BX - 15.5, BZ + 3.4], { minY: -.7, dais: 'planks', props: [[P.boat, 'fishing boat'], [P.net, 'drying net'], [P.bucket, 'bait bucket'], [P.fish, 'basket of fish'], [P.crates, 'stacked crates']] });
+room(4, 1, 'Fishermen’s Landing', BX - 13.5, BZ + 8.5, [BX - 15.5, BZ + 3.4], { minY: -.7, dais: 'planks', props: [[P.boat, 'fishing boat'], [(g, x, y, z) => placePart(g, 'stall', ['Jemuran_low003', 'Fish_low002', 'Fish_low004', 'Fish_low014'], x, y, z, .75, Math.PI / 2) ?? P.net(g, x, y, z), 'fish drying rack'], [(g, x, y, z) => placePart(g, 'stall', 'Cylinder114', x, y, z, .8) ?? P.bucket(g, x, y, z), 'wicker basket'], [P.fish, 'basket of fish'], [(g, x, y, z) => placePart(g, 'stall', 'Crate_low153', x, y, z, 1.1) ?? P.crates(g, x, y, z), 'wooden crate']] });
 room(4, 2, 'Washing Place', BX + 14.5, BZ + 9, [BX + 14.5, BZ + 3.2], { minY: -.7, dais: 'planks', props: [[P.washtub, 'washtub'], [P.rack, 'drying laundry'], [P.saltJar, 'jar of salt'], [P.sack, 'sack of grain'], [P.donkey, 'donkey']] });
 room(4, 3, 'The Milestone', BX + 30, BZ + 8.2, [BX + 30, BZ + 2.4], { dais: 'stones', props: [[P.signpost, 'signpost'], [P.trough, 'water trough'], [P.wheelUp, 'cart wheel'], [P.sack, 'traveller’s pack'], [P.milestone, 'milestone']] });
-room(4, 4, 'Waystation Porch', BX + 42, BZ - 3.2, [BX + 42, BZ + 1.4], { dais: 'planks', spread: [1.5, .9], props: [[P.tablets, 'stack of letters'], [P.scrolls, 'scroll shelf'], [P.lamps, 'lantern stand']] });
+room(4, 4, 'Waystation Porch', BX + 42, BZ - 3.2, [BX + 42, BZ + 1.4], { dais: 'planks', spread: [1.5, .9], props: [[(g, x, y, z) => { const t = P.table(g, x, y, z, '#c43a2e'); return placePart(g, 'table', 'medieval_tablet_11', x, y + .68, z, .55) ?? P.tablets(g, x, y, z); }, 'letter on a table'], [P.scrolls, 'scroll shelf'], [(g, x, y, z) => placePart(g, 'table', ['medieval_candle_7', 'Circle001_6'], x, y, z, 2.2) ?? P.lamps(g, x, y, z), 'tall candle']] });
 
+if (MODELS.stall) { for (const [x, z, r] of [[-9.6, 29.5, Math.PI], [9.8, 75, 0]]) { const g = new THREE.Group(); g.position.set(x, heightAt(x, z), z); g.rotation.y = r; scene.add(g); const c = MODELS.stall.clone(true); c.scale.setScalar(.9); g.add(c); } }
 // ---------- townspeople (simple low-poly figures) ----------
 function person(x, z, rot, tunic = '#c9a46a', opts = {}) {
   const y = opts.y ?? heightAt(x, z), g = new THREE.Group(); g.position.set(x, y, z); g.rotation.y = rot; scene.add(g);
@@ -845,7 +909,7 @@ addEventListener('pointermove', e => { if (!drag || drag.id !== e.pointerId) ret
   else { player.yaw -= dx * .005; player.pitch = Math.max(-1.2, Math.min(.8, player.pitch - dy * .004)); tween = null; }
   drag.x = e.clientX; drag.y = e.clientY; });
 let lastTap = { t: 0, x: 0, y: 0 };
-addEventListener('pointerup', e => { if (!drag || drag.id !== e.pointerId) return; const moved = drag.moved; drag = null;
+addEventListener('pointerup', e => { if (!drag || drag.id !== e.pointerId) return; const moved = drag.moved; drag = null; if (moved) { const h = document.getElementById('help'); if (h) h.hidden = true; }
   if (moved || e.target !== renderer.domElement) return;
   const now = performance.now();
   if (now - lastTap.t < 350 && Math.hypot(e.clientX - lastTap.x, e.clientY - lastTap.y) < 30) { walkTo(e.clientX, e.clientY); lastTap.t = 0; }
@@ -881,6 +945,7 @@ joy.addEventListener('pointermove', e => { if (e.pointerId !== jid) return; cons
 joy.addEventListener('pointerup', () => { jid = null; jv = { x: 0, y: 0 }; knob.style.transform = ''; });
 
 let showNums = false; try { showNums = localStorage.getItem('colossae-nums') === '1'; } catch (e) {}
+document.getElementById('infobtn').onclick = () => { const c = document.getElementById('credits'); c.hidden = !c.hidden; };
 const numbtn = document.getElementById('numbtn'); const syncNum = () => { numbtn.textContent = `Verse numbers: ${showNums ? 'on' : 'off'}`; numbtn.setAttribute('aria-pressed', showNums); };
 numbtn.onclick = () => { showNums = !showNums; syncNum(); try { localStorage.setItem('colossae-nums', showNums ? '1' : '0'); } catch (e) {} }; syncNum();
 let idx = -1, tween = null, overview = false; const doll = { theta: -.45, phi: .95, dist: 150, target: new THREE.Vector3(28, 0, 22) };
@@ -907,6 +972,7 @@ function frame() {
   let s = (keys.KeyD ? 1 : 0) - (keys.KeyA ? 1 : 0) + jv.x;
   if (keys.ArrowLeft) player.yaw += dt * 1.8; if (keys.ArrowRight) player.yaw -= dt * 1.8;
   if ((f || s) && overview) { const sp = doll.dist * .9 * dt; doll.target.x += (-Math.sin(doll.theta) * f + Math.cos(doll.theta) * s) * sp; doll.target.z += (-Math.cos(doll.theta) * f - Math.sin(doll.theta) * s) * sp; f = s = 0; }
+  if ((f || s) && !window.__moved) { window.__moved = true; const h = document.getElementById('help'); if (h) h.hidden = true; }
   if (f || s) { tween = null; const mag = Math.min(1, Math.hypot(f, s)) / (Math.hypot(f, s) || 1); const sp = 3.6 * dt * (keys.ShiftLeft ? 2 : 1) * mag;
     const mx = (-Math.sin(player.yaw) * f + Math.cos(player.yaw) * s) * sp, mz = (-Math.cos(player.yaw) * f - Math.sin(player.yaw) * s) * sp;
     if (!blocked(player.x + mx, player.z + mz)) { player.x += mx; player.z += mz; }
@@ -927,7 +993,7 @@ function frame() {
   const fpx = player.x - Math.sin(player.yaw) * 5.5, fpz = player.z - Math.cos(player.yaw) * 5.5;
   let best = null, bd = 1e9; for (const st of STATIONS) { const d = Math.hypot(st.x - fpx, st.z - fpz); if (d < bd) { bd = d; best = st; } for (const [li, lc] of st.loci.entries()) { lc.gem.rotation.y = t; lc.gem.position.y = lc.gy + .65 + Math.sin(t * 2 + lc.x) * .07;
     const on = tutLocus !== null && st === STATIONS[0] && (tutLocus === 'all' || tutLocus === li); const sc = on ? 1.9 + Math.sin(t * 5) * .25 : 1; lc.gem.scale.setScalar(sc); } }
-  if (best && bd < 9 && !overview) { hudZ.textContent = `Chapter ${best.ch} · ${ZONE[best.ch - 1]} · Room ${best.room}`; let nl = best.loci[0], nd = 1e9; for (const lc of best.loci) { const d = Math.hypot(lc.x - player.x, lc.z - player.z); if (d < nd) { nd = d; nl = lc; } } hudS.textContent = nd < (nl.fy !== undefined ? 2.2 : 1.2) ? `${best.name} · verse ${best.ch}:${nl.v} (${nl.where})${VTEXT[best.ch + ':' + nl.v] ? ' — “' + VTEXT[best.ch + ':' + nl.v] + '”' : ''}` : `${best.name} — ${best.text}`; idx = STATIONS.indexOf(best); }
+  if (best && bd < 9 && !overview) { hudZ.textContent = `Chapter ${best.ch}`; let nl = best.loci[0], nd = 1e9; for (const lc of best.loci) { const d = Math.hypot(lc.x - player.x, lc.z - player.z); if (d < nd) { nd = d; nl = lc; } } hudS.textContent = best.text; idx = STATIONS.indexOf(best); }
   else { hudZ.textContent = 'Colossae'; hudS.textContent = overview ? (MOBILE ? 'Drag to fly · pinch for height · twist to turn · double-tap to land' : 'Drag to fly · scroll for height · right-drag to turn · double-click to land') : 'Walk the path, or press Next'; }
   if (window.__fixed) { const [x, y, z, lx, ly, lz] = window.__fixed; camera.position.set(x, y, z); camera.lookAt(lx, ly, lz); }
   birdFrame(dt, t);
