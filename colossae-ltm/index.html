@@ -26,6 +26,10 @@
   @media (pointer:fine){#joy{display:none}}
   #howbtn{position:fixed;right:calc(130px + env(safe-area-inset-right,0px));top:calc(14px + env(safe-area-inset-top,0px));font:inherit;font-size:15px;background:var(--paper);color:var(--ink);border:1px solid #c9b48f;border-radius:8px;padding:9px 14px;cursor:pointer}
   #numbtn{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));font:inherit;font-size:13px;background:rgba(244,234,214,.92);color:var(--ink);border:1px solid #c9b48f;border-radius:999px;padding:8px 14px;cursor:pointer}
+  #gembtn{position:fixed;left:calc(50% + 92px);bottom:calc(18px + env(safe-area-inset-bottom,0px));font:inherit;font-size:13px;background:rgba(244,234,214,.92);color:var(--ink);border:1px solid #c9b48f;border-radius:999px;padding:8px 14px;cursor:pointer}
+  #numbtn{margin-left:-58px}
+  body.tutorial #gembtn{display:none}
+  @media (max-width:600px){#gembtn{left:auto;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(118px + env(safe-area-inset-bottom,0px))}#numbtn{margin-left:0}#infobtn{bottom:calc(166px + env(safe-area-inset-bottom,0px))!important}#credits{bottom:calc(196px + env(safe-area-inset-bottom,0px))!important}}
   #numbtn[aria-pressed=true]{background:var(--terra);color:#fff8ee;border-color:var(--terra)}
   body.tutorial #numbtn{display:none}
   @media (max-width:600px){#numbtn{left:auto;transform:none;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(76px + env(safe-area-inset-bottom,0px))}}
@@ -61,8 +65,9 @@
 <button id="mapbtn">Bird’s-eye</button>
 <button id="howbtn" aria-label="How it works">How it works</button>
 <button id="numbtn" aria-pressed="false">Verse numbers: off</button>
+<button id="gembtn" aria-pressed="true">Markers: on</button>
 <button id="infobtn" aria-label="Credits">i</button>
-<div id="credits" hidden><b>Credits</b><br>Medieval Village MegaKit by Quaternius (CC0).<br><a href="https://sketchfab.com/3d-models/low-poly-traditional-market-stall-83f6b14a28094a5ab5f8396ea6f4c1e9" target="_blank" rel="noopener">Low Poly Traditional Market Stall</a> by Nisa Nurul Azizah, CC BY 4.0.<br><a href="https://sketchfab.com/3d-models/modular-medieval-table-08dd395a346a440ba85e8b3b46ab3672" target="_blank" rel="noopener">Modular Medieval Table</a> by GameWorldStudio, CC BY 4.0.<br>Scripture quotations from the ESV® Bible, © Crossway.</div>
+<div id="credits" hidden><b>Credits</b><br>Medieval Village MegaKit by Quaternius (CC0).<br><a href="https://sketchfab.com/3d-models/low-poly-market-stall-game-ready-asset-20660479b5c24f55b7873adf4bca4073" target="_blank" rel="noopener">Low Poly Market Stall — Game-Ready Asset</a> by BlackMike, CC BY 4.0.<br><a href="https://sketchfab.com/3d-models/low-poly-traditional-market-stall-83f6b14a28094a5ab5f8396ea6f4c1e9" target="_blank" rel="noopener">Low Poly Traditional Market Stall</a> by Nisa Nurul Azizah, CC BY 4.0.<br><a href="https://sketchfab.com/3d-models/modular-medieval-table-08dd395a346a440ba85e8b3b46ab3672" target="_blank" rel="noopener">Modular Medieval Table</a> by GameWorldStudio, CC BY 4.0.<br>Scripture quotations from the ESV® Bible, © Crossway.</div>
 <div id="tut" hidden>
   <div class="card">
     <div class="step" id="tutStep"></div>
@@ -95,7 +100,7 @@ const KIT = {}, KMAT = {};
   catch (e) { console.warn('kit failed to load, using simple houses', e); }
 }
 const MODELS = {};
-try { await Promise.all(['stall', 'table'].map(m => new GLTFLoader().loadAsync(`./models/${m}/scene.gltf`).then(g => { g.scene.updateMatrixWorld(true); g.scene.traverse(o => { if (o.isMesh) { o.castShadow = o.receiveShadow = true; if (o.material.map) o.material.map.anisotropy = 4; } }); MODELS[m] = g.scene; }))); }
+try { await Promise.all(['stall', 'table', 'gstall'].map(m => new GLTFLoader().loadAsync(`./models/${m}/scene.${m === 'gstall' ? 'glb' : 'gltf'}`).then(g => { g.scene.updateMatrixWorld(true); g.scene.traverse(o => { if (o.isMesh) { o.castShadow = o.receiveShadow = true; if (o.material.map) o.material.map.anisotropy = 4; } }); MODELS[m] = g.scene; }))); }
 catch (e) { console.warn('models failed to load', e); }
 // clone named parts of a model, keeping their layout, re-centred so the bottom-centre sits at the origin
 function part(model, names, scale = 1) {
@@ -489,7 +494,7 @@ const M1 = [
 ];
 M1.forEach(r => r[4] = () => {});
 const STYLE = ['roof', 'awning', 'awning', 'cart', 'tent', 'roof'];   // by M1 index
-M1.forEach(([x, z, f, c, gd], i) => stall(x, z, f, c, gd, STYLE[i]));
+M1.forEach(([x, z, f, c, gd], i) => { if (i === 2 || i === 3) return; if (i === 1 && MODELS.gstall) return; stall(x, z, f, c, gd, STYLE[i]); });
 // prop kit (local coords inside a stall group; returns the top height)
 var P; P = {
   basket: (g, x, y, z, c, n = 12) => { cyl(.42, .32, .32, 8, 'basket', x, y, z, g); for (let i = 0; i < n; i++) add(new THREE.IcosahedronGeometry(.11, 0), mat('f' + c, c), x + R(-.25, .25), y + .36 + R(0, .14), z + R(-.25, .25), g); return y + .55; },
@@ -595,13 +600,46 @@ const LOCAL = [[-1, 1], [-1, -1], [1, -1], [1, 1], [0, 0]];   // near-left, far-
 // order: up the left side from the gate, then down the right side
 const MARKET = [
   { at: 0, name: 'Fig Seller', sign: '#6b2f5a', props: [g => [P.figBowl(g, -1.25, H_NEAR, .7), 'bowl of figs'], g => [P.scale(g, -1.25, H_FAR, -1), 'hanging scales'], g => [P.honey(g, 1.25, H_FAR, -1), 'honey jar'], g => [P.sack(g, 1.25, H_NEAR, .7), 'sack of grain'], g => [P.crates(g, 0, 1.15, -.2), 'stacked crates']] },
-  { at: 2, name: 'Wool Dyer', sign: '#3f6f9a', props: [g => [P.vat(g, -1.25, 0, .4, '#2f5f9a'), 'blue dye vat'], g => [P.rack(g, -1.1, 0, -1), 'drying rack'], g => [P.loom(g, 1.1, 0, -1), 'little loom'], g => [P.bolts(g, 1.25, H_NEAR, .7), 'cloth bolts'], g => [P.wool(g, 0, 1.15, -.2), 'basket of wool']] },
   { at: 4, name: 'Scribe’s Table', sign: '#3a2c22', props: [g => [P.desk(g, -1.2, H_NEAR, .7), 'papyrus and quill'], g => [P.scrolls(g, -1.2, H_FAR - .1, -1.05), 'scroll shelf'], g => [P.lamps(g, 1.2, H_FAR, -1), 'oil lamps'], g => [P.tablets(g, 1.25, H_NEAR, .7), 'wax tablets'], g => [P.chest(g, 0, 1.15, -.2), 'coin chest']] },
   { at: 5, name: 'The Potter', sign: '#9a5a3a', props: [g => [P.wheel(g, -1.15, 0, .3), 'potter’s wheel'], g => [P.kiln(g, -1.1, 0, -.95), 'glowing kiln'], g => [P.jarPyramid(g, 1.15, H_FAR, -1.05), 'pyramid of jars'], g => [P.bowlStack(g, 1.25, H_NEAR, .7), 'stack of bowls'], g => [P.clay(g, 0, 1.15, -.2), 'lump of wet clay']] },
-  { at: 3, name: 'Pomegranates', sign: '#c43a2e', props: [g => [P.basket(g, -1.25, H_NEAR, .7, '#c43a2e'), 'basket of pomegranates'], g => [P.herbs(g, -1.2, H_FAR - 1.1, -1.05), 'hanging herbs'], g => [P.cage(g, 1.25, H_FAR, -1), 'songbird cage'], g => [P.basket(g, 1.25, H_NEAR, .7, '#7a9a3a', 10), 'basket of olives'], g => [P.press(g, 0, 1.15, -.2), 'juice press']] },
-  { at: 1, name: 'Wine Jars', sign: '#7a1f2a', props: [g => [P.cups(g, -1.25, H_NEAR, .7), 'tray of cups'], g => [P.rackJars(g, -1.1, 0, -1), 'rack of wine jars'], g => [P.skin(g, 1.2, H_FAR, -1), 'wineskin'], g => [P.basket(g, 1.25, H_NEAR, .7, '#5a3a6a', 16), 'basket of grapes'], g => [P.bigJar(g, 0, 1.15, -.2, 'clay', 1.15), 'giant amphora']] },
+  { at: 1, name: 'Pomegranates', sign: '#c43a2e', props: [g => [P.basket(g, -1.25, H_NEAR, .7, '#c43a2e'), 'basket of pomegranates'], g => [P.herbs(g, -1.2, H_FAR - 1.1, -1.05), 'hanging herbs'], g => [P.cage(g, 1.25, H_FAR, -1), 'songbird cage'], g => [P.basket(g, 1.25, H_NEAR, .7, '#7a9a3a', 10), 'basket of olives'], g => [P.press(g, 0, 1.15, -.2), 'juice press']] },
 ];
+{ // ROOM 1 — the city gate (seen from outside, facing into town)
+  const gy = heightAt(0, GZ), g = new THREE.Group(); g.position.set(0, gy, GZ); scene.add(g);
+  const at = (x, z, top, what) => ({ x, y: gy + top, z: GZ + z, what });
+  // 1 near-left: a guard with spear and shield
+  person(-2.3, GZ + 2.4, Math.PI * .15, '#9a2a2a', { cloak: '#6a1a1a', hair: 1, y: gy });
+  box(.05, 2.4, .05, 'wood', -2.0, 0, 2.6, g); add(new THREE.ConeGeometry(.07, .3, 4), mat('iron', '#3c3a38', { metalness: .4, roughness: .6 }), -2.0, 2.55, 2.6, g);
+  { const sh = add(new THREE.CylinderGeometry(.42, .42, .08, 14), mat('shield', '#9a2a2a'), -2.65, .75, 2.45, g); sh.rotation.z = Math.PI / 2; sh.rotation.y = .3; add(new THREE.SphereGeometry(.1, 8, 5), mat('brass', '#b8893a', { metalness: .5, roughness: .4 }), -2.7, .75, 2.45, g); }
+  // 2 far-left: a big pot in the corner
+  { const jg = new THREE.Group(); jg.position.set(-2.4, 0, -2.4); g.add(jg); amph(jg, 0, 0, 1.05); }
+  // 3 far-right: a burning torch on a post
+  box(.12, 2, .12, 'wood', 2.4, 0, -2.4, g); cyl(.14, .1, .22, 7, mat('iron', '#3c3a38'), 2.4, 2, -2.4, g);
+  { const fl = add(new THREE.ConeGeometry(.13, .45, 6), new THREE.MeshStandardMaterial({ color: '#ffb23a', emissive: '#ff8a1a', emissiveIntensity: 1.8, flatShading: true }), 2.4, 2.45, -2.4, g); fl.userData.dyn = 1; window.__fire = (window.__fire || []).concat(fl); }
+  // 4 near-right: a rack of spears
+  box(1.2, .1, .12, 'wood', 2.4, 1.3, 2.4, g); for (const sx of [-.55, .55]) box(.08, 1.4, .08, 'wood', 2.4 + sx, 0, 2.4, g);
+  for (let k = 0; k < 4; k++) { const sp = box(.04, 2.3, .04, 'woodLt', 2.0 + k * .26, 0, 2.3, g); sp.rotation.x = .12; add(new THREE.ConeGeometry(.05, .22, 4), mat('iron', '#3c3a38'), 2.0 + k * .26, 2.35, 2.58, g); }
+  // 5 centre: a Roman seal set into the paving
+  { const c = document.createElement('canvas'); c.width = c.height = 256; const x = c.getContext('2d');
+    x.fillStyle = '#9a6a2a'; x.beginPath(); x.arc(128, 128, 126, 0, 7); x.fill(); x.strokeStyle = '#e0b84a'; x.lineWidth = 8; x.beginPath(); x.arc(128, 128, 112, 0, 7); x.stroke();
+    x.strokeStyle = '#6a8a3a'; x.lineWidth = 6; for (const sd of [-1, 1]) { x.beginPath(); x.arc(128, 140, 80, Math.PI / 2 + sd * .4, Math.PI / 2 + sd * 2.2, sd < 0); x.stroke(); }
+    x.fillStyle = '#f0d070'; x.font = 'bold 54px Georgia'; x.textAlign = 'center'; x.fillText('SPQR', 128, 150);
+    x.beginPath(); x.moveTo(128, 40); x.lineTo(150, 80); x.lineTo(128, 70); x.lineTo(106, 80); x.closePath(); x.fill();
+    const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
+    const seal = add(new THREE.CircleGeometry(1, 32), new THREE.MeshStandardMaterial({ map: t, metalness: .5, roughness: .45 }), 0, .06, 0, g); seal.rotation.x = -Math.PI / 2; seal.castShadow = false; }
+  station(1, 1, 'City Gate', 0, GZ, [0, 0, GZ - 10], [at(-2.3, 2.4, 1.6, 'gate guard'), at(-2.4, -2.4, 1.4, 'big pot'), at(2.4, -2.4, 2.75, 'burning torch'), at(2.4, 2.4, 2.4, 'rack of spears'), at(0, 0, .15, 'Roman seal')]);
+  STATIONS[STATIONS.length - 1].back = 5.5;
+}
 MARKET.forEach((m, i) => {
+  if (m.name === 'Pomegranates' && MODELS.gstall) {   // the game-ready fruit stall (BlackMike, CC BY 4.0)
+    const [sx, sz, face] = M1[m.at], g = new THREE.Group(); g.position.set(sx, heightAt(sx, sz), sz); g.rotation.y = face; scene.add(g);
+    const k = 1.35, c = MODELS.gstall.clone(true); c.scale.setScalar(k); c.traverse(o => { if (o.isMesh) o.userData.dyn = 1; }); g.add(c);
+    P.basket(g, -2.35, 0, 1.6, '#c43a2e'); P.basket(g, 2.35, 0, 1.6, '#e0b44a');
+    box(3.6 * k / 1.35 * .95, 1.2, 2.9, 'dark', 0, 0, -.1, g).visible = false;   // keeps you from walking through it
+    g.updateMatrixWorld(true);
+    const L = [[-.85, .2, 1.05, 'crate of limes'], [-1.05, .95, 0, 'crate of oranges'], [1.05, .95, 0, 'crate of potatoes'], [.85, .2, 1.05, 'crate of lemons'], [.35, .95, 0, 'crate of olives']]
+      .map(([x, y, z, what]) => { const w = g.localToWorld(new THREE.Vector3(x * k, y * k + .1, z * k)); return { x: w.x, y: w.y, z: w.z, what }; });
+    station(1, i + 2, 'Fruit Stall', sx, sz, [sx + Math.sign(sx) * 6, 2, sz], L); return; }
   const [sx, sz, face] = M1[m.at];
   const g = new THREE.Group(); g.position.set(sx, heightAt(sx, sz), sz); g.rotation.y = face; scene.add(g);
   ({ 'Fig Seller': () => { P.basket(g, -2.35, 0, 1.6, '#5b2a4c'); P.basket(g, 2.35, 0, 1.6, '#e0b44a'); P.barrel(g, 2.5, 0, -1.1); },
@@ -624,13 +662,25 @@ MARKET.forEach((m, i) => {
   for (const x of [-1.6, -.95, .95, 1.6]) fillAt(x, H_FAR, -.78);
   const custom = m.props.map(fn => { const n0 = g.children.length; const [top, what] = fn(g); const o = g.children[n0]; const lp = o.position.clone(); lp.y = top; g.updateMatrixWorld(true); const w = g.localToWorld(lp); return { x: w.x, y: w.y, z: w.z, what }; });
   // align each prop's reported x/z with its slot even when the first child is offset
-  station(1, i + 1, m.name, sx, sz, [sx + Math.sign(sx) * 6, 2, sz], custom);
+  station(1, i + 2, m.name, sx, sz, [sx + Math.sign(sx) * 6, 2, sz], custom);
 });
+{ // ROOM 6 — the well (seen from the gate side): 1 bucket, 2 water carrier, 3 olive tree, 4 bench
+  const wz = 58, wy = heightAt(0, wz), at = (x, z, top, what) => ({ x, y: wy + top, z: wz + z, what });
+  station(1, 6, 'The Well', 0, wz, [0, 0, wz - 10], [at(-2, 2, .7, 'water bucket'), at(-2.1, -1.8, 1.9, 'woman carrying a jar'), at(2.5, -1.5, 3.2, 'olive tree'), at(2.6, 2.6, .8, 'stone bench')]);
+  STATIONS[STATIONS.length - 1].back = 5.8; }
 // well + olive tree + bench
 { const z = 58, x = 0;
   for (let i = 0; i < 10; i++) { const a = i / 10 * Math.PI * 2; const b = box(.7, .9, .5, 'stone', Math.cos(a) * 1.1, heightAt(0, z), z + Math.sin(a) * 1.1); b.rotation.y = -a; }
   box(.15, 2.2, .15, 'wood', -1, heightAt(0, z), z); box(.15, 2.2, .15, 'wood', 1, heightAt(0, z), z); box(2.3, .15, .15, 'wood', 0, heightAt(0, z) + 2.1, z);
-  box(2.4, .2, .8, 'stone', 3.5, heightAt(3, z) + .45, z + 2.5); box(.3, .45, .6, 'stone', 2.6, heightAt(3, z), z + 2.5); box(.3, .45, .6, 'stone', 4.4, heightAt(3, z), z + 2.5);
+  box(2.4, .2, .8, 'stone', 2.6, heightAt(3, z) + .45, z + 2.6); box(.3, .45, .6, 'stone', 1.7, heightAt(3, z), z + 2.6); box(.3, .45, .6, 'stone', 3.5, heightAt(3, z), z + 2.6);
+  { const y = heightAt(0, z);
+    cyl(1.45, 1.55, .25, 16, 'stoneDk', 0, y - .05, z); cyl(1.32, 1.32, .14, 16, 'marble', 0, y + .9, z); cyl(.9, .9, .02, 16, mat('wellWater', '#2f5a5a', { roughness: .1 }), 0, y + .7, z);
+    gableRoof(2.6, 1.7, .7, 'roof', 0, y + 2.25, z, Math.PI / 2);
+    const wl = add(new THREE.CylinderGeometry(.13, .13, 2, 10), 'wood', 0, y + 1.6, z); wl.rotation.z = Math.PI / 2;
+    box(.07, .5, .07, 'wood', 1.15, y + 1.35, z + .2); box(.25, .07, .07, 'wood', 1.15, y + 1.85, z + .3);
+    box(.02, .75, .02, mat('rope', '#a8885a'), 0, y + .85, z); cyl(.17, .14, .28, 10, 'wood', 0, y + .6, z);
+    cyl(.24, .19, .4, 12, 'wood', -2, heightAt(-2, z + 2), z + 2); cyl(.21, .21, .02, 12, mat('basinW', '#8fd8d4'), -2, heightAt(-2, z + 2) + .37, z + 2);
+    for (let i = 0; i < 8; i++) { const a = R(0, 6), r = R(1.7, 2.3); add(new THREE.DodecahedronGeometry(R(.08, .16), 0), 'stoneDk', Math.cos(a) * r, heightAt(0, z) + .04, z + Math.sin(a) * r).scale.y = .5; } }
   tree(2.5, z - 1.5, .9);
 }
 // market clutter: crates, sacks, straw, pigeons, a sleeping dog, lamps
@@ -840,9 +890,9 @@ function person(x, z, rot, tunic = '#c9a46a', opts = {}) {
 }
 { // merchants behind their stalls
   const MER = [['#7a3b6a', 0, 1], ['#3f6f9a', 1, 2], ['#e8dcc4', 2, 3], ['#9a5a3a', 0, 0], ['#c43a2e', 1, 1], ['#5a4a6a', 2, 2]];
-  M1.forEach(([sx, sz, face], i) => { const [c, sk, hr] = MER[i]; const ox = -2.75, oz = .9, lx = sx + ox * Math.cos(face) + oz * Math.sin(face), lz = sz - ox * Math.sin(face) + oz * Math.cos(face); person(lx, lz, face - .5, c, { skin: sk, hair: hr, armsUp: i % 3 === 0 }); });
+  M1.forEach(([sx, sz, face], i) => { if (i === 2 || i === 3) return; const [c, sk, hr] = MER[i]; const ox = -2.75, oz = .9, lx = sx + ox * Math.cos(face) + oz * Math.sin(face), lz = sz - ox * Math.sin(face) + oz * Math.cos(face); person(lx, lz, face - .5, c, { skin: sk, hair: hr, armsUp: i % 3 === 0 }); });
   // people in the street and around town
-  const P0 = [[3.3, 56, 2.8, '#d9c39a', { carry: 'jar', veil: '#e8dcc4', skin: 1 }], [-3.3, 47, .3, '#8a5a3a', { cloak: '#5a3a2a', hair: 3 }], [3.3, 33, -2.4, '#3f6f9a', { carry: 'basket', skin: 2 }],
+  const P0 = [[-2.1, 56.2, .5, '#d9c39a', { carry: 'jar', veil: '#e8dcc4', skin: 1 }], [-3.3, 47, .3, '#8a5a3a', { cloak: '#5a3a2a', hair: 3 }], [3.3, 33, -2.4, '#3f6f9a', { carry: 'basket', skin: 2 }],
     [-3, 6, 1, '#efe6d4', { cloak: '#9a2a2a', hair: 3 }], [3.5, 12, -2, '#e8dcc4', { armsUp: true }], [-6, 11, .4, '#c79a3a', { veil: '#3f6f9a', skin: 2 }],
     [HX + 2.5, HZ + 1, 2.2, '#9a4a3a', { veil: '#e0b44a', skin: 2 }], [HX + 1, HZ + 13, 0, '#5a6a3a', {}], [BX + 2, BZ + .8, 1.57, '#8a6a4a', { cloak: '#6a4a2a', carry: 'basket' }], [BX + 40, BZ - 1, 3.4, '#5a4a3a', { hair: 1 }],
     [-12, 30, 1.2, '#c9a46a', { carry: 'jar', veil: '#c43a2e' }], [20, 40, 2, '#7a8a5a', {}], [-22, 62, -1, '#a8714c', { cloak: '#3a4a6a' }]];
@@ -878,7 +928,7 @@ stoneWall(BX + 36, BZ + 3, BX + 70, BZ + 3, .8);
 
 drape(-2.5, TZ + 15, 2.5, TZ + 21, 'path'); drape(-62, 45, -3, 48.5, 'path', .03); drape(-62, 25, -3, 28.5, 'path', .03); drape(-48, -30, -44.5, 70, 'path', .03); drape(-22, -30, -18.5, 22, 'path', .03); drape(-2.5, TZ + 17.5, HX + 2, TZ + 21, 'path');
 // walking routes between zones, through doorways
-VIA['2.1'] = [[0, 58], [0, TZ + 21], [0, TZ + 14]];                                   // market -> temple gate
+VIA['2.1'] = [[-3.6, 61], [-3.6, 50], [0, 44], [0, TZ + 21], [0, TZ + 14]];                                   // market -> temple gate
 VIA['3.1'] = [[0, TZ + 14], [0, TZ + 19], [HX, HZ + 15], [HX, HZ + 8], [HX - 4, HZ + 1.5]];  // temple -> house front door
 VIA['4.1'] = [[HX + 9, HZ + 2], [HX + 13, HZ + 2], [BX - 18, BZ + 2]];                 // house side door -> riverbank
 VIA['4.2'] = [[BX - 17, BZ], [BX + 17, BZ]];                                           // across the bridge
@@ -947,6 +997,9 @@ joy.addEventListener('pointerup', () => { jid = null; jv = { x: 0, y: 0 }; knob.
 let showNums = false; try { showNums = localStorage.getItem('colossae-nums') === '1'; } catch (e) {}
 document.getElementById('infobtn').onclick = () => { const c = document.getElementById('credits'); c.hidden = !c.hidden; };
 const numbtn = document.getElementById('numbtn'); const syncNum = () => { numbtn.textContent = `Verse numbers: ${showNums ? 'on' : 'off'}`; numbtn.setAttribute('aria-pressed', showNums); };
+let showGems = true; try { showGems = localStorage.getItem('colossae-gems') !== '0'; } catch (e) {}
+const gembtn = document.getElementById('gembtn'); const syncGem = () => { gembtn.textContent = `Markers: ${showGems ? 'on' : 'off'}`; gembtn.setAttribute('aria-pressed', showGems); }; syncGem();
+gembtn.onclick = () => { showGems = !showGems; syncGem(); try { localStorage.setItem('colossae-gems', showGems ? '1' : '0'); } catch (e) {} };
 numbtn.onclick = () => { showNums = !showNums; syncNum(); try { localStorage.setItem('colossae-nums', showNums ? '1' : '0'); } catch (e) {} }; syncNum();
 let idx = -1, tween = null, overview = false; const doll = { theta: -.45, phi: .95, dist: 150, target: new THREE.Vector3(28, 0, 22) };
 function go(d) { const from = idx; idx = Math.max(0, Math.min(STATIONS.length - 1, idx + d)); const s = STATIONS[idx];
@@ -992,7 +1045,7 @@ function frame() {
   // HUD: nearest station
   const fpx = player.x - Math.sin(player.yaw) * 5.5, fpz = player.z - Math.cos(player.yaw) * 5.5;
   let best = null, bd = 1e9; for (const st of STATIONS) { const d = Math.hypot(st.x - fpx, st.z - fpz); if (d < bd) { bd = d; best = st; } for (const [li, lc] of st.loci.entries()) { lc.gem.rotation.y = t; lc.gem.position.y = lc.gy + .65 + Math.sin(t * 2 + lc.x) * .07;
-    const on = tutLocus !== null && st === STATIONS[0] && (tutLocus === 'all' || tutLocus === li); const sc = on ? 1.9 + Math.sin(t * 5) * .25 : 1; lc.gem.scale.setScalar(sc); } }
+    const on = tutLocus !== null && st === STATIONS[0] && (tutLocus === 'all' || tutLocus === li); const sc = on ? 1.9 + Math.sin(t * 5) * .25 : 1; lc.gem.scale.setScalar(sc); lc.gem.visible = showGems || on; } }
   if (best && bd < 9 && !overview) { hudZ.textContent = `Chapter ${best.ch}`; let nl = best.loci[0], nd = 1e9; for (const lc of best.loci) { const d = Math.hypot(lc.x - player.x, lc.z - player.z); if (d < nd) { nd = d; nl = lc; } } hudS.textContent = best.text; idx = STATIONS.indexOf(best); }
   else { hudZ.textContent = 'Colossae'; hudS.textContent = overview ? (MOBILE ? 'Drag to fly · pinch for height · twist to turn · double-tap to land' : 'Drag to fly · scroll for height · right-drag to turn · double-click to land') : 'Walk the path, or press Next'; }
   if (window.__fixed) { const [x, y, z, lx, ly, lz] = window.__fixed; camera.position.set(x, y, z); camera.lookAt(lx, ly, lz); }
@@ -1029,13 +1082,13 @@ const ORDER_SVG = `<svg viewBox="0 0 220 150" width="220" height="150" role="img
 const TUT = [
   { t: 'Welcome to Colossae', b: `<p>This town is a memory palace for the book of Colossians. Each chapter is a district, each stall or room holds five verses, and every verse is tied to one interesting object inside it.</p><p>Want a short walk-through of how to use it?</p>`, next: 'Show me' },
   { t: 'First, the foundation', b: `<p>Locations don't replace memorizing. They lock in what you've already started to learn.</p><p>Before you place a verse, read it aloud <b>10 to 20 times</b> until you can say it roughly from memory. Then tie it to a spot here to finish the job.</p><p><a href="${ESV}" target="_blank" rel="noopener">Open Colossians 1 (ESV) on esv.org</a></p>` },
-  { t: 'Every room is a square', b: `${ORDER_SVG}<p>Stand facing a stall or room and picture a square inside it. Its five verses always sit on objects in the same order: <b>1</b> near-left, <b>2</b> far-left, <b>3</b> far-right, <b>4</b> near-right, then <b>5</b> in the centre. That's clockwise, finishing in the middle.</p><p>The rooms themselves run the same way. In the market you start at the stall nearest the gate on the left, go up the left side, then come back down the right.</p>`, go: 0 },
-  { t: 'Verse 1:1 · near-left corner', b: `<p>Say Colossians 1:1 a few times. Now tie it to the near-left object, the basket of figs. Make it bigger than life: funny, moving, emotional.</p><p class="ex">For example, you could picture Paul slamming a huge royal seal ("by the will of God") into the basket of figs, splattering fruit everywhere, while young Timothy, his arm around Paul, beams like a proud little brother.</p>`, locus: 0 },
-  { t: 'Verse 1:2 · far-left corner', b: `<p>Next, Colossians 1:2 on the far-left object, the hanging scales.</p><p class="ex">For example, you could picture a dove of peace crash-landing on one pan of the scales and a gift box of grace on the other, addressed in giant letters "To the saints at Colossae."</p>`, locus: 1 },
-  { t: 'Verse 1:3 · far-right corner', b: `<p>Your turn. Read 1:3 until you have it, then make your own picture on the far-right object, the honey jar. The stranger and more vivid it is, the better it sticks. Use whatever makes sense to you.</p>`, locus: 2 },
-  { t: 'Verse 1:4 · near-right corner', b: `<p>Same again for 1:4 on the near-right object, the sack of grain. Give your image movement or emotion. Make something happen.</p>`, locus: 3 },
-  { t: 'Verse 1:5 · centre', b: `<p>Finally, 1:5 goes in the centre, on the stacked crates.</p>`, locus: 4 },
-  { t: 'Walk it back', b: `<p>Look away from the screen. Walk the stall in your mind: figs, scales, honey, grain, crates. At each object, see your picture and say the verse.</p><p>If one is fuzzy, read it again and make its picture louder.</p>`, locus: 'all' },
+  { t: 'Every room is a square', b: `${ORDER_SVG}<p>Stand facing a stall or room and picture a square inside it. Its five verses always sit on objects in the same order: <b>1</b> near-left, <b>2</b> far-left, <b>3</b> far-right, <b>4</b> near-right, then <b>5</b> in the centre. That's clockwise, finishing in the middle.</p><p>The rooms themselves run the same way. Chapter 1 starts at the city gate, then the first stall on the left, up the left side, back down the right side, and ends at the well.</p>`, go: 0 },
+  { t: 'Verse 1:1 · near-left corner', b: `<p>Say Colossians 1:1 a few times. Now tie it to the near-left object, the gate guard. Make it bigger than life: funny, moving, emotional.</p><p class="ex">For example, you could picture the guard stopping Paul, who slams down a huge royal letter stamped "by the will of God," while young Timothy, his arm around Paul, beams like a proud little brother.</p>`, locus: 0 },
+  { t: 'Verse 1:2 · far-left corner', b: `<p>Next, Colossians 1:2 on the far-left object, the big pot in the corner.</p><p class="ex">For example, you could picture a dove of peace bursting out of the pot, carrying a gift box of grace addressed in giant letters "To the saints at Colossae."</p>`, locus: 1 },
+  { t: 'Verse 1:3 · far-right corner', b: `<p>Your turn. Read 1:3 until you have it, then make your own picture on the far-right object, the burning torch. The stranger and more vivid it is, the better it sticks. Use whatever makes sense to you.</p>`, locus: 2 },
+  { t: 'Verse 1:4 · near-right corner', b: `<p>Same again for 1:4 on the near-right object, the rack of spears. Give your image movement or emotion. Make something happen.</p>`, locus: 3 },
+  { t: 'Verse 1:5 · centre', b: `<p>Finally, 1:5 goes in the centre, on the Roman seal in the ground.</p>`, locus: 4 },
+  { t: 'Walk it back', b: `<p>Look away from the screen. Walk the gate in your mind: guard, pot, torch, spears, seal. At each object, see your picture and say the verse.</p><p>If one is fuzzy, read it again and make its picture louder.</p>`, locus: 'all' },
   { t: 'Every room works the same way', b: `<p>Press <b>Next</b> to walk to the next room, or double-tap anywhere to go there. Tap <b>Bird’s-eye</b> to fly over the whole town: drag to fly, pinch for height, twist to turn, double-tap to land.</p>`, next: 'Start the tour' },
 ];
 let tutI = -1, tutLocus = null, VTEXT = {};
@@ -1066,7 +1119,7 @@ function blocked(x, z) { const R2 = .28; for (const [ox, oz] of [[0, 0], [R2, 0]
 {
   scene.updateMatrixWorld(true);
   { const bb = new THREE.Box3();
-    scene.traverse(o => { if (!o.isMesh || o.userData.dyn || o.material.isShaderMaterial || o.geometry.attributes.color || o.material.transparent || o.isSprite) return; for (let q = o; q; q = q.parent) if (!q.visible) return;
+    scene.traverse(o => { if (!o.isMesh || o.userData.dyn || o.material.isShaderMaterial || o.geometry.attributes.color || o.material.transparent || o.isSprite) return; for (let q = o; q; q = q.parent) if (!q.visible && !(q === o && o.material === M.dark)) return;
       bb.setFromObject(o); const sx = bb.max.x - bb.min.x, sz = bb.max.z - bb.min.z; if (sx > 40 || sz > 40 || (sx < .02 && sz < .02)) return;
       const cx = (bb.min.x + bb.max.x) / 2, cz = (bb.min.z + bb.max.z) / 2, gy = groundY(cx, cz);
       if (bb.min.y > gy + 1.8 || bb.max.y < gy + .45) return;          // overhead, or low enough to step over
