@@ -216,7 +216,7 @@ let terrain;
     float wet=1.-smoothstep(.2,2.2,vWP.y);
     vec3 sand=texture2D(tS,vWP.xz*.9).rgb*.75+texture2D(tS,vWP.xz*.23).rgb*.25;sand=sand*1.15*mix(.8,1.1,texture2D(tS,vWP.xz*.02).r);
     vec3 base=(rock*sp.r+grass*sp.g+leaf*sp.b)*mix(1.,.55,wet);if(vWP.z<232.)sand*=vec3(.5,.44,.36);
-    if(vWP.y>2.5)sand=mix(vec3(.09,.07,.05),texture2D(tLf,vWP.xz*.7).rgb*.45,.45)*mix(.7,1.25,texture2D(tLf,vWP.xz*.25).r);diffuseColor.rgb=mix(base,sand*mix(1.,.45,1.-smoothstep(-.6,.55,vWP.y)),vBeach);if(vWP.x>8.&&vWP.x<100.&&vWP.z<70.&&vWP.z>-30.){vec3 fn=normalize(cross(dFdx(vWP),dFdy(vWP)));float st=1.-smoothstep(.72,.9,abs(fn.y));vec3 bk=vec3(dot(rock,vec3(.33)))*vec3(1.02,1.,.94)*2.2;bk=mix(bk,vec3(.17,.28,.08),smoothstep(.4,.7,texture2D(tR,vWP.xz*.05+vWP.y*.03).g)*.7);diffuseColor.rgb=mix(diffuseColor.rgb,bk,st*.85);}`)
+    if(vWP.y>2.5)sand=mix(vec3(.09,.07,.05),texture2D(tLf,vWP.xz*.7).rgb*.45,.45)*mix(.7,1.25,texture2D(tLf,vWP.xz*.25).r);diffuseColor.rgb=mix(base,sand*mix(1.,.45,1.-smoothstep(-.6,.55,vWP.y)),vBeach);if(vWP.x>8.&&vWP.x<100.&&vWP.z<70.&&vWP.z>-30.){vec3 fn=normalize(cross(dFdx(vWP),dFdy(vWP)));float st=1.-smoothstep(.72,.9,abs(fn.y));vec3 bk=vec3(dot(rock,vec3(.33)))*vec3(1.04,1.,.93)*3.2;bk*=mix(1.,.55,smoothstep(.6,.8,texture2D(tR,vec2(vWP.x*.05+vWP.z*.05,vWP.y*.15)).r));bk=mix(bk,vec3(.2,.32,.1)*mix(.7,1.3,texture2D(tG,vWP.xz*.3).g),smoothstep(.35,.6,texture2D(tR,vWP.xz*.05+vWP.y*.03).g)*.8);diffuseColor.rgb=mix(diffuseColor.rgb,bk,st*.85);}`)
    .replace('#include <normal_fragment_maps>','#if 0\n#include <normal_fragment_maps>\n#endif\n{vec3 mn=texture2D(normalMap,vWP.xz*.08).xyz*2.-1.;normal=normalize(normal+(vSplat.r*.9+.2)*vec3(mn.x,mn.y,0.)*normalScale.x*.5);}');};
  terrain=new THREE.Mesh(g,mat);scene.add(terrain);}
 
