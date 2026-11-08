@@ -312,11 +312,12 @@ mountain(-210, -150, 90, 80, '#a6a483'); mountain(260, -140, 100, 90, '#a6a483')
 // ---------- props ----------
 function tree(x, z, s = 1) {
   const y = heightAt(x, z), g = new THREE.Group(); g.position.set(x, y, z); scene.add(g);
-  cyl(.18 * s, .28 * s, 2.2 * s, 5, 'trunk', 0, 0, 0, g);
-  for (let i = 0; i < 4; i++) {
-    const m = add(new THREE.IcosahedronGeometry(R(1.1, 1.6) * s, 0), i % 2 ? 'leaf' : 'leafDk', R(-.9, .9) * s, (2.6 + R(0, 1.1)) * s, R(-.9, .9) * s, g);
-    m.rotation.set(R(0, 3), R(0, 3), 0);
-  }
+  // olive-style tree: a leaning, forked trunk and many small canopy clumps in three greens
+  const tk = cyl(.14 * s, .26 * s, 1.6 * s, 6, 'trunk', 0, 0, 0, g); tk.rotation.z = R(-.12, .12);
+  const br = []; for (let b = 0; b < 3; b++) { const a = b / 3 * Math.PI * 2 + R(-.4, .4), bx = Math.cos(a) * .55 * s, bz = Math.sin(a) * .55 * s;
+    const limb = cyl(.06 * s, .11 * s, 1.1 * s, 5, 'trunk', bx * .5, 1.45 * s, bz * .5, g); limb.rotation.z = -Math.cos(a) * .55; limb.rotation.x = Math.sin(a) * .55; br.push([bx * 1.3, 2.4 * s, bz * 1.3]); }
+  const greens = ['leaf', 'leafDk', 'sh0'];
+  for (const [bx, by, bz] of br) for (let i = 0; i < 6; i++) { const m = add(new THREE.IcosahedronGeometry(R(.38, .58) * s, 0), M[greens[i % 3]] ? greens[i % 3] : 'leaf', bx + R(-.55, .55) * s, by + R(-.15, .55) * s, bz + R(-.55, .55) * s, g); m.scale.y = .72; m.rotation.set(R(0, 3), R(0, 3), 0); }
 }
 function shrub(x, z, s = 1, y) { y ??= heightAt(x, z); const cs = ['#6f8a46', '#5f7a3e', '#7c9450', '#8aa05a'];
   for (let i = 0; i < 5; i++) { const m = add(new THREE.IcosahedronGeometry(R(.22, .34) * s, 1), mat('sh' + i % 4, cs[i % 4], { flatShading: true }), x + R(-.3, .3) * s, y + (.25 + R(0, .3)) * s, z + R(-.3, .3) * s); m.scale.y = .8; }
@@ -635,7 +636,7 @@ const MARKET = [
     const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
     const seal = add(new THREE.CircleGeometry(1, 32), new THREE.MeshStandardMaterial({ map: t, metalness: .5, roughness: .45 }), 0, .06, 0, g); seal.rotation.x = -Math.PI / 2; seal.castShadow = false; }
   station(1, 1, 'City Gate', 0, GZ, [0, 0, GZ - 10], [at(-2.3, 2.4, 1.6, 'gate guard'), at(-2.4, -2.4, 1.4, 'big pot'), at(2.4, -2.4, 2.75, 'burning torch'), at(2.9, 2.4, 2.4, 'rack of spears'), at(0, 0, .15, 'Roman seal')]);
-  STATIONS[STATIONS.length - 1].back = 10; STATIONS[STATIONS.length - 1].pitch = .06;
+  STATIONS[STATIONS.length - 1].back = 11; STATIONS[STATIONS.length - 1].pitch = .1;
 }
 // game-ready stall frame for the other trades: own awning colour, own goods in the crates
 const GSTALL = {
