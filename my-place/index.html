@@ -438,7 +438,7 @@ sky.frustumCulled=false;sky.renderOrder=-1;scene.add(sky);
  const g=new THREE.PlaneGeometry(3400,1700,340,170);g.rotateX(-Math.PI/2);g.translate(0,0,1500);
  const p=g.attributes.position;for(let i=0;i<p.count;i++)p.setY(i,M(p.getX(i),p.getZ(i))-15);
  g.computeVertexNormals();
- const mm=new THREE.MeshStandardMaterial({roughness:.95,envMapIntensity:.6});const rt=tex('dark_rock_diff.jpg',1);
+ const mm=new THREE.MeshStandardMaterial({roughness:.95,envMapIntensity:.6,fog:false});const rt=tex('dark_rock_diff.jpg',1);
  mm.onBeforeCompile=sh=>{sh.uniforms.rt={value:rt};
   sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 mW;varying vec3 mN;').replace('#include <begin_vertex>','#include <begin_vertex>\nmW=(modelMatrix*vec4(position,1.)).xyz;mN=normal;');
   sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nuniform sampler2D rt;varying vec3 mW;varying vec3 mN;\n'+GN).replace('#include <map_fragment>',`
