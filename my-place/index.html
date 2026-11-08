@@ -417,13 +417,13 @@ const sky=new THREE.Mesh(new THREE.SphereGeometry(1900,48,24),new THREE.ShaderMa
  fragmentShader:`${GN}uniform float t,oc;uniform vec3 fogC,sunDir;varying vec3 vD;
  void main(){vec3 d=normalize(vD);float h=max(d.y,0.);
   vec3 col=mix(fogC*vec3(.95,.97,1.02),vec3(.09,.26,.62),pow(h,.3));
-  float sd=max(dot(d,sunDir),0.);col+=vec3(1.,.82,.55)*(pow(sd,6.)*.35+pow(sd,400.)*3.);
+  float sd=max(dot(d,sunDir),0.);col+=vec3(1.,.86,.65)*(pow(sd,6.)*.18+pow(sd,300.)*.5);
   vec2 cu=d.xz/(d.y+.1)*.9+vec2(t*.003,t*.001);
   float c=fb(cu)*.65+fb(cu*3.3+4.)*.35;
   float cov=smoothstep(.40,.70,c)*smoothstep(0.,.14,d.y);
   vec3 cl=mix(vec3(.45,.47,.55),vec3(1.,.93,.82),smoothstep(.48,.85,c))+vec3(1.,.7,.4)*pow(sd,2.)*.6;
   col=mix(col,cl,cov*.92);
-  float o=clamp(oc+smoothstep(.2,-.5,d.z)*.75*oc*1.8,0.,1.);   // heavier cloud over the gorge and falls
+  float o=max(clamp(oc+smoothstep(.2,-.5,d.z)*.75*oc*1.8,0.,1.),.42);   // heavier cloud over the gorge and falls
   col=mix(col,fogC*mix(.95,1.08,fb(cu*1.5)),o);
   gl_FragColor=vec4(col,1.);
   #include <tonemapping_fragment>
@@ -903,7 +903,8 @@ mist(160,()=>[fx+(rnd()-.5)*14,2+rnd()*6,34+rnd()*8],14,.05,55);
 mist(260,()=>[fx+(rnd()-.5)*22,rnd()*1.5,44+rnd()*14],9,.16,4);   // churning spray where the falls hits the river   // spray column rising off the plunge pool             // base plume
 mist(220,()=>[fx+(rnd()-.5)*26,rnd()*3,40+rnd()*16],16,.13,14);   // dense glowing base cloud
 mist(160,()=>{const z=40-rnd()*30;return[riverX(z)+(rnd()-.5)*20,H(riverX(z),z)+rnd()*6,z]},8,.05,10); // face spray
-mist(200,()=>[(rnd()-.5)*200,60+rnd()*25,45+rnd()*180],60,.03,10);          // valley cloud
+mist(200,()=>[(rnd()-.5)*200,60+rnd()*25,45+rnd()*180],60,.03,10);
+mist(260,()=>[(rnd()-.5)*280,1+rnd()*5,LZ+30+rnd()*80],30,.06,3);   // low mist lying along the far shore          // valley cloud
 mist(400,()=>{const z=50+rnd()*190;return[riverX(z)+(rnd()-.5)*16,.5+rnd()*2,z]},5,.10,4); // river haze
 
 let gateRibbons=[],moose=null;
