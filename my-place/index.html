@@ -438,20 +438,20 @@ sky.frustumCulled=false;sky.renderOrder=-1;scene.add(sky);
  const g=new THREE.PlaneGeometry(3400,1700,340,170);g.rotateX(-Math.PI/2);g.translate(0,0,1500);
  const p=g.attributes.position;for(let i=0;i<p.count;i++)p.setY(i,M(p.getX(i),p.getZ(i))-15);
  g.computeVertexNormals();
- const mm=new THREE.MeshStandardMaterial({roughness:.95,envMapIntensity:.6,fog:false});const rt=tex('dark_rock_diff.jpg',1);
+ const mm=new THREE.MeshStandardMaterial({roughness:.95,envMapIntensity:.6,fog:false,flatShading:true});const rt=tex('dark_rock_diff.jpg',1);
  mm.onBeforeCompile=sh=>{sh.uniforms.rt={value:rt};
   sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 mW;varying vec3 mN;').replace('#include <begin_vertex>','#include <begin_vertex>\nmW=(modelMatrix*vec4(position,1.)).xyz;mN=normal;');
   sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nuniform sampler2D rt;varying vec3 mW;varying vec3 mN;\n'+GN).replace('#include <map_fragment>',`
    vec3 n=normalize(mN);vec3 an=abs(n);an/=an.x+an.y+an.z;
-   vec3 rock=(texture2D(rt,mW.zy*.012).rgb*an.x+texture2D(rt,mW.xz*.012).rgb*an.y+texture2D(rt,mW.xy*.012).rgb*an.z);
+   vec3 rock=(texture2D(rt,mW.zy*.035).rgb*an.x+texture2D(rt,mW.xz*.035).rgb*an.y+texture2D(rt,mW.xy*.035).rgb*an.z);
    rock=mix(vec3(dot(rock,vec3(.33))),rock,.35)*vec3(.95,.97,1.05)*.8;
-   rock*=mix(.7,1.15,fb(mW.xz*.01));
+   rock*=mix(.7,1.15,fb(mW.xz*.01));rock*=mix(.45,1.05,smoothstep(.32,.62,fb(vec2(mW.x*.05+mW.z*.03,mW.y*.11))));rock*=mix(.7,1.,smoothstep(.2,.5,fract(mW.y*.045+fb(mW.xz*.02)*.8)));
    float nz=fb(mW.xz*.006);
    float tree=(1.-smoothstep(190.+nz*70.,240.+nz*70.,mW.y))*smoothstep(.35,.6,n.y);
    vec3 forest=vec3(.028,.05,.038)*mix(.7,1.2,fb(mW.xz*.05));
    float snowLine=330.+nz*60.;
-   float snow=smoothstep(snowLine-10.,snowLine+20.,mW.y)*smoothstep(.42,.68,n.y+fb(mW.xz*.03)*.25);
-   snow=max(snow,smoothstep(snowLine+60.,snowLine+110.,mW.y)*smoothstep(.2,.45,n.y)*.85);
+   float snow=smoothstep(snowLine-4.,snowLine+6.,mW.y)*smoothstep(.55,.62,n.y+fb(mW.xz*.06)*.35-.12);
+   snow=max(snow,smoothstep(snowLine+60.,snowLine+90.,mW.y)*smoothstep(.42,.5,n.y+fb(mW.xz*.08)*.3-.1)*.9);
    diffuseColor.rgb=mix(mix(rock,forest,tree),vec3(.9,.92,.97),snow);diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.42,.5,.56),.3);`)};
  scene.add(new THREE.Mesh(g,mm));}
 
@@ -836,11 +836,15 @@ hearthSpots.forEach(([x,y,face])=>{const g=new THREE.Group();g.position.set(x-LW
  [[-.35,.2],[.3,-.25],[0,.5]].forEach(([dx,r])=>{const lg=new THREE.CylinderGeometry(.1,.11,1.15,3,2);lg.scale(1,1,.75);const l=new THREE.Mesh(lg,campLogM);l.rotation.set(0,r,Math.PI/2);l.position.set(dx*.4,.06,(r>0?-.1:.05));g.add(l)});
  const pl=new THREE.PointLight(0xff8a3a,4,7,1.5);pl.position.set(0,.6,.6);g.add(pl);g.userData.pl=pl;lodge.add(g);hearthFires.push(g)});
 function setFire(on){fireOn=on;fireU.on.value=on?1:0;fireBtn.textContent=on?'Put out fire':'Light campfire';fireBtn.setAttribute('aria-pressed',on)}
-function updateFire(){if(!fireOn){fireLight.intensity=fireLight2.intensity=0;return}const t=U.t.value;
+const bigFl=[];function updateFire(){for(const f of bigFl)f.rotation.set(0,Math.atan2(camera.position.x-f.position.x,camera.position.z-f.position.z),0);if(!fireOn){fireLight.intensity=fireLight2.intensity=0;return}const t=U.t.value;
  const fl=1+Math.sin(t*11.3)*.12+Math.sin(t*17.9+1.)*.08+Math.sin(t*5.1)*.1;fireLight.intensity=16*fl;fireLight2.intensity=7*fl;fireLight.position.x=Math.sin(t*7.)*.06;
  flame.quaternion.copy(camera.quaternion);flame.rotation.set(0,Math.atan2(camera.position.x-flame.position.x,camera.position.z-flame.position.z),0)}
 
-{const m=MARKERS.find(m=>m.k==='fire');if(m){const c=fireGroup.clone(true);c.position.set(m.x,H(m.x,m.z)-.1,m.z);c.scale.setScalar(3);const on={value:1};c.traverse(o=>{const p=o.geometry&&o.geometry.parameters;if(p&&p.radiusTop===.2&&p.height===1.6)o.visible=false;if(o.material&&o.material.uniforms&&o.material.uniforms.on){o.material=o.material.clone();o.material.uniforms.on=on;o.material.uniforms.t=U.t}if(o.isPointLight)o.intensity=Math.max(o.intensity,8)});scene.add(c)}}
+{const m=MARKERS.find(m=>m.k==='fire');if(m){const c=fireGroup.clone(true);c.position.set(m.x,H(m.x,m.z)-.1,m.z);c.scale.setScalar(3);const on={value:1};c.traverse(o=>{const p=o.geometry&&o.geometry.parameters;if(p&&p.radiusTop===.2&&p.height===1.6)o.visible=false;if(o.material&&o.material.uniforms&&o.material.uniforms.on){o.material=o.material.clone();o.material.uniforms.on=on;o.material.uniforms.t=U.t}if(o.isPointLight)o.intensity=Math.max(o.intensity,8)});scene.add(c);
+  const ON=o=>{if(o.material&&o.material.uniforms&&o.material.uniforms.on){o.material=o.material.clone();o.material.uniforms.on=on;o.material.uniforms.t=U.t;if(o.material.uniforms.seed)o.material.uniforms.seed={value:o.material.uniforms.seed.value+5.}}};
+  const f2=flame.clone(true);f2.traverse(ON);f2.position.set(m.x,H(m.x,m.z)-.1+.12*3,m.z);f2.scale.set(1.45*3,1.8*3,1.45*3);scene.add(f2);bigFl.push(f2);
+  scene.children.filter(o=>o.isPoints&&o.position.equals(flame.position)).forEach(pp=>{const q=pp.clone();ON(q);q.position.copy(f2.position);q.scale.setScalar(3);scene.add(q)});
+  const L=new THREE.PointLight(0xff7a2e,40,40,1.6);L.position.set(m.x,H(m.x,m.z)+2.5,m.z);scene.add(L)}}
 // ---------- fish leaping in the lake ----------
 const fishes=(()=>{const g=new THREE.SphereGeometry(1,14,8);g.scale(.28,.07,.055);
  const tail=new THREE.ConeGeometry(.06,.12,4);tail.rotateZ(Math.PI/2);tail.scale(1,1,.25);tail.translate(-.32,0,0);
