@@ -766,7 +766,7 @@ const fireLight=new THREE.PointLight(0xff7a2e,0,16,1.6),fireLight2=new THREE.Poi
  stoneM.onBeforeCompile=sh=>{sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 fW;').replace('#include <begin_vertex>','#include <begin_vertex>\nfW=(modelMatrix*vec4(transformed,1.)).xyz;');
   sh.uniforms.fc={value:new THREE.Vector3(FIRE.x,fy,FIRE.z)};
   sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nvarying vec3 fW;uniform vec3 fc;').replace('#include <map_fragment>','#include <map_fragment>\ndiffuseColor.rgb*=.85+.3*fract(sin(dot(floor(fW.xz*40.),vec2(12.9,78.2)))*43758.5);float soot=1.-smoothstep(.45,.85,length(fW.xz-fc.xz));diffuseColor.rgb*=mix(1.,.3,soot*smoothstep(.0,.3,fW.y-fc.y+.05)*.8);')};
- const tints=[0x5f5d58,0x6c6456,0x535a60,0x4a4844,0x736f66];
+ const tints=[0x3a3836,0x45403a,0x34383c,0x2c2a28,0x4a4640];
  for(let i=0;i<13;i++){const a=i/13*6.283+rnd()*.3,r=.74+rnd()*.08,sm2=stoneM.clone();sm2.color.set(tints[i%5]);sm2.onBeforeCompile=stoneM.onBeforeCompile;const st=new THREE.Mesh(sgs[i%3],sm2);
   st.position.set(Math.cos(a)*r,-.02,Math.sin(a)*r);const k=.19+rnd()*.09;st.scale.set(k*(1+rnd()*.5),k*(.8+rnd()*.5),k*(1+rnd()*.4));st.rotation.set(rnd()*.4,rnd()*6.28,rnd()*.4);fireGroup.add(st)}
  // ash and ember bed
@@ -798,7 +798,7 @@ const fireLight=new THREE.PointLight(0xff7a2e,0,16,1.6),fireLight2=new THREE.Poi
  for(let i=0;i<8;i++){const a=rnd()*6.283,r=.25+rnd()*.12;lean(.015+rnd()*.01,0,new THREE.Vector3(Math.cos(a)*r,.03,Math.sin(a)*r),new THREE.Vector3(Math.cos(a+2.8)*.03,.4+rnd()*.12,Math.sin(a+2.8)*.03))}
  // a couple of spare logs and the benches
  const benchM=new THREE.MeshStandardMaterial({map:tex('spruce_bark.jpg',1),normalMap:tex('spruce_bark_nor.jpg'),roughness:1,color:0x8a7a6a});
- [[1.9,.3],[-1.6,2.2]].forEach(([dx,a])=>{const b=new THREE.Mesh(new THREE.CylinderGeometry(.2,.22,1.6,12),benchM);b.rotation.set(0,a,Math.PI/2);b.position.set(dx,.2,dx*.4);fireGroup.add(b)});}
+ [[1.9,.3],[-1.6,2.2]].forEach(([dx,a])=>{const b=new THREE.Mesh(new THREE.CylinderGeometry(.2,.22,1.6,12),benchM);b.rotation.set(0,a,Math.PI/2);b.position.set(dx,.13,dx*.4);fireGroup.add(b)});}
 // flame: three camera-facing layers of animated noise shaped into tongues
 const flame=new THREE.Group();flame.position.set(FIRE.x,H(FIRE.x,FIRE.z)+.12,FIRE.z);flame.scale.set(1.45,1.8,1.45);scene.add(flame);
 [[1.15,.9,0.,1.,0],[.9,.7,3.7,1.15,0],[.55,.42,7.1,1.5,0],[.8,.55,11.3,.9,-.24],[.75,.5,15.9,.9,.26],[.5,.4,21.,1.1,.1]].forEach(([h,w,seed,hot,ox])=>{
@@ -837,7 +837,7 @@ hearthSpots.forEach(([x,y,face])=>{const g=new THREE.Group();g.position.set(x-LW
  const pl=new THREE.PointLight(0xff8a3a,4,7,1.5);pl.position.set(0,.6,.6);g.add(pl);g.userData.pl=pl;lodge.add(g);hearthFires.push(g)});
 function setFire(on){fireOn=on;fireU.on.value=on?1:0;fireBtn.textContent=on?'Put out fire':'Light campfire';fireBtn.setAttribute('aria-pressed',on)}
 function updateFire(){if(!fireOn){fireLight.intensity=fireLight2.intensity=0;return}const t=U.t.value;
- const fl=1+Math.sin(t*11.3)*.12+Math.sin(t*17.9+1.)*.08+Math.sin(t*5.1)*.1;fireLight.intensity=5*fl;fireLight2.intensity=3*fl;fireLight.position.x=Math.sin(t*7.)*.06;
+ const fl=1+Math.sin(t*11.3)*.12+Math.sin(t*17.9+1.)*.08+Math.sin(t*5.1)*.1;fireLight.intensity=16*fl;fireLight2.intensity=7*fl;fireLight.position.x=Math.sin(t*7.)*.06;
  flame.quaternion.copy(camera.quaternion);flame.rotation.set(0,Math.atan2(camera.position.x-flame.position.x,camera.position.z-flame.position.z),0)}
 
 {const m=MARKERS.find(m=>m.k==='fire');if(m){const c=fireGroup.clone(true);c.position.set(m.x,H(m.x,m.z)-.1,m.z);c.scale.setScalar(3);const on={value:1};c.traverse(o=>{const p=o.geometry&&o.geometry.parameters;if(p&&p.radiusTop===.2&&p.height===1.6)o.visible=false;if(o.material&&o.material.uniforms&&o.material.uniforms.on){o.material=o.material.clone();o.material.uniforms.on=on;o.material.uniforms.t=U.t}if(o.isPointLight)o.intensity=Math.max(o.intensity,8)});scene.add(c)}}
