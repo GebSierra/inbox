@@ -210,12 +210,12 @@ let terrain;
      gr=mix(gr,vec3(.18,.33,.08),smoothstep(.5,.8,abs(normalize(vWN).y))*smoothstep(.45,.62,texture2D(tR,vWP.xz*.03).g)*.85);
      gr=mix(gr,gr*.45,(1.-smoothstep(3.,8.,abs(vWP.x-8.5)))*smoothstep(56.,40.,vWP.z)*.8);rock=mix(rock,gr,gz);}   /* fractured light-grey granite, lichen, moss on ledges, dark wet rock beside the falls */   /* lit grey headwall behind the falls */
     vec3 grass=texture2D(tG,vWP.xz*.12).rgb*mix(.8,1.1,texture2D(tG,vWP.xz*.013).g)*vec3(.62,.86,.5);
-    if(vWP.z<2.)grass*=vec3(1.18,1.05,.62);vec3 leaf=(texture2D(tLf,vWP.zy*.14).rgb*an.x+texture2D(tLf,vWP.xz*.14).rgb*an.y+texture2D(tLf,vWP.xy*.14).rgb*an.z)*.8;if(vWP.x>8.&&vWP.z<70.&&vWP.z>-30.){leaf*=vec3(.52,.5,.45)*mix(1.,.8,an.x+an.z);leaf=mix(leaf,vec3(.16,.2,.08)*mix(.75,1.3,texture2D(tG,vWP.xz*.2).g),.35+.45*smoothstep(.35,.65,texture2D(tR,vWP.xz*.04).g));float st=1.-smoothstep(.5,.8,abs(normalize(vWN).y));vec3 bk=vec3(dot(rock,vec3(.33)))*vec3(1.02,1.,.94)*2.4;bk=mix(bk,vec3(.17,.28,.08),smoothstep(.4,.7,texture2D(tR,vWP.xz*.05+vWP.y*.03).g)*.7);leaf=mix(leaf,bk,st*.85);}
+    if(vWP.z<2.)grass*=vec3(1.18,1.05,.62);vec3 leaf=(texture2D(tLf,vWP.zy*.14).rgb*an.x+texture2D(tLf,vWP.xz*.14).rgb*an.y+texture2D(tLf,vWP.xy*.14).rgb*an.z)*.8;if(vWP.x>8.&&vWP.z<70.&&vWP.z>-30.){leaf*=vec3(.52,.5,.45)*mix(1.,.8,an.x+an.z);leaf=mix(leaf,vec3(.16,.2,.08)*mix(.75,1.3,texture2D(tG,vWP.xz*.2).g),.35+.45*smoothstep(.35,.65,texture2D(tR,vWP.xz*.04).g));}
     vec3 sp=vSplat/max(.001,vSplat.r+vSplat.g+vSplat.b);
     // wet darkening near the waterline
     float wet=1.-smoothstep(.2,2.2,vWP.y);
     vec3 sand=texture2D(tS,vWP.xz*.9).rgb*.75+texture2D(tS,vWP.xz*.23).rgb*.25;sand=sand*1.15*mix(.8,1.1,texture2D(tS,vWP.xz*.02).r);
-    vec3 base=(rock*sp.r+grass*sp.g+leaf*sp.b)*mix(1.,.55,wet);if(vWP.z<232.)sand*=vec3(.5,.44,.36);
+    vec3 base=(rock*sp.r+grass*sp.g+leaf*sp.b)*mix(1.,.55,wet);if(vWP.x>8.&&vWP.x<100.&&vWP.z<70.&&vWP.z>-30.){vec3 fn=normalize(cross(dFdx(vWP),dFdy(vWP)));float st=1.-smoothstep(.45,.75,abs(fn.y));vec3 bk=vec3(dot(rock,vec3(.33)))*vec3(1.02,1.,.94)*2.2;bk=mix(bk,vec3(.17,.28,.08),smoothstep(.4,.7,texture2D(tR,vWP.xz*.05+vWP.y*.03).g)*.7);base=mix(base,bk,st*.85);}if(vWP.z<232.)sand*=vec3(.5,.44,.36);
     if(vWP.y>2.5)sand=mix(vec3(.09,.07,.05),texture2D(tLf,vWP.xz*.7).rgb*.45,.45)*mix(.7,1.25,texture2D(tLf,vWP.xz*.25).r);diffuseColor.rgb=mix(base,sand*mix(1.,.45,1.-smoothstep(-.6,.55,vWP.y)),vBeach);`)
    .replace('#include <normal_fragment_maps>','#if 0\n#include <normal_fragment_maps>\n#endif\n{vec3 mn=texture2D(normalMap,vWP.xz*.08).xyz*2.-1.;normal=normalize(normal+(vSplat.r*.9+.2)*vec3(mn.x,mn.y,0.)*normalScale.x*.5);}');};
  terrain=new THREE.Mesh(g,mat);scene.add(terrain);}
