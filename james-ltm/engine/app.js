@@ -71,7 +71,7 @@ let useAO = !MOBILE && !new URLSearchParams(location.search).has('fast');
 }
 scene.add(new THREE.HemisphereLight('#ffdcb8', '#7a5e46', 1.05));
 const sun = new THREE.DirectionalLight('#ffae6a', 3.6);
-sun.position.set(-130, 46, -30);   // low evening sun from the west, over the sea sun.castShadow = true;
+sun.position.set(-130, 46, -30); sun.castShadow = true;   // low evening sun from the west, over the sea
 sun.shadow.mapSize.set(MOBILE ? 2048 : 4096, MOBILE ? 2048 : 4096);
 Object.assign(sun.shadow.camera, { left: -130, right: 130, top: 130, bottom: -130, near: 1, far: 400 });
 sun.shadow.bias = -0.0006; sun.shadow.normalBias = 0.4;
@@ -647,7 +647,7 @@ function stoa(xa, za, xb, zb, { depth = 4, h = 4.6, cols = 6, face = 1, wall = '
 }
 { // 2 · Tower of the Winds: an octagonal marble tower with a sundial face and wind reliefs
   const tx = -18.2, tz = 55, y = heightAt(tx, tz), g = new THREE.Group(); g.position.set(tx, y, tz); scene.add(g);
-  cyl(3.1, 3.2, .5, 8, 'marble', 0, 0, 0, g); const body = cyl(2.6, 2.6, 7.6, 8, 'stone', 0, .5, 0, g); body.rotation.y = Math.PI / 8;
+  cyl(3.1, 3.2, .5, 8, 'marble', 0, 0, 0, g); const body = cyl(2.6, 2.6, 7.6, 8, mat('towerM', '#efe2c8'), 0, .5, 0, g); body.rotation.y = Math.PI / 8;
   const fr = cyl(2.72, 2.72, .9, 8, 'marble', 0, 7.1, 0, g); fr.rotation.y = Math.PI / 8;
   const rf = add(new THREE.ConeGeometry(2.9, 1.5, 8), 'stoneDk', 0, 8.75, 0, g); rf.rotation.y = Math.PI / 8; cyl(.12, .2, .5, 6, 'marble', 0, 9.4, 0, g);
   // sundial on the face towards the square

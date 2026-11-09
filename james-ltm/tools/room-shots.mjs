@@ -15,8 +15,8 @@ if (MARK) await p.evaluate(() => document.getElementById('gembtn')?.click());
 const n = await p.evaluate(() => window.__state().n), list = idx.length ? idx : [...Array(n).keys()];
 for (const i of list) { await p.evaluate(i => window.__snap(i), i); await p.waitForTimeout(2500);
   const name = await p.evaluate(i => window.__dump().rooms[i].name, i);
-  await p.screenshot({ path: `${out}/room-${i}.png` }); console.log(`room-${i}.png  ${name}`); }
-if (AERIAL) { await p.evaluate(() => window.__cam(0, 55, 100, 0, 0, 52)); await p.waitForTimeout(3000); await p.screenshot({ path: `${out}/aerial.png` }); console.log('aerial.png'); }
+  await p.screenshot({ path: `${out}/room-${i}.png`, timeout: 240000 }); console.log(`room-${i}.png  ${name}`); }
+if (AERIAL) { await p.evaluate(() => window.__cam(0, 55, 100, 0, 0, 52)); await p.waitForTimeout(3000); await p.screenshot({ path: `${out}/aerial.png`, timeout: 240000 }); console.log('aerial.png'); }
 console.log('bookCheck:', JSON.stringify(await p.evaluate(() => window.__bookCheck)));
 console.log(errs.length ? 'ERRORS:\n' + errs.join('\n') : 'no page errors');
 await b.close(); close();
