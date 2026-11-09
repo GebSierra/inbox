@@ -53,6 +53,9 @@
   #numbtn[aria-pressed=true]{background:var(--terra);color:#fff8ee;border-color:var(--terra)}
   body.tutorial #numbtn{display:none}
   @media (max-width:600px){#numbtn{left:auto;transform:none;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(76px + env(safe-area-inset-bottom,0px))}}
+  #fsbtn{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(110px + env(safe-area-inset-bottom,0px));width:34px;height:34px;border-radius:8px;border:1px solid #c9b48f;background:var(--paper);color:var(--ink);font-size:18px;cursor:pointer;padding:0;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+  @media (max-width:600px){#fsbtn{bottom:calc(118px + env(safe-area-inset-bottom,0px))}}
+  body.tutorial #fsbtn{display:none}
   #infobtn{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(66px + env(safe-area-inset-bottom,0px));width:34px;height:34px;border-radius:50%;border:1px solid #c9b48f;background:var(--paper);color:var(--ink);font:italic bold 17px Georgia;cursor:pointer;padding:0;box-shadow:0 2px 6px rgba(0,0,0,.15)}
   #credits .tg{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
   #credits .tg button{position:static!important;transform:none!important;margin:0!important;width:100%}
@@ -87,6 +90,7 @@
 <div id="help">WASD / arrows to walk · drag to look · double-click to go there · N / P jump stations</div>
 <button id="mapbtn">Bird’s-eye</button>
 <button id="howbtn" aria-label="How it works">How it works</button>
+<button id="fsbtn" aria-label="Full screen">⛶</button>
 <button id="infobtn" aria-label="Settings and credits">i</button>
 <div id="credits" hidden><div class="tg"><button id="gembtn" aria-pressed="false">Markers: off</button><button id="numbtn" aria-pressed="false">Verse numbers: off</button></div><b>Credits</b><br>Medieval Village MegaKit by Quaternius (CC0).<br><a href="https://sketchfab.com/3d-models/low-poly-bird-animated-82ada91f0ac64ab595fbc3dc994a3590" target="_blank" rel="noopener">Low Poly Bird (Animated)</a> by Charlie Tinley, CC BY 4.0.<br><a href="https://sketchfab.com/3d-models/low-poly-market-stall-game-ready-asset-20660479b5c24f55b7873adf4bca4073" target="_blank" rel="noopener">Low Poly Market Stall — Game-Ready Asset</a> by BlackMike, CC BY 4.0.<br><a href="https://sketchfab.com/3d-models/low-poly-traditional-market-stall-83f6b14a28094a5ab5f8396ea6f4c1e9" target="_blank" rel="noopener">Low Poly Traditional Market Stall</a> by Nisa Nurul Azizah, CC BY 4.0.<br><a href="https://sketchfab.com/3d-models/modular-medieval-table-08dd395a346a440ba85e8b3b46ab3672" target="_blank" rel="noopener">Modular Medieval Table</a> by GameWorldStudio, CC BY 4.0.<br>Scripture quotations from the ESV® Bible, © Crossway.</div>
 <div id="tut" hidden>
@@ -619,7 +623,7 @@ P.bucket = (g, x, y, z) => { add(new THREE.LatheGeometry([[0, 0], [.2, 0], [.25,
   cyl(.22, .22, .02, 14, mat('dyeBlue', '#2f5f9a', { roughness: .2 }), x, y + .38, z, g); const hd = add(new THREE.TorusGeometry(.24, .012, 4, 12, Math.PI), mat('iron', '#3c3a38'), x, y + .44, z, g); hd.rotation.z = .3; return y + .7; };
 P.bolts = (g, x, y, z) => { ['#7a3b6a', '#3f6f9a', '#e0b44a'].forEach((c, i) => { const b = add(new THREE.CylinderGeometry(.13, .13, .9, 12), mat('w' + c, c), x, y + .13 + i * .25, z, g); b.rotation.z = Math.PI / 2; for (const e of [-1, 1]) { const cap = add(new THREE.CircleGeometry(.13, 12), mat('wE' + c, new THREE.Color(c).multiplyScalar(.7).getStyle()), x + e * .451, y + .13 + i * .25, z, g); cap.rotation.y = e * Math.PI / 2; } }); return y + .8; };
 const _basket = P.basket; P.basket = (g, x, y, z, c, n = 12) => {
-  if (MODELS.stall) { const top = placePart(g, 'stall', 'Cylinder133', x, y, z, .62, R(0, 6)); for (let i = 0; i < n + 6; i++) add(new THREE.IcosahedronGeometry(.085, 1), mat('f' + c + 's', c, { flatShading: false, roughness: .5 }), x + R(-.13, .13), top - .2 + (i % 3) * .06, z + R(-.13, .13), g); return top; } const t = _basket(g, x, y, z, c, n); const rim = add(new THREE.TorusGeometry(.42, .03, 5, 16), 'basket', x, y + .32, z, g); rim.rotation.x = Math.PI / 2; return t; };
+  if (MODELS.stall) { const top = placePart(g, 'stall', 'Cylinder133', x, y, z, .62, R(0, 6)); for (let i = 0; i < n; i++) { const a = R(0, Math.PI * 2), r2 = R(0, .1); add(new THREE.IcosahedronGeometry(.07, 1), mat('f' + c + 's', c, { flatShading: false, roughness: .5 }), x + Math.cos(a) * r2, top - .04 + (i % 3) * .045, z + Math.sin(a) * r2, g); } return top; } const t = _basket(g, x, y, z, c, n); const rim = add(new THREE.TorusGeometry(.42, .03, 5, 16), 'basket', x, y + .32, z, g); rim.rotation.x = Math.PI / 2; return t; };
 Object.assign(P, {
   bed: (g, x, y, z) => { box(1, .4, 1.7, 'woodLt', x, y, z, g); box(.9, .2, 1.6, 'wool', x, y + .4, z, g); box(.7, .15, .35, mat('pillow', '#e8dcc4'), x, y + .6, z - .6, g); box(.93, .07, .9, mat('blanket', '#3f6f9a'), x, y + .6, z + .3, g); return y + .75; },
   cradle: (g, x, y, z) => { box(.55, .35, .85, 'wood', x, y + .14, z, g); for (const s of [-1, 1]) { const r = box(.08, .1, 1, 'woodLt', x + s * .22, y, z, g); } box(.45, .1, .5, mat('babyblanket', '#e0b44a'), x, y + .49, z + .1, g); return y + .65; },
@@ -725,7 +729,7 @@ const MARKET = [
 }
 // game-ready stall frame for the other trades: own awning colour, own goods in the crates
 const CRATE_GOODS = {
-  'Fig Seller': { loci: [[{ fruit: '#5b2a5c', r: .075 }, 'crate of figs'], [{ fruit: '#7a4a2a', r: .05, n: 30 }, 'crate of dates'], ['honey', 'honey jars'], [{ fruit: '#d9a640', r: .065 }, 'crate of apricots'], [{ fruit: '#6a7a3a', r: .04, n: 40 }, 'crate of olives']], fill: [{ fruit: '#e8dcc4', r: .035, n: 40 }, { fruit: '#b8331f', r: .08 }] },
+  'Fig Seller': { loci: [[{ fruit: '#5b2a5c', r: .075 }, 'crate of purple figs'], [{ fruit: '#4a2048', r: .07 }, 'crate of dark figs'], [{ fruit: '#6a7a3a', r: .07 }, 'crate of green figs'], [{ fruit: '#7a3a6a', r: .075 }, 'crate of ripe figs'], [{ fruit: '#5b2a5c', r: .072 }, 'crate of figs']], fill: [{ fruit: '#4a2048', r: .07 }, { fruit: '#6a7a3a', r: .07 }] },
   'Scribe’s Table': { loci: [['scrolls', 'crate of scrolls'], ['tablets', 'wax tablets'], ['ink', 'ink pots and quills'], ['letters', 'sealed letters'], ['scrolls', 'scrolls for sale']], fill: ['letters', 'tablets'] },
   'The Potter': { loci: [['jugs', 'little jugs'], ['bowls', 'stacked bowls'], ['lamps', 'clay oil lamps'], ['cups', 'drinking cups'], ['jugs', 'painted jugs']], fill: ['cups', 'bowls'] },
 };
@@ -750,7 +754,7 @@ const CRATES = (() => { if (!MODELS.gstall) return null; let fm; MODELS.gstall.u
   return { low: rows[0], high: rows[1] }; })();
 window.__crates = CRATES;
 // fill one crate with goods, inside its walls; k = model scale
-function fillCrate(g, c, kind, k = 1.35) { const x = c.x * k, y = c.y * k, z = c.z * k, w = Math.min(.55, c.w * k) * .8, d = Math.min(.45, c.d * k) * .8; let top = y;
+function fillCrate(g, c, kind, k = 1.35) { const x = c.x * k, y = c.y * k + (c.y > .5 ? .08 : 0), z = c.z * k, w = Math.min(.55, c.w * k) * .8, d = Math.min(.45, c.d * k) * .8; let top = y;
   const fruit = (col, r, n) => { for (let i = 0; i < n; i++) { const yy = y + r + (i % 3) * r * .9; add(new THREE.IcosahedronGeometry(r * R(.85, 1.1), 1), mat('fr' + col, col, { flatShading: false, roughness: .5 }), x + R(-w, w) / 2, yy, z + R(-d, d) / 2, g); top = Math.max(top, yy + r); } };
   if (kind.fruit) fruit(kind.fruit, kind.r || .07, kind.n || 22);
   else if (kind === 'scrolls') for (let i = 0; i < 7; i++) { const sc = add(new THREE.CylinderGeometry(.045, .045, w * .95, 8), mat('papyrus', '#e8d6a8'), x, y + .05 + (i % 3) * .07, z - d / 2 + (i % 4) * d / 3, g); sc.rotation.z = Math.PI / 2; sc.rotation.y = R(-.15, .15); top = y + .25; }
@@ -833,7 +837,7 @@ MARKET.forEach((m, i) => {
   box(.1, 1.9, .1, 'wood', -1, heightAt(0, z), z); box(.1, 1.9, .1, 'wood', 1, heightAt(0, z), z); box(2.2, .1, .1, 'wood', 0, heightAt(0, z) + 1.85, z);
   box(2.4, .2, .8, 'stone', 2.6, heightAt(3, z) + .45, z + 2.6); box(.3, .45, .6, 'stone', 1.7, heightAt(3, z), z + 2.6); box(.3, .45, .6, 'stone', 3.5, heightAt(3, z), z + 2.6);
   { const y = heightAt(0, z);
-    cyl(1.45, 1.55, .25, 16, 'stoneDk', 0, y - .05, z); cyl(1.32, 1.32, .1, 16, 'marble', 0, y + .72, z); cyl(.9, .9, .02, 16, mat('wellWater', '#2f5a5a', { roughness: .1 }), 0, y + .55, z);
+    cyl(1.45, 1.55, .25, 16, 'stoneDk', 0, y - .05, z); { const rim = add(new THREE.RingGeometry(.88, 1.32, 24), mat('rimM', '#e8e2d6', { side: THREE.DoubleSide }), 0, y + .73, z); rim.rotation.x = -Math.PI / 2; const shaft = add(new THREE.CylinderGeometry(.88, .88, 2.4, 20, 1, true), mat('shaft', '#2a221c', { side: THREE.BackSide }), 0, y + .73 - 1.2, z); shaft.castShadow = false; cyl(.87, .87, .02, 20, mat('wellWater', '#1e3a3c', { roughness: .05, metalness: .2 }), 0, y - 1.2, z); }
     
     const wl = add(new THREE.CylinderGeometry(.11, .11, 2, 10), 'wood', 0, y + 1.45, z); wl.rotation.z = Math.PI / 2;
     box(.07, .5, .07, 'wood', 1.15, y + 1.35, z + .2); box(.25, .07, .07, 'wood', 1.15, y + 1.85, z + .3);
@@ -1236,6 +1240,8 @@ joy.addEventListener('pointermove', e => { if (e.pointerId !== jid) return; cons
 joy.addEventListener('pointerup', () => { jid = null; jv = { x: 0, y: 0 }; knob.style.transform = ''; });
 
 let showNums = false; try { showNums = localStorage.getItem('colossae-nums') === '1'; } catch (e) {}
+{ const fb = document.getElementById('fsbtn'), el = document.documentElement; if (!(el.requestFullscreen || el.webkitRequestFullscreen)) fb.hidden = true;
+  fb.onclick = () => { try { if (document.fullscreenElement || document.webkitFullscreenElement) (document.exitFullscreen || document.webkitExitFullscreen).call(document); else (el.requestFullscreen || el.webkitRequestFullscreen).call(el)?.catch?.(() => {}); } catch (e) {} }; }
 document.getElementById('infobtn').onclick = () => { const c = document.getElementById('credits'); c.hidden = !c.hidden; };
 const numbtn = document.getElementById('numbtn'); const syncNum = () => { numbtn.textContent = `Verse numbers: ${showNums ? 'on' : 'off'}`; numbtn.setAttribute('aria-pressed', showNums); };
 let showGems = false; try { showGems = localStorage.getItem('colossae-gems') === '1'; } catch (e) {}
@@ -1294,7 +1300,7 @@ function frame() { window.__fc = (window.__fc || 0) + 1;
 
   if (tutCam) { window.__tutT0 ??= performance.now(); const k0 = Math.min(1, (performance.now() - window.__tutT0) / 1600), k = k0 * k0 * (3 - 2 * k0);
     let T; if (tutCam === 'fly') { const a = t * .12; T = { p: new THREE.Vector3(25 + Math.sin(a) * 120, 95, 20 + Math.cos(a) * 120), l: new THREE.Vector3(22, 0, 22) }; } else T = tutCamTarget(tutCam);
-    camera.position.lerp(T.p, tutCam === 'fly' ? Math.max(k, .05) : k); window.__tutLook = (window.__tutLook || T.l.clone()).lerp(T.l, Math.max(k, .05)); camera.lookAt(window.__tutLook);
+    window.__tcp ??= camera.position.clone(); const kk = 1 - Math.exp(-dt * (tutCam === 'fly' ? 1.2 : 2.2)); window.__tcp.lerp(T.p, kk); camera.position.copy(window.__tcp); window.__tutLook = (window.__tutLook || T.l.clone()).lerp(T.l, kk); camera.lookAt(window.__tutLook);
     if (tutCycle && tutLocus === null || (tutCycle && TUT[tutI] && TUT[tutI].locus === undefined)) { const cur = Math.floor(t * 1.1) % 5; tutLocus = cur; for (const grp of [tutSquare, stallSquare]) (grp.userData.discs || []).forEach((d, j) => { if (d.isSprite) d.scale.setScalar(j === cur ? .9 : .55); else d.scale.setScalar(j === cur ? 1.5 : 1); }); } }
   if (false) { const gy = groundY(0, GZ); window.__tutT0 ??= performance.now(); window.__tutK = Math.min(1, (performance.now() - window.__tutT0) / 1400); const k = window.__tutK * window.__tutK * (3 - 2 * window.__tutK); camera.position.lerp(new THREE.Vector3(0, gy + 17, GZ + 13), k); camera.lookAt(0, gy, GZ + 4.5); }
 
@@ -1337,7 +1343,7 @@ const TUT = [
   { t: 'One district per chapter', cam: 'fly', b: `<p><b>Chapter 1</b> is the market, from the city gate to the well. <b>Chapter 2</b> is the temple courtyard. <b>Chapter 3</b> is the family house. <b>Chapter 4</b> is the river, the bridge and the road out of town.</p>` },
   { t: 'Every room holds five verses', cam: 'gate', b: `<p>Each room holds five verses on five objects, always in the same order as you face it: <b>1</b> near-left, <b>2</b> far-left, <b>3</b> far-right, <b>4</b> near-right, <b>5</b> centre.</p><p>Here at the city gate: the guard, the pot, the torch, the spears and the seal.</p>` },
   { t: 'Same pattern, every room', cam: 'stall', b: `<p>The first stall works the same way: near-left, far-left, far-right, near-right, then the centre.</p><p>Rooms run in order too: up the left side of the market, back down the right, then on to the next district.</p>` },
-  { t: 'Ready?', choice: true, cam: 'stall', b: `<p>That’s the whole method. Start exploring now, or take a few more tips and practise the first five verses together.</p>` },
+  { t: 'Ready?', choice: true, cam: 'stall', b: `<p>That’s the whole method. Start exploring now, or take a few more tips and practice the first five verses together.</p>` },
   { t: 'First, the foundation', part: 2, b: `<p>Locations don't replace memorizing. They lock in what you've already started to learn.</p><p>Before you place a verse, read it aloud <b>10 to 20 times</b> until you can say it roughly from memory. Then tie it to a spot here to finish the job.</p><p><a href="${ESV}" target="_blank" rel="noopener">Open Colossians 1 (ESV) on esv.org</a></p>` },
   { t: 'Verse 1:1 · near-left corner', part: 2, b: `<p>Say Colossians 1:1 a few times. Now tie it to the near-left object, the gate guard. Make it bigger than life: funny, moving, emotional.</p><p class="ex">For example, you could picture the guard stopping Paul, who slams down a huge royal letter stamped "by the will of God," while young Timothy, his arm around Paul, beams like a proud little brother.</p>`, locus: 0 },
   { t: 'Verse 1:2 · far-left corner', part: 2, b: `<p>Next, Colossians 1:2 on the far-left object, the big pot in the corner.</p><p class="ex">For example, you could picture a dove of peace bursting out of the pot, carrying a gift box of grace addressed in giant letters "To the saints at Colossae."</p>`, locus: 1 },
@@ -1386,7 +1392,7 @@ function tutShow(i) {
   document.getElementById('tutChoice').hidden = !st.choice; document.getElementById('tutNext').hidden = !!st.choice;
 }
 window.__tutGo = n => tutShow(n); window.__tc = () => [window.__fc, tutCam, camera.position.toArray().map(v => +v.toFixed(1)), window.__tutT0];
-function tutEnd() { window.__tutTop = false; tutCam = null; tutCycle = false; tutSquare.visible = false; stallSquare.visible = false; tutEl.hidden = true; document.body.classList.remove('tutorial'); tutLocus = null; tutI = -1; store.set('colossae-tut-done', '1'); }
+function tutEnd() { window.__tutTop = false; tutCam = null; window.__tcp = undefined; window.__tutLook = undefined; tutCycle = false; tutSquare.visible = false; stallSquare.visible = false; tutEl.hidden = true; document.body.classList.remove('tutorial'); tutLocus = null; tutI = -1; store.set('colossae-tut-done', '1'); }
 document.getElementById('tutNext').onclick = () => tutI < TUT.length - 1 ? tutShow(tutI + 1) : tutEnd();
 document.getElementById('tutBack').onclick = () => tutShow(Math.max(0, tutI - 1));
 document.getElementById('tutSkip').onclick = tutEnd;
