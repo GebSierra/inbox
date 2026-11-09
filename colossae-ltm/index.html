@@ -460,6 +460,7 @@ function station(ch, room, name, x, z, look, custom) {
   const spots = [[-1, -1], [1, -1], [1, 1], [-1, 1], [0, 0]];   // [forward, right]
   const CORNER = ['near-left corner', 'far-left corner', 'far-right corner', 'near-right corner', 'centre'];
   const loci = [];
+  if (custom && ch === 1 && room >= 2 && room <= 5 && custom.length === 5) { const q = custom.slice(0, 4); custom[4] = { ...custom[4], x: q.reduce((a, c) => a + c.x, 0) / 4, y: q.reduce((a, c) => a + c.y, 0) / 4, z: q.reduce((a, c) => a + c.z, 0) / 4 }; }
   if (custom) { custom.forEach((c, i) => { const v = v0 + i; if (v > v1) return;
       const gem = add(new THREE.OctahedronGeometry(.13, 0), stationMat, c.x, c.y + .35, c.z); gem.castShadow = false; gem.userData.dyn = 1;
       const l = label(`${ch}:${v}`); l.position.set(c.x, c.y + .7, c.z); l.scale.set(.7, .35, 1); labelScene.add(l);
