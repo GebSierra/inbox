@@ -11,6 +11,14 @@
   #hud{position:fixed;left:50%;top:calc(12px + env(safe-area-inset-top,0px));transform:translateX(-50%);background:rgba(244,234,214,.92);color:var(--ink);
        border:1px solid #c9b48f;border-radius:10px;padding:8px 16px;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.18);
        max-width:calc(100vw - 32px);pointer-events:none}
+  #loader{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;background:linear-gradient(#9fbfd6,#f1dcbc 70%);transition:opacity .7s}
+  #loader.done{opacity:0;pointer-events:none}
+  #loader .lc{text-align:center;color:var(--ink);padding:0 24px}
+  #loader .lt{font-size:42px;letter-spacing:.06em}
+  #loader .ls{font-size:15px;opacity:.75;margin:6px 0 22px}
+  #loader .lb{width:min(260px,70vw);height:6px;margin:0 auto;border-radius:3px;background:rgba(59,42,28,.15);overflow:hidden}
+  #loader .lb i{display:block;height:100%;width:5%;background:var(--terra);transition:width .3s}
+  #loader .lp{font-size:13px;margin-top:10px;opacity:.7}
   #hud{transition:opacity .6s}
   #hud.gone{opacity:0}
   #hud .z{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--terra)}
@@ -18,6 +26,14 @@
   @media (min-width:601px){#hud{max-width:calc(100vw - 420px)}}
   @media (max-width:1000px){#help{display:none}}
   #hud{padding:5px 14px!important}
+  #loader{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;background:linear-gradient(#9fbfd6,#f1dcbc 70%);transition:opacity .7s}
+  #loader.done{opacity:0;pointer-events:none}
+  #loader .lc{text-align:center;color:var(--ink);padding:0 24px}
+  #loader .lt{font-size:42px;letter-spacing:.06em}
+  #loader .ls{font-size:15px;opacity:.75;margin:6px 0 22px}
+  #loader .lb{width:min(260px,70vw);height:6px;margin:0 auto;border-radius:3px;background:rgba(59,42,28,.15);overflow:hidden}
+  #loader .lb i{display:block;height:100%;width:5%;background:var(--terra);transition:width .3s}
+  #loader .lp{font-size:13px;margin-top:10px;opacity:.7}
   #hud{transition:opacity .6s}
   #hud.gone{opacity:0}
   #hud .z{font-size:10px!important}
@@ -66,12 +82,13 @@
 </style>
 </head>
 <body>
+<div id="loader"><div class="lc"><div class="lt">Colossae</div><div class="ls">A memory palace for Colossians</div><div class="lb"><i id="lbar"></i></div><div class="lp" id="lpct">Preparing the town…</div></div></div>
 <div id="hud" class="gone"><div class="z">Colossae</div><div class="s">Walk to the city gate</div></div>
 <div id="help">WASD / arrows to walk · drag to look · double-click to go there · N / P jump stations</div>
 <button id="mapbtn">Bird’s-eye</button>
 <button id="howbtn" aria-label="How it works">How it works</button>
 <button id="infobtn" aria-label="Settings and credits">i</button>
-<div id="credits" hidden><div class="tg"><button id="gembtn" aria-pressed="false">Markers: off</button><button id="numbtn" aria-pressed="false">Verse numbers: off</button></div><b>Credits</b><br>Medieval Village MegaKit by Quaternius (CC0).<br><a href="https://sketchfab.com/3d-models/low-poly-market-stall-game-ready-asset-20660479b5c24f55b7873adf4bca4073" target="_blank" rel="noopener">Low Poly Market Stall — Game-Ready Asset</a> by BlackMike, CC BY 4.0.<br><a href="https://sketchfab.com/3d-models/low-poly-traditional-market-stall-83f6b14a28094a5ab5f8396ea6f4c1e9" target="_blank" rel="noopener">Low Poly Traditional Market Stall</a> by Nisa Nurul Azizah, CC BY 4.0.<br><a href="https://sketchfab.com/3d-models/modular-medieval-table-08dd395a346a440ba85e8b3b46ab3672" target="_blank" rel="noopener">Modular Medieval Table</a> by GameWorldStudio, CC BY 4.0.<br>Scripture quotations from the ESV® Bible, © Crossway.</div>
+<div id="credits" hidden><div class="tg"><button id="gembtn" aria-pressed="false">Markers: off</button><button id="numbtn" aria-pressed="false">Verse numbers: off</button></div><b>Credits</b><br>Medieval Village MegaKit by Quaternius (CC0).<br><a href="https://sketchfab.com/3d-models/low-poly-bird-animated-82ada91f0ac64ab595fbc3dc994a3590" target="_blank" rel="noopener">Low Poly Bird (Animated)</a> by Charlie Tinley, CC BY 4.0.<br><a href="https://sketchfab.com/3d-models/low-poly-market-stall-game-ready-asset-20660479b5c24f55b7873adf4bca4073" target="_blank" rel="noopener">Low Poly Market Stall — Game-Ready Asset</a> by BlackMike, CC BY 4.0.<br><a href="https://sketchfab.com/3d-models/low-poly-traditional-market-stall-83f6b14a28094a5ab5f8396ea6f4c1e9" target="_blank" rel="noopener">Low Poly Traditional Market Stall</a> by Nisa Nurul Azizah, CC BY 4.0.<br><a href="https://sketchfab.com/3d-models/modular-medieval-table-08dd395a346a440ba85e8b3b46ab3672" target="_blank" rel="noopener">Modular Medieval Table</a> by GameWorldStudio, CC BY 4.0.<br>Scripture quotations from the ESV® Bible, © Crossway.</div>
 <div id="tut" hidden>
   <div class="card">
     <div class="step" id="tutStep"></div>
@@ -101,15 +118,16 @@ const KIT = {}, KMAT = {};
     'Roof_RoundTiles_4x4', 'Roof_RoundTiles_4x6', 'Roof_RoundTiles_4x8', 'Roof_RoundTiles_6x4', 'Roof_RoundTiles_6x6', 'Roof_RoundTiles_6x8', 'Roof_RoundTiles_8x8', 'Roof_RoundTiles_8x10',
     'WindowShutters_Wide_Round_Open', 'WindowShutters_Thin_Round_Open', 'WindowShutters_Wide_Round_Closed', 'Window_Wide_Round1', 'Window_Thin_Round1', 'Door_1_Round', 'Balcony_Simple_Straight',
     'Prop_Crate', 'Prop_Wagon', 'Prop_Chimney', 'Prop_Vine2', 'Prop_Vine4', 'Prop_Vine6', 'Corner_Exterior_Brick'];
-  const loader = new GLTFLoader(); const el = document.querySelector('#hud .s'); let done = 0;
-  try { await Promise.all(names.map(n => loader.loadAsync('./kit/' + n + '.gltf').then(g => { done++; if (el) el.textContent = `Building Colossae… ${Math.round(done / names.length * 100)}%`;
+  const loader = new GLTFLoader(); const el = document.getElementById('lpct'), bar = document.getElementById('lbar'); let done = 0;
+  try { await Promise.all(names.map(n => loader.loadAsync('./kit/' + n + '.gltf').then(g => { done++; const pc = Math.round(done / names.length * 80); if (el) el.textContent = `Building Colossae… ${pc}%`; if (bar) bar.style.width = pc + '%';
       g.scene.traverse(o => { if (o.isMesh) { const m = o.material; KMAT[m.name] ??= m; o.material = KMAT[m.name]; o.castShadow = o.receiveShadow = true; } }); KIT[n] = g.scene; }))); }
   catch (e) { console.warn('kit failed to load, using simple houses', e); }
 }
 // Roman stucco instead of northern timber framing: trim becomes pale stone, plaster warmer
 for (const [k, m] of Object.entries(KMAT)) { if (k.startsWith('MI_WoodTrim')) { m.color = new THREE.Color('#e8dcc4'); m.map = null; m.needsUpdate = true; } if (k === 'MI_Plaster') { m.color = new THREE.Color(1.25, 1.2, 1.1); m.needsUpdate = true; } }
 const MODELS = {};
-try { await Promise.all(['stall', 'table', 'gstall'].map(m => new GLTFLoader().loadAsync(`./models/${m}/scene.${m === 'gstall' ? 'glb' : 'gltf'}`).then(g => { g.scene.updateMatrixWorld(true); g.scene.traverse(o => { if (o.isMesh) { o.castShadow = o.receiveShadow = true; if (o.material.map) o.material.map.anisotropy = 4; } }); MODELS[m] = g.scene; }))); }
+let BIRD_ANIM = null;
+try { await Promise.all(['stall', 'table', 'gstall', 'bird'].map(m => new GLTFLoader().loadAsync(`./models/${m}/scene.${m === 'gstall' ? 'glb' : 'gltf'}`).then(g => { g.scene.updateMatrixWorld(true); g.scene.traverse(o => { if (o.isMesh) { o.castShadow = o.receiveShadow = true; if (o.material.map) o.material.map.anisotropy = 4; } }); MODELS[m] = g.scene; if (m === 'bird') BIRD_ANIM = g.animations; }))); }
 catch (e) { console.warn('models failed to load', e); }
 // clone named parts of a model, keeping their layout, re-centred so the bottom-centre sits at the origin
 function part(model, names, scale = 1) {
@@ -552,7 +570,9 @@ var P; P = {
   sign: (g, c) => { box(.06, .5, .06, 'wood', 0, 2.3, 1.85, g); const sg = box(1.1, .45, .06, mat('sign' + c, c), 0, 1.95, 1.9, g); return 0; },
 };
 Object.assign(P, {
-  dovesBig: (g, x, y, z) => { const t = P.cageStack(g, x, y, z); for (const dx of [-.22, .05, .25]) { const d = new THREE.Group(); d.position.set(x + dx, t, z); d.scale.setScalar(1.6); g.add(d); add(new THREE.IcosahedronGeometry(.09, 1), mat('dove', '#ffffff'), 0, .08, 0, d).scale.set(1.5, 1, 1); add(new THREE.IcosahedronGeometry(.055, 1), mat('dove', '#ffffff'), .12, .16, 0, d); add(new THREE.ConeGeometry(.015, .05, 4), mat('beak', '#e0a03a'), .18, .16, 0, d).rotation.z = -Math.PI / 2; } return t + .35; },
+  scrollRack: (g, x, y, z) => { for (const sx of [-.42, .42]) for (const sz of [-.15, .15]) box(.05, 1.25, .05, 'woodLt', x + sx, y, z + sz, g); for (const h of [.05, .45, .85]) { box(.9, .04, .34, 'woodLt', x, y + h, z, g); for (let i = 0; i < 6; i++) { const sc = add(new THREE.CylinderGeometry(.055, .055, .42, 8), mat('scrollC', '#c8a070'), x - .3 + (i % 3) * .3, y + h + .06 + (i > 2 ? .1 : 0), z - .06 + (i > 2 ? .1 : 0), g); sc.rotation.z = Math.PI / 2; } } return y + 1.3; },
+  stoolTablets: (g, x, y, z) => { box(.5, .05, .4, 'woodLt', x, y + .42, z, g); for (const [a, b] of [[-.2, -.15], [.2, -.15], [-.2, .15], [.2, .15]]) box(.05, .42, .05, 'wood', x + a, y, z + b, g); for (let i = 0; i < 6; i++) box(.42, .035, .32, i % 2 ? 'woodLt' : 'wood', x, y + .47 + i * .04, z, g); return y + .75; },
+  dovesBig: (g, x, y, z) => { const t = P.cageStack(g, x, y, z); for (const dx of [-.3, -.1, .1, .3]) { const d = new THREE.Group(); d.position.set(x + dx, t, z + R(-.08, .08)); d.rotation.y = R(-.6, .6); d.scale.setScalar(.8); g.add(d); add(new THREE.IcosahedronGeometry(.09, 1), mat('dove', '#ffffff'), 0, .08, 0, d).scale.set(1.5, 1, 1); add(new THREE.IcosahedronGeometry(.055, 1), mat('dove', '#ffffff'), .12, .16, 0, d); add(new THREE.ConeGeometry(.015, .05, 4), mat('beak', '#e0a03a'), .18, .16, 0, d).rotation.z = -Math.PI / 2; } return t + .35; },
   garland: (g, x, y, z) => { box(.07, 1.8, .07, 'wood', x - .55, y, z, g); box(.07, 1.8, .07, 'wood', x + .55, y, z, g);
     const pts = []; for (let i = 0; i <= 14; i++) { const t = i / 14; pts.push(new THREE.Vector3(x - .55 + t * 1.1, y + 1.75 - Math.sin(t * Math.PI) * .45, z)); } add(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 20, .07, 6), mat('laurel', '#5f8a3e'), 0, 0, 0, g);
     for (let i = 1; i < 14; i += 2) add(new THREE.IcosahedronGeometry(.06, 0), mat('flowerR', i % 4 ? '#e0b44a' : '#c43a2e'), pts[i].x, pts[i].y - .05, pts[i].z + .05, g);
@@ -566,7 +586,7 @@ Object.assign(P, {
   padlockChest: (g, x, y, z) => { box(1.0, .5, 1.0, 'marble', x, y, z, g); box(1.1, .1, 1.1, 'marble', x, y + .5, z, g); const t = P.bigChest(g, x, y + .6, z);
     const gold = mat('gold', '#e0b84a', { metalness: .8, roughness: .3 }); box(.42, .42, .12, gold, x, y + .9, z + .42, g); { const pl = new THREE.PointLight('#ffd9a0', 3, 4, 1.5); pl.position.set(x, y + 2, z + 1); g.add(pl); } const sh = add(new THREE.TorusGeometry(.11, .035, 6, 12, Math.PI), gold, x, y + 1.12, z + .4, g);
     for (const sd of [-1, 1]) for (let i = 0; i < 6; i++) { const lk = add(new THREE.TorusGeometry(.05, .015, 4, 8), gold, x + sd * (.12 + i * .08), y + 1.02 - i * .06, z + .38, g); lk.rotation.y = i % 2 ? Math.PI / 2 : 0; } return t + .1; },
-  plaque: (g, x, y, z) => { const c = document.createElement('canvas'); c.width = 256; c.height = 96; const k = c.getContext('2d'); k.fillStyle = '#d8ccb4'; k.fillRect(0, 0, 256, 96); k.fillStyle = '#5a4a3a'; k.font = 'bold 30px Georgia'; k.textAlign = 'center'; k.fillText('ΦΙΛΟΣΟΦΙΑ', 128, 58);
+  plaque: (g, x, y, z) => { const c = document.createElement('canvas'); c.width = 256; c.height = 96; const k = c.getContext('2d'); k.fillStyle = '#d8ccb4'; k.fillRect(0, 0, 256, 96); k.fillStyle = '#5a4a3a'; k.font = 'bold 30px Georgia'; k.textAlign = 'center'; k.fillText('ΦΙΛΟΣΟΦΙΑ', 128, 42); k.fillText('ΕΣΤΙ ΒΙΟΥ', 128, 80);
     const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t; },
   cageStack: (g, x, y, z) => { let t = y; for (const [dx, dy] of [[-.25, 0], [.25, 0], [0, .62]]) { const c = new THREE.Group(); c.position.set(x + dx, y + dy, z); g.add(c);
       box(.5, .04, .4, 'wood', 0, 0, 0, c); box(.5, .04, .4, 'wood', 0, .56, 0, c); for (let i = 0; i < 6; i++) for (const zz of [-.19, .19]) box(.015, .56, .015, 'woodLt', -.23 + i * .092, 0, zz, c);
@@ -655,7 +675,9 @@ const VIA = {};
 function booth(x, z, viewer, col) { const g = new THREE.Group(); g.position.set(x, heightAt(x, z), z); g.rotation.y = Math.atan2(viewer[0] - x, viewer[1] - z); scene.add(g);
   box(4.4, .18, 3.6, 'stone', 0, 0, 0, g); for (const [a, b] of [[-2, -1.6], [2, -1.6], [-2, 1.6], [2, 1.6]]) { cyl(.12, .14, 3, 8, 'woodLt', a, .18, b, g); }
   const cl = box(4.6, .08, 3.8, mat('booth' + col, col, { map: TEX.cloth, side: THREE.DoubleSide }), 0, 3.15, 0, g); cl.rotation.x = .12;
-  for (let i = 0; i < 9; i++) { const f = add(new THREE.ConeGeometry(.16, .3, 3), mat('booth' + col), -2 + i * .5, 2.95, 1.95, g); f.rotation.x = Math.PI; }
+  for (let i = 0; i < 40; i++) for (const zz of [1.95, -1.95]) box(.03, .22, .03, mat('tassel', '#d8c8a0'), -2.2 + i * .113, 2.95, zz, g);
+  for (let i = 0; i < 32; i++) for (const xx of [2.3, -2.3]) box(.03, .22, .03, mat('tassel', '#d8c8a0'), xx, 2.95, -1.8 + i * .113, g);
+  box(4.6, .35, .06, mat('booth' + col), 0, 3.0, 1.95, g); box(4.6, .35, .06, mat('booth' + col), 0, 3.0, -1.95, g);
   box(4.2, .9, .12, mat('booth' + col), 0, 2.1, -1.75, g); }
 function room(ch, n, name, x, z, viewer, opts) {
   const custom = vignette({ x, z, viewer, ...opts });
@@ -859,6 +881,7 @@ const TZ = 2;
   box(2.4, 1.2, 1.6, 'stone', 0, heightAt(0, TZ + 7), TZ + 7); box(2.7, .25, 1.9, 'marble', 0, heightAt(0, TZ + 7) + 1.2, TZ + 7);
   for (const s of [-1, 1]) { const x = s * 10, z = TZ + 5, y = heightAt(x, z);
     box(1.5, .3, 1.5, 'marble', x, y, z); box(1.2, 1.4, 1.2, 'stone', x, y + .3, z); box(1.5, .25, 1.5, 'marble', x, y + 1.7, z);
+    if (s < 0) { const pt = P.plaque(); const pq = new THREE.Mesh(new THREE.PlaneGeometry(1.0, .38), new THREE.MeshStandardMaterial({ map: pt, roughness: .8 })); { const a = Math.atan2(0 - x, TZ + 9.5 - z); pq.position.set(x + Math.sin(a) * .72, y + .95, z + Math.cos(a) * .72); pq.rotation.y = a; } pq.userData.dyn = 1; scene.add(pq); }
     { const st = makeStatue(THREE, { pose: s < 0 ? 'philosopher' : 'festival', height: 2.3 }); st.position.set(x, y + 1.95, z); st.rotation.y = s > 0 ? -.5 : .5; st.traverse(o => { if (o.isMesh) o.userData.dyn = 1; }); scene.add(st); } }
   for (const s of [-1, 1]) cypress(s * 14, TZ - 11, 1);
   for (const s of [-1, 1]) for (const zz of [TZ - 2]) { const x = s * 14.5; cyl(.7, .6, .7, 8, 'clay', x, heightAt(x, zz), zz); add(new THREE.IcosahedronGeometry(.8, 0), 'leaf', x, heightAt(x, zz) + 1.3, zz); }
@@ -872,10 +895,12 @@ const TZ = 2;
   // courtyard clutter: benches against the walls, planters, a votive table, offerings
   for (const sx of [-1, 1]) { const bx = sx * 16.2; for (const bz of [TZ + 1, TZ + 7]) { box(.7, .45, 3, 'marble', bx, heightAt(bx, bz), bz); box(.8, .12, 3.2, 'marble', bx, heightAt(bx, bz) + .45, bz); } }
   for (const [px, pz] of [[-15.5, TZ - 8], [15.5, TZ - 8]]) { cyl(.55, .45, .6, 10, 'clay', px, heightAt(px, pz), pz); for (let k = 0; k < 4; k++) add(new THREE.IcosahedronGeometry(R(.3, .45), 0), k % 2 ? 'leaf' : 'leafDk', px + R(-.25, .25), heightAt(px, pz) + .8 + R(0, .3), pz + R(-.25, .25)); }
-  booth(-11.5, TZ + 11, hub, '#e8dcc4');
-  { const rg = box(4.2, .04, 3.4, mat('booth#c79a3a', '#b8862a', { map: TEX.cloth }), -11.5, heightAt(-11.5, TZ + 11) + .19, TZ + 11); rg.rotation.y = Math.atan2(hub[0] + 11.5, hub[1] - TZ - 11); }
+  booth(-11.5, TZ + 11, hub, '#efe4cc');
+  { const keyTex = noRep(canvasTex(256, (x, w) => { x.fillStyle = '#e6d6b0'; x.fillRect(0, 0, w, w); x.strokeStyle = '#a8864a'; x.lineWidth = 5; x.strokeRect(10, 10, w - 20, w - 20); x.strokeRect(34, 34, w - 68, w - 68);
+    x.lineWidth = 3; for (let i = 14; i < w - 14; i += 16) { x.beginPath(); x.moveTo(i, 16); x.lineTo(i, 28); x.lineTo(i + 10, 28); x.lineTo(i + 10, 20); x.lineTo(i + 5, 20); x.stroke(); x.beginPath(); x.moveTo(i, w - 16); x.lineTo(i, w - 28); x.lineTo(i + 10, w - 28); x.lineTo(i + 10, w - 20); x.stroke(); } for (let i = 0; i < 1500; i++) { x.fillStyle = `rgba(80,60,30,${R(0, .08)})`; x.fillRect(R(0, w), R(0, w), 2, 2); } }));
+  const rg = box(4.2, .04, 3.4, new THREE.MeshStandardMaterial({ map: keyTex, roughness: 1 }), -11.5, heightAt(-11.5, TZ + 11) + .19, TZ + 11); rg.rotation.y = Math.atan2(hub[0] + 11.5, hub[1] - TZ - 11); }
   room(2, 1, 'Dove Sellers', -11.5, TZ + 11, hub, { dais: 'none', spread: [1.25, .95], big: 1.25, props: [[P.dovesBig, 'dove cages with doves on top'], [P.birdPerch, 'doves on a perch'], [P.scale, 'money-changer’s scales'], [P.coinTable, 'table of coins'], [P.sack, 'sack of seed']] });
-  room(2, 2, 'The Philosopher', -10, TZ + 5, hub, { dais: 'none', centre: { top: sT, what: 'statue of the philosopher' }, spread: [1.3, 1.05], big: 1.3, props: [[P.scrolls, 'shelf of scrolls'], [P.brazier, 'burning brazier'], [P.tablets, 'wax tablets'], [P.basin, 'water basin'], [null]] });
+  room(2, 2, 'The Philosopher', -10, TZ + 5, hub, { dais: 'none', centre: { top: sT, what: 'statue of the philosopher' }, spread: [1.3, 1.05], big: 1.3, props: [[P.scrollRack, 'rack of scrolls'], [P.brazier, 'burning brazier'], [P.stoolTablets, 'wax tablets on a stool'], [P.basin, 'water basin'], [null]] });
   room(2, 3, 'The Altar', 0, TZ + 7, [0, TZ + 12.8], { dais: 'none', spread: [2.3, 1.5], centre: { top: heightAt(0, TZ + 7) + 2.4, what: 'altar fire' }, big: 1.2, props: [[P.brazier, 'left brazier'], [P.garland, 'garland of laurel'], [P.offerings, 'bowl of offerings'], [P.brazier, 'right brazier'], [null]] });
   room(2, 4, 'The Festival Statue', 10, TZ + 5, hub, { dais: 'none', spread: [1.3, 1.05], big: 1.3, centre: { top: sT, what: 'festival statue' }, props: [[(g, x, y, z) => P.basket(g, x, y, z, '#b07a3a', 8), 'basket of bread'], [P.garland, 'garland with ribbons'], [P.wreath, 'laurel wreath'], [P.wineJugs, 'wine jugs'], [null]] });
   for (const st of STATIONS) if (st.ch === 2 && (st.room === 2 || st.room === 4)) { st.back = 6.4; st.pitch = .0; }
@@ -1393,10 +1418,13 @@ const bird = new THREE.Group(); scene.add(bird); bird.visible = false;
     w.userData.sd = sd; return w; });
   bird.traverse(o => { if (o.isMesh) { o.castShadow = false; o.userData.dyn = 1; } });
 }
-let birdT = 0, lastTheta = 0, bank = 0, takeoff = 0;
+let birdT = 0, lastTheta = 0, bank = 0, takeoff = 0, birdMixer = null;
+if (MODELS.bird) { bird.clear(); const bm = MODELS.bird; bm.traverse(o => { if (o.isMesh) { o.castShadow = false; o.userData.dyn = 1; o.frustumCulled = false; } });
+  const bb = new THREE.Box3().setFromObject(bm), sz = bb.getSize(new THREE.Vector3()); const k = 1.1 / Math.max(sz.x, sz.z); const w = new THREE.Group(); w.scale.setScalar(k); w.add(bm); w.rotation.y = Math.PI; bird.add(w);
+  if (BIRD_ANIM && BIRD_ANIM.length) { birdMixer = new THREE.AnimationMixer(bm); birdMixer.clipAction(BIRD_ANIM[0]).play(); } bird.userData.wings = []; }
 function birdFrame(dt, t) {
   if (!overview) { bird.visible = false; takeoff = 0; return; }
-  bird.visible = true; takeoff = Math.min(1, takeoff + dt * .8);
+  bird.visible = true; takeoff = Math.min(1, takeoff + dt * .8); if (birdMixer) birdMixer.update(dt);
   const fwd = new THREE.Vector3(); camera.getWorldDirection(fwd); const up = new THREE.Vector3(0, 1, 0).applyQuaternion(camera.quaternion);
   const dist = 5 + 2 * (1 - takeoff); const p = camera.position.clone().addScaledVector(fwd, dist).addScaledVector(up, -1.25 - (1 - takeoff) * 2);
   bird.position.copy(p);
@@ -1406,8 +1434,10 @@ function birdFrame(dt, t) {
   for (const w of bird.userData.wings) w.rotation.z = w.userData.sd * fl;
   bird.position.y += Math.sin(t * 11) * (glide ? 0 : .04);
 }
+{ const el = document.getElementById('lpct'), bar = document.getElementById('lbar'); if (el) el.textContent = 'Lighting the lamps…'; if (bar) bar.style.width = '95%'; }
 frame();
 window.__ready = true;
+requestAnimationFrame(() => requestAnimationFrame(() => { document.getElementById('lbar').style.width = '100%'; setTimeout(() => document.getElementById('loader').classList.add('done'), 250); }));
 </script>
 </body>
 </html>
