@@ -616,7 +616,7 @@ function gstallFrame(sx, sz, face, tint) {
   g.add(c); const pl = new THREE.PointLight('#ffd9a8', 3, 5, 1.6); pl.position.set(0, 1.6, 2.2); g.add(pl); box(3.4, 1.2, 2.9, 'dark', 0, 0, -.1, g).visible = false; return g; }
 // ---------- ZONE 1: the agora (James 1, six rooms) ----------
 // Enter through the gate (heading south, -z). Rooms run clockwise: up the left (west) side, then back down the right (east).
-// Left side: 1 Gate Stoa, 2 Tower of the Winds, 3 Tholos.  Right side: 4 Lamp Stoa, 5 Mirror Court, 6 Almshouse Portico.
+// 1 Gate Stoa is the court just inside the gate (seen through the arch). Then up the left: 2 Tower of the Winds, 3 Tholos; back down the right: 4 Lamp Stoa, 5 Mirror Court, 6 Almshouse Portico.
 const AG = { x0: -19.5, x1: 19.5, z0: 33, z1: 75.5, rx: 11, z: [67, 55, 43] };
 const JP = jamesProps({ THREE, add, box, cyl, mat, R, amph, iron, bronze, TEX, makeFire, FIRES, flame: (...a) => flame(...a) });
 { // paving: one flagstone square, a little above the terrain everywhere
@@ -641,7 +641,7 @@ function stoa(xa, za, xb, zb, { depth = 4, h = 4.6, cols = 6, face = 1, wall = '
 { // west stoa behind the Gate Stoa room
   stoa(-17, 61, -17, 75, { face: -1, cols: 6 });
   // east colonnade behind the Lamp Stoa room: long, white, many columns
-  stoa(17, 36, 17, 50.5, { face: 1, cols: 7, wall: 'travertine' });
+  stoa(17, 34.5, 17, 47, { face: 1, cols: 6, wall: 'travertine' });
   // south stoa closing the square, with a passage in the middle to the temple road
   stoa(-19, 34.2, -3.4, 34.2, { face: 1, cols: 5 }); stoa(3.4, 34.2, 19, 34.2, { face: 1, cols: 5 });
 }
@@ -665,28 +665,34 @@ function stoa(xa, za, xb, zb, { depth = 4, h = 4.6, cols = 6, face = 1, wall = '
   cyl(4.85, 4.85, .55, 24, 'marble', 0, 4.95, 0, g); add(new THREE.SphereGeometry(4.7, 18, 7, 0, Math.PI * 2, 0, Math.PI / 2), mat('neDome', '#e2cba2'), 0, 5.5, 0, g); cyl(.35, .45, .8, 8, 'marble', 0, 10.1, 0, g);
   box(.15, 2.6, 1.5, 'dark', 3.38, .85, 0, g); }
 { // 5 · The Mirror Court: a half-round bench (exedra) with low walls
-  const ex = 17.5, ez = 55, y = heightAt(ex, ez), g = new THREE.Group(); g.position.set(ex, y, ez); scene.add(g);
+  const ex = 17.5, ez = 52, y = heightAt(ex, ez), g = new THREE.Group(); g.position.set(ex, y, ez); scene.add(g);
   for (let k = 0; k <= 12; k++) { const a = Math.PI / 2 + k / 12 * Math.PI; const bx = Math.cos(a) * -3.4, bz = Math.sin(a) * 3.4;
     const w = box(.95, 2.4, .5, 'wall', bx, 0, bz, g); w.rotation.y = -a; const s = box(.95, .5, .6, 'marble', bx * .85, 0, bz * .85, g); s.rotation.y = -a; }
   box(.4, 2.6, .4, 'marble', 0, 0, -3.6, g); box(.4, 2.6, .4, 'marble', 0, 0, 3.6, g); }
 { // 6 · The Almshouse Portico: four columns under a pediment, a door into the almshouse
-  const px = 18, pz = 67, y = heightAt(px, pz), g = new THREE.Group(); g.position.set(px, y, pz); scene.add(g);
+  const px = 18, pz = 61.5, y = heightAt(px, pz), g = new THREE.Group(); g.position.set(px, y, pz); scene.add(g);
   box(6, 5.6, 9, 'wall', 1.6, 0, 0, g); box(6.4, .5, 9.4, mat('neRoof', '#d2b48a'), 1.6, 5.6, 0, g); box(2.6, .3, 9, 'marble', -2.6, 0, 0, g);
   for (const zz of [-3.6, -1.2, 1.2, 3.6]) { cyl(.24, .28, 3.6, 10, 'marble', -3.4, .3, zz, g); }
   box(1.6, .45, 9.4, 'marble', -3.1, 3.9, 0, g); box(3.4, .3, 9.8, mat('neRoof', '#d2b48a'), -2.4, 4.3, 0, g);
   box(.15, 2.4, 1.4, 'dark', -1.4, .3, 0, g); }
+{ // 1 · The Gate Stoa: a columned porch across the court just inside the gate; you walk through it into the square
+  const z = 64.5, y = heightAt(0, z);
+  box(27, .25, 2.4, 'marble', 0, y, z);
+  for (const x of [-12, -9, -6, -3, 3, 6, 9, 12]) { cyl(.32, .32, .3, 10, 'marble', x, y + .25, z); cyl(.24, .28, 4.2, 12, 'marble', x, y + .55, z); box(.6, .22, .6, 'marble', x, y + 4.75, z); }
+  box(27, .5, .9, 'marble', 0, y + 4.95, z); box(27.4, .3, 2.6, mat('neRoof', '#d2b48a'), 0, y + 5.45, z);
+}
 { // the sacred centre of the square: a small altar (clear of the walking lanes)
   const y = heightAt(0, 55); box(1.6, .5, 1.6, 'stone', 0, y, 55); box(1.2, .9, 1.2, 'marble', 0, y + .5, 55); box(1.4, .15, 1.4, 'marble', 0, y + 1.4, 55);
   for (const [x, z] of [[-1.6, 61], [1.6, 61], [-1.6, 49], [1.6, 49]]) { cyl(.2, .25, .5, 8, 'marble', x, heightAt(x, z), z); }
 }
 // the six rooms (each a square of five objects, viewed from the middle of the square)
 const AGO = { dais: 'none', spread: [1.9, 1.45], big: 1.25 };
-room(1, 1, 'The Gate Stoa', -AG.rx, AG.z[0], [-4, AG.z[0]], { ...AGO, props: [[JP.letter, 'sealed letter with a red wax seal'], [JP.mask, 'laughing bronze theatre mask on a post'], [JP.goldIngot, 'gold ingot on a black touchstone'], [JP.amphoraBlue, 'flawless blue amphora'], [JP.lionFountain, 'lion-head fountain']] });
+room(1, 1, 'The Gate Stoa', 0, 70, [0, 82], { ...AGO, props: [[JP.letter, 'sealed letter with a red wax seal'], [JP.mask, 'laughing bronze theatre mask on a post'], [JP.goldIngot, 'gold ingot on a black touchstone'], [JP.amphoraBlue, 'flawless blue amphora'], [JP.lionFountain, 'lion-head fountain']] });
 room(1, 2, 'The Tower of the Winds', -AG.rx, AG.z[1], [-4, AG.z[1]], { ...AGO, props: [[JP.seaBarrel, 'barrel of churning seawater with a toy ship'], [JP.weathervane, 'bronze Triton weathervane'], [JP.herm, 'two-faced marble herm'], [JP.garlandStool, 'stool with a tiny gold garland'], [JP.poppyUrn, 'urn of wilting red poppies']] });
-room(1, 3, 'The Tholos', -AG.rx, AG.z[2], [-4, AG.z[2]], { ...AGO, props: [[JP.sundial, 'scorched sundial in dry grass'], [JP.crownCushion, 'victor’s crown on a red cushion'], [JP.shieldArrow, 'bronze shield and a snapped arrow'], [JP.fowlerTrap, 'fowler’s trap baited with figs'], [JP.snakePithos, 'pithos with a snake hatching']] });
-room(1, 4, 'The Lamp Stoa', AG.rx, AG.z[2], [4, AG.z[2]], { ...AGO, props: [[JP.conjurerTable, 'conjurer’s table with three cups'], [JP.lampstand, 'seven-flame lampstand'], [JP.barleyBasket, 'basket of first barley sheaves'], [JP.marbleEar, 'giant marble ear'], [JP.cauldron, 'boiling cauldron over coals']] });
-room(1, 5, 'The Mirror Court', AG.rx, AG.z[1], [4, AG.z[1]], { ...AGO, props: [[JP.washbasin, 'washbasin with a soiled tunic'], [JP.malletBlock, 'mallet and chisel on a stone block'], [JP.mirror, 'bronze hand mirror on a stand'], [JP.waxTablet, 'wax tablet wiped smooth'], [JP.shackleStele, 'stele with open shackles']] });
-room(1, 6, 'The Almshouse Portico', AG.rx, AG.z[0], [4, AG.z[0]], { ...AGO, props: [[JP.bridlePost, 'bridle and bit on a post'], [JP.breadBasket, 'basket of bread and a toy horse']] });
+room(1, 3, 'The Tholos', -AG.rx, 41, [-4, 41], { ...AGO, props: [[JP.sundial, 'scorched sundial in dry grass'], [JP.crownCushion, 'victor’s crown on a red cushion'], [JP.shieldArrow, 'bronze shield and a snapped arrow'], [JP.fowlerTrap, 'fowler’s trap baited with figs'], [JP.snakePithos, 'pithos with a snake hatching']] });
+room(1, 4, 'The Lamp Stoa', AG.rx, 41, [4, 41], { ...AGO, props: [[JP.conjurerTable, 'conjurer’s table with three cups'], [JP.lampstand, 'seven-flame lampstand'], [JP.barleyBasket, 'basket of first barley sheaves'], [JP.marbleEar, 'giant marble ear'], [JP.cauldron, 'boiling cauldron over coals']] });
+room(1, 5, 'The Mirror Court', AG.rx, 51.5, [4, 51.5], { ...AGO, props: [[JP.washbasin, 'washbasin with a soiled tunic'], [JP.malletBlock, 'mallet and chisel on a stone block'], [JP.mirror, 'bronze hand mirror on a stand'], [JP.waxTablet, 'wax tablet wiped smooth'], [JP.shackleStele, 'stele with open shackles']] });
+room(1, 6, 'The Almshouse Portico', AG.rx, 61.5, [4, 61.5], { ...AGO, props: [[JP.bridlePost, 'bridle and bit on a post'], [JP.breadBasket, 'basket of bread and a toy horse']] });
 
 const TZ = 2, HX = 32, HZ = 2, BZ = 2, BX = RIVER_X(BZ); const ROOM_LIGHTS = [];
 // Colossae's districts (temple, house, river) are skipped for James
@@ -1007,7 +1013,7 @@ stoneWall(-120, 50, -60, 50, 1); stoneWall(-120, 50, -120, 120, 1); stoneWall(90
 
 drape(-2.5, TZ + 15, 2.5, TZ + 21, 'path'); drape(-62, 45, -21, 48.5, 'path', .03); drape(-62, 25, -3, 28.5, 'path', .03); drape(-48, -30, -44.5, 70, 'path', .03); drape(-22, -30, -18.5, 22, 'path', .03); drape(-2.5, TZ + 17.5, HX + 2, TZ + 21, 'path');
 // walking routes between zones, through doorways
-VIA['1.1'] = [[0, 73]];   // through the gate into the square
+VIA['1.2'] = [[-4.5, 71], [-4.5, 62]];   // from the gate court, round the fountain and through the gate stoa
 VIA['2.1'] = [[-3.6, 61], [-3.6, 50], [0, 44], [0, TZ + 21], [0, TZ + 14]];                                   // market -> temple gate
 VIA['3.1'] = [[0, TZ + 14], [0, TZ + 19], [HX, HZ + 15], [HX, HZ + 8], [HX - 4, HZ + 1.5]];  // temple -> house front door
 VIA['4.1'] = [[HX + 9, HZ + 2], [HX + 13, HZ + 2], [BX - 18, BZ + 2]];                 // house side door -> riverbank
