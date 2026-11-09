@@ -552,6 +552,22 @@ var P; P = {
   sign: (g, c) => { box(.06, .5, .06, 'wood', 0, 2.3, 1.85, g); const sg = box(1.1, .45, .06, mat('sign' + c, c), 0, 1.95, 1.9, g); return 0; },
 };
 Object.assign(P, {
+  dovesBig: (g, x, y, z) => { const t = P.cageStack(g, x, y, z); for (const dx of [-.22, .05, .25]) { const d = new THREE.Group(); d.position.set(x + dx, t, z); d.scale.setScalar(1.6); g.add(d); add(new THREE.IcosahedronGeometry(.09, 1), mat('dove', '#ffffff'), 0, .08, 0, d).scale.set(1.5, 1, 1); add(new THREE.IcosahedronGeometry(.055, 1), mat('dove', '#ffffff'), .12, .16, 0, d); add(new THREE.ConeGeometry(.015, .05, 4), mat('beak', '#e0a03a'), .18, .16, 0, d).rotation.z = -Math.PI / 2; } return t + .35; },
+  garland: (g, x, y, z) => { box(.07, 1.8, .07, 'wood', x - .55, y, z, g); box(.07, 1.8, .07, 'wood', x + .55, y, z, g);
+    const pts = []; for (let i = 0; i <= 14; i++) { const t = i / 14; pts.push(new THREE.Vector3(x - .55 + t * 1.1, y + 1.75 - Math.sin(t * Math.PI) * .45, z)); } add(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 20, .07, 6), mat('laurel', '#5f8a3e'), 0, 0, 0, g);
+    for (let i = 1; i < 14; i += 2) add(new THREE.IcosahedronGeometry(.06, 0), mat('flowerR', i % 4 ? '#e0b44a' : '#c43a2e'), pts[i].x, pts[i].y - .05, pts[i].z + .05, g);
+    for (const sx of [-.55, .55]) for (const [c, o] of [['#c43a2e', 0], ['#3f6f9a', .08], ['#e0b44a', -.08]]) box(.06, .7, .01, mat('rib' + c, c), x + sx + o, y + 1.05, z + .05, g); return y + 1.85; },
+  wreath: (g, x, y, z) => { cyl(.05, .07, 1.0, 8, bronze(), x, y, z, g); const w = add(new THREE.TorusGeometry(.28, .07, 6, 16), mat('laurel', '#5f8a3e'), x, y + 1.32, z, g); for (let i = 0; i < 10; i++) { const a = i / 10 * Math.PI * 2; add(new THREE.ConeGeometry(.05, .16, 4), mat('laurelLt', '#7ca050'), x + Math.cos(a) * .28, y + 1.32 + Math.sin(a) * .28, z + .04, g).rotation.z = a; } return y + 1.7; },
+  wineJugs: (g, x, y, z) => { for (const [dx, dz, sc] of [[-.25, 0, .65], [.2, .1, .55], [0, -.25, .5]]) { const j = new THREE.Group(); j.position.set(x + dx, y, z + dz); g.add(j); amph(j, 0, 0, sc); } cyl(.3, .3, .04, 12, mat('wineSpill', '#6a1a2a', { roughness: .2 }), x, y + .01, z + .3, g); return y + .95; },
+  brazier: (g, x, y, z) => { for (let i = 0; i < 3; i++) { const a = i / 3 * Math.PI * 2, l = box(.05, 1, .05, bronze(), x + Math.cos(a) * .22, y, z + Math.sin(a) * .22, g); l.rotation.z = Math.cos(a) * .15; } add(new THREE.LatheGeometry([[0, 0], [.22, .02], [.34, .18], [.36, .24]].map(([a, b]) => new THREE.Vector2(a, b)), 14), bronze(), x, y + 1, z, g);
+    const f = makeFire(THREE, { scale: .2, light: false }); f.position.set(x, y + 1.16, z); f.traverse(o => o.userData.dyn = 1); g.add(f); FIRES.push(f); return y + 1.7; },
+  offerings: (g, x, y, z) => { add(new THREE.LatheGeometry([[0, 0], [.2, 0], [.32, .08], [.34, .12]].map(([a, b]) => new THREE.Vector2(a, b)), 14), mat('bowlM', '#e9dcc0', { side: THREE.DoubleSide, map: TEX.pot }), x, y, z, g);
+    for (let i = 0; i < 8; i++) add(new THREE.IcosahedronGeometry(.07, 1), mat('fr' + ['#c43a2e', '#e0b44a', '#5b2a5c'][i % 3], ['#c43a2e', '#e0b44a', '#5b2a5c'][i % 3], { flatShading: false }), x + R(-.18, .18), y + .12 + (i > 5 ? .08 : 0), z + R(-.18, .18), g); return y + .3; },
+  padlockChest: (g, x, y, z) => { box(1.0, .5, 1.0, 'marble', x, y, z, g); box(1.1, .1, 1.1, 'marble', x, y + .5, z, g); const t = P.bigChest(g, x, y + .6, z);
+    const gold = mat('gold', '#e0b84a', { metalness: .8, roughness: .3 }); box(.42, .42, .12, gold, x, y + .9, z + .42, g); { const pl = new THREE.PointLight('#ffd9a0', 3, 4, 1.5); pl.position.set(x, y + 2, z + 1); g.add(pl); } const sh = add(new THREE.TorusGeometry(.11, .035, 6, 12, Math.PI), gold, x, y + 1.12, z + .4, g);
+    for (const sd of [-1, 1]) for (let i = 0; i < 6; i++) { const lk = add(new THREE.TorusGeometry(.05, .015, 4, 8), gold, x + sd * (.12 + i * .08), y + 1.02 - i * .06, z + .38, g); lk.rotation.y = i % 2 ? Math.PI / 2 : 0; } return t + .1; },
+  plaque: (g, x, y, z) => { const c = document.createElement('canvas'); c.width = 256; c.height = 96; const k = c.getContext('2d'); k.fillStyle = '#d8ccb4'; k.fillRect(0, 0, 256, 96); k.fillStyle = '#5a4a3a'; k.font = 'bold 30px Georgia'; k.textAlign = 'center'; k.fillText('ΦΙΛΟΣΟΦΙΑ', 128, 58);
+    const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t; },
   cageStack: (g, x, y, z) => { let t = y; for (const [dx, dy] of [[-.25, 0], [.25, 0], [0, .62]]) { const c = new THREE.Group(); c.position.set(x + dx, y + dy, z); g.add(c);
       box(.5, .04, .4, 'wood', 0, 0, 0, c); box(.5, .04, .4, 'wood', 0, .56, 0, c); for (let i = 0; i < 6; i++) for (const zz of [-.19, .19]) box(.015, .56, .015, 'woodLt', -.23 + i * .092, 0, zz, c);
       const b = add(new THREE.IcosahedronGeometry(.1, 1), mat('dove', '#f4f1ea'), 0, .14, 0, c); b.scale.set(1.5, 1, 1); add(new THREE.IcosahedronGeometry(.06, 1), mat('dove', '#f4f1ea'), .13, .24, 0, c); t = Math.max(t, y + dy + .62); } return t; },
@@ -847,6 +863,7 @@ const TZ = 2;
   for (const s of [-1, 1]) cypress(s * 14, TZ - 11, 1);
   for (const s of [-1, 1]) for (const zz of [TZ - 2]) { const x = s * 14.5; cyl(.7, .6, .7, 8, 'clay', x, heightAt(x, zz), zz); add(new THREE.IcosahedronGeometry(.8, 0), 'leaf', x, heightAt(x, zz) + 1.3, zz); }
   { const ay = heightAt(0, TZ + 7) + 1.45; window.__fire = [];
+    { const ay2 = heightAt(0, TZ + 7); for (const sd of [-1, 1]) { const og = new THREE.Group(); og.position.set(sd * .75, ay2 + 1.45, TZ + 7.5); scene.add(og); P.offerings(og, 0, 0, 0); } box(2.75, .3, .08, mat('frieze', '#c9a24a', { metalness: .3 }), 0, ay2 + .75, TZ + 7.96); }
     { const fire = makeFire(THREE, { scale: .5 }); fire.position.set(0, ay - .05, TZ + 7); fire.traverse(o => o.userData.dyn = 1); scene.add(fire); FIRES.push(fire); }
   }
   for (const [ax, ay2] of [[0, 2.6], [-7, 0], [7, 0]]) add(new THREE.OctahedronGeometry(.45, 0), mat('acro', '#c79a3a', { metalness: .3 }), ax, heightAt(0, TZ - 6) + 8.4 + ay2, TZ - .65);
@@ -856,16 +873,17 @@ const TZ = 2;
   for (const sx of [-1, 1]) { const bx = sx * 16.2; for (const bz of [TZ + 1, TZ + 7]) { box(.7, .45, 3, 'marble', bx, heightAt(bx, bz), bz); box(.8, .12, 3.2, 'marble', bx, heightAt(bx, bz) + .45, bz); } }
   for (const [px, pz] of [[-15.5, TZ - 8], [15.5, TZ - 8]]) { cyl(.55, .45, .6, 10, 'clay', px, heightAt(px, pz), pz); for (let k = 0; k < 4; k++) add(new THREE.IcosahedronGeometry(R(.3, .45), 0), k % 2 ? 'leaf' : 'leafDk', px + R(-.25, .25), heightAt(px, pz) + .8 + R(0, .3), pz + R(-.25, .25)); }
   booth(-11.5, TZ + 11, hub, '#e8dcc4');
-  room(2, 1, 'Dove Sellers', -11.5, TZ + 11, hub, { dais: 'none', spread: [1.25, .95], props: [[P.cageStack, 'stacked dove cages'], [P.birdPerch, 'doves on a perch'], [P.scale, 'money-changer’s scales'], [P.coinTable, 'table of coins'], [P.sack, 'sack of seed']] });
-  room(2, 2, 'The Philosopher', -10, TZ + 5, hub, { dais: 'none', spread: [1.7, 1.35], centre: { top: sT, what: 'statue of the philosopher' }, props: [[P.scrolls, 'shelf of scrolls'], [P.tripod, 'incense tripod'], [P.tablets, 'wax tablets'], [P.basin, 'water basin'], [null]] });
-  room(2, 3, 'The Altar', 0, TZ + 7, [0, TZ + 12.8], { dais: 'none', spread: [2.3, 1.5], centre: { top: heightAt(0, TZ + 7) + 2.4, what: 'altar fire' }, props: [[P.basin, 'washing basin'], [P.bigJar, 'tall oil jar'], [P.tripod, 'smoking incense'], [P.basket, 'offering basket'], [null]] });
-  room(2, 4, 'The Festival Statue', 10, TZ + 5, hub, { dais: 'none', spread: [1.7, 1.35], centre: { top: sT, what: 'festival statue' }, props: [[(g, x, y, z) => P.basket(g, x, y, z, '#b07a3a', 8), 'basket of bread'], [P.rackJars, 'rack of wine jars'], [P.lamps, 'festival lamps'], [P.cups, 'tray of cups'], [null]] });
-  for (const st of STATIONS) if (st.ch === 2 && (st.room === 2 || st.room === 4)) { st.back = 7.5; st.pitch = .02; }
-  for (const st of STATIONS) if (st.ch === 2 && (st.room === 1 || st.room === 5)) st.back = 6.2;
+  { const rg = box(4.2, .04, 3.4, mat('booth#c79a3a', '#b8862a', { map: TEX.cloth }), -11.5, heightAt(-11.5, TZ + 11) + .19, TZ + 11); rg.rotation.y = Math.atan2(hub[0] + 11.5, hub[1] - TZ - 11); }
+  room(2, 1, 'Dove Sellers', -11.5, TZ + 11, hub, { dais: 'none', spread: [1.25, .95], big: 1.25, props: [[P.dovesBig, 'dove cages with doves on top'], [P.birdPerch, 'doves on a perch'], [P.scale, 'money-changer’s scales'], [P.coinTable, 'table of coins'], [P.sack, 'sack of seed']] });
+  room(2, 2, 'The Philosopher', -10, TZ + 5, hub, { dais: 'none', centre: { top: sT, what: 'statue of the philosopher' }, spread: [1.3, 1.05], big: 1.3, props: [[P.scrolls, 'shelf of scrolls'], [P.brazier, 'burning brazier'], [P.tablets, 'wax tablets'], [P.basin, 'water basin'], [null]] });
+  room(2, 3, 'The Altar', 0, TZ + 7, [0, TZ + 12.8], { dais: 'none', spread: [2.3, 1.5], centre: { top: heightAt(0, TZ + 7) + 2.4, what: 'altar fire' }, big: 1.2, props: [[P.brazier, 'left brazier'], [P.garland, 'garland of laurel'], [P.offerings, 'bowl of offerings'], [P.brazier, 'right brazier'], [null]] });
+  room(2, 4, 'The Festival Statue', 10, TZ + 5, hub, { dais: 'none', spread: [1.3, 1.05], big: 1.3, centre: { top: sT, what: 'festival statue' }, props: [[(g, x, y, z) => P.basket(g, x, y, z, '#b07a3a', 8), 'basket of bread'], [P.garland, 'garland with ribbons'], [P.wreath, 'laurel wreath'], [P.wineJugs, 'wine jugs'], [null]] });
+  for (const st of STATIONS) if (st.ch === 2 && (st.room === 2 || st.room === 4)) { st.back = 6.4; st.pitch = .0; }
+  for (const st of STATIONS) if (st.ch === 2 && (st.room === 1 || st.room === 5)) { st.back = 5; st.pitch = -.2; }
   for (const st of STATIONS) if (st.ch === 2 && (st.room === 2 || st.room === 4) && st.banner) st.banner.position.y += 2.6;
   booth(11.5, TZ + 11, hub, '#7a2a20');
-  room(2, 5, 'The Locked Chest', 11.5, TZ + 11, hub, { dais: 'none', spread: [1.25, .95], props: [[P.honey, 'honey jar ("do not taste")'], [P.bolts, 'folded cloth ("do not handle")'], [P.bigChest, 'great locked chest ("do not touch")'], [P.bowlStack, 'stack of bowls'], [P.ropeBarrier, 'rope barrier']] });
-  STATIONS[STATIONS.length - 1].back = 6.2;
+  room(2, 5, 'The Locked Chest', 11.5, TZ + 11, hub, { dais: 'none', spread: [1.45, 1.05], big: 1.15, props: [[P.honey, 'honey jar ("do not taste")'], [P.bolts, 'folded cloth ("do not handle")'], [P.padlockChest, 'chest with gold padlock ("do not touch")'], [P.bowlStack, 'stack of bowls'], [P.ropeBarrier, 'rope barrier']] });
+  STATIONS[STATIONS.length - 1].back = 5; STATIONS[STATIONS.length - 1].pitch = -.2;
 }
 // path market -> temple
 drape(-2.5, TZ + 14, 2.5, 24, 'path');
