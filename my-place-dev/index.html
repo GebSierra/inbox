@@ -359,7 +359,7 @@ const spruceSpots=[],forestChunks=[];
  const bm=new THREE.MeshStandardMaterial({map:tex('spruce_bark.jpg',1),normalMap:tex('spruce_bark_nor.jpg'),roughness:1,color:0x6a625c});
  const tg=new THREE.CylinderGeometry(.06,.42,25,8,1,true);tg.translate(0,12.5,0);{const uv=tg.attributes.uv;for(let i=0;i<uv.count;i++)uv.setY(i,uv.getY(i)*6)}
  const VAR=3,o=new THREE.Object3D(),c=new THREE.Color();
- const CELL=110,cells=new Map();spruceSpots.forEach((p,i)=>{const k=Math.floor(p[0]/CELL)+','+Math.floor(p[1]/CELL)+','+(i%VAR);if(!cells.has(k))cells.set(k,[]);cells.get(k).push(p)});
+ const CELL=160,cells=new Map();spruceSpots.forEach((p,i)=>{if(Math.hypot(p[0]-riverX(60)-16,p[1]-60)<6)return;const k=Math.floor(p[0]/CELL)+','+Math.floor(p[1]/CELL)+','+(i%VAR);if(!cells.has(k))cells.set(k,[]);cells.get(k).push(p)});
  const geos=[...Array(VAR)].map((_,v)=>spruceGeo(v+1));
  cells.forEach((mine,key)=>{const v=+key.split(',')[2];   // spatial chunks so whole patches of forest are skipped when out of view or far away
   const fol=new THREE.InstancedMesh(geos[v],fm,mine.length),tr=new THREE.InstancedMesh(tg,bm,mine.length);
@@ -386,7 +386,7 @@ function variants(gl){gl.scene.updateMatrixWorld(true);
  return gl.scene.children.map(ch=>{const parts=[];ch.traverse(o=>{if(o.isMesh){const g=deq(o.geometry);g.applyMatrix4(o.matrixWorld);const m=o.material;if(m.transparent||m.alphaTest>0||m.alphaMap){m.transparent=false;m.depthWrite=true;m.alphaTest=.45;m.side=THREE.DoubleSide;m.alphaToCoverage=true}parts.push({g,m})}});
   const b=new THREE.Box3();parts.forEach(p=>{p.g.computeBoundingBox();b.union(p.g.boundingBox)});
   parts.forEach(p=>p.g.translate(-(b.min.x+b.max.x)/2,-b.min.y,-(b.min.z+b.max.z)/2));return {parts,h:b.max.y-b.min.y}}).filter(v=>v.parts.length)}
-const smallChunks=[];function scatter(vars,items,far=90){vars.forEach((v,i)=>{const all=items.filter(e=>e.v%vars.length===i);if(!all.length)return;const cells=new Map();all.forEach(e=>{const k=Math.floor(e.x/40)+','+Math.floor(e.z/40);if(!cells.has(k))cells.set(k,[]);cells.get(k).push(e)});
+const smallChunks=[];function scatter(vars,items,far=90){vars.forEach((v,i)=>{const all=items.filter(e=>e.v%vars.length===i);if(!all.length)return;const cells=new Map();all.forEach(e=>{const k=Math.floor(e.x/60)+','+Math.floor(e.z/60);if(!cells.has(k))cells.set(k,[]);cells.get(k).push(e)});
  cells.forEach(mine=>v.parts.forEach(p=>{const im=new THREE.InstancedMesh(p.g,p.m,mine.length);
   mine.forEach((e,k)=>{o3.position.set(e.x,e.y,e.z);o3.rotation.set(e.rx||0,e.ry,e.rz||0);o3.scale.setScalar(e.s/(e.abs?1:v.h));o3.updateMatrix();im.setMatrixAt(k,o3.matrix)});im.computeBoundingSphere();im.userData.far=far;smallChunks.push(im);scene.add(im)}))})}   // small plants in 40 m patches, skipped beyond ~90 m
 const o3=new THREE.Object3D();
