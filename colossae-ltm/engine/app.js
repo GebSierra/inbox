@@ -193,8 +193,10 @@ const WATER_T = { value: 0 };
   const g = new THREE.BufferGeometry(); const pos = [];
   for (let z = -240; z <= 260; z += 4) pts.push(z);
   for (let i = 0; i < pts.length - 1; i++) {
-    const z0 = pts[i], z1 = pts[i + 1], x0 = RIVER_X(z0), x1 = RIVER_X(z1), y = -1.7;
-    pos.push(x0 - W, y, z0, x0 + W, y, z0, x1 - W, y, z1, x0 + W, y, z0, x1 + W, y, z1, x1 - W, y, z1);
+    const z0 = pts[i], z1 = pts[i + 1], x0 = RIVER_X(z0), x1 = RIVER_X(z1);
+    // follow the riverbed: outside town the hills lift the bed above a flat water level
+    const wy = z => heightAt(RIVER_X(z), z) + 0.4, y0 = wy(z0), y1 = wy(z1);
+    pos.push(x0 - W, y0, z0, x0 + W, y0, z0, x1 - W, y1, z1, x0 + W, y0, z0, x1 + W, y1, z1, x1 - W, y1, z1);
   }
   g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.computeVertexNormals();
   const wm = new THREE.MeshStandardMaterial({ color: '#9ad9d2', roughness: .22, metalness: .05, transparent: true, opacity: .93, side: THREE.DoubleSide });
