@@ -164,3 +164,6 @@ Things that looked broken and were easy to fix:
 - Statues: shape first (lathe robe + capsule limbs), carved folds, painted marble with veins/streaks, darkened creases, smooth shading, base joined to feet.
 - Ask the person for AI-generated reference renders per room; they are the clearest brief.
 - Use a cheaper sub-agent for self-contained modules (statue.js) so the main thread stays on integration.
+- The acceptance suite's first run passed 43/79. Several "failures" were the test's own flaws: it measured marker tops instead of object bases, and it raycast only top-level meshes. Fix the test before fixing the town, then trust it. It then caught real bugs no one had noticed: the Dining Room order, floating statue markers, and a route through the bridge parapet.
+- Screenshot comparison earns its keep: it caught an unstyled page after the engine split, because the test server didn't serve `.css` with a `text/css` content type.
+- A cold-start sub-agent given only the docs is a cheap way to find gaps in a handoff (it found 3).

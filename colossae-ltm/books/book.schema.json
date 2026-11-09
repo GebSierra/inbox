@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "LTM book",
+  "type": "object",
+  "required": ["book", "translation", "chapters"],
+  "properties": {
+    "book": { "type": "string" },
+    "translation": { "const": "ESV" },
+    "chapters": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["chapter", "verses", "district", "rooms"],
+        "properties": {
+          "chapter": { "type": "integer", "minimum": 1 },
+          "verses": { "type": "integer", "minimum": 1 },
+          "district": { "type": "string", "description": "One district per chapter" },
+          "rooms": {
+            "type": "array",
+            "description": "ceil(verses/5) rooms, in clockwise order starting nearest the district entrance on the left",
+            "items": {
+              "type": "object",
+              "required": ["room", "name", "verses", "objects"],
+              "properties": {
+                "room": { "type": "integer", "minimum": 1 },
+                "name": { "type": "string" },
+                "verses": { "type": "string", "pattern": "^\\d+:\\d+(–\\d+)?$" },
+                "objects": {
+                  "type": "array", "minItems": 1, "maxItems": 5,
+                  "description": "One object per verse, in order: near-left, far-left, far-right, near-right, centre",
+                  "items": { "type": "string" }
+                },
+                "referenceImage": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
