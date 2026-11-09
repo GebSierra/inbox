@@ -1,0 +1,30 @@
+<!doctype html><html><head><meta charset="utf-8"><title>statue view</title>
+<style>html,body{margin:0;background:#9fb4c8}canvas{display:block}</style>
+<script type="importmap">{"imports":{"three":"../three.module.js"}}</script></head><body>
+<script type="module">
+import * as THREE from 'three';
+import { makeStatue, statueTop } from '../statue.js';
+const q = new URLSearchParams(location.search);
+const W = innerWidth, H = innerHeight;
+const r = new THREE.WebGLRenderer({ antialias: true });
+r.setSize(W, H); r.shadowMap.enabled = true; r.shadowMap.type = THREE.PCFSoftShadowMap;
+r.toneMapping = THREE.ACESFilmicToneMapping;
+document.body.appendChild(r.domElement);
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x9fb4c8);
+const hemi = new THREE.HemisphereLight(0xdfeaff, 0x8a7a60, 1.5); scene.add(hemi);
+const sun = new THREE.DirectionalLight(0xfff0d8, 3.2);
+sun.position.set(4, 7, 5); sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048);
+Object.assign(sun.shadow.camera, { left: -4, right: 4, top: 4, bottom: -2, near: 1, far: 20 });
+scene.add(sun);
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(30, 30), new THREE.MeshStandardMaterial({ color: 0x8a7f6a, roughness: 1 }));
+ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground);
+const a = makeStatue(THREE, { pose: 'philosopher' }); a.position.x = -1.5; scene.add(a);
+const b = makeStatue(THREE, { pose: 'festival' }); b.position.x = 1.5; scene.add(b);
+a.rotation.y = +q.get('ry') || 0.35; b.rotation.y = -(+q.get('ry') || 0.35);
+const cam = new THREE.PerspectiveCamera(+q.get('fov') || 32, W / H, 0.1, 100);
+const d = +q.get('d') || 9;
+cam.position.set(0, statueTop(2.3) * 0.5, d); cam.lookAt(0, statueTop(2.3) * 0.5, 0);
+r.render(scene, cam);
+window.__ok = 1;
+</script></body></html>
