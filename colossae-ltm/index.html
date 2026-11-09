@@ -441,6 +441,13 @@ const amph = (g, x, z, s = 1, y = 0) => { const m = add(new THREE.LatheGeometry(
 // ---------- STATIONS (memory loci) ----------
 const STATIONS = []; const labelScene = new THREE.Scene();
 const stationMat = new THREE.MeshStandardMaterial({ color: '#f0c46a', emissive: '#b8802a', emissiveIntensity: .6, flatShading: true });
+function label2(name, ref) {
+  const c = document.createElement('canvas'); c.width = 512; c.height = 176; const x = c.getContext('2d');
+  x.fillStyle = 'rgba(244,234,214,.96)'; x.strokeStyle = '#b8583a'; x.lineWidth = 6; x.beginPath(); x.roundRect(6, 6, 500, 164, 22); x.fill(); x.stroke();
+  x.fillStyle = '#3b2a1c'; x.textAlign = 'center'; let fs = 58; x.font = `bold ${fs}px Georgia`; while (x.measureText(name).width > 470 && fs > 30) { fs -= 2; x.font = `bold ${fs}px Georgia`; }
+  x.fillText(name, 256, 82); x.fillStyle = '#b8583a'; x.font = '44px Georgia'; x.fillText(ref, 256, 144);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
+  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: t, depthTest: false, transparent: true })); s.scale.set(2.2, .76, 1); s.userData.wide = 1; return s; }
 function label(text) {
   const c = document.createElement('canvas'); c.width = 256; c.height = 128; const x = c.getContext('2d');
   x.fillStyle = 'rgba(244,234,214,.95)'; x.strokeStyle = '#b8583a'; x.lineWidth = 6;
@@ -465,7 +472,7 @@ function station(ch, room, name, x, z, look, custom) {
       const gem = add(new THREE.OctahedronGeometry(.13, 0), stationMat, c.x, c.y + .35, c.z); gem.castShadow = false; gem.userData.dyn = 1;
       const l = label(`${ch}:${v}`); l.position.set(c.x, c.y + .7, c.z); l.scale.set(.7, .35, 1); labelScene.add(l);
       loci.push({ v, x: c.x, z: c.z, fy: c.y, base: null, gem, label: l, where: `${CORNER[i]} · ${c.what}` }); });
-    const ban = label(`${ch}:${v0}–${v1}`); ban.position.set(x, heightAt(x, z) + 4.4, z); ban.scale.set(1.2, .6, 1); labelScene.add(ban);
+    const ban = label2(name, `${ch}:${v0}–${v1}`); ban.position.set(x, heightAt(x, z) + 4.4, z); ban.scale.set(2.2, .76, 1); labelScene.add(ban);
     STATIONS.push({ ch, room, name, x, z, look, loci, banner: ban, text: `Colossians ${ch}:${v0}–${v1}` }); return; }
   spots.forEach(([f, r], i) => { const v = v0 + i; if (v > v1) return;
     const lx = x + fx * f * h + rx * r * h, lz = z + fz * f * h + rz * r * h, y = heightAt(lx, lz);
@@ -1244,7 +1251,7 @@ function frame() {
   if (useAO) composer.render(); else renderer.render(scene, camera);
   for (const st of STATIONS) for (const lc of st.loci) { const L = lc.label, d = camera.position.distanceTo(L.position); L.visible = (showNums || (tutLocus !== null && st === STATIONS[0])) && (overview ? d < 60 : d < 14); L.material.opacity = overview ? 1 : Math.min(1, (14 - d) / 4); const k = lc.fy !== undefined ? .7 : .9; if (overview) L.scale.set(d * .022, d * .011, 1); else L.scale.set(k, k / 2, 1); }
   for (const z of ZONES) { z.visible = overview; if (overview) { const d = camera.position.distanceTo(z.position); { const k = camera.aspect < 1 ? 1.7 : 1; z.scale.set(d * .16 * k, d * .05 * k, 1); } z.material.opacity = Math.min(1, Math.max(.35, (d - 15) / 40)); } }
-  for (const st of STATIONS) if (st.banner) { const d = camera.position.distanceTo(st.banner.position); st.banner.visible = overview ? d < 160 : d < 22; if (overview) st.banner.scale.set(d * .04, d * .02, 1); else st.banner.scale.set(1.2, .6, 1); }
+  for (const st of STATIONS) if (st.banner) { const d = camera.position.distanceTo(st.banner.position); st.banner.visible = overview ? d < 160 : d < 22; if (overview) st.banner.scale.set(d * .06, d * .021, 1); else st.banner.scale.set(2.2, .76, 1); }
   renderer.autoClear = false; renderer.render(labelScene, camera); renderer.autoClear = true; window.__calls = renderer.info.render.calls; requestAnimationFrame(frame);
 }
 // fix station plinths that sit on the bridge deck
