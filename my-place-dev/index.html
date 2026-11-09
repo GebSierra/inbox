@@ -386,9 +386,9 @@ function variants(gl){gl.scene.updateMatrixWorld(true);
  return gl.scene.children.map(ch=>{const parts=[];ch.traverse(o=>{if(o.isMesh){const g=deq(o.geometry);g.applyMatrix4(o.matrixWorld);const m=o.material;if(m.transparent||m.alphaTest>0||m.alphaMap){m.transparent=false;m.depthWrite=true;m.alphaTest=.45;m.side=THREE.DoubleSide;m.alphaToCoverage=true}parts.push({g,m})}});
   const b=new THREE.Box3();parts.forEach(p=>{p.g.computeBoundingBox();b.union(p.g.boundingBox)});
   parts.forEach(p=>p.g.translate(-(b.min.x+b.max.x)/2,-b.min.y,-(b.min.z+b.max.z)/2));return {parts,h:b.max.y-b.min.y}}).filter(v=>v.parts.length)}
-function scatter(vars,items){vars.forEach((v,i)=>{const mine=items.filter(e=>e.v%vars.length===i);if(!mine.length)return;
- v.parts.forEach(p=>{const im=new THREE.InstancedMesh(p.g,p.m,mine.length);im.frustumCulled=false;
-  mine.forEach((e,k)=>{o3.position.set(e.x,e.y,e.z);o3.rotation.set(e.rx||0,e.ry,e.rz||0);o3.scale.setScalar(e.s/(e.abs?1:v.h));o3.updateMatrix();im.setMatrixAt(k,o3.matrix)});scene.add(im)})})}
+const smallChunks=[];function scatter(vars,items,far=90){vars.forEach((v,i)=>{const all=items.filter(e=>e.v%vars.length===i);if(!all.length)return;const cells=new Map();all.forEach(e=>{const k=Math.floor(e.x/40)+','+Math.floor(e.z/40);if(!cells.has(k))cells.set(k,[]);cells.get(k).push(e)});
+ cells.forEach(mine=>v.parts.forEach(p=>{const im=new THREE.InstancedMesh(p.g,p.m,mine.length);
+  mine.forEach((e,k)=>{o3.position.set(e.x,e.y,e.z);o3.rotation.set(e.rx||0,e.ry,e.rz||0);o3.scale.setScalar(e.s/(e.abs?1:v.h));o3.updateMatrix();im.setMatrixAt(k,o3.matrix)});im.computeBoundingSphere();im.userData.far=far;smallChunks.push(im);scene.add(im)}))})}   // small plants in 40 m patches, skipped beyond ~90 m
 const o3=new THREE.Object3D();
 // young firs and pines on the banks
 const saplingSpots=[];for(let t=0;t<6000&&saplingSpots.length<260;t++){const z=50+rnd()*190,side=rnd()<.5?-1:1,d=12+rnd()*22,x=riverX(z)+side*d;
@@ -461,7 +461,7 @@ sky.frustumCulled=false;sky.renderOrder=-1;scene.add(sky);
  scene.add(new THREE.Mesh(g,mm));}
 
 // ---------- the lake: live mirror reflections with drifting ripples ----------
-const lake=new Reflector(new THREE.PlaneGeometry(2*LRX+20,2*LRZ+48),{textureWidth:Math.round(innerWidth*.6),textureHeight:Math.round(innerHeight*.6),color:0x889999,
+const lake=new Reflector(new THREE.PlaneGeometry(2*LRX+20,2*LRZ+48),{textureWidth:Math.round(innerWidth*(PHONE?.3:.45)),textureHeight:Math.round(innerHeight*(PHONE?.3:.45)),color:0x889999,
  shader:{uniforms:{color:{value:null},tDiffuse:{value:null},textureMatrix:{value:null},t:{value:0}},
  vertexShader:`uniform mat4 textureMatrix;varying vec4 vUv;varying vec3 vW;void main(){vUv=textureMatrix*vec4(position,1.);vW=(modelMatrix*vec4(position,1.)).xyz;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
  fragmentShader:`${GN}uniform sampler2D tDiffuse;uniform float t;varying vec4 vUv;varying vec3 vW;
@@ -1041,7 +1041,7 @@ pending.push(GL.loadAsync(A+'grass2.glb').then(gl=>{const v=variants(gl);v.forEa
 // ================= Area 2: the lake above the falls =================
 {const sg=new THREE.CylinderGeometry(1,1.1,1,9),P=sg.attributes.position;for(let i=0;i<P.count;i++)P.setXYZ(i,P.getX(i)*(1+(rnd()-.5)*.25),P.getY(i),P.getZ(i)*(1+(rnd()-.5)*.25));sg.computeVertexNormals();const sm3=new THREE.MeshStandardMaterial({map:tex('dark_rock_diff.jpg',1),color:0xb8b4ac,roughness:.9});const it=[];for(let i=1;i<CAUSE.length;i++){const a=CAUSE[i-1],b=CAUSE[i],l=Math.hypot(b[0]-a[0],b[1]-a[1]);for(let d=0;d<l;d+=1.15){const t=d/l,x=a[0]+(b[0]-a[0])*t+(rnd()-.5)*.3,z=a[1]+(b[1]-a[1])*t+(rnd()-.5)*.3;if(H(x,z)>WL+.15)continue;const m=new THREE.Mesh(sg,sm3);const r=.5+rnd()*.15;m.position.set(x,WL-.15,z);m.scale.set(r,.6,r*.85);m.rotation.y=rnd()*6;m.castShadow=m.receiveShadow=true;scene.add(m)}}}   // stepping stones across the pond's foot to the meadow
 {const it=[];for(let i=0;i<900;i++){const x=-8+rnd()*24,z=-16+rnd()*12,y=H(x,z);if(y<WL+.05||causeD(x,z)<1.2)continue;if(z<-11.5&&rnd()<.6)continue;it.push({v:i,x,y:y-.02,z,ry:rnd()*6,s:.4+rnd()*.4})}pending.push(GL.loadAsync(A+'grass2.glb').then(gl=>{const v=variants(gl);v.forEach(vv=>vv.parts.forEach(p=>{p.m=p.m.clone();p.m.color.setRGB(.75,.78,.45)}));scatter(v,it)}).catch(e=>console.warn(e)))}   // sedge and tall grass on the knoll at the pond's foot
-{const water=new Reflector(new THREE.PlaneGeometry(240,340),{textureWidth:Math.round(innerWidth*.45),textureHeight:Math.round(innerHeight*.45),color:0x6f7f80});
+{const water=new Reflector(new THREE.PlaneGeometry(240,340),{textureWidth:Math.round(innerWidth*(PHONE?.25:.4)),textureHeight:Math.round(innerHeight*(PHONE?.25:.4)),color:0x6f7f80});
  water.rotation.x=-Math.PI/2;water.position.set(0,WL,-169);water.scale.y=334/340;scene.add(water);
  const graniteM=new THREE.MeshStandardMaterial({map:tex('dark_rock_diff.jpg',1),normalMap:tex('dark_rock_nor_gl.jpg'),color:0xd0ccc4,roughness:.85});
  // rounded granite outcrops framing the lip
@@ -1161,7 +1161,7 @@ const PLACES={falls:{x:riverX(60)+16,z:60,yaw:.05,pitch:.18},trail:{x:PE[0].x,z:
  lake:{x:24,z:249,yaw:3.14,pitch:.03},cabin:{...fromPlan(11,LD+7),yaw:0,pitch:.06}};
 PLACES.cabin.yaw=Math.atan2(-(CABIN.x-PLACES.cabin.x),-(CABIN.z-PLACES.cabin.z));
 PLACES.island={x:ISL.x+2,z:ISL.z-5,yaw:Math.atan2(-(CANOE.x-ISL.x-2),-(CANOE.z-ISL.z+5)),pitch:-.05};
-{const dx=-5-LOOK.x,dz=300-LOOK.z,l=Math.hypot(dx,dz);PLACES.lookout={x:LOOK.x-dx/l*3,z:LOOK.z-dz/l*3,yaw:Math.atan2(-dx,-dz),pitch:-.06};Object.assign(player,PLACES.lookout);PLACES.westtrail={x:PW[0].x,z:PW[0].z,yaw:Math.atan2(-(PW[1].x-PW[0].x),-(PW[1].z-PW[0].z)),pitch:0}}
+{const dx=-5-LOOK.x,dz=300-LOOK.z,l=Math.hypot(dx,dz);PLACES.lookout={x:LOOK.x-dx/l*3,z:LOOK.z-dz/l*3,yaw:Math.atan2(-dx,-dz),pitch:-.06};Object.assign(player,PLACES.cabin);PLACES.westtrail={x:PW[0].x,z:PW[0].z,yaw:Math.atan2(-(PW[1].x-PW[0].x),-(PW[1].z-PW[0].z)),pitch:0}}
 PLACES.inside={...fromPlan(14.4,15.2),yaw:PLACES.cabin.yaw,pitch:.08};
 const fade=document.getElementById('fade');
 {const ib=document.getElementById('infoBtn'),info=document.getElementById('info');ib.addEventListener('click',()=>{info.hidden=!info.hidden;ib.setAttribute('aria-expanded',!info.hidden)});
@@ -1211,6 +1211,7 @@ function frame(){const dt=Math.min(clock.getDelta(),.05);U.t.value+=dt;
  const nx=player.x+vel.x*dt,nz=player.z+vel.z*dt,moving=Math.hypot(vel.x,vel.z);
  updateCanoe(U.t.value);updateAreas(U.t.value);updateLodge(U.t.value);updateEagle(U.t.value);updateFish(U.t.value,dt);
  updateFire();
+ for(const m of smallChunks){const bs=m.boundingSphere;m.visible=bs.center.distanceTo(camera.position)-bs.radius<(PHONE?m.userData.far*.75:m.userData.far)}
  for(const m of forestChunks){const bs=m.boundingSphere;m.visible=bs.center.distanceTo(camera.position)-bs.radius<(PHONE?380:460)}
  if(inCanoe&&(Math.abs(f)>.3||Math.abs(s)>.3))leaveCanoe();
  if(inCanoe){vel.x=vel.z=0}else if(moving>.02&&!tryMove(nx,nz)){vel.x*=.2;vel.z*=.2}
