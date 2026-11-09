@@ -1,0 +1,269 @@
+{
+ "book": "Colossians",
+ "translation": "ESV",
+ "chapters": [
+  {
+   "chapter": 1,
+   "verses": 29,
+   "district": "The Market",
+   "rooms": [
+    {
+     "room": 1,
+     "name": "City Gate",
+     "verses": "1:1–5",
+     "objects": [
+      "gate guard",
+      "big pot",
+      "burning torch",
+      "rack of spears",
+      "Roman seal"
+     ]
+    },
+    {
+     "room": 2,
+     "name": "Fig Seller",
+     "verses": "1:6–10",
+     "objects": [
+      "crate of purple figs",
+      "crate of dark figs",
+      "crate of green figs",
+      "crate of ripe figs",
+      "crate of figs"
+     ]
+    },
+    {
+     "room": 3,
+     "name": "Scribe’s Table",
+     "verses": "1:11–15",
+     "objects": [
+      "crate of scrolls",
+      "wax tablets",
+      "ink pots and quills",
+      "sealed letters",
+      "scrolls for sale"
+     ]
+    },
+    {
+     "room": 4,
+     "name": "The Potter",
+     "verses": "1:16–20",
+     "objects": [
+      "little jugs",
+      "stacked bowls",
+      "clay oil lamps",
+      "drinking cups",
+      "painted jugs"
+     ]
+    },
+    {
+     "room": 5,
+     "name": "Fruit Stall",
+     "verses": "1:21–25",
+     "objects": [
+      "crate of limes",
+      "crate of oranges",
+      "crate of potatoes",
+      "crate of lemons",
+      "crate of pink fruit"
+     ]
+    },
+    {
+     "room": 6,
+     "name": "The Well",
+     "verses": "1:26–29",
+     "objects": [
+      "water bucket",
+      "woman carrying a jar",
+      "olive tree",
+      "stone bench"
+     ]
+    }
+   ]
+  },
+  {
+   "chapter": 2,
+   "verses": 23,
+   "district": "The Temple Courtyard",
+   "rooms": [
+    {
+     "room": 1,
+     "name": "Dove Sellers",
+     "verses": "2:1–5",
+     "objects": [
+      "dove cages with doves on top",
+      "doves on a perch",
+      "money-changer’s scales",
+      "table of coins",
+      "sack of seed"
+     ]
+    },
+    {
+     "room": 2,
+     "name": "The Philosopher",
+     "verses": "2:6–10",
+     "objects": [
+      "rack of scrolls",
+      "burning brazier",
+      "wax tablets on a stool",
+      "water basin",
+      "statue of the philosopher"
+     ]
+    },
+    {
+     "room": 3,
+     "name": "The Altar",
+     "verses": "2:11–15",
+     "objects": [
+      "left brazier",
+      "garland of laurel",
+      "bowl of offerings",
+      "right brazier",
+      "altar fire"
+     ]
+    },
+    {
+     "room": 4,
+     "name": "The Festival Statue",
+     "verses": "2:16–20",
+     "objects": [
+      "basket of bread",
+      "garland with ribbons",
+      "laurel wreath",
+      "wine jugs",
+      "festival statue"
+     ]
+    },
+    {
+     "room": 5,
+     "name": "The Locked Chest",
+     "verses": "2:21–23",
+     "objects": [
+      "honey jar (\"do not taste\")",
+      "folded cloth (\"do not handle\")",
+      "chest with gold padlock (\"do not touch\")"
+     ]
+    }
+   ]
+  },
+  {
+   "chapter": 3,
+   "verses": 25,
+   "district": "The Family House",
+   "rooms": [
+    {
+     "room": 1,
+     "name": "Loom Room",
+     "verses": "3:1–5",
+     "objects": [
+      "loom",
+      "cloth bolts",
+      "open sewing chest",
+      "basket of wool",
+      "stool with spindle"
+     ]
+    },
+    {
+     "room": 2,
+     "name": "Bedroom",
+     "verses": "3:6–10",
+     "objects": [
+      "bed",
+      "baby’s cradle",
+      "lamp stand",
+      "washbasin",
+      "clothes rack"
+     ]
+    },
+    {
+     "room": 3,
+     "name": "Dining Room",
+     "verses": "3:11–15",
+     "objects": [
+      "bowl of apples and pears",
+      "carved chair",
+      "plate of food",
+      "wine jug",
+      "candle"
+     ]
+    },
+    {
+     "room": 4,
+     "name": "Kitchen",
+     "verses": "3:16–20",
+     "objects": [
+      "bread oven",
+      "hanging herbs",
+      "sack of flour",
+      "stack of bowls",
+      "stew pot over the fire"
+     ]
+    },
+    {
+     "room": 5,
+     "name": "Household Shrine",
+     "verses": "3:21–25",
+     "objects": [
+      "incense burner",
+      "shelf of scrolls",
+      "oil lamps",
+      "painted jar",
+      "little shrine"
+     ]
+    }
+   ]
+  },
+  {
+   "chapter": 4,
+   "verses": 18,
+   "district": "The Bridge & Road",
+   "rooms": [
+    {
+     "room": 1,
+     "name": "Fishermen’s Landing",
+     "verses": "4:1–5",
+     "objects": [
+      "fishing boat",
+      "fish drying rack",
+      "wicker basket",
+      "basket of fish",
+      "wooden crate"
+     ]
+    },
+    {
+     "room": 2,
+     "name": "Washing Place",
+     "verses": "4:6–10",
+     "objects": [
+      "washtub",
+      "drying laundry",
+      "jar of salt",
+      "sack of grain",
+      "donkey"
+     ]
+    },
+    {
+     "room": 3,
+     "name": "The Milestone",
+     "verses": "4:11–15",
+     "objects": [
+      "signpost",
+      "water trough",
+      "cart wheel",
+      "traveller’s pack",
+      "milestone"
+     ]
+    },
+    {
+     "room": 4,
+     "name": "Waystation Porch",
+     "verses": "4:16–18",
+     "objects": [
+      "sealed letter on a table",
+      "scroll shelf",
+      "tall candle"
+     ]
+    }
+   ]
+  }
+ ]
+}

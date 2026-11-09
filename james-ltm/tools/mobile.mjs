@@ -1,0 +1,13 @@
+import { chromium } from '/home/claude/colossae/node_modules/playwright-core/index.mjs';
+import http from 'http'; import fs from 'fs'; import path from 'path';
+const root='/home/claude/colossae';
+const srv=http.createServer((q,r)=>{const f=path.join(root,q.url==='/'?'index.html':q.url);fs.readFile(f,(e,d)=>{if(e){r.writeHead(404);return r.end()}r.writeHead(200,{'content-type':f.endsWith('.js')?'text/javascript':'text/html'});r.end(d)})}).listen(8768);
+const b=await chromium.launch({executablePath:'/usr/bin/google-chrome',args:['--use-angle=swiftshader','--enable-unsafe-swiftshader']});
+const ctx=await b.newContext({viewport:{width:412,height:839},deviceScaleFactor:1,isMobile:true,hasTouch:true});const p=await ctx.newPage();const errs=[];p.on('pageerror',e=>errs.push(e.message));
+await p.goto('http://localhost:8768/');await p.waitForFunction(()=>window.__ready,null,{timeout:240000});await p.waitForTimeout(4000);
+console.log('pos',JSON.stringify(await p.evaluate(()=>window.__dbg())));
+await p.screenshot({path:root+'/shots/m_start.png'});
+await p.tap('#next');await p.waitForTimeout(12000);await p.screenshot({path:root+'/shots/m_station.png'});
+for(let i=0;i<7;i++){await p.tap('#next');await p.waitForTimeout(400);} await p.waitForTimeout(12000);await p.screenshot({path:root+'/shots/m_temple.png'});
+await p.tap('#mapbtn');await p.waitForTimeout(15000);await p.screenshot({path:root+'/shots/m_doll.png'});
+console.log('ERR',errs);await b.close();srv.close();
