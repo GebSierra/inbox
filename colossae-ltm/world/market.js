@@ -1,0 +1,127 @@
+// order: up the left side from the gate, then down the right side
+const MARKET = [
+  { at: 0, name: 'Fig Seller', sign: '#6b2f5a', props: [g => [P.figBowl(g, -1.25, H_NEAR, .7), 'bowl of figs'], g => [P.scale(g, -1.25, H_FAR, -1), 'hanging scales'], g => [P.honey(g, 1.25, H_FAR, -1), 'honey jar'], g => [P.sack(g, 1.25, H_NEAR, .7), 'sack of grain'], g => [P.crates(g, 0, 1.15, -.2), 'stacked crates']] },
+  { at: 4, name: 'Scribe’s Table', sign: '#3a2c22', props: [g => [P.desk(g, -1.2, H_NEAR, .7), 'papyrus and quill'], g => [P.scrolls(g, -1.2, H_FAR - .1, -1.05), 'scroll shelf'], g => [P.lamps(g, 1.2, H_FAR, -1), 'oil lamps'], g => [P.tablets(g, 1.25, H_NEAR, .7), 'wax tablets'], g => [P.chest(g, 0, 1.15, -.2), 'coin chest']] },
+  { at: 5, name: 'The Potter', sign: '#9a5a3a', props: [g => [P.wheel(g, -1.15, 0, .3), 'potter’s wheel'], g => [P.kiln(g, -1.1, 0, -.95), 'glowing kiln'], g => [P.jarPyramid(g, 1.15, H_FAR, -1.05), 'pyramid of jars'], g => [P.bowlStack(g, 1.25, H_NEAR, .7), 'stack of bowls'], g => [P.clay(g, 0, 1.15, -.2), 'lump of wet clay']] },
+  { at: 1, name: 'Pomegranates', sign: '#c43a2e', props: [g => [P.basket(g, -1.25, H_NEAR, .7, '#c43a2e'), 'basket of pomegranates'], g => [P.herbs(g, -1.2, H_FAR - 1.1, -1.05), 'hanging herbs'], g => [P.cage(g, 1.25, H_FAR, -1), 'songbird cage'], g => [P.basket(g, 1.25, H_NEAR, .7, '#7a9a3a', 10), 'basket of olives'], g => [P.press(g, 0, 1.15, -.2), 'juice press']] },
+];
+{ // ROOM 1 — the city gate (seen from outside, facing into town)
+  const gy = heightAt(0, GZ), g = new THREE.Group(); g.position.set(0, gy, GZ); scene.add(g);
+  const at = (x, z, top, what) => ({ x, y: gy + top, z: GZ + z, what });
+  // 1 near-left: a guard with spear and shield
+  person(-2.3, GZ + 2.4, Math.PI * .15, '#9a2a2a', { cloak: '#6a1a1a', hair: 1, y: gy });
+  box(.05, 2.4, .05, 'wood', -2.0, 0, 2.6, g); add(new THREE.ConeGeometry(.07, .3, 4), mat('iron', '#3c3a38', { metalness: .4, roughness: .6 }), -2.0, 2.55, 2.6, g);
+  { const sh = add(new THREE.CylinderGeometry(.42, .42, .08, 14), mat('shield', '#9a2a2a'), -2.65, .75, 2.45, g); sh.rotation.z = Math.PI / 2; sh.rotation.y = .3; add(new THREE.SphereGeometry(.1, 8, 5), mat('brass', '#b8893a', { metalness: .5, roughness: .4 }), -2.7, .75, 2.45, g); }
+  // 2 far-left: a big pot in the corner
+  { const jg = new THREE.Group(); jg.position.set(-2.4, 0, -2.4); g.add(jg); amph(jg, 0, 0, 1.05); }
+  // 3 far-right: a burning torch on a post
+  box(.12, 2, .12, 'wood', 2.4, 0, -2.4, g); cyl(.14, .1, .22, 7, mat('iron', '#3c3a38'), 2.4, 2, -2.4, g);
+  { const fl = add(new THREE.ConeGeometry(.13, .45, 6), new THREE.MeshStandardMaterial({ color: '#ffb23a', emissive: '#ff8a1a', emissiveIntensity: 1.8, flatShading: true }), 2.4, 2.45, -2.4, g); fl.userData.dyn = 1; window.__fire = (window.__fire || []).concat(fl); }
+  // 4 near-right: a rack of spears
+  box(1.2, .1, .12, 'wood', 2.9, 1.3, 2.4, g); for (const sx of [-.55, .55]) box(.08, 1.4, .08, 'wood', 2.9 + sx, 0, 2.4, g);
+  for (let k = 0; k < 4; k++) { const sp = box(.04, 2.3, .04, 'woodLt', 2.5 + k * .26, 0, 2.3, g); sp.rotation.x = .12; add(new THREE.ConeGeometry(.05, .22, 4), mat('iron', '#3c3a38'), 2.5 + k * .26, 2.35, 2.58, g); }
+  // 5 centre: a Roman seal set into the paving
+  { const c = document.createElement('canvas'); c.width = c.height = 256; const x = c.getContext('2d');
+    x.fillStyle = '#9a6a2a'; x.beginPath(); x.arc(128, 128, 126, 0, 7); x.fill(); x.strokeStyle = '#e0b84a'; x.lineWidth = 8; x.beginPath(); x.arc(128, 128, 112, 0, 7); x.stroke();
+    x.strokeStyle = '#6a8a3a'; x.lineWidth = 6; for (const sd of [-1, 1]) { x.beginPath(); x.arc(128, 140, 80, Math.PI / 2 + sd * .4, Math.PI / 2 + sd * 2.2, sd < 0); x.stroke(); }
+    x.fillStyle = '#f0d070'; x.font = 'bold 54px Georgia'; x.textAlign = 'center'; x.fillText('SPQR', 128, 150);
+    x.beginPath(); x.moveTo(128, 40); x.lineTo(150, 80); x.lineTo(128, 70); x.lineTo(106, 80); x.closePath(); x.fill();
+    const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
+    const seal = add(new THREE.CircleGeometry(1, 32), new THREE.MeshStandardMaterial({ map: t, metalness: .5, roughness: .45 }), 0, .06, 0, g); seal.rotation.x = -Math.PI / 2; seal.castShadow = false; }
+  station(1, 1, 'City Gate', 0, GZ, [0, 0, GZ - 10], [at(-2.3, 2.4, 1.6, 'gate guard'), at(-2.4, -2.4, 1.4, 'big pot'), at(2.4, -2.4, 2.75, 'burning torch'), at(2.9, 2.4, 2.4, 'rack of spears'), at(0, 0, .15, 'Roman seal')]);
+  STATIONS[STATIONS.length - 1].back = 11; STATIONS[STATIONS.length - 1].pitch = .1;
+}
+// game-ready stall frame for the other trades: own awning colour, own goods in the crates
+const CRATE_GOODS = {
+  'Fig Seller': { loci: [[{ fruit: '#5b2a5c', r: .075 }, 'crate of purple figs'], [{ fruit: '#4a2048', r: .07 }, 'crate of dark figs'], [{ fruit: '#6a7a3a', r: .07 }, 'crate of green figs'], [{ fruit: '#7a3a6a', r: .075 }, 'crate of ripe figs'], [{ fruit: '#5b2a5c', r: .072 }, 'crate of figs']], fill: [{ fruit: '#4a2048', r: .07 }, { fruit: '#6a7a3a', r: .07 }] },
+  'Scribe’s Table': { loci: [['scrolls', 'crate of scrolls'], ['tablets', 'wax tablets'], ['ink', 'ink pots and quills'], ['letters', 'sealed letters'], ['scrolls', 'scrolls for sale']], fill: ['letters', 'tablets'] },
+  'The Potter': { loci: [['jugs', 'little jugs'], ['bowls', 'stacked bowls'], ['lamps', 'clay oil lamps'], ['cups', 'drinking cups'], ['jugs', 'painted jugs']], fill: ['cups', 'bowls'] },
+};
+const GSTALL = {
+  'Fig Seller': { tint: '#7a3b6a', props: [[(g, x, y, z) => P.figBowl(g, x, y, z), -1.15, .43, 1.42, 'bowl of figs'], [(g, x, y, z) => P.scale(g, x, y, z), -1.35, 1.24, .3, 'hanging scales'], [(g, x, y, z) => P.honey(g, x, y, z), 1.35, 1.24, .3, 'honey jar'], [(g, x, y, z) => P.sack(g, x, y, z), 1.15, .43, 1.42, 'sack of grain'], [(g, x, y, z) => P.basket(g, x, y, z, '#5b2a5c', 14), .45, 1.24, .3, 'basket of figs']], fill: '#5b2a5c' },
+  'Scribe’s Table': { tint: '#3f6f9a', props: [[(g, x, y, z) => P.desk(g, x, y, z), -1.15, .43, 1.42, 'papyrus and quill'], [(g, x, y, z) => P.scrolls(g, x, y, z), -1.35, 1.24, .3, 'scroll shelf'], [(g, x, y, z) => P.bigJar(g, x, y, z, mat('inkJar', '#2a2a3a', { roughness: .35 }), .42), 1.35, 1.24, .3, 'big ink jar'], [(g, x, y, z) => P.tablets(g, x, y, z), 1.15, .43, 1.42, 'wax tablets'], [(g, x, y, z) => P.chest(g, x, y, z), .45, 1.24, .3, 'coin chest']], fill: null },
+  'The Potter': { tint: '#d9a640', props: [[(g, x, y, z) => P.bowlStack(g, x, y, z), -1.15, .43, 1.42, 'stack of bowls'], [(g, x, y, z) => P.jarPyramid(g, x, y, z), -1.35, 1.24, .3, 'pyramid of jars'], [(g, x, y, z) => P.clay(g, x, y, z), 1.35, 1.24, .3, 'lump of wet clay'], [(g, x, y, z) => P.wheel(g, x, y, z), 1.25, 0, 1.95, 'potter’s wheel'], [(g, x, y, z) => P.bigJar(g, x, y, z, 'clay', .55), .45, 1.24, .3, 'painted jar']], fill: null },
+};
+MARKET.forEach((m, i) => {
+  if (GSTALL[m.name] && MODELS.gstall && CRATES && CRATES.low.length === 3 && CRATES.high.length === 4) {
+    const [sx, sz, face] = M1[m.at], cg = CRATE_GOODS[m.name], g = gstallFrame(sx, sz, face, GSTALL[m.name].tint);
+    ({ 'Fig Seller': () => { P.basket(g, -2.35, 0, 1.6, '#5b2a4c'); P.basket(g, 2.35, 0, 1.6, '#e0b44a'); P.barrel(g, 2.5, 0, -1.1); }, 'Scribe’s Table': () => { P.chest(g, 2.4, 0, 1.5); }, 'The Potter': () => { for (let k = 0; k < 5; k++) amph(g, -2.6 + (k % 3) * .45, 1.4 + (k > 2 ? .5 : 0), .7); P.kiln(g, 2.5, 0, -.6); } })[m.name]();
+    const order = [CRATES.low[0], CRATES.high[0], CRATES.high[3], CRATES.low[2], CRATES.low[1]];
+    fillCrate(g, CRATES.high[1], cg.fill[0]); fillCrate(g, CRATES.high[2], cg.fill[1]); g.updateMatrixWorld(true);
+    const L = order.map((c, j) => { const top = fillCrate(g, c, cg.loci[j][0]); const w = g.localToWorld(new THREE.Vector3(c.x * 1.35, top, c.z * 1.35)); return { x: w.x, y: w.y, z: w.z, what: cg.loci[j][1] }; });
+    station(1, i + 2, m.name, sx, sz, [sx + Math.sign(sx) * 6, 2, sz], L); return; }
+  if (false) {
+    const [sx, sz, face] = M1[m.at], cfg = GSTALL[m.name], g = gstallFrame(sx, sz, face, cfg.tint);
+    ({ 'Fig Seller': () => { P.basket(g, -2.35, 0, 1.6, '#5b2a4c'); P.basket(g, 2.35, 0, 1.6, '#e0b44a'); P.barrel(g, 2.5, 0, -1.1); },
+       'Scribe’s Table': () => { P.chest(g, 2.4, 0, 1.5); box(.5, .9, .5, 'woodLt', -2.35, 0, 1.4, g); P.scrolls(g, -2.35, .9, 1.4); },
+       'The Potter': () => { for (let k = 0; k < 5; k++) amph(g, -2.6 + (k % 3) * .45, 1.4 + (k > 2 ? .5 : 0), .7); P.kiln(g, 2.5, 0, -.6); } })[m.name]();
+    // fill the empty middle crates so nothing looks bare
+    g.updateMatrixWorld(true);
+    for (let [fx, fy, fz] of [[0, .43, 1.42], [-.45, 1.24, .3]]) { if (fy > .9) fy = surfaceY(g, fx, fz, fy); if (cfg.fill) for (let n = 0; n < 9; n++) add(new THREE.IcosahedronGeometry(.1, 1), mat('f' + cfg.fill + 's', cfg.fill, { flatShading: false, roughness: .5 }), fx + R(-.25, .25), fy + R(0, .1), fz + R(-.2, .2), g);
+      else if (m.name === 'Scribe’s Table') for (let n = 0; n < 4; n++) { const sc = add(new THREE.CylinderGeometry(.05, .05, .4, 8), mat('papyrus', '#e8d6a8'), fx + R(-.2, .2), fy + .05 + n * .06, fz, g); sc.rotation.z = Math.PI / 2; sc.rotation.y = R(-.5, .5); }
+      else for (let n = 0; n < 3; n++) { const jg = new THREE.Group(); jg.position.set(fx - .25 + n * .25, fy, fz); g.add(jg); amph(jg, 0, 0, .3); } }
+    g.updateMatrixWorld(true);
+    const L = cfg.props.map(([fn, x, y, z, what]) => { let top; if (y > .9) { y = surfaceY(g, x, z, y); const sg = new THREE.Group(); sg.position.set(x, y, z); sg.scale.setScalar(1.55); g.add(sg); top = y + fn(sg, 0, 0, 0) * 1.55; } else top = fn(g, x, y, z); const w = g.localToWorld(new THREE.Vector3(x, top, z)); return { x: w.x, y: w.y, z: w.z, what }; });
+    station(1, i + 2, m.name, sx, sz, [sx + Math.sign(sx) * 6, 2, sz], L); return; }
+  if (m.name === 'Pomegranates' && MODELS.gstall) {   // the game-ready fruit stall (BlackMike, CC BY 4.0)
+    const [sx, sz, face] = M1[m.at], k = 1.35, g = gstallFrame(sx, sz, face, '#ffffff'); g.children[0].traverse(o => { if (o.isMesh && (o.material.name || '').includes('FruitVeg')) o.visible = true; });
+    P.basket(g, -2.35, 0, 1.6, '#c43a2e'); P.basket(g, 2.35, 0, 1.6, '#e0b44a');
+    g.updateMatrixWorld(true);
+    const names = ['crate of limes', 'crate of oranges', 'crate of potatoes', 'crate of lemons', 'crate of pink fruit'];
+    const L = (CRATES ? [CRATES.low[0], CRATES.high[0], CRATES.high[3], CRATES.low[2], CRATES.low[1]] : []).map((c, j) => { const w = g.localToWorld(new THREE.Vector3(c.x * k, c.y * k + .25, c.z * k)); return { x: w.x, y: w.y, z: w.z, what: names[j] }; });
+    station(1, i + 2, 'Fruit Stall', sx, sz, [sx + Math.sign(sx) * 6, 2, sz], L); return; }
+  const [sx, sz, face] = M1[m.at];
+  const g = new THREE.Group(); g.position.set(sx, heightAt(sx, sz), sz); g.rotation.y = face; scene.add(g);
+  ({ 'Fig Seller': () => { P.basket(g, -2.35, 0, 1.6, '#5b2a4c'); P.basket(g, 2.35, 0, 1.6, '#e0b44a'); P.barrel(g, 2.5, 0, -1.1); },
+     'Wool Dyer': () => { P.bucket(g, -2.3, 0, 1.6); P.vat(g, 2.4, 0, 1.4, '#9a2a2a'); for (let k = 0; k < 3; k++) P.barrel(g, 2.5, 0, -1.2 + k * .7); },
+     'Scribe’s Table': () => { P.chest(g, 2.4, 0, 1.5); box(.5, .9, .5, 'woodLt', -2.35, 0, 1.4, g); P.scrolls(g, -2.35, .9, 1.4); },
+     'The Potter': () => { for (let k = 0; k < 5; k++) amph(g, -2.6 + (k % 3) * .45, 1.4 + (k > 2 ? .5 : 0), .7); P.bowlStack(g, 2.3, 0, 1.6); P.clay(g, 2.6, 0, .9); },
+     'Pomegranates': () => { P.basket(g, -2.35, 0, 1.6, '#c43a2e'); P.basket(g, 2.35, 0, 1.6, '#e0b44a'); P.crates(g, 2.5, 0, -.8); },
+     'Wine Jars': () => { for (let k = 0; k < 4; k++) P.barrel(g, -2.5, 0, -1.2 + k * .75); amph(g, 2.4, 1.5, .9); amph(g, 2.6, .8, .8); } })[m.name]?.();
+  g.updateMatrixWorld(true);
+  box(.8, 1.15, .7, 'wood', 0, 0, -.2, g); box(.9, .08, .8, 'woodLt', 0, 1.07, -.2, g);
+  const FILL = { 'Fig Seller': ['fruit', '#5b2a5c'], 'Wool Dyer': ['cloth'], 'Scribe’s Table': ['scroll'], 'The Potter': ['pots'], 'Pomegranates': ['fruit', '#c43a2e'], 'Wine Jars': ['pots'] }[m.name];
+  const fillAt = (x, y, z) => { const k = FILL[0];
+    if (k === 'fruit') { for (let n = 0; n < 7; n++) add(new THREE.IcosahedronGeometry(.1, 1), mat('f' + FILL[1] + 's', FILL[1], { flatShading: false, roughness: .5 }), x + R(-.18, .18), y + .1 + (n > 4 ? .12 : 0), z + R(-.12, .12), g); }
+    else if (k === 'cloth') { const c = ['#c94a3a', '#e0b44a', '#3f6f9a', '#7a3b6a', '#efe6d4'][(rnd() * 5) | 0]; box(.42, .14, .3, mat('w' + c, c), x, y, z, g); box(.4, .12, .28, mat('w#efe6d4', '#efe6d4'), x + .02, y + .14, z, g); }
+    else if (k === 'scroll') { const sc = add(new THREE.CylinderGeometry(.05, .05, .36, 8), mat('papyrus', '#e8d6a8'), x, y + .05, z, g); sc.rotation.z = Math.PI / 2; sc.rotation.y = R(-.5, .5); }
+    else { const jg = new THREE.Group(); jg.position.set(x, y, z); g.add(jg); amph(jg, 0, 0, R(.32, .45)); } };
+  const n00 = g.children.length;
+  for (const x of [-.55, -.2, .2, .55]) fillAt(x, H_NEAR, .55 + R(-.05, .1));
+  for (const x of [-.6, -.2, .2, .6]) fillAt(x, H_FAR, -1);
+  for (const x of [-1.6, -.95, .95, 1.6]) fillAt(x, H_FAR, -.78);
+  const custom = m.props.map(fn => { const n0 = g.children.length; const [top, what] = fn(g); const o = g.children[n0]; const lp = o.position.clone(); lp.y = top; g.updateMatrixWorld(true); const w = g.localToWorld(lp); return { x: w.x, y: w.y, z: w.z, what }; });
+  // align each prop's reported x/z with its slot even when the first child is offset
+  station(1, i + 2, m.name, sx, sz, [sx + Math.sign(sx) * 6, 2, sz], custom);
+});
+{ // ROOM 6 — the well (seen from the gate side): 1 bucket, 2 water carrier, 3 olive tree, 4 bench
+  const wz = 58, wy = heightAt(0, wz), at = (x, z, top, what) => ({ x, y: wy + top, z: wz + z, what });
+  station(1, 6, 'The Well', 0, wz, [0, 0, wz - 10], [at(-2, 2, .7, 'water bucket'), at(-2.1, -1.8, 1.9, 'woman carrying a jar'), at(2.5, -1.5, 3.2, 'olive tree'), at(2.6, 2.6, .8, 'stone bench')]);
+  STATIONS[STATIONS.length - 1].back = 5.8; }
+// well + olive tree + bench
+{ const z = 58, x = 0;
+  for (let i = 0; i < 14; i++) { const a = i / 14 * Math.PI * 2; const b = box(.52, .72, .42, i % 2 ? 'stone' : 'stoneDk', Math.cos(a) * 1.1, heightAt(0, z), z + Math.sin(a) * 1.1); b.rotation.y = -a; }
+  box(.1, 1.9, .1, 'wood', -1, heightAt(0, z), z); box(.1, 1.9, .1, 'wood', 1, heightAt(0, z), z); box(2.2, .1, .1, 'wood', 0, heightAt(0, z) + 1.85, z);
+  box(2.4, .2, .8, 'stone', 2.6, heightAt(3, z) + .45, z + 2.6); box(.3, .45, .6, 'stone', 1.7, heightAt(3, z), z + 2.6); box(.3, .45, .6, 'stone', 3.5, heightAt(3, z), z + 2.6);
+  { const y = heightAt(0, z);
+    cyl(1.45, 1.55, .25, 16, 'stoneDk', 0, y - .05, z); { const rim = add(new THREE.RingGeometry(.88, 1.32, 24), mat('rimM', '#e8e2d6', { side: THREE.DoubleSide }), 0, y + .73, z); rim.rotation.x = -Math.PI / 2; const shaft = add(new THREE.CylinderGeometry(.88, .88, 2.4, 20, 1, true), mat('shaft', '#2a221c', { side: THREE.BackSide }), 0, y + .73 - 1.2, z); shaft.castShadow = false; cyl(.87, .87, .02, 20, mat('wellWater', '#1e3a3c', { roughness: .05, metalness: .2 }), 0, y - 1.2, z); }
+    
+    const wl = add(new THREE.CylinderGeometry(.11, .11, 2, 10), 'wood', 0, y + 1.45, z); wl.rotation.z = Math.PI / 2;
+    box(.07, .5, .07, 'wood', 1.15, y + 1.35, z + .2); box(.25, .07, .07, 'wood', 1.15, y + 1.85, z + .3);
+    box(.02, .75, .02, mat('rope', '#a8885a'), 0, y + .85, z); cyl(.17, .14, .28, 10, 'wood', 0, y + .6, z);
+    cyl(.24, .19, .4, 12, 'wood', -2, heightAt(-2, z + 2), z + 2); cyl(.21, .21, .02, 12, mat('basinW', '#8fd8d4'), -2, heightAt(-2, z + 2) + .37, z + 2);
+    for (let i = 0; i < 8; i++) { const a = R(0, 6), r = R(1.7, 2.3); add(new THREE.DodecahedronGeometry(R(.08, .16), 0), 'stoneDk', Math.cos(a) * r, heightAt(0, z) + .04, z + Math.sin(a) * r).scale.y = .5; } }
+  tree(2.5, z - 1.5, .9);
+}
+// market clutter: crates, sacks, straw, pigeons, a sleeping dog, lamps
+for (const [x, z] of [[-4.6, 61], [4.6, 60.5], [-4.6, 49], [4.8, 48.5], [-4.6, 37.5], [4.6, 37]]) {
+  const y = heightAt(x, z);
+  for (let i = 0; i < 3; i++) { const st = box(R(.4, .9), .03, .05, 'straw', x + R(-1.5, 1.5), y + .02, z + R(-2, 2)); st.rotation.y = R(0, 3); }
+}
+for (let i = 0; i < 0; i++) { const x = R(-2.5, 2.5), z = R(34, 70), y = heightAt(x, z); const pg = new THREE.Group(); pg.position.set(x, y, z); pg.rotation.y = R(0, 6); scene.add(pg);
+  const b = add(new THREE.IcosahedronGeometry(.13, 0), 'pigeon', 0, .14, 0, pg); b.scale.set(1.5, 1, 1); add(new THREE.IcosahedronGeometry(.07, 0), 'pigeon', .17, .25, 0, pg); }
+
+for (const [x, z] of [[-6.8, 61.6], [6.8, 49.6], [-6.8, 37.6]]) { const y = heightAt(x, z); box(.03, .5, .03, 'dark', x, y + 2.2, z); add(new THREE.IcosahedronGeometry(.13, 0), mat('lamp', '#e2b062', { emissive: '#a86a1a', emissiveIntensity: .5 }), x, y + 2.15, z); }
+// houses lining the street
+for (let z = 70; z > 22; z -= 9) for (const s of [-1, 1]) house(s * R(14, 15.5), z + R(-1, 1), R(7, 9), R(7, 8.5), rnd() > .5 ? 2 : 1, s > 0 ? -Math.PI / 2 : Math.PI / 2);
+

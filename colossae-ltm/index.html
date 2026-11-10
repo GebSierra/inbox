@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>Colossae LTM</title>
-<link rel="stylesheet" href="engine/app.css">
+<link rel="stylesheet" href="../ltm-engine/engine/app.css">
 </head>
 <body>
 <div id="loader"><div class="lc"><div class="lt">Colossae</div><div class="ls">A memory palace for Colossians</div><div class="lb"><i id="lbar"></i></div><div class="lp" id="lpct">Preparing the town…</div></div></div>
@@ -25,7 +25,7 @@
 </div>
 <div id="nav"><button id="prev">◀ Prev</button><button id="next">Next ▶</button></div>
 <div id="joy"><div id="knob"></div></div>
-<script type="importmap">{"imports":{"three":"./three.module.js","three/addons/":"./addons/"}}</script>
-<script type="module" src="engine/app.js"></script>
+<script type="importmap">{"imports":{"three":"../ltm-engine/three.module.js","three/addons/":"../ltm-engine/addons/","ltm-engine/":"../ltm-engine/","ltm-town/":"./"}}</script>
+<script type="module" src="../ltm-engine/boot.js"></script>
 </body>
 </html>

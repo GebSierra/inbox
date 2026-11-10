@@ -1,0 +1,23 @@
+// ---- tutorial: the LTM method, demonstrated on the first square (Colossians 1:1-5) ----
+const ESV = 'https://www.esv.org/Colossians+1/';
+const ORDER_SVG = `<svg viewBox="0 0 220 150" width="220" height="150" role="img" aria-label="Square of five spots: 1 near-left, 2 far-left, 3 far-right, 4 near-right, 5 centre">
+  <rect x="50" y="14" width="120" height="96" fill="none" stroke="#b8583a" stroke-width="2" stroke-dasharray="5 4"/>
+  <path d="M60 100 L60 26 L160 26 L160 100" fill="none" stroke="#3b2a1c" stroke-width="1.5" marker-end="url(#ah)"/>
+  <defs><marker id="ah" viewBox="0 0 8 8" refX="6" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#3b2a1c"/></marker></defs>
+  ${[[50, 110, 1], [50, 14, 2], [170, 14, 3], [170, 110, 4], [110, 62, 5]].map(([x, y, n]) => `<circle cx="${x}" cy="${y}" r="13" fill="#f0c46a" stroke="#3b2a1c"/><text x="${x}" y="${y + 5}" text-anchor="middle" font-size="14" font-family="Georgia" font-weight="bold" fill="#3b2a1c">${n}</text>`).join('')}
+  <text x="110" y="142" text-anchor="middle" font-size="12" font-family="Georgia" fill="#3b2a1c">you stand here, facing the stall</text></svg>`;
+const TUT = [
+  { t: 'Welcome to Colossae', cam: 'fly', b: `<p>This town is a memory palace for the book of Colossians. Watch it from above: each chapter has its own district.</p>`, next: 'Show me' },
+  { t: 'One district per chapter', cam: 'fly', b: `<p><b>Chapter 1</b> is the market, from the city gate to the well. <b>Chapter 2</b> is the temple courtyard. <b>Chapter 3</b> is the family house. <b>Chapter 4</b> is the river, the bridge and the road out of town.</p>` },
+  { t: 'Every room holds five verses', cam: 'gate', b: `<p>Each room holds five verses on five objects, always in the same order as you face it: <b>1</b> near-left, <b>2</b> far-left, <b>3</b> far-right, <b>4</b> near-right, <b>5</b> centre.</p><p>Here at the city gate: the guard, the pot, the torch, the spears and the seal.</p>` },
+  { t: 'Same pattern, every room', cam: 'stall', b: `<p>The first stall works the same way: near-left, far-left, far-right, near-right, then the centre.</p><p>Rooms run in order too: up the left side of the market, back down the right, then on to the next district.</p>` },
+  { t: 'Ready?', choice: true, cam: 'stall', b: `<p>That’s the whole method. Start exploring now, or take a few more tips and practice the first five verses together.</p>` },
+  { t: 'First, the foundation', part: 2, b: `<p>Locations don't replace memorizing. They lock in what you've already started to learn.</p><p>Before you place a verse, read it aloud <b>10 to 20 times</b> until you can say it roughly from memory. Then tie it to a spot here to finish the job.</p><p><a href="${ESV}" target="_blank" rel="noopener">Open Colossians 1 (ESV) on esv.org</a></p>` },
+  { t: 'Verse 1:1 · near-left corner', part: 2, b: `<p>Say Colossians 1:1 a few times. Now tie it to the near-left object, the gate guard. Make it bigger than life: funny, moving, emotional.</p><p class="ex">For example, you could picture the guard stopping Paul, who slams down a huge royal letter stamped "by the will of God," while young Timothy, his arm around Paul, beams like a proud little brother.</p>`, locus: 0 },
+  { t: 'Verse 1:2 · far-left corner', part: 2, b: `<p>Next, Colossians 1:2 on the far-left object, the big pot in the corner.</p><p class="ex">For example, you could picture a dove of peace bursting out of the pot, carrying a gift box of grace addressed in giant letters "To the saints at Colossae."</p>`, locus: 1 },
+  { t: 'Verse 1:3 · far-right corner', part: 2, b: `<p>Your turn. Read 1:3 until you have it, then make your own picture on the far-right object, the burning torch. The stranger and more vivid it is, the better it sticks. Use whatever makes sense to you.</p>`, locus: 2 },
+  { t: 'Verse 1:4 · near-right corner', part: 2, b: `<p>Same again for 1:4 on the near-right object, the rack of spears. Give your image movement or emotion. Make something happen.</p>`, locus: 3 },
+  { t: 'Verse 1:5 · centre', part: 2, b: `<p>Finally, 1:5 goes in the centre, on the Roman seal in the ground.</p>`, locus: 4 },
+  { t: 'Walk it back', part: 2, b: `<p>Look away from the screen. Walk the gate in your mind: guard, pot, torch, spears, seal. At each object, see your picture and say the verse.</p><p>If one is fuzzy, read it again and make its picture louder.</p>`, locus: 'all' },
+  { t: 'Every room works the same way', part: 2, b: `<p>Press <b>Next</b> to walk to the next room, or double-tap anywhere to go there. Tap <b>Bird’s-eye</b> to fly over the whole town: drag to fly, pinch for height, twist to turn, double-tap to land.</p>`, next: 'Start the tour' },
+];

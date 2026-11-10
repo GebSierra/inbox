@@ -1,0 +1,18 @@
+// ---- tutorial: the LTM method, demonstrated on the first room (James 1:1-5) ----
+const ESV = 'https://www.esv.org/James+1/';
+const ORDER_SVG = '';
+const TUT = [
+  { t: 'Welcome to the agora', cam: 'fly', b: `<p>This town is a memory palace for the book of James. Watch it from above: each chapter gets its own district.</p>`, next: 'Show me' },
+  { t: 'One district per chapter', cam: 'fly', b: `<p><b>Chapter 1</b> is the agora, the city's open market square, just inside the gate. The districts for chapters 2 to 5 come next.</p>` },
+  { t: 'Every room holds five verses', cam: 'gate', b: `<p>Each room holds five verses on five objects, always in the same order as you face it: <b>1</b> near-left, <b>2</b> far-left, <b>3</b> far-right, <b>4</b> near-right, <b>5</b> centre.</p><p>Here in the Gate Stoa: the sealed letter, the laughing mask, the gold ingot, the blue amphora and the lion fountain.</p>` },
+  { t: 'Same pattern, every room', cam: 'stall', b: `<p>The Tower of the Winds works the same way: near-left, far-left, far-right, near-right, then the centre.</p><p>Rooms run in order too: up the left side of the square from the gate, then back down the right.</p>` },
+  { t: 'Ready?', choice: true, cam: 'stall', b: `<p>That’s the whole method. Start exploring now, or take a few more tips and practice the first five verses together.</p>` },
+  { t: 'First, the foundation', part: 2, b: `<p>Locations don't replace memorizing. They lock in what you've already started to learn.</p><p>Before you place a verse, read it aloud <b>10 to 20 times</b> until you can say it roughly from memory. Then tie it to a spot here to finish the job.</p><p><a href="${ESV}" target="_blank" rel="noopener">Open James 1 (ESV) on esv.org</a></p>` },
+  { t: 'Verse 1:1 · near-left corner', part: 2, b: `<p>Say James 1:1 a few times. Now tie it to the near-left object, the sealed letter. Make it bigger than life: funny, moving, emotional.</p><p class="ex">For example, you could picture James, dressed as a humble servant, cracking the red seal, and twelve tiny travellers tumbling out of the letter and scattering across the stoa, every one of them waving and shouting "Greetings!"</p>`, locus: 0 },
+  { t: 'Verse 1:2 · far-left corner', part: 2, b: `<p>Next, James 1:2 on the far-left object, the laughing theatre mask.</p><p class="ex">For example, you could picture all kinds of troubles pelting the mask: rain, rotten figs, a goat, and the mask only laughs harder with every hit.</p>`, locus: 1 },
+  { t: 'Verse 1:3 · far-right corner', part: 2, b: `<p>Your turn. Read 1:3 until you have it, then make your own picture on the far-right object, the gold ingot on the black touchstone. The stranger and more vivid it is, the better it sticks. Use whatever makes sense to you.</p>`, locus: 2 },
+  { t: 'Verse 1:4 · near-right corner', part: 2, b: `<p>Same again for 1:4 on the near-right object, the flawless blue amphora. Give your image movement or emotion. Make something happen.</p>`, locus: 3 },
+  { t: 'Verse 1:5 · centre', part: 2, b: `<p>Finally, 1:5 goes in the centre, on the lion-head fountain.</p>`, locus: 4 },
+  { t: 'Walk it back', part: 2, b: `<p>Look away from the screen. Walk the Gate Stoa in your mind: letter, mask, gold, amphora, fountain. At each object, see your picture and say the verse.</p><p>If one is fuzzy, read it again and make its picture louder.</p>`, locus: 'all' },
+  { t: 'Every room works the same way', part: 2, b: `<p>Press <b>Next</b> to walk to the next room, or double-tap anywhere to go there. Tap <b>Bird’s-eye</b> to fly over the whole town: drag to fly, pinch for height, twist to turn, double-tap to land.</p>`, next: 'Start the tour' },
+];

@@ -1,0 +1,86 @@
+// ---- collision grid: footprints of solid things you would bump into ----
+const CG = { x0: -260, z0: -260, n: 1100, r: .5 }; CG.cells = new Uint8Array(CG.n * CG.n);
+function blocked(x, z) { const R2 = .28; for (const [ox, oz] of [[0, 0], [R2, 0], [-R2, 0], [0, R2], [0, -R2]]) { const i = Math.floor((x + ox - CG.x0) / CG.r), j = Math.floor((z + oz - CG.z0) / CG.r); if (i < 0 || j < 0 || i >= CG.n || j >= CG.n) return true; if (CG.cells[j * CG.n + i]) return true; } return false; }
+// ---- merge static scenery into one draw call per material (big win on phones) ----
+{
+  scene.updateMatrixWorld(true);
+  { const bb = new THREE.Box3();
+    scene.traverse(o => { if (!o.isMesh || o.userData.dyn || o.material.isShaderMaterial || o.geometry.attributes.color || o.material.transparent || o.isSprite) return; for (let q = o; q; q = q.parent) if (!q.visible && !(q === o && o.material === M.dark)) return;
+      bb.setFromObject(o); const sx = bb.max.x - bb.min.x, sz = bb.max.z - bb.min.z; if (sx > 40 || sz > 40 || (sx < .02 && sz < .02)) return;
+      const cx = (bb.min.x + bb.max.x) / 2, cz = (bb.min.z + bb.max.z) / 2, gy = groundY(cx, cz);
+      if (bb.min.y > gy + 1.8 || bb.max.y < gy + .45) return;          // overhead, or low enough to step over
+      // a rotated thin wall: rasterise along its length instead of filling its whole bounding box
+      const pos = o.geometry.parameters, isWall = !!(pos && pos.width && pos.depth !== undefined && Math.min(pos.width, pos.depth) < .9 && Math.max(pos.width, pos.depth) > 2.5);
+      if (isWall && sx > 1 && sz > 1) { const L = Math.max(pos.width, pos.depth), d = new THREE.Vector3(pos.width >= pos.depth ? 1 : 0, 0, pos.width >= pos.depth ? 0 : 1).applyQuaternion(o.getWorldQuaternion(new THREE.Quaternion())); const c = o.getWorldPosition(new THREE.Vector3());
+        for (let t2 = -L / 2; t2 <= L / 2; t2 += .25) { const i = Math.floor((c.x + d.x * t2 - CG.x0) / CG.r), j = Math.floor((c.z + d.z * t2 - CG.z0) / CG.r); if (i >= 0 && j >= 0 && i < CG.n && j < CG.n) CG.cells[j * CG.n + i] = 1; } return; }
+      const i0 = Math.floor((bb.min.x - CG.x0) / CG.r), i1 = Math.floor((bb.max.x - CG.x0) / CG.r), j0 = Math.floor((bb.min.z - CG.z0) / CG.r), j1 = Math.floor((bb.max.z - CG.z0) / CG.r);
+      for (let j = Math.max(0, j0); j <= Math.min(CG.n - 1, j1); j++) for (let i = Math.max(0, i0); i <= Math.min(CG.n - 1, i1); i++) CG.cells[j * CG.n + i] = 1; });
+    // keep the walkways themselves clear (gates, doorways, bridge deck)
+    const clear = (x0, z0, x1, z1) => { for (let z = z0; z <= z1; z += .25) for (let x = x0; x <= x1; x += .25) { const i = Math.floor((x - CG.x0) / CG.r), j = Math.floor((z - CG.z0) / CG.r); if (i >= 0 && j >= 0 && i < CG.n && j < CG.n) CG.cells[j * CG.n + i] = 0; } };
+    for (const w of WALKWAYS) clear(...w);   // [x0, z0, x1, z1] boxes from the town part
+  }
+  const groups = new Map(), kill = [];
+  const hidden = []; scene.traverse(o => { if (o.isMesh && !o.userData.dyn) { let v = true; for (let q = o; q; q = q.parent) if (!q.visible) { v = false; break; } if (!v) hidden.push(o); } }); hidden.forEach(o => o.parent.remove(o));
+  scene.traverse(o => {
+    if (!o.isMesh || o.userData.dyn || o.material.isShaderMaterial || o.geometry.attributes.color || o.material.transparent) return;
+    let g = o.geometry.index ? o.geometry.toNonIndexed() : o.geometry.clone();
+    g.applyMatrix4(o.matrixWorld);
+    for (const k of Object.keys(g.attributes)) if (!['position', 'normal', 'uv'].includes(k)) g.deleteAttribute(k);
+    if (!g.attributes.normal) g.computeVertexNormals();
+    if (!g.attributes.uv) g.setAttribute('uv', new THREE.Float32BufferAttribute(new Float32Array(g.attributes.position.count * 2), 2));
+    g.morphAttributes = {}; g.clearGroups();
+    const key = o.material.uuid + (o.castShadow ? 's' : 'n');
+    if (!groups.has(key)) groups.set(key, { m: o.material, cast: o.castShadow, list: [] });
+    groups.get(key).list.push(g); kill.push(o);
+  });
+  for (const o of kill) o.parent.remove(o);
+  for (const { m, cast, list } of groups.values()) { const merged = mergeGeometries(list, false); if (!merged) continue;
+    const mesh = new THREE.Mesh(merged, m); mesh.castShadow = cast; mesh.receiveShadow = true; mesh.matrixAutoUpdate = false; scene.add(mesh); }
+  const empties = []; scene.traverse(o => { if (o.isGroup && !o.children.length) empties.push(o); }); empties.forEach(o => o.parent && o.parent.remove(o));
+}
+// ---- the bird you fly as in bird's-eye view ----
+const bird = new THREE.Group(); scene.add(bird); bird.visible = false;
+{ const white = new THREE.MeshStandardMaterial({ color: '#f4f1ea', flatShading: true, roughness: .8 }), grey = new THREE.MeshStandardMaterial({ color: '#b9b4ab', flatShading: true }), beak = new THREE.MeshStandardMaterial({ color: '#e0a03a', flatShading: true });
+  const body = new THREE.Mesh(new THREE.IcosahedronGeometry(.3, 0), white); body.scale.set(.75, .6, 1.5); bird.add(body);
+  const head = new THREE.Mesh(new THREE.IcosahedronGeometry(.16, 0), white); head.position.set(0, .1, -.45); bird.add(head);
+  const bk = new THREE.Mesh(new THREE.ConeGeometry(.05, .16, 4), beak); bk.rotation.x = -Math.PI / 2; bk.position.set(0, .08, -.62); bird.add(bk);
+  const tail = new THREE.Mesh(new THREE.ConeGeometry(.16, .4, 3), grey); tail.rotation.x = Math.PI / 2; tail.scale.set(1.4, 1, .25); tail.position.set(0, .02, .52); bird.add(tail);
+  bird.userData.wings = [-1, 1].map(sd => { const w = new THREE.Group(); w.position.set(sd * .18, .08, -.05); bird.add(w);
+    const sh = new THREE.Shape(); sh.moveTo(0, -.18); sh.lineTo(sd * .95, .02); sh.lineTo(sd * .7, .2); sh.lineTo(0, .2);
+    const m = new THREE.Mesh(new THREE.ShapeGeometry(sh), new THREE.MeshStandardMaterial({ color: '#efebe2', flatShading: true, side: THREE.DoubleSide })); m.rotation.x = -Math.PI / 2; w.add(m);
+    const tip = new THREE.Mesh(new THREE.ShapeGeometry((() => { const t = new THREE.Shape(); t.moveTo(sd * .7, .2); t.lineTo(sd * .95, .02); t.lineTo(sd * 1.1, .14); return t; })()), new THREE.MeshStandardMaterial({ color: '#6d6a66', side: THREE.DoubleSide })); tip.rotation.x = -Math.PI / 2; w.add(tip);
+    w.userData.sd = sd; return w; });
+  bird.traverse(o => { if (o.isMesh) { o.castShadow = false; o.userData.dyn = 1; } });
+}
+let birdT = 0, lastTheta = 0, bank = 0, takeoff = 0, birdMixer = null;
+if (MODELS.bird) { bird.clear(); const bm = MODELS.bird; bm.traverse(o => { if (o.isMesh) { o.castShadow = false; o.userData.dyn = 1; o.frustumCulled = false; } });
+  const bb = new THREE.Box3().setFromObject(bm), sz = bb.getSize(new THREE.Vector3()); const k = 1.1 / Math.max(sz.x, sz.z); const w = new THREE.Group(); w.scale.setScalar(k); w.add(bm); w.rotation.y = Math.PI; bird.add(w);
+  if (BIRD_ANIM && BIRD_ANIM.length) { birdMixer = new THREE.AnimationMixer(bm); birdMixer.clipAction(BIRD_ANIM[0]).play(); } bird.userData.wings = []; }
+function birdFrame(dt, t) {
+  if (!overview) { bird.visible = false; takeoff = 0; return; }
+  bird.visible = true; takeoff = Math.min(1, takeoff + dt * .8); if (birdMixer) birdMixer.update(dt);
+  const fwd = new THREE.Vector3(); camera.getWorldDirection(fwd); const up = new THREE.Vector3(0, 1, 0).applyQuaternion(camera.quaternion);
+  const dist = 5 + 2 * (1 - takeoff); const p = camera.position.clone().addScaledVector(fwd, dist).addScaledVector(up, -1.25 - (1 - takeoff) * 2);
+  bird.position.copy(p);
+  let turn = doll.theta - lastTheta; turn = Math.atan2(Math.sin(turn), Math.cos(turn)); lastTheta = doll.theta; bank += (Math.max(-.6, Math.min(.6, turn * 25)) - bank) * Math.min(1, dt * 4);
+  bird.quaternion.copy(camera.quaternion); bird.rotateX(.25); bird.rotateZ(bank);
+  const glide = (Math.sin(t * .7) + 1) / 2 > .65; const fl = glide ? .15 : Math.sin(t * 11) * .75;   // flap, with the odd glide
+  for (const w of bird.userData.wings) w.rotation.z = w.userData.sd * fl;
+  bird.position.y += Math.sin(t * 11) * (glide ? 0 : .04);
+}
+{ const el = document.getElementById('lpct'), bar = document.getElementById('lbar'); if (el) el.textContent = 'Lighting the lamps…'; if (bar) bar.style.width = '95%'; }
+frame();
+window.__ready = true;
+requestAnimationFrame(() => requestAnimationFrame(() => { document.getElementById('lbar').style.width = '100%'; setTimeout(() => document.getElementById('loader').classList.add('done'), 250); }));
+
+// ---- book data check: books/<book>.json must match the rooms built above ----
+fetch('./books/' + CFG.bookFile + '.json').then(r => r.ok ? r.json() : null).then(book => { if (!book) return; const issues = [];
+  for (const c of book.chapters.filter(c => c.chapter <= BUILT)) for (const r of c.rooms) { const st = STATIONS.find(s => s.ch === c.chapter && s.room === r.room);
+    if (!st) { issues.push(`missing room ${c.chapter}.${r.room} ${r.name}`); continue; }
+    if (st.name !== r.name) issues.push(`${c.chapter}.${r.room}: built "${st.name}", book says "${r.name}"`);
+    if (st.loci.length !== r.objects.length) issues.push(`${c.chapter}.${r.room}: ${st.loci.length} spots built, ${r.objects.length} objects in book`); }
+  window.__bookCheck = issues; if (issues.length) console.warn('book/engine mismatch:', issues); }).catch(() => {});
+// ---- ?fps shows a frame-rate readout, for measuring on a real phone ----
+if (new URLSearchParams(location.search).has('fps')) { const el = Object.assign(document.createElement('div'), { style: 'position:fixed;left:8px;top:8px;z-index:30;font:12px monospace;background:#000a;color:#fff;padding:3px 6px;border-radius:4px' }); document.body.appendChild(el);
+  let n = 0, t0 = performance.now(); (function tick() { n++; const t = performance.now(); if (t - t0 > 1000) { el.textContent = `${(n * 1000 / (t - t0)).toFixed(0)} fps`; n = 0; t0 = t; } requestAnimationFrame(tick); })(); }
+window.__scene = scene; window.__labelScene = labelScene; window.__CG = CG;   // test hooks (tools/fingerprint.mjs)
