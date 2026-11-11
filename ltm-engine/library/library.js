@@ -148,5 +148,9 @@
   { const el = document.getElementById('loader'); if (el) el.classList.add('done'); }
   $('status').textContent = 'Rendering thumbnails…';
   window.__libraryOpen = id => openBig(OBJECTS.get(id)); window.__libraryClose = closeBig;
-  thumbs().catch(e => { console.error('[library] thumbnails stopped:', e); window.__library.errors.push('thumbnails: ' + e.message); $('status').textContent = 'Thumbnails stopped: ' + e.message; });
+  // test hook for tools/angles.mjs: render one object from a given angle (?angles skips the thumbnail run so the renderer is free)
+  window.__libraryAngle = (id, spin, pitch, w = 640, h = 480, zoom = 1) => { const e = OBJECTS.get(id); if (!e) throw new Error('no object ' + id); bigStage.appendChild(renderer.domElement);
+    show(e); cur.spin = spin; cur.pitch = pitch; cur.zoom = zoom; renderer.setPixelRatio(1); renderer.setSize(w, h, false); frame(w / h); tick(1.0); renderer.render(libScene, cam);
+    const url = renderer.domElement.toDataURL('image/png'); clearStage(); stash.appendChild(renderer.domElement); return url; };
+  if (/[?&]angles\b/.test(location.search)) { window.__library.done = true; $('status').textContent = ''; } else thumbs().catch(e => { console.error('[library] thumbnails stopped:', e); window.__library.errors.push('thumbnails: ' + e.message); $('status').textContent = 'Thumbnails stopped: ' + e.message; });
 }

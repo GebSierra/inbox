@@ -15,10 +15,11 @@ const CRATES = (() => { if (!MODELS.gstall) return null; let fm; MODELS.gstall.u
 window.__crates = CRATES;
 // fill one crate with goods, inside its walls; k = model scale
 function fillCrate(g, c, kind, k = 1.35) { const x = c.x * k, y = c.y * k + (c.y > .5 ? .08 : 0), z = c.z * k, w = Math.min(.55, c.w * k) * .8, d = Math.min(.45, c.d * k) * .8; let top = y;
+  if (typeof ubGoods === 'function') { const t = ubGoods(g, kind, x, y, z, w, d); if (t != null) return t; }
   const fruit = (col, r, n) => { for (let i = 0; i < n; i++) { const yy = y + r + (i % 3) * r * .9; add(new THREE.IcosahedronGeometry(r * R(.85, 1.1), 1), mat('fr' + col, col, { flatShading: false, roughness: .5 }), x + R(-w, w) / 2, yy, z + R(-d, d) / 2, g); top = Math.max(top, yy + r); } };
   if (kind.fruit) fruit(kind.fruit, kind.r || .07, kind.n || 22);
   else if (kind === 'scrolls') for (let i = 0; i < 7; i++) { const sc = add(new THREE.CylinderGeometry(.045, .045, w * .95, 8), mat('papyrus', '#e8d6a8'), x, y + .05 + (i % 3) * .07, z - d / 2 + (i % 4) * d / 3, g); sc.rotation.z = Math.PI / 2; sc.rotation.y = R(-.15, .15); top = y + .25; }
-  else if (kind === 'tablets') { for (let i = 0; i < 5; i++) { box(w * .8, .035, d * .7, i % 2 ? 'woodLt' : 'wood', x + R(-.02, .02), y + i * .04, z, g).rotation.y = R(-.2, .2); } box(w * .7, .01, d * .55, mat('wax', '#3a2c22'), x, y + .2, z, g); top = y + .22; }
+  else if (kind === 'tablets') top = upTablets(g, x, y, z, .8, 5);
   else if (kind === 'ink') { for (let i = 0; i < 4; i++) { const ix = x + (i % 2 - .5) * w * .5, iz = z + ((i >> 1) - .5) * d * .5; cyl(.05, .06, .1, 8, mat('inkJar', '#2a2a3a', { roughness: .35 }), ix, y, iz, g); const q = box(.012, .25, .012, 'wool', ix, y + .08, iz, g); q.rotation.z = .35; } top = y + .3; }
   else if (kind === 'letters') { for (let i = 0; i < 6; i++) { const l = box(w * .55, .02, d * .45, mat('papyrus', '#e8d6a8'), x + R(-.04, .04), y + .02 + i * .025, z + R(-.04, .04), g); l.rotation.y = R(-.4, .4); } cyl(.03, .03, .012, 8, mat('seal', '#b8331f'), x, y + .18, z, g); top = y + .2; }
   else if (kind === 'jugs') { for (let i = 0; i < 4; i++) { const jg = new THREE.Group(); jg.position.set(x + (i % 2 - .5) * w * .55, y, z + ((i >> 1) - .5) * d * .55); g.add(jg); amph(jg, 0, 0, .2); } top = y + .3; }
@@ -34,4 +35,4 @@ function gstallFrame(sx, sz, face, tint) {
     if (n.includes('FruitVeg')) o.visible = false;
     else if (n.includes('Wood')) { const k = 'gw' + n; if (!KMAT[k]) { KMAT[k] = o.material.clone(); const t = TEX.wood.clone(); t.repeat.set(3, 3); t.needsUpdate = true; KMAT[k].map = t; KMAT[k].aoMap = null; KMAT[k].color = new THREE.Color(n.includes('Dark') ? '#8a5c3a' : '#b88a5c'); KMAT[k].needsUpdate = true; } o.material = KMAT[k]; }
     else if (n.includes('Cloth') && tint !== '#ffffff') { o.material = o.material.clone(); o.material.map = null; o.material.color = new THREE.Color(tint); o.material.roughness = .95; o.material.needsUpdate = true; } });
-  g.add(c); const pl = new THREE.PointLight('#ffd9a8', 3, 5, 1.6); pl.position.set(0, 1.6, 2.2); g.add(pl); box(3.4, 1.2, 2.9, 'dark', 0, 0, -.1, g).visible = false; return g; }
+  g.add(c); if (tint !== '#ffffff' && typeof ubStallCloth === 'function') ubStallCloth(g, c, tint); const pl = new THREE.PointLight('#ffd9a8', 3, 5, 1.6); pl.position.set(0, 1.6, 2.2); g.add(pl); box(3.4, 1.2, 2.9, 'dark', 0, 0, -.1, g).visible = false; return g; }

@@ -18,7 +18,8 @@ const LIB_NE = townNE({ THREE, scene, heightAt: (x, z) => heightAt(x, z), add, b
   T((g, x, y, z) => viaScene(g, x, y, z, () => LIB_NE.palm(0, 0, 1)), 'date-palm', 'Date palm', 'james kit', 'plant', ['tree', 'harbour']);
   T((g, x, y, z) => viaScene(g, x, y, z, () => { for (const [dx, dz, s] of [[-2.5, 0, 1], [0, 1, .9], [2.6, -.2, 1.1]]) LIB_NE.palm(dx, dz, s); }), 'palm-grove', 'Palms along the shore', 'james kit', 'plant', ['tree', 'harbour', 'grove']);
   // the clay planters of the temple courtyard (colossae-ltm/world/temple.js) and the house front
-  const planter = (g, x, y, z, c = 'leaf') => { cyl(.55, .45, .6, 10, 'clay', x, y, z, g); for (let k = 0; k < 4; k++) add(new THREE.IcosahedronGeometry(R(.3, .45), 0), k % 2 ? 'leaf' : 'leafDk', x + R(-.25, .25), y + .8 + R(0, .3), z + R(-.25, .25), g); return y + 1.3; };
+  const planter = (g, x, y, z, c = 'leaf') => { for (let k = 0; k < 16; k++) R(0, 1);   // the old bush drew 16 numbers: keep the town's random stream where it was
+    return UD.planter(g, x, y, z); };
   T(planter, 'potted-bush', 'Clay planter with a bush', 'colossae 2.2', 'plant', ['planter', 'temple', 'pottery']);
   const urnTree = (g, x, y, z) => { cyl(.5, .4, .6, 8, 'clay', x, y, z, g); add(new THREE.IcosahedronGeometry(.6, 0), 'leaf', x, y + 1, z, g); return y + 1.6; };
   T(urnTree, 'potted-laurel', 'Laurel in a clay pot', 'colossae 3.1', 'plant', ['planter', 'house', 'pottery']);
@@ -52,10 +53,7 @@ const LIB_NE = townNE({ THREE, scene, heightAt: (x, z) => heightAt(x, z), add, b
   T(fire(1), 'campfire', 'Campfire', 'colossae kit', 'effect', ['fire', 'light']);
   T(fire(.5), 'altar-flame', 'Altar flame', 'colossae 2.3', 'effect', ['fire', 'temple']);
   T(fire(.2), 'small-flame', 'Small oil-lamp flame', 'colossae kit', 'effect', ['fire', 'light']);
-  const torch = (g, x, y, z) => { box(.12, 2, .12, 'wood', x, y, z, g); cyl(.14, .1, .22, 7, mat('iron', '#3c3a38'), x, y + 2, z, g);
-    const fl = add(new THREE.ConeGeometry(.13, .45, 6), new THREE.MeshStandardMaterial({ color: '#ffb23a', emissive: '#ff8a1a', emissiveIntensity: 1.8, flatShading: true }), x, y + 2.45, z, g); fl.userData.dyn = 1; return y + 2.7; };
-  T(torch, 'gate-torch', 'Burning torch on a post', 'colossae 1.1', 'effect', ['fire', 'light', 'gate']);
-  const lampPost = (g, x, y, z) => { box(.03, .5, .03, 'dark', x, y + 2.2, z, g); add(new THREE.IcosahedronGeometry(.13, 0), mat('lamp', '#e2b062', { emissive: '#a86a1a', emissiveIntensity: .5 }), x, y + 2.15, z, g); box(.08, 2.2, .08, 'wood', x, y, z, g); return y + 2.75; };
-  T(lampPost, 'street-lamp', 'Street lamp on a post', 'colossae 1.2', 'effect', ['light', 'market']);
+  T(gateTorch, 'gate-torch', 'Burning torch on a post', 'colossae 1.1', 'effect', ['fire', 'light', 'gate']);
+  T((g, x, y, z) => oilLampStand(g, x, y, z), 'street-lamp', 'Street lamp on a post', 'colossae 1.2', 'effect', ['light', 'market']);
   T((g, x, y, z) => { cyl(.05, .06, .3, 8, 'wool', x, y, z, g); flame(g, x, y + .3, z, 2); return y + .65; }, 'candle-flame', 'Candle flame', 'colossae kit', 'effect', ['fire', 'light']);
 }

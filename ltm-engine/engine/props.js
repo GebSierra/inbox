@@ -12,9 +12,7 @@ function shrub(x, z, s = 1, y) { y ??= heightAt(x, z); const cs = ['#6f8a46', '#
   for (let i = 0; i < 5; i++) { const m = add(new THREE.IcosahedronGeometry(R(.22, .34) * s, 1), mat('sh' + i % 4, cs[i % 4], { flatShading: true }), x + R(-.3, .3) * s, y + (.25 + R(0, .3)) * s, z + R(-.3, .3) * s); m.scale.y = .8; }
   if (rnd() < .4) for (let i = 0; i < 4; i++) add(new THREE.IcosahedronGeometry(.05 * s, 0), mat('flower' + (i % 2), i % 2 ? '#e0b44a' : '#e8e2d8'), x + R(-.35, .35) * s, y + R(.4, .65) * s, z + R(-.35, .35) * s); }
 function cypress(x, z, s = 1) {
-  const y = heightAt(x, z);
-  cyl(.15, .2, 1, 5, 'trunk', x, y, z);
-  const m = add(new THREE.ConeGeometry(1 * s, 7 * s, 6), 'cypress', x, y + 1 + 3.5 * s, z); m.scale.x = .8;
+  UD.cypress(x, z, s, heightAt(x, z));   // objects/up-d.js: flame-shaped cypress, shared geometry, no random numbers drawn
 }
 function sheep(x, z) {
   const g = new THREE.Group(); g.position.set(x, heightAt(x, z), z); g.rotation.y = R(0, 6); scene.add(g);

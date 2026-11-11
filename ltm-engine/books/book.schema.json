@@ -44,7 +44,7 @@
     "layout": {
       "type": "object",
       "properties": {
-        "dais": { "enum": ["stone", "low", "planks", "stones", "rug", "none"] },
+        "dais": { "enum": ["stone", "low", "planks", "pier", "stones", "rug", "none"] },
         "spread": { "type": "array", "items": { "type": "number" }, "minItems": 2, "maxItems": 2, "description": "half-width and half-depth of the square of five objects" },
         "big": { "type": "number", "description": "scale of the objects" },
         "rug": { "type": "string", "description": "rug colour, for dais \"rug\"" },

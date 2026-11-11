@@ -39,8 +39,8 @@ var P; P = {
   wool: (g, x, y, z) => { cyl(.4, .32, .35, 8, 'basket', x, y, z, g); for (let i = 0; i < 5; i++) add(new THREE.IcosahedronGeometry(.17, 0), 'wool', x + R(-.2, .2), y + .4, z + R(-.2, .2), g); return y + .6; },
   loom: (g, x, y, z) => { for (const s of [-1, 1]) box(.07, 1.5, .07, 'wood', x + s * .45, y, z, g); box(1, .07, .07, 'wood', x, y + 1.45, z, g); box(.8, 1.1, .02, mat('loomcloth', '#9a4a3a'), x, y + .3, z, g); for (let i = 0; i < 6; i++) add(new THREE.SphereGeometry(.05, 5, 3), 'clay', x - .35 + i * .14, y + .2, z + .05, g); return y + 1.55; },
   scrolls: (g, x, y, z) => { box(.9, .05, .35, 'wood', x, y, z, g); box(.9, .05, .35, 'wood', x, y + .36, z, g); for (const sx of [-.43, .43]) box(.04, .72, .35, 'wood', x + sx, y, z, g); for (let r = 0; r < 2; r++) for (let i = 0; i < 4; i++) { const s = add(new THREE.CylinderGeometry(.06, .06, .62, 8), mat('papyrus', '#e8d6a8'), x + R(-.05, .05), y + .11 + r * .36 + i * .0, z - .1 + i * .07, g); s.rotation.z = Math.PI / 2 + R(-.08, .08); s.position.y += (i % 2) * .1; for (const e of [-1, 1]) { const k = add(new THREE.CylinderGeometry(.025, .025, .06, 6), 'wood', s.position.x + e * .34, s.position.y, s.position.z, g); k.rotation.z = Math.PI / 2; } } return y + .78; },
-  desk: (g, x, y, z) => { const sh = add(new THREE.PlaneGeometry(.6, .4), mat('papyrus', '#e8d6a8', { side: THREE.DoubleSide }), x, y + .02, z, g); sh.rotation.x = -Math.PI / 2; cyl(.06, .07, .12, 7, 'dark', x + .25, y, z - .1, g); const q = box(.02, .35, .02, 'wool', x + .25, y + .1, z - .1, g); q.rotation.z = .4; return y + .4; },
-  tablets: (g, x, y, z) => { for (let i = 0; i < 4; i++) box(.4, .05, .3, i % 2 ? 'woodLt' : 'wood', x + R(-.03, .03), y + i * .05, z, g).rotation.y = R(-.2, .2); box(.36, .01, .26, mat('wax', '#3a2c22'), x, y + .2, z, g); return y + .3; },
+  desk: (g, x, y, z) => upDesk(g, x, y, z),
+  tablets: (g, x, y, z) => upTablets(g, x, y, z),
   lamps: (g, x, y, z) => { box(.05, 1.2, .05, 'dark', x, y, z, g); box(.6, .04, .04, 'dark', x, y + 1.18, z, g); for (const s of [-1, 0, 1]) { box(.01, .25, .01, 'dark', x + s * .27, y + .95, z, g); add(new THREE.SphereGeometry(.09, 6, 4), mat('lamp', '#e2b062', { emissive: '#a86a1a', emissiveIntensity: .6 }), x + s * .27, y + .9, z, g); } return y + 1.25; },
   chest: (g, x, y, z) => { box(.6, .38, .4, 'wood', x, y, z, g); box(.62, .06, .42, mat('brass', '#b8893a', { metalness: .5, roughness: .4 }), x, y + .38, z, g); for (let i = 0; i < 5; i++) cyl(.05, .05, .02, 8, mat('coin', '#e0b84a', { metalness: .7, roughness: .3 }), x + R(-.2, .2), y + .45 + i * .02, z, g); return y + .55; },
   wheel: (g, x, y, z) => { cyl(.12, .12, .5, 6, 'wood', x, y, z, g); cyl(.4, .4, .07, 12, 'woodLt', x, y + .5, z, g); P.bowl(g, x, y + .57, z); return y + .75; },
@@ -61,11 +61,8 @@ Object.assign(P, {
   scrollRack: (g, x, y, z) => { for (const sx of [-.42, .42]) for (const sz of [-.15, .15]) box(.05, 1.25, .05, 'woodLt', x + sx, y, z + sz, g); for (const h of [.05, .45, .85]) { box(.9, .04, .34, 'woodLt', x, y + h, z, g); for (let i = 0; i < 6; i++) { const sc = add(new THREE.CylinderGeometry(.055, .055, .42, 8), mat('scrollC', '#c8a070'), x - .3 + (i % 3) * .3, y + h + .06 + (i > 2 ? .1 : 0), z - .06 + (i > 2 ? .1 : 0), g); sc.rotation.z = Math.PI / 2; } } return y + 1.3; },
   stoolTablets: (g, x, y, z) => { box(.5, .05, .4, 'woodLt', x, y + .42, z, g); for (const [a, b] of [[-.2, -.15], [.2, -.15], [-.2, .15], [.2, .15]]) box(.05, .42, .05, 'wood', x + a, y, z + b, g); for (let i = 0; i < 6; i++) box(.42, .035, .32, i % 2 ? 'woodLt' : 'wood', x, y + .47 + i * .04, z, g); return y + .75; },
   dovesBig: (g, x, y, z) => { const t = P.cageStack(g, x, y, z); for (const dx of [-.3, -.1, .1, .3]) { if (realBird(g, x + dx, t, z + R(-.08, .08), .42, R(0, 6))) continue; const d = new THREE.Group(); d.position.set(x + dx, t, z + R(-.08, .08)); d.rotation.y = R(-.6, .6); d.scale.setScalar(.8); g.add(d); add(new THREE.IcosahedronGeometry(.09, 1), mat('dove', '#ffffff'), 0, .08, 0, d).scale.set(1.5, 1, 1); add(new THREE.IcosahedronGeometry(.055, 1), mat('dove', '#ffffff'), .12, .16, 0, d); add(new THREE.ConeGeometry(.015, .05, 4), mat('beak', '#e0a03a'), .18, .16, 0, d).rotation.z = -Math.PI / 2; } return t + .35; },
-  garland: (g, x, y, z) => { box(.07, 1.8, .07, 'wood', x - .55, y, z, g); box(.07, 1.8, .07, 'wood', x + .55, y, z, g);
-    const pts = []; for (let i = 0; i <= 14; i++) { const t = i / 14; pts.push(new THREE.Vector3(x - .55 + t * 1.1, y + 1.75 - Math.sin(t * Math.PI) * .45, z)); } add(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 20, .07, 6), mat('laurel', '#5f8a3e'), 0, 0, 0, g);
-    for (let i = 1; i < 14; i += 2) add(new THREE.IcosahedronGeometry(.06, 0), mat('flowerR', i % 4 ? '#e0b44a' : '#c43a2e'), pts[i].x, pts[i].y - .05, pts[i].z + .05, g);
-    for (const sx of [-.55, .55]) for (const [c, o] of [['#c43a2e', 0], ['#3f6f9a', .08], ['#e0b44a', -.08]]) box(.06, .7, .01, mat('rib' + c, c), x + sx + o, y + 1.05, z + .05, g); return y + 1.85; },
-  wreath: (g, x, y, z) => { cyl(.05, .07, 1.0, 8, bronze(), x, y, z, g); const w = add(new THREE.TorusGeometry(.28, .07, 6, 16), mat('laurel', '#5f8a3e'), x, y + 1.32, z, g); for (let i = 0; i < 10; i++) { const a = i / 10 * Math.PI * 2; add(new THREE.ConeGeometry(.05, .16, 4), mat('laurelLt', '#7ca050'), x + Math.cos(a) * .28, y + 1.32 + Math.sin(a) * .28, z + .04, g).rotation.z = a; } return y + 1.7; },
+  garland: (g, x, y, z) => UD.garland(g, x, y, z),
+  wreath: (g, x, y, z) => UD.wreath(g, x, y, z),
   wineJugs: (g, x, y, z) => { for (const [dx, dz, sc] of [[-.25, 0, .65], [.2, .1, .55], [0, -.25, .5]]) { const j = new THREE.Group(); j.position.set(x + dx, y, z + dz); g.add(j); amph(j, 0, 0, sc); } // spilled wine: an irregular, lobed puddle (fixed sine wobble, no random numbers, so the town's seeded layout is untouched),
     // longer one way than the other, with a few splashed drops around it
     const wine = mat('wineSpill', '#6a1a2a', { roughness: .2 }), pts = [];
@@ -107,7 +104,7 @@ P.chest = (g, x, y, z) => { box(.7, .4, .45, 'wood', x, y, z, g); const lid = ad
   box(.1, .12, .03, mat('brass', '#b8893a', { metalness: .5, roughness: .4 }), x, y + .32, z + .24, g); return y + .65; };
 P.bucket = (g, x, y, z) => { add(new THREE.LatheGeometry([[0, 0], [.2, 0], [.25, .42], [.24, .44], [0, .44]].map(([a, b]) => new THREE.Vector2(a, b)), 14), 'wood', x, y, z, g); for (const h of [.08, .34]) { const t = add(new THREE.TorusGeometry(h > .2 ? .245 : .21, .016, 4, 16), mat('iron', '#3c3a38', { metalness: .4, roughness: .6 }), x, y + h, z, g); t.rotation.x = Math.PI / 2; }
   cyl(.22, .22, .02, 14, mat('dyeBlue', '#2f5f9a', { roughness: .2 }), x, y + .38, z, g); const hd = add(new THREE.TorusGeometry(.24, .012, 4, 12, Math.PI), mat('iron', '#3c3a38'), x, y + .44, z, g); hd.rotation.z = .3; return y + .7; };
-P.bolts = (g, x, y, z) => { ['#7a3b6a', '#3f6f9a', '#e0b44a'].forEach((c, i) => { const b = add(new THREE.CylinderGeometry(.13, .13, .9, 12), mat('w' + c, c), x, y + .13 + i * .25, z, g); b.rotation.z = Math.PI / 2; for (const e of [-1, 1]) { const cap = add(new THREE.CircleGeometry(.13, 12), mat('wE' + c, new THREE.Color(c).multiplyScalar(.7).getStyle()), x + e * .451, y + .13 + i * .25, z, g); cap.rotation.y = e * Math.PI / 2; } }); return y + .8; };
+P.bolts = (g, x, y, z) => UD.bolts(g, x, y, z);
 const _basket = P.basket; P.basket = (g, x, y, z, c, n = 12) => {
   if (MODELS.stall) { const top = placePart(g, 'stall', 'Cylinder133', x, y, z, .62, R(0, 6)); for (let i = 0; i < n; i++) { const a = R(0, Math.PI * 2), r2 = R(0, .1); add(new THREE.IcosahedronGeometry(.07, 1), mat('f' + c + 's', c, { flatShading: false, roughness: .5 }), x + Math.cos(a) * r2, top - .04 + (i % 3) * .045, z + Math.sin(a) * r2, g); } return top; } const t = _basket(g, x, y, z, c, n); const rim = add(new THREE.TorusGeometry(.42, .03, 5, 16), 'basket', x, y + .32, z, g); rim.rotation.x = Math.PI / 2; return t; };
 Object.assign(P, {
@@ -232,10 +229,7 @@ Object.assign(P, {
     return top + .37; },
   stoolSpindle: (g, x, y, z) => { box(.55, .07, .42, 'woodLt', x, y + .55, z, g); for (const [a, b] of [[-.22, -.16], [.22, -.16], [-.22, .16], [.22, .16]]) box(.06, .55, .06, 'wood', x + a, y, z + b, g); box(.44, .04, .04, 'wood', x, y + .2, z - .16, g); box(.44, .04, .04, 'wood', x, y + .2, z + .16, g);
     const sp = add(new THREE.CylinderGeometry(.02, .02, .45, 6), 'woodLt', x - .1, y + .66, z, g); sp.rotation.z = Math.PI / 2; add(new THREE.IcosahedronGeometry(.15, 1), 'wool', x + .1, y + .74, z, g); return y + .9; },
-  bed2: (g, x, y, z) => { box(1.1, .35, 2.1, 'woodLt', x, y + .2, z, g); for (const [a, b, h] of [[-.55, -1.05, 1.05], [.55, -1.05, 1.05], [-.55, 1.05, .8], [.55, 1.05, .8]]) box(.1, h, .1, 'wood', x + a, y, z + b, g);
-    box(1.1, .4, .06, 'wood', x, y + .55, z - 1.05, g); box(1.1, .25, .06, 'wood', x, y + .5, z + 1.05, g); box(1.02, .16, 2, mat('mattress', '#efe2c4', { map: TEX.cloth }), x, y + .55, z, g);
-    for (const a of [-.25, .25]) { const pw = add(new THREE.IcosahedronGeometry(.2, 1), mat('pillow', '#f0e4c8', { map: TEX.cloth }), x + a, y + .78, z - .8, g); pw.scale.set(1.1, .45, .7); }
-    box(1.12, .1, 1.35, mat('blanketB', '#2f5f9a', { map: TEX.cloth }), x, y + .7, z + .3, g); box(.05, .45, 1.35, mat('blanketB', '#2f5f9a'), x + .58, y + .3, z + .3, g); return y + 1.05; },
+  bed2: (g, x, y, z) => UD.bed(g, x, y, z),
   cradle2: (g, x, y, z) => { box(.8, .08, .5, 'woodLt', x, y + .25, z, g); for (const sx of [-.4, .4]) box(.06, .6, .5, 'wood', x + sx, y, z, g);
     for (let i = -3; i <= 3; i++) for (const sz of [-.25, .25]) box(.025, .3, .025, 'woodLt', x + i * .11, y + .33, z + sz, g); box(.8, .04, .04, 'wood', x, y + .62, z - .25, g); box(.8, .04, .04, 'wood', x, y + .62, z + .25, g);
     const bl = box(.55, .1, .4, mat('babyblanket', '#d9a640', { map: TEX.cloth }), x + .05, y + .34, z, g); bl.rotation.z = .15; return y + .7; },
@@ -333,7 +327,7 @@ Object.assign(P, {
 
 // ---- objects that used to be written inline in a room call (Colossians 4 and 2:4 bread basket uses fruit-basket with arguments) ----
 const COL_INLINE = {
-  fishingBoat: (g, x, y, z) => { const b = new THREE.Group(); b.position.set(x - .3, y - .35, z); b.scale.setScalar(.7); b.rotation.y = .4; g.add(b); return y - .35 + P.boat(b, 0, 0, 0) * .7; },
+  fishingBoat: (g, x, y, z) => ueFishingBoat(g, x, y, z),   // objects/up-e.js: afloat, moored, with oars and net
   fishDryingRack: (g, x, y, z) => (placePart(g, 'stall', ['Jemuran_low003', 'Fish_low002', 'Fish_low004', 'Fish_low014'], x, y, z, .6, Math.PI / 2), box(.5, .5, .5, mat('fishCrate', '#8a6040', { map: TEX.wood }), x, y, z, g), y + .55) ?? P.net(g, x, y, z),
   wickerBasket: (g, x, y, z) => placePart(g, 'stall', 'Cylinder114', x, y, z, .8) ?? P.bucket(g, x, y, z),
   woodenCrate: (g, x, y, z) => placePart(g, 'stall', 'Crate_low153', x, y, z, 1.1) ?? P.crates(g, x, y, z),

@@ -22,7 +22,7 @@ for (const s of sources) { const t = fs.readFileSync(s, 'utf8');
   for (const m of t.matchAll(/\bdefBuilder\(\s*'([\w.-]+)'/g)) BUILD.add(m[1]);
   for (const m of t.matchAll(/\bdefAnchor\(\s*'([\w-]+)'/g)) ANCH.add(m[1]); }
 
-const DAIS = ['stone', 'low', 'planks', 'stones', 'rug', 'none'];
+const DAIS = ['stone', 'low', 'planks', 'pier', 'stones', 'rug', 'none'];
 const isNum = v => typeof v === 'number' && Number.isFinite(v);
 const posOk = p => (Array.isArray(p) && p.length === 2 && p.every(isNum)) || (p && typeof p === 'object' && typeof p.from === 'string' && (p.dx === undefined || isNum(p.dx)) && (p.dz === undefined || isNum(p.dz)));
 const posAnchors = p => p && p.from ? [p.from] : [];

@@ -12,6 +12,7 @@ function vignette({ x, z, viewer, props, dais = 'stone', spread = [1.6, 1.15], c
   let base = 0;
   if (dais === 'stone') { box(spread[0] * 2 + 1.2, 2.6, spread[1] * 2 + 1.2, 'stone', 0, -2.3, 0, g); box(spread[0] * 2 + 1.35, .1, spread[1] * 2 + 1.35, 'marble', 0, .25, 0, g); base = .35; }
   else if (dais === 'low') { box(spread[0] * 2 + 1.1, .16, spread[1] * 2 + 1.1, 'marble', 0, 0, 0, g); base = .16; }
+  else if (dais === 'pier') { uePier(g, spread); base = .1; }
   else if (dais === 'planks') { const W2 = spread[0] * 2 + 2, D2 = spread[1] * 2 + 1.8; for (let i = 0; i < 11; i++) box(W2, .12, D2 / 11 * .95, 'woodLt', 0, -.02, -D2 / 2 + (i + .5) * D2 / 11, g); for (const sx of [-1, 1]) for (const sz of [-1, 1]) cyl(.12, .12, 1.6, 7, 'wood', sx * W2 / 2, -1.5, sz * D2 / 2, g); base = .1; }
   else if (dais === 'stones') { for (let i = 0; i < 26; i++) { const a = i / 26 * Math.PI * 2; const st = add(new THREE.DodecahedronGeometry(R(.18, .3), 0), 'stoneDk', Math.cos(a) * (spread[0] + .6), .05, Math.sin(a) * (spread[1] + .5), g); st.scale.y = .6; } base = 0; }
   else if (dais === 'rug') { box(spread[0] * 2 + .9, .04, spread[1] * 2 + .9, mat('rug' + rug, rug), 0, 0, 0, g); box(spread[0] * 2 + .5, .05, spread[1] * 2 + .5, mat('rugIn', '#d8b06a'), 0, 0, 0, g); base = .05; }

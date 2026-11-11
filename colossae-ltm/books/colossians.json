@@ -301,7 +301,7 @@
           "kind": "vignette",
           "at": { "from": "bridge", "dx": -4.6, "dz": 8.5 },
           "viewer": { "from": "bridge", "dx": -8.2, "dz": 4.2 },
-          "layout": { "minY": -0.7, "dais": "planks", "spread": [1.7, 1.4] },
+          "layout": { "minY": -0.7, "dais": "pier", "spread": [1.7, 1.4] },
           "objects": [
             { "id": "fishing-boat", "what": "fishing boat" },
             { "id": "fish-drying-rack", "what": "fish drying rack" },

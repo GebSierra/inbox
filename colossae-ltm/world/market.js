@@ -17,13 +17,12 @@ defBuilder('colossae.gate', r => { // ROOM 1 — the city gate (seen from outsid
   // 2 far-left: a big pot in the corner
   { const jg = new THREE.Group(); jg.position.set(-2.4, 0, -2.4); g.add(jg); amph(jg, 0, 0, 1.05); }
   // 3 far-right: a burning torch on a post
-  box(.12, 2, .12, 'wood', 2.4, 0, -2.4, g); cyl(.14, .1, .22, 7, mat('iron', '#3c3a38'), 2.4, 2, -2.4, g);
-  { const fl = add(new THREE.ConeGeometry(.13, .45, 6), new THREE.MeshStandardMaterial({ color: '#ffb23a', emissive: '#ff8a1a', emissiveIntensity: 1.8, flatShading: true }), 2.4, 2.45, -2.4, g); fl.userData.dyn = 1; window.__fire = (window.__fire || []).concat(fl); }
+  gateTorch(g, 2.4, 0, -2.4);   // the library's 'gate-torch' (objects/up-a.js)
   // 4 near-right: a rack of spears
-  spearRack(g, 2.9, 0, 2.4);
+  spearRack(g, 2.2, 0, 2.4);
   // 5 centre: a Roman seal set into the paving
   romanSeal(g, 0, 0, 0);
-  station(1, r.room, r.name, 0, GZ, [0, 0, GZ - 10], [at(-2.3, 2.4, 1.6, W(0)), at(-2.4, -2.4, 1.4, W(1)), at(2.4, -2.4, 2.75, W(2)), at(2.9, 2.4, 2.4, W(3)), at(0, 0, .15, W(4))]);
+  station(1, r.room, r.name, 0, GZ, [0, 0, GZ - 10], [at(-2.3, 2.4, 1.6, W(0)), at(-2.4, -2.4, 1.4, W(1)), at(2.4, -2.4, 2.75, W(2)), at(2.2, 2.4, 2.45, W(3)), at(0, 0, .15, W(4))]);
 });
 // game-ready stall frame for the other trades: own awning colour, own goods in the crates (GST: colossae-shared.js, the library draws the same)
 defBuilder('colossae.marketStall', r => {   // ROOMS 2-5 — a stall in the market street: args { stall: name in MARKET, slot: index in M1 }
@@ -90,7 +89,7 @@ for (const [x, z] of [[-4.6, 61], [4.6, 60.5], [-4.6, 49], [4.8, 48.5], [-4.6, 3
 for (let i = 0; i < 0; i++) { const x = R(-2.5, 2.5), z = R(34, 70), y = heightAt(x, z); const pg = new THREE.Group(); pg.position.set(x, y, z); pg.rotation.y = R(0, 6); scene.add(pg);
   const b = add(new THREE.IcosahedronGeometry(.13, 0), 'pigeon', 0, .14, 0, pg); b.scale.set(1.5, 1, 1); add(new THREE.IcosahedronGeometry(.07, 0), 'pigeon', .17, .25, 0, pg); }
 
-for (const [x, z] of [[-6.8, 61.6], [6.8, 49.6], [-6.8, 37.6]]) { const y = heightAt(x, z); box(.03, .5, .03, 'dark', x, y + 2.2, z); add(new THREE.IcosahedronGeometry(.13, 0), mat('lamp', '#e2b062', { emissive: '#a86a1a', emissiveIntensity: .5 }), x, y + 2.15, z); }
+for (const [x, z] of [[-6.8, 61.6], [6.8, 49.6], [-6.8, 37.6]]) oilLampStand(scene, x, heightAt(x, z), z, x > 0 ? Math.PI : 0);   // the library's 'street-lamp' (objects/up-a.js)
 // houses lining the street
 for (let z = 70; z > 22; z -= 9) for (const s of [-1, 1]) house(s * R(14, 15.5), z + R(-1, 1), R(7, 9), R(7, 8.5), rnd() > .5 ? 2 : 1, s > 0 ? -Math.PI / 2 : Math.PI / 2);
 

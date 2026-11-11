@@ -16,23 +16,32 @@
 //   banners    true hangs a cloth banner from each tower, facing +z (false)
 //   stone, stoneDk, trim, dark   material keys or materials for the wall stone, the dark merlon stone, the keystone and the slits ('stone', 'stoneDk', 'marble', 'dark')
 //   bannerColor  banner cloth colour ('#a83a2a'),  bannerTrim  its fringe ('#d9a640')
-const GATE_STYLES = { colossae: {}, james: {} };
+const GATE_STYLES = { colossae: { inscription: '\u039A\u039F\u039B\u039F\u03A3\u03A3\u0391\u0399' }, james: { inscription: '\u0391\u0393\u039F\u03A1\u0391' } };
 function cityGate(GZ, opts = {}) {
   const o = Object.assign({ towerH: 10, battlements: true, voussoirs: true, keystone: true, slits: true, torches: false, banners: false,
     stone: 'stone', stoneDk: 'stoneDk', trim: 'marble', dark: 'dark', bannerColor: '#a83a2a', bannerTrim: '#d9a640' }, GATE_STYLES[opts.style || 'colossae'], opts);
   const H = o.towerH;
+  // the town's own stone colours, with coursed ashlar for the walls and dressed stone for single blocks (see objects/up-a.js)
+  const st = uaStoneMat(o.stone, 'Ash'), sd = uaStoneMat(o.stoneDk, 'Ash'), dr = uaStoneMat(o.stone, 'Dr'), drd = uaStoneMat(o.stoneDk, 'Dr'), drl = uaStoneMat(o.trim, 'Dr');
+  const moss = typeof o.stoneDk === 'string' ? uaStoneMat(o.stoneDk, 'Ash', '#c4ccac') : o.stoneDk;
   const tower = (x) => { const g = new THREE.Group(); g.position.set(x, heightAt(x, GZ), GZ); scene.add(g);
-    box(6, H, 6, o.stone, 0, 0, 0, g);
-    if (o.battlements) for (let i = -1; i <= 1; i++) for (const [a, b] of [[i * 2, 2.6], [i * 2, -2.6], [2.6, i * 2], [-2.6, i * 2]]) box(1, 1, 1, o.stoneDk, a, H, b, g);
-    if (o.slits) box(.9, 1.6, .2, o.dark, 0, 6, 3.02, g);
-    if (o.banners) { const sd = Math.sign(x), bx = -sd * 1.4; box(1.5, 2.6, .06, mat('gateBanner', o.bannerColor, { side: THREE.DoubleSide }), bx, 3.4, 3.06, g); box(1.5, .14, .08, mat('gateBannerTrim', o.bannerTrim), bx, 3.26, 3.07, g); box(1.7, .1, .1, 'wood', bx, 6.1, 3.08, g); } };
+    if (o.slits) { box(6, H, 4.4, st, 0, 0, 0, g); uaTowerFace(g, H, 1, true, st, drd, o); uaTowerFace(g, H, -1, false, st, drd, o); } else box(6, H, 6, st, 0, 0, 0, g);
+    box(6.3, .6, 6.3, moss, (x < 0 ? -.15 : .15), 0, 0, g); box(6.4, .1, 6.4, drd, (x < 0 ? -.15 : .15), .6, 0, g);
+    box(6.4, .3, 6.4, drl, 0, H - .6, 0, g); box(6.24, .1, 6.24, drd, 0, H - .7, 0, g);
+    if (o.battlements) for (let i = -1; i <= 1; i++) for (const [a, b] of [[i * 2, 2.6], [i * 2, -2.6], [2.6, i * 2], [-2.6, i * 2]]) box(1, 1, 1, sd, a, H, b, g);
+    if (o.banners) { const sg = Math.sign(x), bx = -sg * 1.4; box(1.5, 2.6, .06, mat('gateBanner', o.bannerColor, { side: THREE.DoubleSide }), bx, 3.4, 3.06, g); box(1.5, .14, .08, mat('gateBannerTrim', o.bannerTrim), bx, 3.26, 3.07, g); box(1.7, .1, .1, 'wood', bx, 6.1, 3.08, g); } };
   tower(-6.5); tower(6.5);
-  box(7, 3, 6, o.stone, 0, 6.5, GZ); if (o.battlements) for (let i = -2; i <= 2; i++) box(.9, .9, .9, o.stoneDk, i * 1.5, 9.5, GZ + 2.5);
-  { const gy0 = heightAt(0, GZ), sh = new THREE.Shape(); sh.moveTo(-3.5, 0); sh.lineTo(3.5, 0); sh.lineTo(3.5, 6.6); sh.lineTo(-3.5, 6.6); sh.lineTo(-3.5, 0);
-    const hole = new THREE.Path(); hole.moveTo(-3.3, 0); hole.lineTo(-3.3, 3.2); hole.absarc(0, 3.2, 3.3, Math.PI, 0, true); hole.lineTo(3.3, 0); hole.lineTo(-3.3, 0); sh.holes.push(hole);
-    const vg = new THREE.ExtrudeGeometry(sh, { depth: 6, bevelEnabled: false, curveSegments: 14 }); vg.translate(0, 0, -3); add(vg, o.stone, 0, gy0, GZ);
-    if (o.voussoirs) for (const zz of [GZ + 3.02, GZ - 3.02]) { for (let k = 0; k <= 10; k++) { const a = Math.PI * k / 10; const v = box(.55, .75, .2, o.stoneDk, Math.cos(a) * 3.55, gy0 + 3.2 + Math.sin(a) * 3.55 - .37, zz); v.rotation.z = a - Math.PI / 2; } }
-    if (o.keystone) box(.9, .7, .25, o.trim, 0, gy0 + 6.75, GZ + 3.05);
+  box(7, 3, 6, st, 0, 6.5, GZ); for (const sx of [-2.8, 2.8]) box(1.7, .3, 6.3, drl, sx, 8.95, GZ); box(7.3, .3, .3, drl, 0, 8.95, GZ - 3); if (o.battlements) for (let i = -2; i <= 2; i++) box(.9, .9, .9, sd, i * 1.5, 9.5, GZ + 2.5);
+  { const gy0 = heightAt(0, GZ), sh = new THREE.Shape(); sh.moveTo(-3.5, 0); sh.lineTo(-3.3, 0); sh.lineTo(-3.3, 3.2); sh.absarc(0, 3.2, 3.3, Math.PI, 0, true); sh.lineTo(3.3, 0); sh.lineTo(3.5, 0); sh.lineTo(3.5, 6.6); sh.lineTo(-3.5, 6.6); sh.lineTo(-3.5, 0);   // one outline with the passage open at the bottom: a hole touching the bottom edge left a floor slab across the passage
+    const vg = new THREE.ExtrudeGeometry(sh, { depth: 6, bevelEnabled: false, curveSegments: 14 }); vg.translate(0, 0, -3); add(vg, st, 0, gy0, GZ);
+    if (o.voussoirs) {
+      // irregular voussoirs through the whole passage (so you see them inside too), a keystone, an impost course and uneven jamb blocks
+      const gz = new THREE.Group(); gz.position.set(0, gy0, GZ); scene.add(gz);
+      uaVoussoirs(gz, 0, 3.2, 3.28, .42, .62, 13, -3.16, 3.16, [dr, drd, drl], 2207, .2);
+      for (const sg of [-1, 1]) { box(.95, .2, 6.34, drl, sg * 3.66, 3.0, 0, gz); box(.8, .06, 6.4, drd, sg * 3.6, 3.2, 0, gz).position.y = 3.2;
+        let yy = 0; [.74, .5, .7, .56, .5].forEach((h, i) => { const wd = i % 2 ? .62 : .92; box(wd, h - .03, 6.3, i % 2 ? dr : drd, sg * (3.22 + wd / 2), yy, 0, gz); yy += h; }); }
+    }
+    if (o.keystone) uaPlaque(scene, 0, gy0 + 7.78, GZ + 3, 3.0, 1.05, o.inscription, drl);
     if (o.torches) for (const sx of [-3.9, 3.9]) { box(.1, .9, .1, 'wood', sx, gy0 + 2.2, GZ + 3.1); cyl(.14, .09, .2, 7, mat('bronze', '#7a5230', { metalness: .4, roughness: .5 }), sx, gy0 + 3.05, GZ + 3.1);
       add(new THREE.SphereGeometry(.15, 7, 5), mat('lampGlow', '#ffd27a', { emissive: '#ff9a3a', emissiveIntensity: 1.4 }), sx, gy0 + 3.4, GZ + 3.1).castShadow = false; } }
 }
@@ -72,10 +81,7 @@ function marbleTemple(TZ) {
 }
 
 // the altar of the temple courtyard: stone altar with a marble top, offerings, a gilt frieze and a burning fire (adds the fire to FIRES)
-function altarWithFire(g, x, y, z) { box(2.4, 1.2, 1.6, 'stone', x, y, z, g); box(2.7, .25, 1.9, 'marble', x, y + 1.2, z, g);
-  for (const sd of [-1, 1]) { const og = new THREE.Group(); og.position.set(x + sd * .75, y + 1.45, z + .5); g.add(og); P.offerings(og, 0, 0, 0); }
-  box(2.75, .3, .08, mat('frieze', '#c9a24a', { metalness: .3 }), x, y + .75, z + .96, g);
-  const f = makeFire(THREE, { scale: .5 }); f.position.set(x, y + 1.4, z); f.traverse(o => o.userData.dyn = 1); g.add(f); FIRES.push(f); return y + 2.3; }
+function altarWithFire(g, x, y, z) { return altarOfFire(g, x, y, z); }   // built in objects/up-a.js
 
 // the Roman house around its atrium (centre HX, HZ): walls, peristyle, upper gallery, porch, door, garden and impluvium (draws 20 random numbers)
 function romanAtrium(HX, HZ) {
