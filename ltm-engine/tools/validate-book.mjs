@@ -18,6 +18,7 @@ const OBJ = new Set(), BUILD = new Set(), ANCH = new Set();
 for (const s of sources) { const t = fs.readFileSync(s, 'utf8');
   for (const m of t.matchAll(/\bdefObject\(\s*'([a-z0-9-]+)'/g)) OBJ.add(m[1]);
   for (const m of t.matchAll(/^\s*T\(\s*[^,]+,\s*'([a-z0-9-]+)'/gm)) OBJ.add(m[1]);
+  for (const m of t.matchAll(/^[ \t]*T\([\s\S]*?,\s*'([a-z0-9-]+)',\s*'[^']*',\s*'(?:colossae|james|engine)[^']*',\s*'(?:object|person|plant|animal|structure|effect)'/gm)) OBJ.add(m[1]);   // library entries with a kind: T(builder, id, label, origin, kind, tags)
   for (const m of t.matchAll(/\bdefBuilder\(\s*'([\w.-]+)'/g)) BUILD.add(m[1]);
   for (const m of t.matchAll(/\bdefAnchor\(\s*'([\w-]+)'/g)) ANCH.add(m[1]); }
 

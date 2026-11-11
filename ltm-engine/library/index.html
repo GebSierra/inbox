@@ -17,7 +17,7 @@
   #sub { margin: 0 0 14px; color: var(--mute); }
   .bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 8px; }
   #q { flex: 1 1 200px; min-width: 0; font: inherit; padding: 9px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--card); color: var(--ink); }
-  #chips { display: flex; gap: 6px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
   .chip { font: inherit; padding: 7px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--chip); color: var(--ink); cursor: pointer; }
   .chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
   #count, #status { color: var(--mute); font-size: 13px; }
@@ -64,13 +64,14 @@
 <header>
   <h1>Object library</h1>
   <p id="sub">Loading…</p>
-  <div class="bar"><input id="q" type="search" placeholder="Search id, label, tag or room" aria-label="Search the library" autocomplete="off"><div id="chips"></div></div>
+  <div class="bar"><input id="q" type="search" placeholder="Search id, label, tag, kind or room" aria-label="Search the library" autocomplete="off"></div>
+  <div class="bar" role="group" aria-label="Filters"><div id="chips" class="chips" aria-label="Town"></div><div id="kchips" class="chips" aria-label="Kind"></div></div>
   <div><span id="count"></span><span id="status"></span></div>
 </header>
 <main><div id="grid"></div></main>
 <footer>Objects are built in code (ltm-engine/objects/) and placed in rooms by the books. Medieval Village MegaKit by Quaternius (CC0). <a href="https://sketchfab.com/3d-models/low-poly-bird-animated-82ada91f0ac64ab595fbc3dc994a3590" target="_blank" rel="noopener">Low Poly Bird</a> by Charlie Tinley, <a href="https://sketchfab.com/3d-models/low-poly-market-stall-game-ready-asset-20660479b5c24f55b7873adf4bca4073" target="_blank" rel="noopener">Market Stall</a> by BlackMike, <a href="https://sketchfab.com/3d-models/low-poly-traditional-market-stall-83f6b14a28094a5ab5f8396ea6f4c1e9" target="_blank" rel="noopener">Traditional Market Stall</a> by Nisa Nurul Azizah, <a href="https://sketchfab.com/3d-models/modular-medieval-table-08dd395a346a440ba85e8b3b46ab3672" target="_blank" rel="noopener">Modular Medieval Table</a> by GameWorldStudio (CC BY 4.0).</footer>
 <div id="modal" hidden role="dialog" aria-modal="true" aria-label="Object view"><div class="sheet"><button id="close" type="button">Close</button><div id="bigstage"></div><div id="info"></div></div></div>
-<script type="importmap">{"imports":{"three":"../three.module.js","three/addons/":"../addons/","ltm-engine/":"../","ltm-town/":"./"}}</script>
+<script type="importmap">{"imports":{"three":"../three.module.js","three/addons/":"../addons/","ltm-engine/":"../","ltm-town/":"./","ltm-james/":"../../james-ltm/"}}</script>
 <script type="module" src="../boot.js"></script>
 </body>
 </html>

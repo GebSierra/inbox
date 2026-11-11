@@ -33,6 +33,13 @@
     "ltm:rooms",
     "obj:colossae",
     "obj:james",
+    "ltm:crates",
+    "ltm:people",
+    "obj:lib-util",
+    "obj:townsfolk",
+    "obj:nature",
+    "obj:colossae-places",
+    "obj:structures",
     "library.js"
   ]
 }

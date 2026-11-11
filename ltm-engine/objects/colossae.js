@@ -445,3 +445,5 @@ const COL_INLINE = {
   T(COL_INLINE.letterOnTable, 'letter-on-table', 'Sealed letter on a table', '4.4', ['writing', 'furniture']);
   T(COL_INLINE.tallCandle, 'tall-candle', 'Tall candle', '4.4', ['light', 'metal']);
 }
+// the library page filters by kind (default 'object'): the animals, boats and the burning brazier are listed under their own kinds
+for (const [id, kind] of Object.entries({ donkey: 'animal', 'donkey-simple': 'animal', 'donkey-side-on': 'animal', 'small-boat': 'structure', 'fishing-boat': 'structure', brazier: 'effect' })) OBJECTS.get(id).kind = kind;

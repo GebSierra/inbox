@@ -19,11 +19,12 @@
 //   { "kind": "custom", "builder": "colossae.marketStall", "args": {...}, "objects": [ { "what": ... } ] }   // the builder (registered by the town part with defBuilder) places the room itself
 //   A custom room may carry "fallback": { "viewer", "layout", "objects" }: a plain vignette the builder can ask for (ctx.fallback()) when its special assets are missing.
 
-const OBJECTS = new Map();           // id -> { id, fn, label, origin, tags, args }
+const OBJECTS = new Map();           // id -> { id, fn, label, origin, tags, args, kind }
 const BUILDERS = new Map();          // 'town.name' -> (room, ctx) => void
 const ANCHORS = {};                  // name -> [x, z]
 const BUILT_ROOMS = new Set();       // 'ch.room' keys built through buildRoom
 const ID_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
+const KINDS = ['object', 'person', 'plant', 'animal', 'structure', 'effect'];   // what an object library entry is (the library page filters by it)
 
 // A book problem is shown to the learner as well as logged: the loader text keeps the message (boot.js leaves it alone).
 function bookError(msg) {
@@ -31,12 +32,13 @@ function bookError(msg) {
   const el = document.getElementById('lpct'); if (el) el.textContent = m;
   const e = new Error(m); e.ltmMessage = m; throw e;
 }
-// defObject('bronze-hand-mirror', (g, x, y, z) => topY, { label, origin: 'james 1.5', tags: [...], args: [...default extra arguments] })
+// defObject('bronze-hand-mirror', (g, x, y, z) => topY, { label, origin: 'james 1.5', tags: [...], args: [...default extra arguments], kind: 'object' | 'person' | 'plant' | 'animal' | 'structure' | 'effect' })
 function defObject(id, fn, meta = {}) {
   if (!ID_RE.test(id)) throw new Error(`object id "${id}" must be kebab-case`);
   if (OBJECTS.has(id)) throw new Error(`object id "${id}" is registered twice`);
   if (typeof fn !== 'function') throw new Error(`object "${id}": builder is not a function`);
-  OBJECTS.set(id, { id, fn, label: meta.label || id, origin: meta.origin || '', tags: meta.tags || [], args: meta.args || [] });
+  if (meta.kind !== undefined && !KINDS.includes(meta.kind)) throw new Error(`object "${id}": kind "${meta.kind}" is not one of ${KINDS.join(', ')}`);
+  OBJECTS.set(id, { id, fn, label: meta.label || id, origin: meta.origin || '', tags: meta.tags || [], args: meta.args || [], kind: meta.kind || 'object' });
 }
 function defBuilder(name, fn) { if (BUILDERS.has(name)) throw new Error(`room builder "${name}" is registered twice`); BUILDERS.set(name, fn); }
 function defAnchor(name, p) { ANCHORS[name] = p; }
