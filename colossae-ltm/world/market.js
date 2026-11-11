@@ -27,23 +27,13 @@ defBuilder('colossae.gate', r => { // ROOM 1 — the city gate (seen from outsid
   romanSeal(g, 0, 0, 0);
   station(1, r.room, r.name, 0, GZ, [0, 0, GZ - 10], [at(-2.3, 2.4, 1.6, W(0)), at(-2.4, -2.4, 1.4, W(1)), at(2.4, -2.4, 2.75, W(2)), at(2.9, 2.4, 2.4, W(3)), at(0, 0, .15, W(4))]);
 });
-// game-ready stall frame for the other trades: own awning colour, own goods in the crates
-const CRATE_GOODS = {
-  'Fig Seller': { loci: [[{ fruit: '#5b2a5c', r: .075 }, 'crate of purple figs'], [{ fruit: '#4a2048', r: .07 }, 'crate of dark figs'], [{ fruit: '#6a7a3a', r: .07 }, 'crate of green figs'], [{ fruit: '#7a3a6a', r: .075 }, 'crate of ripe figs'], [{ fruit: '#5b2a5c', r: .072 }, 'crate of figs']], fill: [{ fruit: '#4a2048', r: .07 }, { fruit: '#6a7a3a', r: .07 }] },
-  'Scribe’s Table': { loci: [['scrolls', 'crate of scrolls'], ['tablets', 'wax tablets'], ['ink', 'ink pots and quills'], ['letters', 'sealed letters'], ['scrolls', 'scrolls for sale']], fill: ['letters', 'tablets'] },
-  'The Potter': { loci: [['jugs', 'little jugs'], ['bowls', 'stacked bowls'], ['lamps', 'clay oil lamps'], ['cups', 'drinking cups'], ['jugs', 'painted jugs']], fill: ['cups', 'bowls'] },
-};
-const GSTALL = {
-  'Fig Seller': { tint: '#7a3b6a', props: [[(g, x, y, z) => P.figBowl(g, x, y, z), -1.15, .43, 1.42, 'bowl of figs'], [(g, x, y, z) => P.scale(g, x, y, z), -1.35, 1.24, .3, 'hanging scales'], [(g, x, y, z) => P.honey(g, x, y, z), 1.35, 1.24, .3, 'honey jar'], [(g, x, y, z) => P.sack(g, x, y, z), 1.15, .43, 1.42, 'sack of grain'], [(g, x, y, z) => P.basket(g, x, y, z, '#5b2a5c', 14), .45, 1.24, .3, 'basket of figs']], fill: '#5b2a5c' },
-  'Scribe’s Table': { tint: '#3f6f9a', props: [[(g, x, y, z) => P.desk(g, x, y, z), -1.15, .43, 1.42, 'papyrus and quill'], [(g, x, y, z) => P.scrolls(g, x, y, z), -1.35, 1.24, .3, 'scroll shelf'], [(g, x, y, z) => P.bigJar(g, x, y, z, mat('inkJar', '#2a2a3a', { roughness: .35 }), .42), 1.35, 1.24, .3, 'big ink jar'], [(g, x, y, z) => P.tablets(g, x, y, z), 1.15, .43, 1.42, 'wax tablets'], [(g, x, y, z) => P.chest(g, x, y, z), .45, 1.24, .3, 'coin chest']], fill: null },
-  'The Potter': { tint: '#d9a640', props: [[(g, x, y, z) => P.bowlStack(g, x, y, z), -1.15, .43, 1.42, 'stack of bowls'], [(g, x, y, z) => P.jarPyramid(g, x, y, z), -1.35, 1.24, .3, 'pyramid of jars'], [(g, x, y, z) => P.clay(g, x, y, z), 1.35, 1.24, .3, 'lump of wet clay'], [(g, x, y, z) => P.wheel(g, x, y, z), 1.25, 0, 1.95, 'potter’s wheel'], [(g, x, y, z) => P.bigJar(g, x, y, z, 'clay', .55), .45, 1.24, .3, 'painted jar']], fill: null },
-};
+// game-ready stall frame for the other trades: own awning colour, own goods in the crates (GST: colossae-shared.js, the library draws the same)
 defBuilder('colossae.marketStall', r => {   // ROOMS 2-5 — a stall in the market street: args { stall: name in MARKET, slot: index in M1 }
   const m = MARKET.find(x => x.name === r.args.stall); if (!m) bookError(`${r.room} ${r.name}: unknown stall "${r.args.stall}"`);
   const slot = r.args.slot, W = j => r.objects[j].what;
-  if (GSTALL[m.name] && MODELS.gstall && CRATES && CRATES.low.length === 3 && CRATES.high.length === 4) {
-    const [sx, sz, face] = M1[slot], cg = CRATE_GOODS[m.name], g = gstallFrame(sx, sz, face, GSTALL[m.name].tint);
-    ({ 'Fig Seller': () => { P.basket(g, -2.35, 0, 1.6, '#5b2a4c'); P.basket(g, 2.35, 0, 1.6, '#e0b44a'); P.barrel(g, 2.5, 0, -1.1); }, 'Scribe’s Table': () => { P.chest(g, 2.4, 0, 1.5); }, 'The Potter': () => { for (let k = 0; k < 5; k++) amph(g, -2.6 + (k % 3) * .45, 1.4 + (k > 2 ? .5 : 0), .7); P.kiln(g, 2.5, 0, -.6); } })[m.name]();
+  if (GST[m.name] && MODELS.gstall && CRATES && CRATES.low.length === 3 && CRATES.high.length === 4) {
+    const [sx, sz, face] = M1[slot], cg = GST[m.name], g = gstallFrame(sx, sz, face, cg.tint);
+    cg.ends(g);
     const order = [CRATES.low[0], CRATES.high[0], CRATES.high[3], CRATES.low[2], CRATES.low[1]];
     fillCrate(g, CRATES.high[1], cg.fill[0]); fillCrate(g, CRATES.high[2], cg.fill[1]); g.updateMatrixWorld(true);
     const L = order.map((c, j) => { const top = fillCrate(g, c, cg.loci[j][0]); const w = g.localToWorld(new THREE.Vector3(c.x * 1.35, top, c.z * 1.35)); return { x: w.x, y: w.y, z: w.z, what: W(j) }; });

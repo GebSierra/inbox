@@ -25,18 +25,12 @@
   T(stallOf('#efe2c4', g => { box(1.3, .6, .7, 'woodLt', 0, 1.12, .7, g); for (let i = 0; i < 4; i++) { const s = add(new THREE.CylinderGeometry(.1, .1, .9, 6), 'wool', -1.2 + i * .25 + (i > 1 ? 2 : 0), 1.25, .6, g); s.rotation.z = Math.PI / 2; } cyl(.12, .1, .2, 6, 'dark', .3, 1.75, .7, g); }, 'tent'), 'stall-wool-tent', 'Wool seller’s tent', 'colossae 1.3', 'structure', ['market', 'stall', 'tent', 'textile']);
   T(stallOf(() => stripeTex('#3f6f9a', '#efe7d4', 8), g => { cyl(.5, .55, .5, 10, 'woodLt', -1, 1.12, .7, g); for (let i = 0; i < 4; i++) cyl(.32, .18, .22, 8, 'clay', .2 + i * .45, 1.12, .7, g); }, 'roof'), 'stall-pottery-tiled-roof', 'Pottery stall with a tiled roof', 'colossae 1.4', 'structure', ['market', 'stall', 'pottery']);
 
-  // the game-ready stall frame (BlackMike, CC BY 4.0) with the goods of each trade in its crates (copy of "colossae.marketStall")
-  const GST = {
-    'Fig Seller': { tint: '#7a3b6a', fill: ['#4a2048', '#6a7a3a'].map(c => ({ fruit: c, r: .07 })), loci: [{ fruit: '#5b2a5c', r: .075 }, { fruit: '#4a2048', r: .07 }, { fruit: '#6a7a3a', r: .07 }, { fruit: '#7a3a6a', r: .075 }, { fruit: '#5b2a5c', r: .072 }],
-      ends: g => { P.basket(g, -2.35, 0, 1.6, '#5b2a4c'); P.basket(g, 2.35, 0, 1.6, '#e0b44a'); P.barrel(g, 2.5, 0, -1.1); } },
-    'Scribe’s Table': { tint: '#3f6f9a', fill: ['letters', 'tablets'], loci: ['scrolls', 'tablets', 'ink', 'letters', 'scrolls'], ends: g => { P.chest(g, 2.4, 0, 1.5); } },
-    'The Potter': { tint: '#d9a640', fill: ['cups', 'bowls'], loci: ['jugs', 'bowls', 'lamps', 'cups', 'jugs'], ends: g => { for (let k = 0; k < 5; k++) amph(g, -2.6 + (k % 3) * .45, 1.4 + (k > 2 ? .5 : 0), .7); P.kiln(g, 2.5, 0, -.6); } },
-  };
+  // the game-ready stall frame (BlackMike, CC BY 4.0) with the goods of each trade in its crates (GST in colossae-shared.js, shared with "colossae.marketStall")
   const gstallOf = name => (g, x, y, z) => viaScene(g, x, y, z, () => {
     if (!MODELS.gstall || !CRATES || CRATES.low.length !== 3 || CRATES.high.length !== 4) return;
     const s = GST[name], f = gstallFrame(0, 0, 0, s.tint); s.ends(f);
     fillCrate(f, CRATES.high[1], s.fill[0]); fillCrate(f, CRATES.high[2], s.fill[1]);
-    [CRATES.low[0], CRATES.high[0], CRATES.high[3], CRATES.low[2], CRATES.low[1]].forEach((c, j) => fillCrate(f, c, s.loci[j])); });
+    [CRATES.low[0], CRATES.high[0], CRATES.high[3], CRATES.low[2], CRATES.low[1]].forEach((c, j) => fillCrate(f, c, s.loci[j][0])); });
   T(gstallOf('Fig Seller'), 'stall-frame-fig-seller', 'Market stall frame: fig seller', 'colossae 1.2', 'structure', ['market', 'stall', 'model', 'food']);
   T(gstallOf('Scribe’s Table'), 'stall-frame-scribe', 'Market stall frame: scribe’s table', 'colossae 1.3', 'structure', ['market', 'stall', 'model', 'writing']);
   T(gstallOf('The Potter'), 'stall-frame-potter', 'Market stall frame: the potter', 'colossae 1.4', 'structure', ['market', 'stall', 'model', 'pottery']);

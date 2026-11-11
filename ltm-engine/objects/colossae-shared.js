@@ -158,3 +158,12 @@ function marbleStoa(g, x, y, z) { box(6, .4, 26, 'marble', x, y, z, g); box(2, 6
 function roundShrine(g, x, y, z) { cyl(4.2, 4.6, .8, 16, 'marble', x, y, z, g); cyl(2.6, 2.6, 4, 14, 'wallTrim', x, y + .8, z, g);
   for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2; cyl(.22, .26, 4, 8, 'marble', x + Math.cos(a) * 3.7, y + .8, z + Math.sin(a) * 3.7, g); }
   cyl(4.2, 4.2, .5, 16, 'marble', x, y + 4.8, z, g); add(new THREE.ConeGeometry(4.5, 2.2, 16), 'roof', x, y + 6.4, z, g); return y + 7.5; }
+
+// the game-ready stall frames' trades (BlackMike frame, CC BY 4.0): awning tint, the goods in each crate (loci: [what to fill, its label]), the two top crates' fill, and the
+// extras at the stall's ends. Used by colossae-ltm/world/market.js ("colossae.marketStall") and by the library's stall-frame entries. Only closures run later, no random numbers here.
+const GST = {
+  'Fig Seller': { tint: '#7a3b6a', fill: [{ fruit: '#4a2048', r: .07 }, { fruit: '#6a7a3a', r: .07 }], loci: [[{ fruit: '#5b2a5c', r: .075 }, 'crate of purple figs'], [{ fruit: '#4a2048', r: .07 }, 'crate of dark figs'], [{ fruit: '#6a7a3a', r: .07 }, 'crate of green figs'], [{ fruit: '#7a3a6a', r: .075 }, 'crate of ripe figs'], [{ fruit: '#5b2a5c', r: .072 }, 'crate of figs']],
+    ends: g => { P.basket(g, -2.35, 0, 1.6, '#5b2a4c'); P.basket(g, 2.35, 0, 1.6, '#e0b44a'); P.barrel(g, 2.5, 0, -1.1); } },
+  'Scribe’s Table': { tint: '#3f6f9a', fill: ['letters', 'tablets'], loci: [['scrolls', 'crate of scrolls'], ['tablets', 'wax tablets'], ['ink', 'ink pots and quills'], ['letters', 'sealed letters'], ['scrolls', 'scrolls for sale']], ends: g => { P.chest(g, 2.4, 0, 1.5); } },
+  'The Potter': { tint: '#d9a640', fill: ['cups', 'bowls'], loci: [['jugs', 'little jugs'], ['bowls', 'stacked bowls'], ['lamps', 'clay oil lamps'], ['cups', 'drinking cups'], ['jugs', 'painted jugs']], ends: g => { for (let k = 0; k < 5; k++) amph(g, -2.6 + (k % 3) * .45, 1.4 + (k > 2 ? .5 : 0), .7); P.kiln(g, 2.5, 0, -.6); } },
+};

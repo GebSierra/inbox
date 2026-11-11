@@ -51,11 +51,12 @@ const bookChapter = ch => BOOKDATA && BOOKDATA.chapters.find(c => c.chapter === 
 const bookRoom = (ch, n) => { const c = bookChapter(ch); return c && c.rooms.find(r => r.room === n); };
 let bookChecked = false;
 // every object id named by the book must be in the library: reported all at once, before anything is built
+// (a custom room's own objects are built by its builder, which ignores the id: it only links the object to a library entry, and the validator checks it there)
 function checkBookObjects() {
   if (bookChecked || !BOOKDATA) return; bookChecked = true; const bad = [];
   for (const c of BOOKDATA.chapters) { if (c.chapter > BUILT) continue;
     for (const r of c.rooms) for (const [where, list] of [['', r.objects], [' (fallback)', r.fallback && r.fallback.objects]])
-      (list || []).forEach((o, i) => { if (o.id && !OBJECTS.has(o.id)) bad.push(`${c.chapter}.${r.room} ${r.name}${where}, object ${i + 1}: unknown object id "${o.id}"`); }); }
+      (list || []).forEach((o, i) => { if (o.id && !(r.kind === 'custom' && !where) && !OBJECTS.has(o.id)) bad.push(`${c.chapter}.${r.room} ${r.name}${where}, object ${i + 1}: unknown object id "${o.id}"`); }); }
   if (bad.length) bookError(`${bad.length} unknown object id(s) in books/${CFG.bookFile}.json: ${bad.join('; ')}`);
 }
 

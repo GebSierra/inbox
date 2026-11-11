@@ -17,7 +17,7 @@
           "at": [0, 78],
           "back": 11,
           "pitch": 0.1,
-          "objects": [{ "what": "gate guard" }, { "what": "big pot" }, { "what": "burning torch" }, { "what": "rack of spears" }, { "what": "Roman seal" }]
+          "objects": [{ "id": "gate-guard", "what": "gate guard" }, { "id": "amphora", "what": "big pot" }, { "id": "gate-torch", "what": "burning torch" }, { "id": "spear-rack", "what": "rack of spears" }, { "id": "roman-seal", "what": "Roman seal" }]
         },
         {
           "room": 2,
@@ -87,7 +87,7 @@
           "builder": "colossae.well",
           "args": { "z": 58 },
           "back": 5.8,
-          "objects": [{ "what": "water bucket" }, { "what": "woman carrying a jar" }, { "what": "olive tree" }, { "what": "stone bench" }]
+          "objects": [{ "id": "water-pail", "what": "water bucket" }, { "id": "woman-with-water-jar", "what": "woman carrying a jar" }, { "id": "olive-tree", "what": "olive tree" }, { "id": "stone-bench", "what": "stone bench" }]
         }
       ]
     },
@@ -237,11 +237,11 @@
           "at": { "from": "house", "dz": -7 },
           "back": 5.2,
           "objects": [
-            { "what": "bowl of apples and pears" },
-            { "what": "chair with a woven back" },
-            { "what": "carved chair" },
+            { "id": "bowl-of-apples-and-pears", "what": "bowl of apples and pears" },
+            { "id": "woven-back-chair", "what": "chair with a woven back" },
+            { "id": "carved-chair", "what": "carved chair" },
             { "what": "end chair" },
-            { "what": "candle" }
+            { "id": "candle-model", "what": "candle" }
           ],
           "fallback": {
             "viewer": { "from": "house", "dz": -2.6 },
