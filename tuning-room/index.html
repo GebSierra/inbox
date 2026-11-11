@@ -445,6 +445,7 @@ function home(){
       <div class="step"><span class="num muted">4</span><div><b>Check in</b><br><span class="muted">Did it feel blended? Any strain?</span></div><span class="num">10 s</span></div>
     </div>
     ${lastMix?`<p class="muted">Last time: ${lastMix.n?Math.round((1-lastMix.cracks/lastMix.n)*100):0}% clean notes, highest clean ${lastMix.best!=null?noteName(lastMix.best):"–"}.</p>`:""}
+    <p style="margin-top:10px"><span class="label">Today's thought</span><br>${thought()}</p>
     ${diagHTML()}
     ${tipsHTML(false)}
     ${weeklyHTML()}
@@ -713,16 +714,31 @@ const TIPS={
   "Narrow the vowel up high: “ah” toward “uh,” “ay” toward “eh,” “ee” toward “ih.” Wide vowels pull you into a yell.",
   "Let it change. Your voice is meant to get lighter as you rise. Trying to keep it exactly the same is what makes it snap.",
   "Coming down is easier than going up. Start high and light, and carry that feel down into your chest notes.",
-  "If it cracks, that's fine. Go quieter and try again. Never force through."]};
+  "If it cracks, that's fine. Go quieter and try again. Never force through.",
+  "On the break notes (C♯4 to E4 for you), round the vowel a little. Slightly thinner, slightly covered. Not wide open, not pinched shut."],
+ // Short phrases to carry in your head while you sing. Drawn from voice coaches and experienced singers.
+ models:["<b>Thin out, don't push up.</b> High notes come from lighter cords, not more force.",
+  "<b>Lighter going up, heavier coming down.</b> On every slide, add a little head as you rise and a little chest as you fall.",
+  "<b>Every note has a bit of both.</b> Your low notes carry a drop of head voice; your high notes keep a drop of chest.",
+  "<b>Same place, different amount.</b> High notes are made where low notes are made. Only the weight and the air change.",
+  "<b>Start light and add.</b> Begin a high note soft, even falsetto-light, then add buzz. Never start heavy and try to lighten.",
+  "<b>Clean vowels fix pitch.</b> When a note is off, check the vowel first. A pure, steady vowel usually lands in tune.",
+  "<b>Calm Adam's apple.</b> Rest a finger on your larynx. If it jumps up as you climb, you're reaching. Go lighter.",
+  "<b>Loose jaw, open space.</b> A tight jaw makes high notes thin and pinched. Let it hang."],
+ checks:["Finger on your Adam's apple: does it stay put as you climb?","Jaw loose? Wiggle it gently on the top note.","Shoulders down, neck long.","Breath steady: same easy flow on the high notes as the low ones."]};
+const thought=()=>TIPS.models[Math.floor(Date.now()/864e5)%TIPS.models.length];
 function diagHTML(){if(S.bridge==null)return "";const last=S.diag&&S.diag[S.diag.length-1],days=last?(Date.now()-new Date(last.date))/864e5:Infinity;
   return `<div class="item" style="margin-top:14px"><span class="grow"><b>Crack diagnostic</b> <span class="muted">· ${last?"focus: "+CAUSES[last.cause].toLowerCase()+(days>=14?" · due again":""):"not taken yet. Take it before your next session."}</span></span><button id="diagBtn">${last&&days<14?"Retake":"Take it"}</button></div>`}
 function tipsHTML(open){const sec=(t,a)=>`<p style="margin:10px 0 2px"><b>${t}</b></p><ul style="margin:4px 0;padding-left:20px">${a.map(x=>`<li>${x}</li>`).join("")}</ul>`;
-  return `<details ${open?"open":""} style="margin-top:12px"><summary class="label" style="cursor:pointer">Tips: chest, head, and the switch</summary>${sec("Chest voice",TIPS.chest)}${sec("Head voice (not falsetto)",TIPS.head)}${sec("Crossing the break",TIPS.bridge)}</details>`}
+  return `<details ${open?"open":""} style="margin-top:12px"><summary class="label" style="cursor:pointer">Tips: chest, head, and the switch</summary>${sec("Ways to think about it",TIPS.models)}${sec("Chest voice",TIPS.chest)}${sec("Head voice (not falsetto)",TIPS.head)}${sec("Crossing the break",TIPS.bridge)}</details>`}
 const MIX=[
  {id:"mtrill",name:"Lip trill slide",steps:[0,7,0],beats:[1,2,2],syl:["Brr"],how:"Slide smoothly up and down. Easiest way through the break: the lips take the pressure off.",tip:TIPS.bridge[0]},
  {id:"mnay",name:"Bratty Nay",steps:[0,4,7,4,0],beats:[1,1,2,1,2],syl:["Nay"],how:"Whiny and bright, like a teasing kid. Stay quiet. Twang holds the voice together at the top.",tip:TIPS.head[1]},
  {id:"mmum",name:"Mum 1-5-1",steps:[0,7,0],beats:[1,2,2],syl:["Mum"],how:"Lips closed on each “m.” Feel the buzz on your lips as you go up.",tip:TIPS.head[2]},
  {id:"mgee",name:"Gee arpeggio",steps:[0,4,7,12,7,4,0],beats:[1,1,1,2,1,1,2],syl:["Gee"],how:"Sing “gee” with a slight “ih.” Get lighter on the way up. Small mouth at the top.",tip:TIPS.bridge[1],wide:true},
+ {id:"mng",name:"NG slide",steps:[0,7,0],beats:[1,2,2],syl:["Ng"],how:"Say “sing” and hold the “ng.” Tongue back, mouth slightly open. Slide up and down. All the buzz is in your nose; the throat has nothing to do.",tip:TIPS.models[1]},
+ {id:"mfal",name:"Falsetto to head",steps:[7,5,4,2,0],beats:[1,1,1,1,2],syl:["Hoo","Hoo","Noo","Neh","Nay"],how:"Start at the top in light falsetto on “hoo.” As you step down, add buzz: “noo,” “neh,” then “nay.” You're turning airy into clear.",tip:TIPS.models[4],down:true},
+ {id:"mstac",name:"Staccato taps",steps:[0,2,4,5,7,5,4,2,0],beats:[.5,.5,.5,.5,1,.5,.5,.5,1],syl:["Ha"],how:"Short, light “ha” on each note, like a little laugh. Each tap starts on the note, not below it. No neck tension.",tip:TIPS.models[5]},
  {id:"mwoo",name:"Woo down",steps:[7,5,4,2,0],beats:[1,1,1,1,2],syl:["Woo"],how:"Start light and high, like an owl. Keep that ease as you step down into your speaking range.",tip:TIPS.bridge[3],down:true},
 ];
 function bridgeNote(){return S.bridge??(S.range?S.range.hi+3:60)}
@@ -788,12 +804,12 @@ async function mixRun(d){
     d.steps.forEach((s,i)=>{const du=d.beats[i]*beat;notes.push({m:r+s,start:t,end:t+du*.94,syl:d.syl[i%d.syl.length],round:r});t+=du});t+=beat*1.3});
   const total=t;
   stage.innerHTML=`<div class="row between"><span class="label">${session.label}</span><button class="ghost" id="mEnd">End drill</button></div>
-    <h2>${d.name}</h2><p>${d.how}</p><p class="muted"><b>Tip:</b> ${d.tip}</p>
+    <h2>${d.name}</h2><p>${d.how}</p><p class="muted"><b>Tip:</b> ${d.tip}<br><b>Check:</b> ${TIPS.checks[(S.mix.length+session.results.length)%TIPS.checks.length]}</p>
     <canvas id="lane" style="width:100%;height:min(52vh,440px);display:block;border-radius:12px;background:var(--raise);margin-top:8px"></canvas>
     <div class="row between" style="margin-top:8px"><span id="mNow" class="prompt" style="font-size:1.3rem;margin:0">Get ready</span><span class="muted">Shaded band = your break · <span class="bad">red</span> = crack</span></div>`;
   let stop=false;$("mEnd").onclick=()=>{stop=true};
   const t0=ctx.currentTime+1.2;notes.forEach(n=>scheduleTone(n.m,t0+n.start/1000,(n.end-n.start)/1000,n.cue?0.2:0.1));
-  const reported=new Set();let flash="",flashUntil=-1;
+  const reported=new Set();let flash="",flashUntil=-1;const stopRec=startRecorder();
   const frames=[],LAG=140,cv=$("lane"),all=notes.map(n=>n.m),lo=Math.min(...all)-2,hi=Math.max(...all)+2,b=bridgeNote();
   await frameLoop(r=>{
     if(stop||!$("lane"))return false;const now=(ctx.currentTime-t0)*1000;
@@ -816,6 +832,7 @@ async function mixRun(d){
     c.fillStyle=css("--accent");c.globalAlpha=.1;c.fillRect(36,yy(b+0.5),W,rh);c.globalAlpha=1}
     $("mNow").textContent=now<flashUntil?flash:now<0?"Get ready":cur&&!cur.cue&&now-LAG>=cur.start?cur.syl+(off?"":" · "+noteName(cur.m)):"Listen";
     return now<total+400});
+  const take=await stopRec().catch(()=>null);
   const sung=notes.filter(n=>!n.cue),cracks=sung.filter(n=>n.crack).length;
   const clean=sung.filter(n=>!n.crack&&n.grade!=null&&Math.abs(n.grade)<=100).map(n=>n.m);
   const best=clean.length?Math.max(...clean):null;
@@ -823,11 +840,14 @@ async function mixRun(d){
     <div class="stats" style="margin:10px 0"><div class="stat"><div class="label">Cracks heard</div><div class="v ${cracks?"warn":"good"}">${cracks}</div></div>
     <div class="stat"><div class="label">Highest clean note</div><div class="v">${best!=null?noteName(best):"–"}</div><div class="muted small">your break: ${noteName(b)}</div></div></div>
     <canvas id="lane" style="width:100%;height:200px;display:block;border-radius:12px;background:var(--raise)"></canvas>
-    <p style="margin-top:12px"><b>Up near ${noteName(b)}, how did it feel?</b></p>
+    <div class="row" style="margin-top:10px"><button id="listen">▶ Listen back</button><span class="muted small">Hear it before you rate it. Your ears are the real judge.</span></div>
+    <p style="margin-top:12px"><b>Up near ${noteName(b)}, how did it feel and sound?</b></p>
     <div class="efforts" style="grid-template-columns:repeat(4,1fr)">${REG.map((e,i)=>`<button data-r="${i}">${e}</button>`).join("")}</div>
     <p class="muted small">Blended is the goal: lighter than chest, not airy like falsetto, no flip.</p>`;
   drawLane($("lane"),notes,frames,null,lo,hi);
+  let au=null;$("listen").onclick=()=>{if(!take)return;if(au)au.pause();au=new Audio(URL.createObjectURL(take));au.play()};
   const reg=await new Promise(r=>stage.querySelectorAll("[data-r]").forEach(x=>x.onclick=()=>r(+x.dataset.r)));
+  if(au)au.pause();
   return {id:d.id,cracks,n:sung.length,best,reg,stopped:stop};
 }
 MIX.push(
@@ -836,12 +856,13 @@ MIX.push(
  {id:"mdown",name:"Head down into chest",steps:[7,5,4,2,0],beats:[1,1,1,1,3],syl:["Oo"],how:"Start light and high. Keep the same light feel as you step down. Let chest come in by itself.",tip:TIPS.bridge[3],down:true,off:.75,one:"weight"});
 const CAUSES={volume:"Pushing volume as you climb",vowel:"The vowel fighting the note",weight:"Carrying heavy chest too high",squeeze:"Throat squeeze or a rising larynx",airy:"Too little closure (flips airy)",unclear:"No clear pattern yet"};
 const byId=id=>MIX.find(m=>m.id===id);
+const ROT=["mmum","mng","mgee","mfal","mstac"];
 function mixPlan(){const day=S.mix.length,c=S.diag&&S.diag.length?S.diag[S.diag.length-1].cause:null;
   if(c==="volume")return ["mtrill","mswell","mnay","mwoo"].map(byId);
   if(c==="vowel")return ["mtrill","mvowel","mnay","mwoo"].map(byId);
   if(c==="weight"||c==="squeeze")return ["mtrill","mmum","mdown","mswell"].map(byId);
   if(c==="airy")return ["mtrill","mnay","mgee","mwoo"].map(byId);
-  return [MIX[0],MIX[1],day%2?MIX[3]:MIX[2],MIX[4]]}
+  return ["mtrill","mnay",ROT[day%ROT.length],"mwoo"].map(byId)}
 async function mixSession(){
   if(!await needAudio())return;setFocus(true);
   if(S.bridge==null)return sirenFlow();
