@@ -40,7 +40,7 @@ const TZ = 2;
   }
   for (const [ax, ay2] of [[0, 2.6], [-7, 0], [7, 0]]) add(new THREE.OctahedronGeometry(.45, 0), mat('acro', '#c79a3a', { metalness: .3 }), ax, heightAt(0, TZ - 6) + 8.4 + ay2, TZ - .65);
 }
-{ const hub = [0, TZ + 9.5], sT = heightAt(10, TZ + 5) + 4.75;
+{ const hub = [0, TZ + 9.5];
   // courtyard clutter: benches against the walls, planters, a votive table, offerings
   for (const sx of [-1, 1]) { const bx = sx * 16.2; for (const bz of [TZ + 1, TZ + 7]) { box(.7, .45, 3, 'marble', bx, heightAt(bx, bz), bz); box(.8, .12, 3.2, 'marble', bx, heightAt(bx, bz) + .45, bz); } }
   for (const [px, pz] of [[-15.5, TZ - 8], [15.5, TZ - 8]]) { cyl(.55, .45, .6, 10, 'clay', px, heightAt(px, pz), pz); for (let k = 0; k < 4; k++) add(new THREE.IcosahedronGeometry(R(.3, .45), 0), k % 2 ? 'leaf' : 'leafDk', px + R(-.25, .25), heightAt(px, pz) + .8 + R(0, .3), pz + R(-.25, .25)); }
@@ -48,16 +48,10 @@ const TZ = 2;
   { const keyTex = noRep(canvasTex(256, (x, w) => { x.fillStyle = '#e6d6b0'; x.fillRect(0, 0, w, w); x.strokeStyle = '#a8864a'; x.lineWidth = 5; x.strokeRect(10, 10, w - 20, w - 20); x.strokeRect(34, 34, w - 68, w - 68);
     x.lineWidth = 3; for (let i = 14; i < w - 14; i += 16) { x.beginPath(); x.moveTo(i, 16); x.lineTo(i, 28); x.lineTo(i + 10, 28); x.lineTo(i + 10, 20); x.lineTo(i + 5, 20); x.stroke(); x.beginPath(); x.moveTo(i, w - 16); x.lineTo(i, w - 28); x.lineTo(i + 10, w - 28); x.lineTo(i + 10, w - 20); x.stroke(); } for (let i = 0; i < 1500; i++) { x.fillStyle = `rgba(80,60,30,${R(0, .08)})`; x.fillRect(R(0, w), R(0, w), 2, 2); } }));
   const rg = box(4.2, .04, 3.4, new THREE.MeshStandardMaterial({ map: keyTex, roughness: 1 }), -11.5, heightAt(-11.5, TZ + 11) + .19, TZ + 11); rg.rotation.y = Math.atan2(hub[0] + 11.5, hub[1] - TZ - 11); }
-  room(2, 1, 'Dove Sellers', -11.5, TZ + 11, hub, { dais: 'none', spread: [1.25, .95], big: 1.25, props: [[P.dovesBig, 'dove cages with doves on top'], [P.birdPerch, 'doves on a perch'], [P.scale, 'money-changer’s scales'], [P.coinTable, 'table of coins'], [P.sack, 'sack of seed']] });
-  room(2, 2, 'The Philosopher', -10, TZ + 5, hub, { dais: 'none', centre: { top: sT, what: 'statue of the philosopher' }, spread: [1.3, 1.05], big: 1.3, props: [[P.scrollRack, 'rack of scrolls'], [P.brazier, 'burning brazier'], [P.stoolTablets, 'wax tablets on a stool'], [P.basin, 'water basin'], [null]] });
-  room(2, 3, 'The Altar', 0, TZ + 7, [0, TZ + 12.8], { dais: 'none', spread: [2.3, 1.5], centre: { top: heightAt(0, TZ + 7) + 2.4, what: 'altar fire' }, big: 1.2, props: [[P.brazier, 'left brazier'], [P.garland, 'garland of laurel'], [P.offerings, 'bowl of offerings'], [P.brazier, 'right brazier'], [null]] });
-  room(2, 4, 'The Festival Statue', 10, TZ + 5, hub, { dais: 'none', spread: [1.3, 1.05], big: 1.3, centre: { top: sT, what: 'festival statue' }, props: [[(g, x, y, z) => P.basket(g, x, y, z, '#b07a3a', 8), 'basket of bread'], [P.garland, 'garland with ribbons'], [P.wreath, 'laurel wreath'], [P.wineJugs, 'wine jugs'], [null]] });
-  for (const st of STATIONS) if (st.ch === 2 && (st.room === 2 || st.room === 4)) { st.back = 6.4; st.pitch = .0; }
-  for (const st of STATIONS) if (st.ch === 2 && (st.room === 1 || st.room === 5)) { st.back = 5; st.pitch = -.2; }
-  for (const st of STATIONS) if (st.ch === 2 && (st.room === 2 || st.room === 4) && st.banner) st.banner.position.y += 3.4;
+  defAnchor('temple', [0, TZ]);   // the book places the five temple rooms relative to this
+  buildRooms(2, 1, 4);   // Dove Sellers, Philosopher, Altar, Festival Statue (their camera tweaks are in the book)
   booth(11.5, TZ + 11, hub, '#7a2a20');
-  room(2, 5, 'The Locked Chest', 11.5, TZ + 11, hub, { dais: 'none', spread: [1.45, 1.05], big: 1.15, props: [[P.honey, 'honey jar ("do not taste")'], [P.bolts, 'folded cloth ("do not handle")'], [P.padlockChest, 'chest with gold padlock ("do not touch")'], [P.bowlStack, 'stack of bowls'], [P.ropeBarrier, 'rope barrier']] });
-  STATIONS[STATIONS.length - 1].back = 5; STATIONS[STATIONS.length - 1].pitch = -.2;
+  buildRooms(2, 5, 5);   // The Locked Chest
 }
 // path market -> temple
 drape(-2.5, TZ + 14, 2.5, 24, 'path');

@@ -73,13 +73,19 @@ frame();
 window.__ready = true;
 requestAnimationFrame(() => requestAnimationFrame(() => { document.getElementById('lbar').style.width = '100%'; setTimeout(() => document.getElementById('loader').classList.add('done'), 250); }));
 
-// ---- book data check: books/<book>.json must match the rooms built above ----
-fetch('./books/' + CFG.bookFile + '.json').then(r => r.ok ? r.json() : null).then(book => { if (!book) return; const issues = [];
-  for (const c of book.chapters.filter(c => c.chapter <= BUILT)) for (const r of c.rooms) { const st = STATIONS.find(s => s.ch === c.chapter && s.room === r.room);
-    if (!st) { issues.push(`missing room ${c.chapter}.${r.room} ${r.name}`); continue; }
-    if (st.name !== r.name) issues.push(`${c.chapter}.${r.room}: built "${st.name}", book says "${r.name}"`);
-    if (st.loci.length !== r.objects.length) issues.push(`${c.chapter}.${r.room}: ${st.loci.length} spots built, ${r.objects.length} objects in book`); }
-  window.__bookCheck = issues; if (issues.length) console.warn('book/engine mismatch:', issues); }).catch(() => {});
+// ---- book data check: the rooms were built from books/<book>.json (rooms.js); this confirms the book and the built town agree ----
+{ const issues = [];
+  if (BOOKDATA) {
+    for (const c of BOOKDATA.chapters.filter(c => c.chapter <= BUILT)) for (const r of c.rooms) { const st = STATIONS.find(s => s.ch === c.chapter && s.room === r.room);
+      if (!st) { issues.push(`missing room ${c.chapter}.${r.room} ${r.name}`); continue; }
+      if (!BUILT_ROOMS.has(`${c.chapter}.${r.room}`)) issues.push(`${c.chapter}.${r.room}: not built through the book`);
+      if (st.name !== r.name) issues.push(`${c.chapter}.${r.room}: built "${st.name}", book says "${r.name}"`);
+      if (st.text !== `${BOOK} ${r.verses}`) issues.push(`${c.chapter}.${r.room}: built for ${st.text}, book says ${r.verses}`);
+      const spots = r.objects.filter(o => !o.extra);   // "extra" objects are dressing without a verse (a room of 3 verses may stand 5 objects)
+      if (st.loci.length !== spots.length) issues.push(`${c.chapter}.${r.room}: ${st.loci.length} spots built, ${spots.length} objects in book`);
+      else spots.forEach((o, i) => { const w = st.loci[i].where.split(' · ').slice(1).join(' · ') || st.loci[i].where; if (w !== o.what) issues.push(`${c.chapter}.${r.room} spot ${i + 1}: built "${w}", book says "${o.what}"`); }); }
+    for (const st of STATIONS) if (!bookRoom(st.ch, st.room)) issues.push(`built room ${st.ch}.${st.room} ${st.name} is not in the book`); }
+  window.__bookCheck = issues; if (issues.length) console.warn('book/engine mismatch:', issues); }
 // ---- ?fps shows a frame-rate readout, for measuring on a real phone ----
 if (new URLSearchParams(location.search).has('fps')) { const el = Object.assign(document.createElement('div'), { style: 'position:fixed;left:8px;top:8px;z-index:30;font:12px monospace;background:#000a;color:#fff;padding:3px 6px;border-radius:4px' }); document.body.appendChild(el);
   let n = 0, t0 = performance.now(); (function tick() { n++; const t = performance.now(); if (t - t0 > 1000) { el.textContent = `${(n * 1000 / (t - t0)).toFixed(0)} fps`; n = 0; t0 = t; } requestAnimationFrame(tick); })(); }

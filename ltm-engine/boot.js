@@ -1,8 +1,9 @@
 // boot.js: starts a memory-palace town.
 //
 // A town is a folder with index.html + town.json (+ world/*.js, books/<book>.json). index.html loads this file.
-// town.json lists, in order, the PARTS of the program: "ltm:<name>" is a shared part (ltm-engine/engine/<name>.js),
-// any other entry is a path relative to the town's page (e.g. "world/terrain.js").
+// town.json lists, in order, the PARTS of the program: "ltm:<name>" is a shared engine part (ltm-engine/engine/<name>.js),
+// "obj:<name>" is a shared object-library part (ltm-engine/objects/<name>.js), any other entry is a path relative to the
+// town's page (e.g. "world/terrain.js"). The library preview page (ltm-engine/library/) is booted the same way, with its own town.json.
 //
 // The parts are plain-text JavaScript that share ONE module scope, exactly like the old single app.js. boot.js fetches
 // them, joins them in order, and runs the result as one ES module through a blob: URL. So:
@@ -16,6 +17,7 @@
 //   RAISED, WALKWAYS         [[cz, halfD, cx, halfW, deckY]...] ground lifts; [[x0, z0, x1, z1]...] boxes kept clear of collision
 //   TUT, ESV                 tutorial text (world/tutorial.js)
 // and it may set HOOKS.house, push boats to SHIPS, and tune the look with the "theme" block of town.json.
+// Rooms come from books/<book>.json (engine/rooms.js): the world parts register anchors and custom room builders, then call buildRooms(ch).
 // Errors are mapped back to part + line (the browser only knows the blob), see mapStack() below.
 const ENGINE = new URL('./', import.meta.url).href;            // absolute URL of ltm-engine/
 const status = msg => { const el = document.getElementById('lpct'); if (el) el.textContent = msg; };
@@ -34,12 +36,12 @@ addEventListener('unhandledrejection', ev => { if (/blob:|ltm-bundle/.test(Strin
 
 try {
   const cfg = await (await fetch('./town.json')).json();         // relative to the page: the town's own config
-  const urlOf = p => p.startsWith('ltm:') ? `${ENGINE}engine/${p.slice(4)}.js` : new URL(p, location.href).href;
+  const urlOf = p => p.startsWith('ltm:') ? `${ENGINE}engine/${p.slice(4)}.js` : p.startsWith('obj:') ? `${ENGINE}objects/${p.slice(4)}.js` : new URL(p, location.href).href;
   const texts = await Promise.all(cfg.parts.map(async p => { const r = await fetch(urlOf(p)); if (!r.ok) throw new Error(`part ${p}: HTTP ${r.status}`); return r.text(); }));
   let src = '', line = 1;
-  texts.forEach((t, i) => { if (!t.endsWith('\n')) t += '\n'; const lines = t.split('\n').length - 1; table.push({ part: cfg.parts[i].replace(/^ltm:(.*)$/, 'engine/$1.js'), start: line, lines }); src += t; line += lines; });
+  texts.forEach((t, i) => { if (!t.endsWith('\n')) t += '\n'; const lines = t.split('\n').length - 1; table.push({ part: cfg.parts[i].replace(/^ltm:(.*)$/, 'engine/$1.js').replace(/^obj:(.*)$/, 'objects/$1.js'), start: line, lines }); src += t; line += lines; });
   src += '//# sourceURL=ltm-bundle.js\n';
   globalThis.__LTM = { engine: ENGINE, cfg };                    // read by engine/core.js
   const blob = URL.createObjectURL(new Blob([src], { type: 'text/javascript' }));
-  try { await import(blob); } catch (e) { report('startup error', e); status('Something went wrong while building the town (see the console).'); throw e; }
+  try { await import(blob); } catch (e) { report('startup error', e); status(e && e.ltmMessage ? e.ltmMessage : 'Something went wrong while building the town (see the console).'); throw e; }
 } catch (e) { if (!globalThis.__ltm.failed) { globalThis.__ltm.failed = e; status('Could not load the town: ' + (e.message || e)); } console.error(e); }

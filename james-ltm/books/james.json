@@ -1,317 +1,349 @@
 {
- "book": "James",
- "translation": "ESV",
- "chapters": [
-  {
-   "chapter": 1,
-   "verses": 27,
-   "district": "The Agora (City Gate & Market)",
-   "rooms": [
+  "book": "James",
+  "translation": "ESV",
+  "chapters": [
     {
-     "room": 1,
-     "name": "The Gate Stoa",
-     "verses": "1:1–5",
-     "objects": [
-      "sealed papyrus letter with a red wax seal on a courier's stone shelf",
-      "laughing bronze theatre mask on a tall wooden post",
-      "gold ingot on a black touchstone slab",
-      "flawless glazed blue amphora, tall and unchipped, on a plinth",
-      "bronze lion-head fountain spouting water into a round basin"
-     ]
+      "chapter": 1,
+      "verses": 27,
+      "district": "The Agora (City Gate & Market)",
+      "layout": { "dais": "none", "spread": [1.9, 1.45], "big": 1.25 },
+      "rooms": [
+        {
+          "room": 1,
+          "name": "The Gate Stoa",
+          "verses": "1:1–5",
+          "kind": "vignette",
+          "at": [0, 70],
+          "viewer": [0, 82],
+          "objects": [
+            { "id": "sealed-letter", "what": "sealed letter with a red wax seal", "desc": "sealed papyrus letter with a red wax seal on a courier's stone shelf" },
+            { "id": "theatre-mask", "what": "laughing bronze theatre mask on a post", "desc": "laughing bronze theatre mask on a tall wooden post" },
+            { "id": "gold-ingot", "what": "gold ingot on a black touchstone", "desc": "gold ingot on a black touchstone slab" },
+            { "id": "blue-amphora", "what": "flawless blue amphora", "desc": "flawless glazed blue amphora, tall and unchipped, on a plinth" },
+            { "id": "lion-head-fountain", "what": "lion-head fountain", "desc": "bronze lion-head fountain spouting water into a round basin" }
+          ]
+        },
+        {
+          "room": 2,
+          "name": "The Tower of the Winds",
+          "verses": "1:6–10",
+          "kind": "vignette",
+          "at": [-11, 55],
+          "viewer": [-4, 55],
+          "objects": [
+            { "id": "sea-barrel", "what": "barrel of churning seawater with a toy ship", "desc": "barrel of churning seawater with a toy ship tossing in it" },
+            { "id": "triton-weathervane", "what": "bronze Triton weathervane", "desc": "bronze Triton weathervane spinning on an iron pole" },
+            { "id": "two-faced-herm", "what": "two-faced marble herm", "desc": "two-faced white marble herm, a head looking each way" },
+            { "id": "garland-stool", "what": "stool with a tiny gold garland", "desc": "low three-legged wooden stool with a tiny gold garland on it" },
+            { "id": "poppy-urn", "what": "urn of wilting red poppies", "desc": "stone urn of wilting red poppies" }
+          ]
+        },
+        {
+          "room": 3,
+          "name": "The Tholos",
+          "verses": "1:11–15",
+          "kind": "vignette",
+          "at": [-11, 41],
+          "viewer": [-4, 41],
+          "objects": [
+            { "id": "scorched-sundial", "what": "scorched sundial in dry grass", "desc": "scorched sundial ringed with dried yellow grass tufts" },
+            { "id": "victors-crown", "what": "victor’s crown on a red cushion", "desc": "gilded olive-leaf victor's crown on a red cushion" },
+            { "id": "shield-and-arrow", "what": "bronze shield and a snapped arrow", "desc": "polished bronze shield on a stand with a snapped arrow at its foot" },
+            { "id": "fowlers-trap", "what": "fowler’s trap baited with figs", "desc": "fowler's wicker trap baited with fresh figs" },
+            { "id": "snake-pithos", "what": "pithos with a snake hatching", "desc": "egg-shaped clay pithos with a small black snake hatching from it" }
+          ]
+        },
+        {
+          "room": 4,
+          "name": "The Lamp Stoa",
+          "verses": "1:16–20",
+          "kind": "vignette",
+          "at": [11, 41],
+          "viewer": [4, 41],
+          "objects": [
+            { "id": "conjurers-table", "what": "conjurer’s table with three cups", "desc": "conjurer's table with three cups and a hidden ball" },
+            { "id": "seven-flame-lampstand", "what": "seven-flame lampstand", "desc": "tall bronze seven-flame lampstand at noon that casts no shadow" },
+            { "id": "barley-basket", "what": "basket of first barley sheaves", "desc": "basket of the first barley sheaves tied with a red ribbon" },
+            { "id": "marble-ear", "what": "giant marble ear", "desc": "oversized white marble ear on a plinth" },
+            { "id": "bronze-cauldron", "what": "boiling cauldron over coals", "desc": "boiling bronze cauldron over coals, steam pouring out" }
+          ]
+        },
+        {
+          "room": 5,
+          "name": "The Mirror Court",
+          "verses": "1:21–25",
+          "kind": "vignette",
+          "at": [11, 51.5],
+          "viewer": [4, 51.5],
+          "objects": [
+            { "id": "soiled-washbasin", "what": "washbasin with a soiled tunic", "desc": "stone washbasin of grey water with a soiled tunic over its rim" },
+            { "id": "mallet-and-chisel", "what": "mallet and chisel on a stone block", "desc": "mason's mallet and chisel on a half-carved limestone block" },
+            { "id": "bronze-hand-mirror", "what": "bronze hand mirror on a stand", "desc": "polished bronze hand mirror on a stand" },
+            { "id": "wax-tablet", "what": "wax tablet wiped smooth", "desc": "wax writing tablet wiped smooth, stylus beside it" },
+            { "id": "shackle-stele", "what": "stele with open shackles", "desc": "inscribed stone stele with open unlocked iron shackles hanging from it" }
+          ]
+        },
+        {
+          "room": 6,
+          "name": "The Almshouse Portico",
+          "verses": "1:26–27",
+          "kind": "vignette",
+          "at": [11, 61.5],
+          "viewer": [4, 61.5],
+          "objects": [
+            { "id": "bridle-post", "what": "bridle and bit on a post", "desc": "leather horse bridle and bit hung on a wooden post" },
+            { "id": "bread-basket", "what": "basket of bread and a toy horse", "desc": "basket of bread loaves with a small child's wooden toy horse beside it" }
+          ]
+        }
+      ]
     },
     {
-     "room": 2,
-     "name": "The Tower of the Winds",
-     "verses": "1:6–10",
-     "objects": [
-      "barrel of churning seawater with a toy ship tossing in it",
-      "bronze Triton weathervane spinning on an iron pole",
-      "two-faced white marble herm, a head looking each way",
-      "low three-legged wooden stool with a tiny gold garland on it",
-      "stone urn of wilting red poppies"
-     ]
+      "chapter": 2,
+      "verses": 26,
+      "district": "The Synagogue Courtyard",
+      "rooms": [
+        {
+          "room": 1,
+          "name": "TODO room 1",
+          "verses": "2:1–5",
+          "kind": "vignette",
+          "objects": [
+            { "id": "TODO", "what": "TODO 2:1 near-left object" },
+            { "id": "TODO", "what": "TODO 2:2 far-left object" },
+            { "id": "TODO", "what": "TODO 2:3 far-right object" },
+            { "id": "TODO", "what": "TODO 2:4 near-right object" },
+            { "id": "TODO", "what": "TODO 2:5 centre object" }
+          ]
+        },
+        {
+          "room": 2,
+          "name": "TODO room 2",
+          "verses": "2:6–10",
+          "kind": "vignette",
+          "objects": [
+            { "id": "TODO", "what": "TODO 2:6 near-left object" },
+            { "id": "TODO", "what": "TODO 2:7 far-left object" },
+            { "id": "TODO", "what": "TODO 2:8 far-right object" },
+            { "id": "TODO", "what": "TODO 2:9 near-right object" },
+            { "id": "TODO", "what": "TODO 2:10 centre object" }
+          ]
+        },
+        {
+          "room": 3,
+          "name": "TODO room 3",
+          "verses": "2:11–15",
+          "kind": "vignette",
+          "objects": [
+            { "id": "TODO", "what": "TODO 2:11 near-left object" },
+            { "id": "TODO", "what": "TODO 2:12 far-left object" },
+            { "id": "TODO", "what": "TODO 2:13 far-right object" },
+            { "id": "TODO", "what": "TODO 2:14 near-right object" },
+            { "id": "TODO", "what": "TODO 2:15 centre object" }
+          ]
+        },
+        {
+          "room": 4,
+          "name": "TODO room 4",
+          "verses": "2:16–20",
+          "kind": "vignette",
+          "objects": [
+            { "id": "TODO", "what": "TODO 2:16 near-left object" },
+            { "id": "TODO", "what": "TODO 2:17 far-left object" },
+            { "id": "TODO", "what": "TODO 2:18 far-right object" },
+            { "id": "TODO", "what": "TODO 2:19 near-right object" },
+            { "id": "TODO", "what": "TODO 2:20 centre object" }
+          ]
+        },
+        {
+          "room": 5,
+          "name": "TODO room 5",
+          "verses": "2:21–25",
+          "kind": "vignette",
+          "objects": [
+            { "id": "TODO", "what": "TODO 2:21 near-left object" },
+            { "id": "TODO", "what": "TODO 2:22 far-left object" },
+            { "id": "TODO", "what": "TODO 2:23 far-right object" },
+            { "id": "TODO", "what": "TODO 2:24 near-right object" },
+            { "id": "TODO", "what": "TODO 2:25 centre object" }
+          ]
+        },
+        {
+          "room": 6,
+          "name": "TODO room 6",
+          "verses": "2:26",
+          "kind": "vignette",
+          "objects": [{ "id": "TODO", "what": "TODO 2:26 near-left object" }]
+        }
+      ]
     },
     {
-     "room": 3,
-     "name": "The Tholos",
-     "verses": "1:11–15",
-     "objects": [
-      "scorched sundial ringed with dried yellow grass tufts",
-      "gilded olive-leaf victor's crown on a red cushion",
-      "polished bronze shield on a stand with a snapped arrow at its foot",
-      "fowler's wicker trap baited with fresh figs",
-      "egg-shaped clay pithos with a small black snake hatching from it"
-     ]
+      "chapter": 3,
+      "verses": 18,
+      "district": "The Craftsmen’s Street",
+      "rooms": [
+        {
+          "room": 1,
+          "name": "TODO room 1",
+          "verses": "3:1–5",
+          "kind": "vignette",
+          "objects": [
+            { "id": "TODO", "what": "TODO 3:1 near-left object" },
+            { "id": "TODO", "what": "TODO 3:2 far-left object" },
+            { "id": "TODO", "what": "TODO 3:3 far-right object" },
+            { "id": "TODO", "what": "TODO 3:4 near-right object" },
+            { "id": "TODO", "what": "TODO 3:5 centre object" }
+          ]
+        },
+        {
+          "room": 2,
+          "name": "TODO room 2",
+          "verses": "3:6–10",
+          "kind": "vignette",
+          "objects": [
+            { "id": "TODO", "what": "TODO 3:6 near-left object" },
+            { "id": "TODO", "what": "TODO 3:7 far-left object" },
+            { "id": "TODO", "what": "TODO 3:8 far-right object" },
+            { "id": "TODO", "what": "TODO 3:9 near-right object" },
+            { "id": "TODO", "what": "TODO 3:10 centre object" }
+          ]
+        },
+        {
+          "room": 3,
+          "name": "TODO room 3",
+          "verses": "3:11–15",
+          "kind": "vignette",
+          "objects": [
+            { "id": "TODO", "what": "TODO 3:11 near-left object" },
+            { "id": "TODO", "what": "TODO 3:12 far-left object" },
+            { "id": "TODO", "what": "TODO 3:13 far-right object" },
+            { "id": "TODO", "what": "TODO 3:14 near-right object" },
+            { "id": "TODO", "what": "TODO 3:15 centre object" }
+          ]
+        },
+        {
+          "room": 4,
+          "name": "TODO room 4",
+          "verses": "3:16–18",
+          "kind": "vignette",
+          "objects": [
+            { "id": "TODO", "what": "TODO 3:16 near-left object" },
+            { "id": "TODO", "what": "TODO 3:17 far-left object" },
+            { "id": "TODO", "what": "TODO 3:18 far-right object" }
+          ]
+        }
+      ]
     },
     {
-     "room": 4,
-     "name": "The Lamp Stoa",
-     "verses": "1:16–20",
-     "objects": [
-      "conjurer's table with three cups and a hidden ball",
-      "tall bronze seven-flame lampstand at noon that casts no shadow",
-      "basket of the first barley sheaves tied with a red ribbon",
-      "oversized white marble ear on a plinth",
-      "boiling bronze cauldron over coals, steam pouring out"
-     ]
+      "chapter": 4,
+      "verses": 17,
+      "district": "The Harbour Warehouses",
+      "rooms": [
+        {
+          "room": 1,
+          "name": "TODO room 1",
+          "verses": "4:1–5",
+          "kind": "vignette",
+          "objects": [
+            { "id": "TODO", "what": "TODO 4:1 near-left object" },
+            { "id": "TODO", "what": "TODO 4:2 far-left object" },
+            { "id": "TODO", "what": "TODO 4:3 far-right object" },
+            { "id": "TODO", "what": "TODO 4:4 near-right object" },
+            { "id": "TODO", "what": "TODO 4:5 centre object" }
+          ]
+        },
+        {
+          "room": 2,
+          "name": "TODO room 2",
+          "verses": "4:6–10",
+          "kind": "vignette",
+          "objects": [
+            { "id": "TODO", "what": "TODO 4:6 near-left object" },
+            { "id": "TODO", "what": "TODO 4:7 far-left object" },
+            { "id": "TODO", "what": "TODO 4:8 far-right object" },
+            { "id": "TODO", "what": "TODO 4:9 near-right object" },
+            { "id": "TODO", "what": "TODO 4:10 centre object" }
+          ]
+        },
+        {
+          "room": 3,
+          "name": "TODO room 3",
+          "verses": "4:11–15",
+          "kind": "vignette",
+          "objects": [
+            { "id": "TODO", "what": "TODO 4:11 near-left object" },
+            { "id": "TODO", "what": "TODO 4:12 far-left object" },
+            { "id": "TODO", "what": "TODO 4:13 far-right object" },
+            { "id": "TODO", "what": "TODO 4:14 near-right object" },
+            { "id": "TODO", "what": "TODO 4:15 centre object" }
+          ]
+        },
+        {
+          "room": 4,
+          "name": "TODO room 4",
+          "verses": "4:16–17",
+          "kind": "vignette",
+          "objects": [{ "id": "TODO", "what": "TODO 4:16 near-left object" }, { "id": "TODO", "what": "TODO 4:17 far-left object" }]
+        }
+      ]
     },
     {
-     "room": 5,
-     "name": "The Mirror Court",
-     "verses": "1:21–25",
-     "objects": [
-      "stone washbasin of grey water with a soiled tunic over its rim",
-      "mason's mallet and chisel on a half-carved limestone block",
-      "polished bronze hand mirror on a stand",
-      "wax writing tablet wiped smooth, stylus beside it",
-      "inscribed stone stele with open unlocked iron shackles hanging from it"
-     ]
-    },
-    {
-     "room": 6,
-     "name": "The Almshouse Portico",
-     "verses": "1:26–27",
-     "objects": [
-      "leather horse bridle and bit hung on a wooden post",
-      "basket of bread loaves with a small child's wooden toy horse beside it"
-     ]
+      "chapter": 5,
+      "verses": 20,
+      "district": "The Farm & Vineyard",
+      "rooms": [
+        {
+          "room": 1,
+          "name": "TODO room 1",
+          "verses": "5:1–5",
+          "kind": "vignette",
+          "objects": [
+            { "id": "TODO", "what": "TODO 5:1 near-left object" },
+            { "id": "TODO", "what": "TODO 5:2 far-left object" },
+            { "id": "TODO", "what": "TODO 5:3 far-right object" },
+            { "id": "TODO", "what": "TODO 5:4 near-right object" },
+            { "id": "TODO", "what": "TODO 5:5 centre object" }
+          ]
+        },
+        {
+          "room": 2,
+          "name": "TODO room 2",
+          "verses": "5:6–10",
+          "kind": "vignette",
+          "objects": [
+            { "id": "TODO", "what": "TODO 5:6 near-left object" },
+            { "id": "TODO", "what": "TODO 5:7 far-left object" },
+            { "id": "TODO", "what": "TODO 5:8 far-right object" },
+            { "id": "TODO", "what": "TODO 5:9 near-right object" },
+            { "id": "TODO", "what": "TODO 5:10 centre object" }
+          ]
+        },
+        {
+          "room": 3,
+          "name": "TODO room 3",
+          "verses": "5:11–15",
+          "kind": "vignette",
+          "objects": [
+            { "id": "TODO", "what": "TODO 5:11 near-left object" },
+            { "id": "TODO", "what": "TODO 5:12 far-left object" },
+            { "id": "TODO", "what": "TODO 5:13 far-right object" },
+            { "id": "TODO", "what": "TODO 5:14 near-right object" },
+            { "id": "TODO", "what": "TODO 5:15 centre object" }
+          ]
+        },
+        {
+          "room": 4,
+          "name": "TODO room 4",
+          "verses": "5:16–20",
+          "kind": "vignette",
+          "objects": [
+            { "id": "TODO", "what": "TODO 5:16 near-left object" },
+            { "id": "TODO", "what": "TODO 5:17 far-left object" },
+            { "id": "TODO", "what": "TODO 5:18 far-right object" },
+            { "id": "TODO", "what": "TODO 5:19 near-right object" },
+            { "id": "TODO", "what": "TODO 5:20 centre object" }
+          ]
+        }
+      ]
     }
-   ]
-  },
-  {
-   "chapter": 2,
-   "verses": 26,
-   "district": "The Synagogue Courtyard",
-   "rooms": [
-    {
-     "room": 1,
-     "name": "TODO room 1",
-     "verses": "2:1–5",
-     "objects": [
-      "TODO 2:1 near-left object",
-      "TODO 2:2 far-left object",
-      "TODO 2:3 far-right object",
-      "TODO 2:4 near-right object",
-      "TODO 2:5 centre object"
-     ]
-    },
-    {
-     "room": 2,
-     "name": "TODO room 2",
-     "verses": "2:6–10",
-     "objects": [
-      "TODO 2:6 near-left object",
-      "TODO 2:7 far-left object",
-      "TODO 2:8 far-right object",
-      "TODO 2:9 near-right object",
-      "TODO 2:10 centre object"
-     ]
-    },
-    {
-     "room": 3,
-     "name": "TODO room 3",
-     "verses": "2:11–15",
-     "objects": [
-      "TODO 2:11 near-left object",
-      "TODO 2:12 far-left object",
-      "TODO 2:13 far-right object",
-      "TODO 2:14 near-right object",
-      "TODO 2:15 centre object"
-     ]
-    },
-    {
-     "room": 4,
-     "name": "TODO room 4",
-     "verses": "2:16–20",
-     "objects": [
-      "TODO 2:16 near-left object",
-      "TODO 2:17 far-left object",
-      "TODO 2:18 far-right object",
-      "TODO 2:19 near-right object",
-      "TODO 2:20 centre object"
-     ]
-    },
-    {
-     "room": 5,
-     "name": "TODO room 5",
-     "verses": "2:21–25",
-     "objects": [
-      "TODO 2:21 near-left object",
-      "TODO 2:22 far-left object",
-      "TODO 2:23 far-right object",
-      "TODO 2:24 near-right object",
-      "TODO 2:25 centre object"
-     ]
-    },
-    {
-     "room": 6,
-     "name": "TODO room 6",
-     "verses": "2:26",
-     "objects": [
-      "TODO 2:26 near-left object"
-     ]
-    }
-   ]
-  },
-  {
-   "chapter": 3,
-   "verses": 18,
-   "district": "The Craftsmen’s Street",
-   "rooms": [
-    {
-     "room": 1,
-     "name": "TODO room 1",
-     "verses": "3:1–5",
-     "objects": [
-      "TODO 3:1 near-left object",
-      "TODO 3:2 far-left object",
-      "TODO 3:3 far-right object",
-      "TODO 3:4 near-right object",
-      "TODO 3:5 centre object"
-     ]
-    },
-    {
-     "room": 2,
-     "name": "TODO room 2",
-     "verses": "3:6–10",
-     "objects": [
-      "TODO 3:6 near-left object",
-      "TODO 3:7 far-left object",
-      "TODO 3:8 far-right object",
-      "TODO 3:9 near-right object",
-      "TODO 3:10 centre object"
-     ]
-    },
-    {
-     "room": 3,
-     "name": "TODO room 3",
-     "verses": "3:11–15",
-     "objects": [
-      "TODO 3:11 near-left object",
-      "TODO 3:12 far-left object",
-      "TODO 3:13 far-right object",
-      "TODO 3:14 near-right object",
-      "TODO 3:15 centre object"
-     ]
-    },
-    {
-     "room": 4,
-     "name": "TODO room 4",
-     "verses": "3:16–18",
-     "objects": [
-      "TODO 3:16 near-left object",
-      "TODO 3:17 far-left object",
-      "TODO 3:18 far-right object"
-     ]
-    }
-   ]
-  },
-  {
-   "chapter": 4,
-   "verses": 17,
-   "district": "The Harbour Warehouses",
-   "rooms": [
-    {
-     "room": 1,
-     "name": "TODO room 1",
-     "verses": "4:1–5",
-     "objects": [
-      "TODO 4:1 near-left object",
-      "TODO 4:2 far-left object",
-      "TODO 4:3 far-right object",
-      "TODO 4:4 near-right object",
-      "TODO 4:5 centre object"
-     ]
-    },
-    {
-     "room": 2,
-     "name": "TODO room 2",
-     "verses": "4:6–10",
-     "objects": [
-      "TODO 4:6 near-left object",
-      "TODO 4:7 far-left object",
-      "TODO 4:8 far-right object",
-      "TODO 4:9 near-right object",
-      "TODO 4:10 centre object"
-     ]
-    },
-    {
-     "room": 3,
-     "name": "TODO room 3",
-     "verses": "4:11–15",
-     "objects": [
-      "TODO 4:11 near-left object",
-      "TODO 4:12 far-left object",
-      "TODO 4:13 far-right object",
-      "TODO 4:14 near-right object",
-      "TODO 4:15 centre object"
-     ]
-    },
-    {
-     "room": 4,
-     "name": "TODO room 4",
-     "verses": "4:16–17",
-     "objects": [
-      "TODO 4:16 near-left object",
-      "TODO 4:17 far-left object"
-     ]
-    }
-   ]
-  },
-  {
-   "chapter": 5,
-   "verses": 20,
-   "district": "The Farm & Vineyard",
-   "rooms": [
-    {
-     "room": 1,
-     "name": "TODO room 1",
-     "verses": "5:1–5",
-     "objects": [
-      "TODO 5:1 near-left object",
-      "TODO 5:2 far-left object",
-      "TODO 5:3 far-right object",
-      "TODO 5:4 near-right object",
-      "TODO 5:5 centre object"
-     ]
-    },
-    {
-     "room": 2,
-     "name": "TODO room 2",
-     "verses": "5:6–10",
-     "objects": [
-      "TODO 5:6 near-left object",
-      "TODO 5:7 far-left object",
-      "TODO 5:8 far-right object",
-      "TODO 5:9 near-right object",
-      "TODO 5:10 centre object"
-     ]
-    },
-    {
-     "room": 3,
-     "name": "TODO room 3",
-     "verses": "5:11–15",
-     "objects": [
-      "TODO 5:11 near-left object",
-      "TODO 5:12 far-left object",
-      "TODO 5:13 far-right object",
-      "TODO 5:14 near-right object",
-      "TODO 5:15 centre object"
-     ]
-    },
-    {
-     "room": 4,
-     "name": "TODO room 4",
-     "verses": "5:16–20",
-     "objects": [
-      "TODO 5:16 near-left object",
-      "TODO 5:17 far-left object",
-      "TODO 5:18 far-right object",
-      "TODO 5:19 near-right object",
-      "TODO 5:20 centre object"
-     ]
-    }
-   ]
-  }
- ]
+  ]
 }

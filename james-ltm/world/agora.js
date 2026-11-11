@@ -1,9 +1,7 @@
-import { jamesProps } from 'ltm-town/world/props-james.js';
 // ---------- ZONE 1: the agora (James 1, six rooms) ----------
 // Enter through the gate (heading south, -z). Rooms run clockwise: up the left (west) side, then back down the right (east).
 // 1 Gate Stoa is the court just inside the gate (seen through the arch). Then up the left: 2 Tower of the Winds, 3 Tholos; back down the right: 4 Lamp Stoa, 5 Mirror Court, 6 Almshouse Portico.
 const AG = { x0: -19.5, x1: 19.5, z0: 33, z1: 75.5, rx: 11, z: [67, 55, 43] };
-const JP = jamesProps({ THREE, add, box, cyl, mat, R, amph, iron, bronze, TEX, makeFire, FIRES, flame: (...a) => flame(...a) });
 { // paving: one flagstone square, a little above the terrain everywhere
   drape(AG.x0, AG.z0, AG.x1, AG.z1, 'path', .06);
   // a kerb of darker stone round the square
@@ -70,13 +68,7 @@ function stoa(xa, za, xb, zb, { depth = 4, h = 4.6, cols = 6, face = 1, wall = '
   const y = heightAt(0, 55); box(1.6, .5, 1.6, 'stone', 0, y, 55); box(1.2, .9, 1.2, 'marble', 0, y + .5, 55); box(1.4, .15, 1.4, 'marble', 0, y + 1.4, 55);
   for (const [x, z] of [[-1.6, 61], [1.6, 61], [-1.6, 49], [1.6, 49]]) { cyl(.2, .25, .5, 8, 'marble', x, heightAt(x, z), z); }
 }
-// the six rooms (each a square of five objects, viewed from the middle of the square)
-const AGO = { dais: 'none', spread: [1.9, 1.45], big: 1.25 };
-room(1, 1, 'The Gate Stoa', 0, 70, [0, 82], { ...AGO, props: [[JP.letter, 'sealed letter with a red wax seal'], [JP.mask, 'laughing bronze theatre mask on a post'], [JP.goldIngot, 'gold ingot on a black touchstone'], [JP.amphoraBlue, 'flawless blue amphora'], [JP.lionFountain, 'lion-head fountain']] });
-room(1, 2, 'The Tower of the Winds', -AG.rx, AG.z[1], [-4, AG.z[1]], { ...AGO, props: [[JP.seaBarrel, 'barrel of churning seawater with a toy ship'], [JP.weathervane, 'bronze Triton weathervane'], [JP.herm, 'two-faced marble herm'], [JP.garlandStool, 'stool with a tiny gold garland'], [JP.poppyUrn, 'urn of wilting red poppies']] });
-room(1, 3, 'The Tholos', -AG.rx, 41, [-4, 41], { ...AGO, props: [[JP.sundial, 'scorched sundial in dry grass'], [JP.crownCushion, 'victor’s crown on a red cushion'], [JP.shieldArrow, 'bronze shield and a snapped arrow'], [JP.fowlerTrap, 'fowler’s trap baited with figs'], [JP.snakePithos, 'pithos with a snake hatching']] });
-room(1, 4, 'The Lamp Stoa', AG.rx, 41, [4, 41], { ...AGO, props: [[JP.conjurerTable, 'conjurer’s table with three cups'], [JP.lampstand, 'seven-flame lampstand'], [JP.barleyBasket, 'basket of first barley sheaves'], [JP.marbleEar, 'giant marble ear'], [JP.cauldron, 'boiling cauldron over coals']] });
-room(1, 5, 'The Mirror Court', AG.rx, 51.5, [4, 51.5], { ...AGO, props: [[JP.washbasin, 'washbasin with a soiled tunic'], [JP.malletBlock, 'mallet and chisel on a stone block'], [JP.mirror, 'bronze hand mirror on a stand'], [JP.waxTablet, 'wax tablet wiped smooth'], [JP.shackleStele, 'stele with open shackles']] });
-room(1, 6, 'The Almshouse Portico', AG.rx, 61.5, [4, 61.5], { ...AGO, props: [[JP.bridlePost, 'bridle and bit on a post'], [JP.breadBasket, 'basket of bread and a toy horse']] });
+// the six rooms (each a square of five objects, viewed from the middle of the square) are built from books/james.json
+buildRooms(1);
 
 const TZ = 2, HX = 32, HZ = 2, BZ = 2, BX = RIVER_X(BZ);
