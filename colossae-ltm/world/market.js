@@ -22,16 +22,9 @@ defBuilder('colossae.gate', r => { // ROOM 1 — the city gate (seen from outsid
   box(.12, 2, .12, 'wood', 2.4, 0, -2.4, g); cyl(.14, .1, .22, 7, mat('iron', '#3c3a38'), 2.4, 2, -2.4, g);
   { const fl = add(new THREE.ConeGeometry(.13, .45, 6), new THREE.MeshStandardMaterial({ color: '#ffb23a', emissive: '#ff8a1a', emissiveIntensity: 1.8, flatShading: true }), 2.4, 2.45, -2.4, g); fl.userData.dyn = 1; window.__fire = (window.__fire || []).concat(fl); }
   // 4 near-right: a rack of spears
-  box(1.2, .1, .12, 'wood', 2.9, 1.3, 2.4, g); for (const sx of [-.55, .55]) box(.08, 1.4, .08, 'wood', 2.9 + sx, 0, 2.4, g);
-  for (let k = 0; k < 4; k++) { const sp = box(.04, 2.3, .04, 'woodLt', 2.5 + k * .26, 0, 2.3, g); sp.rotation.x = .12; add(new THREE.ConeGeometry(.05, .22, 4), mat('iron', '#3c3a38'), 2.5 + k * .26, 2.35, 2.58, g); }
+  spearRack(g, 2.9, 0, 2.4);
   // 5 centre: a Roman seal set into the paving
-  { const c = document.createElement('canvas'); c.width = c.height = 256; const x = c.getContext('2d');
-    x.fillStyle = '#9a6a2a'; x.beginPath(); x.arc(128, 128, 126, 0, 7); x.fill(); x.strokeStyle = '#e0b84a'; x.lineWidth = 8; x.beginPath(); x.arc(128, 128, 112, 0, 7); x.stroke();
-    x.strokeStyle = '#6a8a3a'; x.lineWidth = 6; for (const sd of [-1, 1]) { x.beginPath(); x.arc(128, 140, 80, Math.PI / 2 + sd * .4, Math.PI / 2 + sd * 2.2, sd < 0); x.stroke(); }
-    x.fillStyle = '#f0d070'; x.font = 'bold 54px Georgia'; x.textAlign = 'center'; x.fillText('SPQR', 128, 150);
-    x.beginPath(); x.moveTo(128, 40); x.lineTo(150, 80); x.lineTo(128, 70); x.lineTo(106, 80); x.closePath(); x.fill();
-    const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
-    const seal = add(new THREE.CircleGeometry(1, 32), new THREE.MeshStandardMaterial({ map: t, metalness: .5, roughness: .45 }), 0, .06, 0, g); seal.rotation.x = -Math.PI / 2; seal.castShadow = false; }
+  romanSeal(g, 0, 0, 0);
   station(1, r.room, r.name, 0, GZ, [0, 0, GZ - 10], [at(-2.3, 2.4, 1.6, W(0)), at(-2.4, -2.4, 1.4, W(1)), at(2.4, -2.4, 2.75, W(2)), at(2.9, 2.4, 2.4, W(3)), at(0, 0, .15, W(4))]);
 });
 // game-ready stall frame for the other trades: own awning colour, own goods in the crates
@@ -92,18 +85,10 @@ defBuilder('colossae.well', r => {   // ROOM 6 — the well (seen from the gate 
   station(1, r.room, r.name, 0, wz, [0, 0, wz - 10], [at(-2, 2, .7, W(0)), at(-2.1, -1.8, 1.9, W(1)), at(2.5, -1.5, 3.2, W(2)), at(2.6, 2.6, .8, W(3))]);
   }
 // well + olive tree + bench
-{ const z = r.args.z, x = 0;
-  for (let i = 0; i < 14; i++) { const a = i / 14 * Math.PI * 2; const b = box(.52, .72, .42, i % 2 ? 'stone' : 'stoneDk', Math.cos(a) * 1.1, heightAt(0, z), z + Math.sin(a) * 1.1); b.rotation.y = -a; }
-  box(.1, 1.9, .1, 'wood', -1, heightAt(0, z), z); box(.1, 1.9, .1, 'wood', 1, heightAt(0, z), z); box(2.2, .1, .1, 'wood', 0, heightAt(0, z) + 1.85, z);
-  box(2.4, .2, .8, 'stone', 2.6, heightAt(3, z) + .45, z + 2.6); box(.3, .45, .6, 'stone', 1.7, heightAt(3, z), z + 2.6); box(.3, .45, .6, 'stone', 3.5, heightAt(3, z), z + 2.6);
-  { const y = heightAt(0, z);
-    cyl(1.45, 1.55, .25, 16, 'stoneDk', 0, y - .05, z); { const rim = add(new THREE.RingGeometry(.88, 1.32, 24), mat('rimM', '#e8e2d6', { side: THREE.DoubleSide }), 0, y + .73, z); rim.rotation.x = -Math.PI / 2; const shaft = add(new THREE.CylinderGeometry(.88, .88, 2.4, 20, 1, true), mat('shaft', '#2a221c', { side: THREE.BackSide }), 0, y + .73 - 1.2, z); shaft.castShadow = false; cyl(.87, .87, .02, 20, mat('wellWater', '#1e3a3c', { roughness: .05, metalness: .2 }), 0, y - 1.2, z); }
-    
-    const wl = add(new THREE.CylinderGeometry(.11, .11, 2, 10), 'wood', 0, y + 1.45, z); wl.rotation.z = Math.PI / 2;
-    box(.07, .5, .07, 'wood', 1.15, y + 1.35, z + .2); box(.25, .07, .07, 'wood', 1.15, y + 1.85, z + .3);
-    box(.02, .75, .02, mat('rope', '#a8885a'), 0, y + .85, z); cyl(.17, .14, .28, 10, 'wood', 0, y + .6, z);
-    cyl(.24, .19, .4, 12, 'wood', -2, heightAt(-2, z + 2), z + 2); cyl(.21, .21, .02, 12, mat('basinW', '#8fd8d4'), -2, heightAt(-2, z + 2) + .37, z + 2);
-    for (let i = 0; i < 8; i++) { const a = R(0, 6), r = R(1.7, 2.3); add(new THREE.DodecahedronGeometry(R(.08, .16), 0), 'stoneDk', Math.cos(a) * r, heightAt(0, z) + .04, z + Math.sin(a) * r).scale.y = .5; } }
+{ const z = r.args.z;
+  villageWell(scene, 0, heightAt(0, z), z);
+  stoneBench(scene, 2.6, heightAt(3, z), z + 2.6);
+  waterPail(scene, -2, heightAt(-2, z + 2), z + 2);
   tree(2.5, z - 1.5, .9);
 }
 });

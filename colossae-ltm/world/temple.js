@@ -8,37 +8,16 @@ const TZ = 2;
   for (const s2 of [-1, 1]) { box(1.2, 2.6, 1.2, 'marble', s2 * 4, heightAt(0, TZ + 15), TZ + 15); box(1.4, .3, 1.4, 'wallTrim', s2 * 4, heightAt(0, TZ + 15) + 2.6, TZ + 15); }
   stoneWall(-17, TZ + 15, -17, TZ - 15, 2.2); stoneWall(17, TZ + 15, 17, TZ - 15, 2.2); stoneWall(-17, TZ - 15, 17, TZ - 15, 2.2);
   // temple
-  const g = new THREE.Group(); g.position.set(0, heightAt(0, TZ - 6), TZ - 6); scene.add(g);
-  for (let i = 0; i < 3; i++) box(16 - i * 1.2, .5, 12 - i * 1.2, 'marble', 0, i * .5, 0, g);
-  box(9, 6, 7, 'wallTrim', 0, 1.5, -1, g); box(2.6, 4.2, .2, mat('bronze', '#7a5230', { metalness: .4, roughness: .5 }), 0, 1.5, 2.52, g); box(3.2, .45, .35, 'marble', 0, 5.7, 2.55, g); for (const sx of [-1.45, 1.45]) box(.35, 4.2, .3, 'marble', sx, 1.5, 2.55, g);
-  for (let i = 0; i < 6; i++) for (const zz of [4.6, -4.6]) cyl(.42, .5, 6, 10, 'marble', -6 + i * 2.4, 1.5, zz, g);
-  for (let k = -1; k <= 1; k++) for (const xx of [-6, 6]) cyl(.42, .5, 6, 10, 'marble', xx, 1.5, k * 2.3, g);
-  box(14.2, .8, 10.6, 'marble', 0, 7.5, 0, g);
-  { const pl = new THREE.PointLight('#ffc27a', 1.8, 7, 1.6); pl.position.set(0, 4, 3.6); g.add(pl); for (const sx of [-1.8, 1.8]) { cyl(.12, .16, 1.3, 7, mat('bronze', '#7a5230', { metalness: .4, roughness: .5 }), sx, 1.5, 3.4, g); add(new THREE.SphereGeometry(.14, 7, 5), mat('lampGlow', '#ffd27a', { emissive: '#ff9a3a', emissiveIntensity: 1.4 }), sx, 2.95, 3.4, g); } }
-  const r = gableRoof(14.2, 10.6, 2.6, 'roof', 0, 8.3, 0, Math.PI / 2, g); r.scale.set(.75, 1, 1.0); if (KMAT.MI_RoundTiles) { r.material = KMAT.MI_RoundTiles; worldUV(r.geometry, .35); }
-  // pediment
-  const pd = gableRoof(13.4, .2, 2.2, mat('ped', '#e3dccd'), 0, 8.3, 5.35, 0, g);
-  for (let i = -4; i <= 4; i++) { const hgt = 1.6 * (1 - Math.abs(i) / 5.2); if (hgt < .35) continue; const fig = new THREE.Group(); fig.position.set(i * 1.25, 8.4, 5.5); g.add(fig);
-    add(new THREE.CylinderGeometry(.16, .26, hgt * .75, 6), 'marble', 0, 0, 0, fig); add(new THREE.IcosahedronGeometry(.14, 0), 'marble', 0, hgt * .75 + .12, 0, fig); if (Math.abs(i) > 2) fig.rotation.z = Math.sign(i) * -.9; }
-  box(2.2, .5, .12, mat('tymp', '#c9a24a', { metalness: .4, roughness: .5 }), 0, 9.95, 5.46, g);
-  box(14.8, .35, 11.2, 'wallTrim', 0, 8.15, 0, g); box(14.4, .2, 10.8, 'marble', 0, 7.3, 0, g);
-  for (let i = -6.6; i <= 6.6; i += 1.1) for (const zz of [5.3, -5.3]) box(.35, .55, .08, 'stoneDk', i, 7.7, zz, g);
-  for (let i = 0; i < 6; i++) for (const zz of [4.6, -4.6]) { box(1.05, .3, 1.05, 'marble', -6 + i * 2.4, 7.2, zz, g); box(1.1, .3, 1.1, 'marble', -6 + i * 2.4, 1.5, zz, g); }
-  // steps to front
-  for (let i = 0; i < 4; i++) box(6, .4, .8, 'marble', 0, i * .4 - .4, 6.8 - i * .8, g);
+  marbleTemple(TZ);
   // altar, statues
-  box(2.4, 1.2, 1.6, 'stone', 0, heightAt(0, TZ + 7), TZ + 7); box(2.7, .25, 1.9, 'marble', 0, heightAt(0, TZ + 7) + 1.2, TZ + 7);
   for (const s of [-1, 1]) { const x = s * 10, z = TZ + 5, y = heightAt(x, z);
     box(1.5, .3, 1.5, 'marble', x, y, z); box(1.2, 1.4, 1.2, 'stone', x, y + .3, z); box(1.5, .25, 1.5, 'marble', x, y + 1.7, z);
     if (s < 0) { const pt = P.plaque(); const pq = new THREE.Mesh(new THREE.PlaneGeometry(1.0, .38), new THREE.MeshStandardMaterial({ map: pt, roughness: .8 })); { const a = Math.atan2(0 - x, TZ + 9.5 - z); pq.position.set(x + Math.sin(a) * .72, y + .95, z + Math.cos(a) * .72); pq.rotation.y = a; } pq.userData.dyn = 1; scene.add(pq); }
     { const st = makeStatue(THREE, { pose: s < 0 ? 'philosopher' : 'festival', height: 2.3 }); st.position.set(x, y + 1.95, z); st.rotation.y = s > 0 ? -.5 : .5; st.traverse(o => { if (o.isMesh) o.userData.dyn = 1; }); scene.add(st); } }
   for (const s of [-1, 1]) cypress(s * 14, TZ - 11, 1);
   for (const s of [-1, 1]) for (const zz of [TZ - 2]) { const x = s * 14.5; cyl(.7, .6, .7, 8, 'clay', x, heightAt(x, zz), zz); add(new THREE.IcosahedronGeometry(.8, 0), 'leaf', x, heightAt(x, zz) + 1.3, zz); }
-  { const ay = heightAt(0, TZ + 7) + 1.45; window.__fire = [];
-    { const ay2 = heightAt(0, TZ + 7); for (const sd of [-1, 1]) { const og = new THREE.Group(); og.position.set(sd * .75, ay2 + 1.45, TZ + 7.5); scene.add(og); P.offerings(og, 0, 0, 0); } box(2.75, .3, .08, mat('frieze', '#c9a24a', { metalness: .3 }), 0, ay2 + .75, TZ + 7.96); }
-    { const fire = makeFire(THREE, { scale: .5 }); fire.position.set(0, ay - .05, TZ + 7); fire.traverse(o => o.userData.dyn = 1); scene.add(fire); FIRES.push(fire); }
-  }
-  for (const [ax, ay2] of [[0, 2.6], [-7, 0], [7, 0]]) add(new THREE.OctahedronGeometry(.45, 0), mat('acro', '#c79a3a', { metalness: .3 }), ax, heightAt(0, TZ - 6) + 8.4 + ay2, TZ - .65);
+  window.__fire = [];
+  altarWithFire(scene, 0, heightAt(0, TZ + 7), TZ + 7);
 }
 { const hub = [0, TZ + 9.5];
   // courtyard clutter: benches against the walls, planters, a votive table, offerings

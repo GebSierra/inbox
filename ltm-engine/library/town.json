@@ -35,6 +35,8 @@
     "obj:james",
     "ltm:crates",
     "ltm:people",
+    "obj:colossae-shared",
+    "obj:james-shared",
     "obj:lib-util",
     "obj:townsfolk",
     "obj:nature",

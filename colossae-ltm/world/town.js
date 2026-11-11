@@ -15,13 +15,9 @@ const WALKWAYS = [[-2.6, GZ - 4, 2.6, GZ + 4], [-3.6, TZ + 13.5, 3.6, TZ + 16.5]
 for (const [gx, gz] of [[-58, 8], [-30, -26], [-58, 60], [8, -30]]) { for (let r = 0; r < 5; r++) for (let c2 = 0; c2 < 8; c2++) { const x = gx + c2 * .9, z = gz + r * 1.1; add(new THREE.IcosahedronGeometry(R(.22, .32), 0), r % 2 ? 'green' : 'leaf', x, heightAt(x, z) + .15, z).scale.y = .7; } stoneWall(gx - 1, gz - 1, gx + 7.5, gz - 1, .6); }
 // ---------- landmarks ----------
 { // stoa (covered colonnade) facing the temple courtyard from the west
-  const sx = -30, sz = 6, y = heightAt(sx, sz); box(6, .4, 26, 'marble', sx, y, sz); box(2, 6, 26, 'wallTrim', sx - 2.5, y, sz);
-  for (let i = 0; i < 9; i++) cyl(.3, .35, 5.2, 10, 'marble', sx + 2.4, y + .4, sz - 12 + i * 3);
-  box(6.4, .6, 26.4, 'marble', sx, y + 5.6, sz); const r = gableRoof(6.6, 26.6, 1.6, 'roof', sx, y + 6.2, sz, 0); }
+  marbleStoa(scene, -30, heightAt(-30, 6), 6); }
 { // tholos (round shrine) on a little green near the gate
-  const tx = -32, tz = 52, y = heightAt(tx, tz); cyl(4.2, 4.6, .8, 16, 'marble', tx, y, tz); cyl(2.6, 2.6, 4, 14, 'wallTrim', tx, y + .8, tz);
-  for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2; cyl(.22, .26, 4, 8, 'marble', tx + Math.cos(a) * 3.7, y + .8, tz + Math.sin(a) * 3.7); }
-  cyl(4.2, 4.2, .5, 16, 'marble', tx, y + 4.8, tz); add(new THREE.ConeGeometry(4.5, 2.2, 16), 'roof', tx, y + 6.4, tz); }
+  roundShrine(scene, -32, heightAt(-32, 52), 52); }
 { // three-storey insula block
   const ix = -36, iz = 28; const g = house(ix, iz, 12, 9, 3, Math.PI / 2); }
 // ---------- town filler: more houses, trees, walls, sheep ----------

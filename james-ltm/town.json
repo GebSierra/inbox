@@ -34,6 +34,7 @@
     "ltm:rooms",
     "obj:colossae",
     "obj:james",
+    "obj:james-shared",
     "world/gate.js",
     "ltm:kit",
     "ltm:crates",
