@@ -19,6 +19,7 @@
   T(column, 'marble-column', 'Marble column with base and capital', 'engine kit', 'structure', ['columns', 'marble', 'stoa']);
   T((g, x, y, z) => { box(14, .25, 2.4, 'marble', x, y, z, g); for (let i = 0; i < 5; i++) column(g, x - 6 + i * 3, y + .25, z, 4.2); box(14, .5, .9, 'marble', x, y + 4.7, z, g); box(14.4, .3, 2.6, 'wallTrim', x, y + 5.2, z, g); return y + 5.5; }, 'column-row', 'Row of five marble columns under a beam', 'engine kit', 'structure', ['columns', 'marble', 'stoa']);
   T(via(() => { stoneWall(-3, 0, 3, 0, 1.3); }), 'stone-wall-section', 'Section of dry stone wall', 'engine kit', 'structure', ['wall', 'stone']);
+  T(via(() => { ufCityWall(-9, 0, 9, 0, 3.6, { quiet: 1, centre: [0, 40] }); ufTurret(9, 0, 3.6, 2.6, 1, { stone: 'stone', stoneDk: 'stoneDk' }, 0); }), 'city-wall-section', 'City wall run with a corner turret (same masonry as the gate)', 'colossae 1.1', 'structure', ['wall', 'stone', 'gate']);
   const kitProp = (name, scale = 1) => (g, x, y, z) => { const o = kitPiece(name, g, x, y, z, 0); if (!o) return y; o.scale.setScalar(scale); o.updateMatrixWorld(true); const b = new THREE.Box3().setFromObject(o); return b.max.y - g.getWorldPosition(new THREE.Vector3()).y; };
   T(kitProp('Prop_Wagon'), 'wooden-wagon', 'Wooden wagon (MegaKit)', 'engine kit', 'structure', ['cart', 'travel', 'kit']);
   T(kitProp('Prop_Crate'), 'kit-crate', 'Wooden crate (MegaKit)', 'engine kit', 'object', ['container', 'kit']);

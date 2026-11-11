@@ -1,4 +1,4 @@
-// ---------- UP-E: Roman seal in the paving, spear rack, well rope and bucket, fishing boat on the water, the fishermen's pier ----------
+// ---------- UP-E: Roman seal in the paving, well rope and bucket, fishing boat on the water, the fishermen's pier ----------
 // Called from objects/colossae-shared.js (romanSeal, spearRack, villageWell), objects/colossae.js (fishingBoat) and engine/kit.js (dais "pier").
 // Function declarations and caches only: nothing runs at load. NEVER calls R(): variation comes from the private generator ueRng(seed).
 const ueRng = seed => { let s = (seed >>> 0) || 1; return (a = 0, b = 1) => a + ((s = (Math.imul(s, 1664525) + 1013904223) >>> 0) / 4294967296) * (b - a); };
@@ -96,10 +96,11 @@ function ueSealTex() {
 }
 // (g, x, y, z) => top y: y is the paving height at the centre; the medallion follows the slope of the ground under it
 function ueRomanSeal(g, x, y, z) {
-  const R0 = 1.6, sg = new THREE.Group(); sg.position.set(x, y, z); g.add(sg); sg.updateWorldMatrix(true, false);
+  const R0 = 1.6, ZS = 1.45, sg = new THREE.Group();   // ZS: the medallion is stretched along the line of sight (z) so it still reads round from the stop, 6 m back and low
+   sg.position.set(x, y, z); g.add(sg); sg.updateWorldMatrix(true, false);
   const G = (px, pz) => ueGround(sg, px, pz) - ueGround(sg, 0, 0);
   const gx = (G(1, 0) - G(-1, 0)) / 2, gz = (G(0, 1) - G(0, -1)) / 2;
-  const med = new THREE.Group(); med.position.y = .04; med.rotation.set(-Math.atan(gz), 0, Math.atan(gx)); sg.add(med);   // .04 = how far the paving drape lies above the terrain
+  const med = new THREE.Group(); med.position.y = .04; med.rotation.set(-Math.atan(gz), 0, Math.atan(gx)); med.scale.z = ZS; sg.add(med);   // .04 = how far the paving drape lies above the terrain
   const T = ueSealTex();
   const face = new THREE.CircleGeometry(R0 - .05, 72); face.rotateX(-Math.PI / 2);
   add(face, new THREE.MeshStandardMaterial({ map: T.map, bumpMap: T.bump, bumpScale: 3, roughness: .5, metalness: .12 }), 0, .03, 0, med).castShadow = false;
@@ -107,34 +108,19 @@ function ueRomanSeal(g, x, y, z) {
   add(new THREE.LatheGeometry(prof, 72), mat('sealRim', '#8c6428', { roughness: .45, metalness: .15, side: THREE.DoubleSide }), 0, 0, 0, med).castShadow = false;
   // a mortar bed round it, following the ground, and the setting stones on top of it
   const rg = ueRng(4411), SEG = 64, pos = [], idx = [], r0 = R0 + .03, r1 = R0 + .62;
-  for (let i = 0; i <= SEG; i++) { const a = i / SEG * Math.PI * 2; for (const r of [r0, r1]) { const px = Math.cos(a) * r, pz = Math.sin(a) * r; pos.push(px, G(px, pz) + .05, pz); } }
+  for (let i = 0; i <= SEG; i++) { const a = i / SEG * Math.PI * 2; for (const r of [r0, r1]) { const px = Math.cos(a) * r, pz = Math.sin(a) * r * ZS; pos.push(px, G(px, pz) + .05, pz); } }
   for (let i = 0; i < SEG; i++) { const a = i * 2; idx.push(a, a + 1, a + 2, a + 1, a + 3, a + 2); }
   const bed = new THREE.BufferGeometry(); bed.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); bed.setIndex(idx); bed.computeVertexNormals();
   add(bed, mat('sealBed', '#7f735f', { side: THREE.DoubleSide }), 0, 0, 0, sg).castShadow = false;
   const stA = uaStoneMat('stone', 'Dr'), stB = uaStoneMat('stoneDk', 'Dr'), N = 22;
-  for (let i = 0; i < N; i++) { const a = (i + rg(-.05, .05)) / N * Math.PI * 2, rr = R0 + .3 + rg(-.02, .02), px = Math.cos(a) * rr, pz = Math.sin(a) * rr, h = .1 + rg(0, .015);
-    const b = box(.5 + rg(0, .06), h, .3 + rg(0, .04), i % 2 ? stA : stB, px, G(px, pz) - .03, pz, sg); b.rotation.y = -a; }
+  for (let i = 0; i < N; i++) { const a = (i + rg(-.05, .05)) / N * Math.PI * 2, rr = R0 + .3 + rg(-.02, .02), px = Math.cos(a) * rr, pz = Math.sin(a) * rr * ZS, h = .1 + rg(0, .015);
+    const b = box(.5 + rg(0, .06), h, .3 + rg(0, .04), i % 2 ? stA : stB, px, G(px, pz) - .03, pz, sg); b.rotation.y = -Math.atan2(Math.sin(a) / ZS, Math.cos(a)); }
   return y + .1;
 }
 
-// ================= a rack of spears that stands free =================
-// (g, x, y, z) => top y. Two posts on feet, two rails, five spears leaning back on the top rail; the heads sit exactly on the shaft tops.
-function ueSpearRack(g, x, y, z) {
-  const rk = new THREE.Group(); rk.position.set(x, y, z); g.add(rk); const r = ueRng(9217);
-  const wd = 'wood', ir = mat('iron', '#3c3a38', { metalness: .35, roughness: .6 });
-  for (const s of [-1, 1]) { box(.09, 1.5, .09, wd, s * .62, 0, 0, rk); box(.09, .07, .72, wd, s * .62, 0, 0, rk); }
-  box(1.34, .1, .1, wd, 0, 1.28, 0, rk); box(1.34, .08, .2, wd, 0, .52, .07, rk);
-  for (let i = 0; i < 5; i++) { const sx = -.46 + i * .23, base = [sx, .07, .2 + r(-.02, .02)], top = [sx + r(-.02, .02), 2.12, -.02 + r(-.02, .02)];
-    ueLimb(rk, base, top, .02, .016, 'woodLt', 6);
-    const dir = new THREE.Vector3(top[0] - base[0], top[1] - base[1], top[2] - base[2]).normalize();
-    const fer = add(new THREE.CylinderGeometry(.026, .026, .09, 6), ir, top[0], top[1], top[2], rk); fer.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
-    const hd = add(new THREE.ConeGeometry(.05, .26, 4), ir, top[0] + dir.x * .17, top[1] + dir.y * .17, top[2] + dir.z * .17, rk); hd.scale.set(1, 1, .4); hd.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir); }
-  return y + 2.45;
-}
-
-// ================= the well: a twisted rope from the windlass to the bail of a bucket hanging in the shaft =================
-function ueWellBucket(g, x, o, z) {
-  const rimY = o + .42, bw = mat('bucketWood', '#8a5a34', { side: THREE.DoubleSide }), iron = mat('iron', '#3c3a38', { metalness: .4, roughness: .6 });
+// ================= the well: a twisted rope from the windlass (axis at height rollY) to the bail of a bucket hanging in the shaft (rim at rimY; both relative to the group) =================
+function ueWellBucket(g, x, o, z, rollY = o + 1.45, rimY = o + .42) {
+  const bw = mat('bucketWood', '#8a5a34', { side: THREE.DoubleSide }), iron = mat('iron', '#3c3a38', { metalness: .4, roughness: .6 });
   const pr = [[0, 0], [.15, 0], [.2, .32], [.185, .32], [.145, .04], [0, .04]].map(([a, b]) => new THREE.Vector2(a, b));
   add(new THREE.LatheGeometry(pr, 14), bw, x, rimY - .32, z, g);
   for (const h of [.07, .26]) { const t = add(new THREE.TorusGeometry(.153 + h * .17, .014, 4, 16), iron, x, rimY - .32 + h, z, g); t.rotation.x = Math.PI / 2; }
@@ -143,8 +129,8 @@ function ueWellBucket(g, x, o, z) {
   for (const s of [-1, 1]) add(new THREE.SphereGeometry(.022, 5, 4), iron, x + s * .2, rimY, z, g);
   const topY = rimY + .2;   // top of the bail
   // coils on the windlass, then the rope itself down to the bail, a knot and two turns round the handle
-  for (let i = 0; i < 5; i++) { const t = add(new THREE.TorusGeometry(.118, .02, 5, 12), mat('ropeCoil', '#a8885a'), x - .12 + i * .06, o + 1.45, z, g); t.rotation.y = Math.PI / 2; }
-  ueRope(g, [[x, o + 1.45 - .13, z], [x + .012, (o + 1.32 + topY) / 2 + .1, z + .006], [x - .006, (o + 1.32 + topY) / 2 - .2, z], [x, topY + .045, z]], .022);
+  for (let i = 0; i < 5; i++) { const t = add(new THREE.TorusGeometry(.118, .02, 5, 12), mat('ropeCoil', '#a8885a'), x - .12 + i * .06, rollY, z, g); t.rotation.y = Math.PI / 2; }
+  ueRope(g, [[x, rollY - .13, z], [x + .012, (rollY - .13 + topY) / 2 + .1, z + .006], [x - .006, (rollY - .13 + topY) / 2 - .1, z], [x, topY + .045, z]], .022);
   add(new THREE.SphereGeometry(.052, 7, 5), mat('ropeKnot', '#a8885a'), x, topY + .03, z, g).scale.set(1, 1.25, 1);
   for (const dz of [-.02, .02]) { const t = add(new THREE.TorusGeometry(.036, .014, 5, 10), mat('ropeKnot'), x, topY, z + dz, g); t.rotation.x = Math.PI / 2 - dz * 6; }
   return topY + .1;

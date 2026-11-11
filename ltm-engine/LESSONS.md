@@ -167,3 +167,23 @@ Things that looked broken and were easy to fix:
 - The acceptance suite's first run passed 43/79. Several "failures" were the test's own flaws: it measured marker tops instead of object bases, and it raycast only top-level meshes. Fix the test before fixing the town, then trust it. It then caught real bugs no one had noticed: the Dining Room order, floating statue markers, and a route through the bridge parapet.
 - Screenshot comparison earns its keep: it caught an unstyled page after the engine split, because the test server didn't serve `.css` with a `text/css` content type.
 - A cold-start sub-agent given only the docs is a cheap way to find gaps in a handoff (it found 3).
+
+## 10. Upgrading library objects (from the owner's other AI session, plus this one)
+Process
+- Check the registry first, then search the whole repo for the object's words; many objects are written inline in town files, not in `ltm-engine/objects/`.
+- Move an inline object into the library BEFORE changing it (same look), take the "before" renders from that, then rebuild.
+- Never call `R()` in new code: the town layout comes from a seeded random sequence and extra or missing calls shift every room. Use a private generator (LCG) for textures and variation; leave existing `R()` calls alone, and if you rebuild a builder that used `R()`, draw and discard the same number.
+- Run `node ltm-engine/tests/fast.mjs all` after every change. Syntax-check on a copy. A trailing `//` comment on a code line once commented out working code and broke a whole town.
+- When several helpers work in parallel, wrap every browser command in `flock /tmp/ltm-browser.lock`, put new builders in their own `objects/up-<name>.js` file (prefix every identifier so names never collide), and merge `git pull --rebase` conflicts by looking at both versions in town before choosing.
+Modeling
+- Diagnose the structural fault before adding detail: spear heads as separate objects drift (build them inside the shaft's group); a pail with a lid = water flush with the rim (open lathe, thin wall, water below the rim); a well that looks shallow = terrain hides below-ground geometry (raise the curb, water just above ground).
+- "A flat sticker" = no depth cues: real slab, raised rim, bump map, joints. Stone and marble: canvas texture with speckles, veins, low-contrast clouds.
+- If you can't recognize it, draw it larger and with more contrast (laurel = pointed ellipses in pairs along a branch, with berries).
+- Faces: silhouette and openings beat blobs. Hollow things get real geometry (open, double-sided, thin-walled).
+- Cloth that "doesn't match the stall" usually has a different visual language (smooth, untextured): give it the same woven texture, fading, seams and rope ties as the rest.
+- A new gate makes the wall around it look old: upgrade neighbours (walls, towers) so one masonry family runs through the whole town.
+- Build reusable helpers once (limb between two points, pointed leaf, lathe with thickness, drape, rope).
+Verification
+- `node ltm-engine/tools/angles.mjs <id>[,<id>] --out <dir> --tag before|after` renders a library object from four sides and above into one picture. Look before and after every change; one angle hides what another shows.
+- Match the viewing angle to the complaint (a low camera hides water at the bottom of a well). Also look at the real in-town stop camera.
+- Don't trust one set of numbers; use a reference height for figure proportions.

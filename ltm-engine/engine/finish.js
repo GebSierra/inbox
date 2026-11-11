@@ -5,7 +5,7 @@ function blocked(x, z) { const R2 = .28; for (const [ox, oz] of [[0, 0], [R2, 0]
 {
   scene.updateMatrixWorld(true);
   { const bb = new THREE.Box3();
-    scene.traverse(o => { if (!o.isMesh || o.userData.dyn || o.material.isShaderMaterial || o.geometry.attributes.color || o.material.transparent || o.isSprite) return; for (let q = o; q; q = q.parent) if (!q.visible && !(q === o && o.material === M.dark)) return;
+    scene.traverse(o => { if (!o.isMesh || o.userData.dyn || o.userData.nocol || o.material.isShaderMaterial || o.geometry.attributes.color || o.material.transparent || o.isSprite) return; for (let q = o; q; q = q.parent) if (!q.visible && !(q === o && o.material === M.dark)) return;
       bb.setFromObject(o); const sx = bb.max.x - bb.min.x, sz = bb.max.z - bb.min.z; if (sx > 40 || sz > 40 || (sx < .02 && sz < .02)) return;
       const cx = (bb.min.x + bb.max.x) / 2, cz = (bb.min.z + bb.max.z) / 2, gy = groundY(cx, cz);
       if (bb.min.y > gy + 1.8 || bb.max.y < gy + .45) return;          // overhead, or low enough to step over

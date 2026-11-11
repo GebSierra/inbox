@@ -13,12 +13,13 @@
 //   keystone   false leaves the marble plaque over the arch off (true)
 //   slits      false leaves the dark arrow-slit door on the front of each tower off (true)
 //   torches    true adds a bracket torch (bronze cup, emissive flame, no light) on each side of the arch, facing +z (false)
+//   wallH      height of the city wall that meets the towers (3.6, so its cornice meets the arch's impost course): a string course goes round each tower at that wall's cornice line; 0 leaves it off
 //   banners    true hangs a cloth banner from each tower, facing +z (false)
 //   stone, stoneDk, trim, dark   material keys or materials for the wall stone, the dark merlon stone, the keystone and the slits ('stone', 'stoneDk', 'marble', 'dark')
 //   bannerColor  banner cloth colour ('#a83a2a'),  bannerTrim  its fringe ('#d9a640')
 const GATE_STYLES = { colossae: { inscription: '\u039A\u039F\u039B\u039F\u03A3\u03A3\u0391\u0399' }, james: { inscription: '\u0391\u0393\u039F\u03A1\u0391' } };
 function cityGate(GZ, opts = {}) {
-  const o = Object.assign({ towerH: 10, battlements: true, voussoirs: true, keystone: true, slits: true, torches: false, banners: false,
+  const o = Object.assign({ towerH: 10, battlements: true, voussoirs: true, keystone: true, slits: true, torches: false, banners: false, wallH: 3.6,
     stone: 'stone', stoneDk: 'stoneDk', trim: 'marble', dark: 'dark', bannerColor: '#a83a2a', bannerTrim: '#d9a640' }, GATE_STYLES[opts.style || 'colossae'], opts);
   const H = o.towerH;
   // the town's own stone colours, with coursed ashlar for the walls and dressed stone for single blocks (see objects/up-a.js)
@@ -28,6 +29,7 @@ function cityGate(GZ, opts = {}) {
     if (o.slits) { box(6, H, 4.4, st, 0, 0, 0, g); uaTowerFace(g, H, 1, true, st, drd, o); uaTowerFace(g, H, -1, false, st, drd, o); } else box(6, H, 6, st, 0, 0, 0, g);
     box(6.3, .6, 6.3, moss, (x < 0 ? -.15 : .15), 0, 0, g); box(6.4, .1, 6.4, drd, (x < 0 ? -.15 : .15), .6, 0, g);
     box(6.4, .3, 6.4, drl, 0, H - .6, 0, g); box(6.24, .1, 6.24, drd, 0, H - .7, 0, g);
+    if (o.wallH && !o.torches && !o.banners) { box(6.3, .3, 6.3, drl, 0, o.wallH - .6, 0, g); box(6.2, .1, 6.2, drd, 0, o.wallH - .7, 0, g); }   // string course at the wall's cornice height, so the city wall's cornice runs straight into the tower
     if (o.battlements) for (let i = -1; i <= 1; i++) for (const [a, b] of [[i * 2, 2.6], [i * 2, -2.6], [2.6, i * 2], [-2.6, i * 2]]) box(1, 1, 1, sd, a, H, b, g);
     if (o.banners) { const sg = Math.sign(x), bx = -sg * 1.4; box(1.5, 2.6, .06, mat('gateBanner', o.bannerColor, { side: THREE.DoubleSide }), bx, 3.4, 3.06, g); box(1.5, .14, .08, mat('gateBannerTrim', o.bannerTrim), bx, 3.26, 3.07, g); box(1.7, .1, .1, 'wood', bx, 6.1, 3.08, g); } };
   tower(-6.5); tower(6.5);
@@ -46,9 +48,9 @@ function cityGate(GZ, opts = {}) {
       add(new THREE.SphereGeometry(.15, 7, 5), mat('lampGlow', '#ffd27a', { emissive: '#ff9a3a', emissiveIntensity: 1.4 }), sx, gy0 + 3.4, GZ + 3.1).castShadow = false; } }
 }
 
-// a rack of spears, the Roman seal (see the upgraded models at the end of this part)
+// a rack of spears (spearRack_ at the end of this part), the Roman seal (objects/up-e.js)
 function spearRack(g, x, y, z) { return spearRack_(g, x, y, z); }
-function romanSeal(g, x, y, z) { return romanSeal_(g, x, y, z); }
+function romanSeal(g, x, y, z) { return ueRomanSeal(g, x, y, z); }   // objects/up-e.js: a bronze medallion bedded flush in the paving, ringed with setting stones
 
 // the well (upgraded: stone_well_ below), then the loose stones round it (draws 24 random numbers, exactly as before)
 function villageWell(g, x, y, z) { const top = stoneWell_(g, x, y, z);
@@ -177,7 +179,6 @@ const GST = {
 
 // ---- upgraded models (from the object-library pass): gate guard, spear rack, Roman seal, pail, well, water carrier, marble bench ----
 // ---- helpers for the gate and well objects. None of them draws a random number from R(), so the town's seeded layout is untouched. ----
-function LCG(seed) { let s = seed >>> 0; return () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296; }
 // A limb: a tapered cylinder from point p to point q (both [x,y,z] in g's coordinates).
 function LIMB(g, p, q, r, m, seg = 7) {
   const a = new THREE.Vector3(...p), b = new THREE.Vector3(...q), d = b.clone().sub(a), len = d.length();
@@ -192,29 +193,7 @@ function SPEARHEAD(g, x, y, z) {
   const bl = add(new THREE.LatheGeometry([[0, 0], [.02, .015], [.052, .09], [.062, .16], [.046, .26], [.02, .34], [0, .4]].map(([a, b]) => new THREE.Vector2(a, b)), 8), steel, x, y + .04, z, g); bl.scale.z = .22;  // leaf-shaped blade
   box(.012, .3, .03, mat('spearRib', '#8f979c', { metalness: .7, roughness: .35 }), x, y + .08, z, g);   // central ridge
 }
-// A carved paving stone's colour and relief canvases: a stone surface with a laurel wreath and SPQR cut into it.
-function sealCanvases() {
-  const N = 512, c = document.createElement('canvas'), b = document.createElement('canvas'); c.width = c.height = b.width = b.height = N;
-  const k = c.getContext('2d'), h = b.getContext('2d'), r = LCG(77);
-  k.fillStyle = '#a79f8e'; k.fillRect(0, 0, N, N); h.fillStyle = '#808080'; h.fillRect(0, 0, N, N);
-  for (let i = 0; i < 2600; i++) { const x = r() * N, y = r() * N, s = r() * 5 + 1, v = r(); k.fillStyle = v < .5 ? `rgba(60,52,42,${.05 + r() * .12})` : `rgba(255,248,232,${.05 + r() * .12})`; k.fillRect(x, y, s, s); h.fillStyle = v < .5 ? 'rgba(0,0,0,.18)' : 'rgba(255,255,255,.14)'; h.fillRect(x, y, s, s); }
-  for (let i = 0; i < 9; i++) { let x = r() * N, y = r() * N; k.strokeStyle = 'rgba(70,60,48,.28)'; h.strokeStyle = 'rgba(0,0,0,.35)'; k.lineWidth = h.lineWidth = 1.5; k.beginPath(); h.beginPath(); k.moveTo(x, y); h.moveTo(x, y); for (let j = 0; j < 8; j++) { x += (r() - .5) * 60; y += (r() - .5) * 60; k.lineTo(x, y); h.lineTo(x, y); } k.stroke(); h.stroke(); }
-  const C = N / 2;
-  const ringStroke = (rad, w, col, hv) => { k.strokeStyle = col; h.strokeStyle = hv; k.lineWidth = h.lineWidth = w; k.beginPath(); k.arc(C, C, rad, 0, 7); k.stroke(); h.beginPath(); h.arc(C, C, rad, 0, 7); h.stroke(); };
-  ringStroke(236, 14, '#7c7466', '#d8d8d8'); ringStroke(214, 5, '#5e574b', '#202020');            // raised outer band and an incised line inside it
-  const leaf = (x, y, ang, len, wid, fill, hv) => { for (const [cx, f] of [[k, fill], [h, hv]]) { cx.save(); cx.translate(x, y); cx.rotate(ang); cx.fillStyle = f; cx.beginPath(); cx.moveTo(0, 0); cx.quadraticCurveTo(len * .45, -wid, len, 0); cx.quadraticCurveTo(len * .45, wid, 0, 0); cx.fill(); cx.restore(); } };
-  for (const sd of [-1, 1]) {                                                                          // two laurel branches, rising from the bottom to meet at the top
-    const pts = []; for (let i = 0; i <= 12; i++) { const t = .55 + i / 12 * 2.35, a = Math.PI / 2 + sd * t; pts.push([C + Math.cos(a) * 178, C + Math.sin(a) * 178, a]); }
-    k.strokeStyle = '#4a5a30'; h.strokeStyle = '#b0b0b0'; k.lineWidth = h.lineWidth = 5; k.beginPath(); h.beginPath(); pts.forEach(([x, y], i) => { k[i ? 'lineTo' : 'moveTo'](x, y); h[i ? 'lineTo' : 'moveTo'](x, y); }); k.stroke(); h.stroke();
-    pts.forEach(([x, y, a], i) => { if (i === 12) return; const tan = a + sd * Math.PI / 2;                 // leaves in pairs, one outside the ring and one inside, pointing along the branch
-      leaf(x, y, tan - .6, 48, 15, i % 2 ? '#5f7a34' : '#728f3e', '#f2f2f2');
-      leaf(x, y, tan + .6, 42, 13, i % 2 ? '#6f8a3a' : '#587232', '#e6e6e6'); });
-    const [bx, by] = pts[pts.length - 1]; for (const [dx, dy] of [[0, 0], [10, -6]]) { k.fillStyle = '#9a3a2a'; k.beginPath(); k.arc(bx + dx * sd, by + dy, 8, 0, 7); k.fill(); h.fillStyle = '#eee'; h.beginPath(); h.arc(bx + dx * sd, by + dy, 8, 0, 7); h.fill(); }
-  }
-  for (const [cx, f] of [[k, '#d8b84a'], [h, '#ffffff']]) { cx.fillStyle = f; cx.font = 'bold 110px Georgia, serif'; cx.textAlign = 'center'; cx.textBaseline = 'middle'; cx.fillText('SPQR', C, C + 4); }
-  for (const [cx, f] of [[k, '#d8b84a'], [h, '#ffffff']]) { cx.fillStyle = f; cx.fillRect(C - 120, C - 62, 240, 7); cx.fillRect(C - 120, C + 62, 240, 7); }   // a line above and below the letters
-  return [c, b];
-}
+function LCG(seed) { let s = seed >>> 0; return () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296; }
 // A marble canvas: warm white with grey-blue veins and a few soft clouds.
 function marbleCanvas(seed = 5) {
   const N = 512, c = document.createElement('canvas'); c.width = c.height = N; const k = c.getContext('2d'), r = LCG(seed);
@@ -283,13 +262,6 @@ const spearRack_ = (g, x, y, z) => { const L = 2.3, lean = .12;
     for (let k = 0; k < 5; k++) { const sg = new THREE.Group(); sg.position.set(x - .44 + k * .22, y, z - .16); sg.rotation.x = lean + (k % 2) * .012; sg.rotation.z = (k - 2) * .012; g.add(sg);
       cyl(.022, .026, L, 7, 'woodLt', 0, 0, 0, sg); SPEARHEAD(sg, 0, L, 0); cyl(.03, .028, .05, 7, mat('spearSocket', '#8a6a2a', { metalness: .5, roughness: .45 }), 0, 0, 0, sg); }
     return y + 2.75; };
-const romanSeal_ = (g, x, y, z) => { const [c, b] = sealCanvases(), tx = new THREE.CanvasTexture(c), tb = new THREE.CanvasTexture(b); tx.colorSpace = THREE.SRGBColorSpace; tx.anisotropy = tb.anisotropy = 4;
-    box(2.3, .1, 2.3, mat('sealSlab', '#9b9484'), x, y, z, g);
-    for (const s of [-1, 1]) { box(2.3, .014, .02, mat('sealJoint', '#4a443a'), x, y + .1, z + s * .575, g); box(.02, .014, 2.3, mat('sealJoint', '#4a443a'), x + s * .575, y + .1, z, g); }   // joints between the paving slabs
-    const top = new THREE.MeshStandardMaterial({ map: tx, bumpMap: tb, bumpScale: 5, roughness: .88, metalness: 0 }), side = mat('sealSide', '#8d8676');
-    const d = add(new THREE.CylinderGeometry(1, 1.02, .08, 40), [side, top, side], x, y + .14, z, g);
-    const rg = add(new THREE.TorusGeometry(1.02, .035, 6, 40), mat('sealRing', '#9a6a2a', { metalness: .55, roughness: .4 }), x, y + .15, z, g); rg.rotation.x = Math.PI / 2;
-    return y + .2; };
 const waterPail_ = (g, x, y, z) => PAIL(g, x, y, z, 1, true);
 const stoneBench_ = (g, x, y, z) => { const t = new THREE.CanvasTexture(marbleCanvas(5)); t.colorSpace = THREE.SRGBColorSpace; t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = 4;
     const m = mat('marbleBench', '#ffffff', { map: t, roughness: .28, metalness: .05, flatShading: false }), dk = mat('marbleBenchDk', '#cfc9bb', { map: t, roughness: .3, metalness: .05, flatShading: false });
@@ -305,10 +277,10 @@ const stoneWell_ = (g, x, y, z) => { const H = 1.1;
     for (let c = 0; c < 2; c++) for (let i = 0; i < 14; i++) { const a = (i + c * .5) / 14 * Math.PI * 2, b = box(.54, H / 2, .44, (i + c) % 2 ? 'stone' : 'stoneDk', x + Math.cos(a) * 1.1, y + c * H / 2, z + Math.sin(a) * 1.1, g); b.rotation.y = -a; }
     add(new THREE.LatheGeometry([[.86, H], [1.36, H], [1.36, H + .07], [.86, H + .07]].map(([a, b]) => new THREE.Vector2(a, b)), 28), mat('rimM', '#e8e2d6', { side: THREE.DoubleSide }), x, y, z, g);   // marble coping
     const shaft = add(new THREE.CylinderGeometry(.88, .88, H + .1, 24, 1, true), mat('wellWall', '#4a4238', { side: THREE.BackSide }), x, y + (H + .1) / 2 - .05, z, g); shaft.castShadow = false;
-    cyl(.88, .88, .02, 24, mat('wellWater2', '#2f7f88', { roughness: .05, metalness: .3, emissive: '#0c3036' }), x, y + .22, z, g);   // the water, close enough to the top to be seen
-    for (const r of [.3, .55, .78]) { const t = add(new THREE.TorusGeometry(r, .008, 3, 28), mat('wellRipple', '#8fd0d4', { roughness: .2 }), x, y + .242, z, g); t.rotation.x = Math.PI / 2; }
+    cyl(.88, .88, .02, 24, mat('wellWater2', '#2f7f88', { roughness: .05, metalness: .3, emissive: '#0c3036' }), x, y + .5, z, g);   // the water, close enough to the top to be seen
+    for (const r of [.3, .55, .78]) { const t = add(new THREE.TorusGeometry(r, .008, 3, 28), mat('wellRipple', '#8fd0d4', { roughness: .2 }), x, y + .522, z, g); t.rotation.x = Math.PI / 2; }
     for (const s of [-1, 1]) { box(.12, 1.25, .12, 'wood', x + s * 1.1, y + H + .07, z, g); }                                // posts stand on the coping
     box(2.5, .12, .14, 'wood', x, y + 2.3, z, g); const ax = add(new THREE.CylinderGeometry(.09, .09, 2.5, 10), 'wood', x, y + 1.9, z, g); ax.rotation.z = Math.PI / 2;   // top beam and the roller
     box(.07, .5, .07, 'wood', x + 1.35, y + 1.4, z + .1, g); box(.07, .07, .3, 'wood', x + 1.35, y + 1.4, z + .22, g);        // crank
-    box(.02, .62, .02, mat('rope', '#a8885a'), x, y + 1.28, z, g); PAIL(g, x, y + .66, z, .6, false);                         // the rope and a bucket hanging over the water
+    ueWellBucket(g, x, y, z, y + 1.9, y + 1.02);                                                                              // twisted rope from the roller to the bail of a bucket hanging in the shaft (objects/up-e.js)
     return y + 2.4; };
