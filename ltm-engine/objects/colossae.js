@@ -8,7 +8,29 @@ var P; P = {
   basket: (g, x, y, z, c, n = 12) => { cyl(.42, .32, .32, 8, 'basket', x, y, z, g); for (let i = 0; i < n; i++) add(new THREE.IcosahedronGeometry(.11, 0), mat('f' + c, c), x + R(-.25, .25), y + .36 + R(0, .14), z + R(-.25, .25), g); return y + .55; },
   scale: (g, x, y, z) => { box(.08, .9, .08, 'wood', x, y, z, g); box(.9, .05, .05, 'dark', x, y + .88, z, g); for (const s of [-1, 1]) { cyl(.18, .14, .05, 8, mat('brass', '#b8893a', { metalness: .5, roughness: .4 }), x + s * .42, y + .5, z, g); box(.01, .38, .01, 'dark', x + s * .42, y + .52, z, g); } return y + .95; },
   crates: (g, x, y, z) => { box(.6, .45, .5, 'woodLt', x, y, z, g); box(.5, .4, .45, 'wood', x + .05, y + .45, z, g).rotation.y = .3; return y + .9; },
-  sack: (g, x, y, z, c = '#e2c46a') => { const s = add(new THREE.CylinderGeometry(.26, .32, .5, 7), 'sack', x, y + .25, z, g); add(new THREE.ConeGeometry(.24, .18, 7), mat('grain' + c, c), x, y + .58, z, g); return y + .7; },
+  // Burlap sack of grain, low-poly: a lumpy, slumped belly (lathe profile pushed about by fixed waves, no random numbers so the town's
+  // seeded layout is untouched), gathered pleats into a neck tied with a rope (knot and two loose ends), then a floppy pleated mouth,
+  // tipped a little, whose edge folds over and hangs down round a heap of grain in colour c. About 0.65 wide and 0.72 tall; returns y + .7.
+  sack: (g, x, y, z, c = '#e2c46a') => {
+    const V = (pts) => pts.map(([a, b]) => new THREE.Vector2(a, b)), burlap = mat('sackBurlap', '#c4a476'), rope = mat('sackRope', '#7d5f3a');
+    const body = new THREE.LatheGeometry(V([[0, 0], [.22, 0], [.29, .03], [.315, .1], [.31, .19], [.285, .29], [.23, .38], [.155, .45], [.1, .5]]), 12);
+    const p = body.attributes.position;
+    for (let i = 0; i < p.count; i++) { const px = p.getX(i), py = p.getY(i), pz = p.getZ(i), t = py / .5, a = Math.atan2(pz, px), s = Math.sin(Math.PI * Math.min(t, 1));
+      const k = 1 + (.08 * Math.sin(3 * a + 1.3) + .045 * Math.sin(5 * a + .4)) * s + .06 * Math.cos(2 * a) * (1 - t)  // lumpy belly, sagging foot
+        + .28 * Math.cos(6 * a) * t ** 3;                                                                                // pleats gathered at the neck
+      p.setXYZ(i, px * k + .03 * t * t, py * (1 - .06 * Math.cos(a - .6) * t), pz * k * .93); }                 // slumps and leans a little
+    body.computeVertexNormals(); add(body, burlap, x, y, z, g);
+    const top = new THREE.Group(); top.position.set(x + .03, y + .47, z); top.rotation.set(.06, 0, -.1); g.add(top);   // neck and mouth, tipped
+    const band = add(new THREE.TorusGeometry(.102, .03, 4, 10), rope, 0, .03, 0, top); band.rotation.x = Math.PI / 2;  // rope band round the neck
+    add(new THREE.IcosahedronGeometry(.045, 0), rope, .13, .03, .04, top);                                            // the knot
+    for (const [dz, rz, h] of [[.02, -.2, .16], [.08, -.6, .12]]) { const e = add(new THREE.CylinderGeometry(.016, .011, h, 4), rope, .15 + h * .2, -.04, dz, top); e.rotation.z = rz; }
+    const prof = [[.09, 0], [.1, .05], [.14, .1], [.18, .135], [.215, .14], [.235, .11], [.225, .07]], W = [0, .2, .5, .8, 1, 1, 1];  // flare, then the folded-over hem
+    const mouth = new THREE.LatheGeometry(V(prof), 18), q = mouth.attributes.position;
+    for (let i = 0; i < q.count; i++) { const a = Math.atan2(q.getZ(i), q.getX(i)), u = W[i % prof.length], f = 1 + (.12 * Math.cos(9 * a) + .08 * Math.sin(2 * a + 1)) * u;  // floppy pleats
+      q.setXYZ(i, q.getX(i) * f, q.getY(i) + (.03 * Math.sin(3 * a + .5) - .015 * Math.cos(9 * a)) * u, q.getZ(i) * f); }
+    mouth.computeVertexNormals(); add(mouth, mat('sackBurlapIn', '#c4a476', { side: THREE.DoubleSide }), 0, 0, 0, top);
+    const heap = add(new THREE.SphereGeometry(.17, 9, 3, 0, Math.PI * 2, 0, Math.PI / 2), mat('grain' + c, c), 0, .08, 0, top); heap.scale.y = .85;  // heaped grain
+    return y + .7; },
   bigJar: (g, x, y, z, c = 'clay', s = 1) => { const m = add(new THREE.LatheGeometry([[0, 0], [.12, .01], [.2, .06], [.28, .22], [.31, .4], [.3, .6], [.24, .78], [.15, .88], [.1, .95], [.13, 1], [.14, 1.03]].map(([a, b]) => new THREE.Vector2(a * s, b * s)), 16), c, x, y, z, g); return y + 1.05 * s; },
   honey: (g, x, y, z) => { const t = P.bigJar(g, x, y, z, mat('honey', '#d9a43a', { roughness: .4 }), .6); add(new THREE.SphereGeometry(.09, 6, 4), mat('honeyDrip', '#f0b840', { roughness: .2 }), x + .14, y + .5, z, g); return t; },
   vat: (g, x, y, z, c) => { cyl(.38, .33, .5, 10, 'wood', x, y, z, g); cyl(.33, .33, .03, 10, mat('dye' + c, c, { roughness: .2 }), x, y + .48, z, g); box(.04, .7, .04, 'woodLt', x + .15, y + .3, z, g).rotation.z = .5; return y + .8; },
