@@ -147,9 +147,57 @@ Object.assign(P, {
     box(.95, .55, .02, mat('loomBlue', '#3f6f9a', { map: TEX.cloth }), 0, .65, .03, fr); box(.95, .04, .03, mat('loomStripe', '#efe6d4'), 0, .9, .04, fr);
     for (let i = -2; i <= 2; i++) { box(.008, .35, .008, 'straw', i * .2, .95, -.08, fr); add(new THREE.ConeGeometry(.06, .14, 6), 'clay', i * .2, .9, -.08, fr).rotation.x = Math.PI; }
     box(.12, .5, .4, 'woodLt', -.55, 0, -.25, g === fr ? g : fr); return y + 2.2; },
-  boltPyr: (g, x, y, z) => { const cs = ['#7a3b6a', '#3f6f9a', '#d9a640', '#7a3b6a', '#3f6f9a', '#d9a640']; let n = 0;
-    for (let r = 0; r < 3; r++) for (let i = 0; i < 3 - r; i++) { const c = cs[n++], b = add(new THREE.CylinderGeometry(.17, .17, .9, 12), mat('w' + c, c, { map: TEX.cloth }), x, y + .17 + r * .3, z + (i - (2 - r) / 2) * .35, g); b.rotation.z = Math.PI / 2;
-      for (const e of [-1, 1]) { const cap = add(new THREE.CircleGeometry(.17, 12), mat('wE' + c, new THREE.Color(c).multiplyScalar(.75).getStyle()), x + e * .452, y + .17 + r * .3, b.position.z, g); cap.rotation.y = e * Math.PI / 2; } } return y + 1.0; },
+  // Six bolts of woven cloth stacked 3-2-1. Each bolt is a faceted roll, slightly fuller in the middle, with woven border bands near its ends,
+  // the step of its loose outer lap, and its rolled layers (a spiral) on both end faces around a wooden core rod or an open centre.
+  // The per-bolt variation (radius, length, slight turn and slide) is fixed in the table, not drawn from R(), so the town's random sequence is unchanged.
+  // One bolt is tied with twine; the bottom outer one has its loose end hanging down onto the floor.
+  boltPyr: (g, x, y, z) => { const PI = Math.PI, shade = (c, k) => new THREE.Color(c).multiplyScalar(k).getStyle();
+    const B = [ // [cloth, border, radius, length, turn, slide, core rod?]   bottom row, middle row, top
+      ['#3f6f9a', '#efe6d4', .168, .88, .05, .02, 1], ['#7a3b6a', '#d9a640', .172, .92, -.04, -.03, 0], ['#d9a640', '#7a3b6a', .164, .85, .07, .01, 1],
+      ['#c94a3a', '#efe6d4', .165, .9, -.06, .035, 0], ['#3f6f9a', '#d9a640', .16, .86, .03, -.025, 1], ['#efe6d4', '#c94a3a', .158, .83, -.05, 0, 1]];
+    // centres (z, y) in the stack: the bottom row sits on the floor; each upper bolt rests on the two below it
+    const C = [[-.355, B[0][2]], [0, B[1][2]], [.355, B[2][2]]];
+    const rest = (a, b, r) => { const [z1, y1] = C[a], [z2, y2] = C[b], R1 = B[a][2] + r, R2 = B[b][2] + r, dz = z2 - z1, dy = y2 - y1, d = Math.hypot(dz, dy);
+      const k = (R1 * R1 - R2 * R2 + d * d) / (2 * d), h = Math.sqrt(R1 * R1 - k * k); return [z1 + (k * dz - h * dy) / d, y1 + (k * dy + h * dz) / d + .002]; };
+    C.push(rest(0, 1, B[3][2]), rest(1, 2, B[4][2])); C.push(rest(3, 4, B[5][2]));
+    // a flat spiral strip (the rolled layers seen on an end face), in the XY plane facing +Z
+    const spiral = (r0, r1, turns, w, a0) => { const n = Math.round(turns * 12), p = [], ix = [];
+      for (let i = 0; i <= n; i++) { const t = i / n, a = a0 + t * turns * 2 * PI, rr = r0 + (r1 - r0) * t; for (const s of [-1, 1]) p.push(Math.cos(a) * (rr + s * w / 2), Math.sin(a) * (rr + s * w / 2), 0);
+        if (i < n) ix.push(2 * i, 2 * i + 1, 2 * i + 2, 2 * i + 1, 2 * i + 3, 2 * i + 2); }
+      const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(p, 3)); geo.setIndex(ix); geo.computeVertexNormals(); return geo; };
+    B.forEach(([c, bc, r, L, turn, slide, rod], i) => { const [cz, cy] = C[i], b = new THREE.Group(); b.position.set(x + slide, y + cy, z + cz); b.rotation.y = turn; g.add(b);
+      const cloth = mat('w' + c, c, { map: TEX.cloth });
+      // the roll: ten facets, the middle ring pushed out a little so it is not a machined tube
+      const body = new THREE.CylinderGeometry(r, r, L, 10, 2); const bp = body.attributes.position;
+      for (let k = 0; k < bp.count; k++) if (Math.abs(bp.getY(k)) < 1e-4) { bp.setX(k, bp.getX(k) * 1.035); bp.setZ(k, bp.getZ(k) * 1.035); }
+      body.computeVertexNormals(); body.rotateZ(PI / 2); add(body, cloth, 0, 0, 0, b);
+      // woven border: a wide band and a thin line near each end
+      for (const e of [-1, 1]) for (const [off, w] of [[.065, .05], [.115, .014]]) { const rr = r * (1 + .035 * (1 - (L / 2 - off) / (L / 2))) + .003;
+        const band = new THREE.CylinderGeometry(rr, rr, w, 10); band.rotateZ(PI / 2); add(band, mat('bpBand' + bc, bc, { map: TEX.cloth }), e * (L / 2 - off), 0, 0, b); }
+      // the loose outer lap: a thin strip lying along the roll, its free edge lifted
+      const la = .9 + i * .7, lr = r * 1.035 + .004, lap = add(new THREE.BoxGeometry(L * .97, .01, .1), cloth, 0, lr * Math.cos(la), lr * Math.sin(la), b); lap.rotation.x = la + .06;
+      // end faces: darker cut face, the spiral of rolled layers, and a core rod or an open centre
+      for (const e of [-1, 1]) { const f = new THREE.Group(); f.position.x = e * L / 2; f.rotation.y = e * PI / 2; b.add(f);
+        add(new THREE.CircleGeometry(r, 10), mat('bpEnd' + c, shade(c, .8)), 0, 0, .001, f);
+        add(spiral(.035, r - .014, 3.5, .007, i * 1.3 + e), mat('bpLayer' + c, shade(c, .5)), 0, 0, .003, f);
+        if (!rod) add(new THREE.CircleGeometry(.032, 8), mat('bpHole', '#2a2018'), 0, 0, .004, f); }
+      if (rod) { const core = new THREE.CylinderGeometry(.026, .026, L + .07, 6); core.rotateZ(PI / 2); add(core, 'woodLt', 0, 0, 0, b); } });
+    // twine tied round the top bolt, with a knot
+    { const [cz, cy] = C[5], [, , r, , turn, slide] = B[5], t = new THREE.Group(); t.position.set(x + slide, y + cy, z + cz); t.rotation.y = turn; g.add(t);
+      for (const s of [-1, 1]) { const ring = add(new THREE.TorusGeometry(r * 1.03 + .006, .009, 4, 14), mat('bpTwine', '#a8875a'), s * .17, 0, 0, t); ring.rotation.y = PI / 2; }
+      add(new THREE.IcosahedronGeometry(.02, 0), 'bpTwine', .17, r * 1.03 + .012, 0, t); }
+    // the loose end of the bottom outer bolt: wraps round its outer side, falls to the floor and lies there in a soft fold
+    { const [c, , r, L, turn, slide] = B[2], [cz, cy] = C[2], t = new THREE.Group(); t.position.set(x + slide, y + cy, z + cz); t.rotation.y = turn; g.add(t);
+      // path down the cloth: [z out, y, ripple height on the floor]; across it five columns, the outer ones rippling into soft folds
+      const lr = r * 1.035 + .006, path = [.6, .3, 0, -.3].map(a => [lr * Math.cos(a), lr * Math.sin(a), 0])
+        .concat([[lr + .035, -r * .6, 0], [lr + .07, -r + .01, .006], [lr + .13, -r + .004, .022], [lr + .19, -r + .004, .03], [lr + .24, -r + .006, .018]]);
+      const W = .48, COLS = [-1, -.5, 0, .5, 1], RIP = [0, 1, -.4, .8, .1], N = COLS.length, last = path.length - 1, p = [], ix = [], uv = [];
+      path.forEach(([pz, py, h], k) => { COLS.forEach((s, j) => { const fz = k === last ? s * .035 : 0;   // the cut end runs a little on the slant
+          p.push(-.04 + s * W / 2 * (1 - h * 1.5), py + Math.max(0, RIP[j] * h), pz + fz + (k > 3 ? RIP[j] * h * .5 : 0)); uv.push(0, 0); });
+        if (k < last) for (let q = 0; q < N - 1; q++) { const a = N * k + q; ix.push(a, a + N, a + 1, a + 1, a + N, a + N + 1); } });
+      const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(p, 3)); geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); geo.setIndex(ix); geo.computeVertexNormals();
+      add(geo, mat('bpTail' + c, c, { map: TEX.cloth, side: THREE.DoubleSide }), 0, 0, 0, t); }
+    return y + 1.0; },
   chestOpen: (g, x, y, z) => { box(.8, .45, .5, 'wood', x, y, z, g); for (const k of [-.3, .3]) box(.05, .47, .52, iron(), x + k, y - .01, z, g); box(.7, .02, .4, mat('chestIn', '#5a3a26'), x, y + .3, z, g);
     const lid = new THREE.Group(); lid.position.set(x, y + .45, z - .25); lid.rotation.x = -1.85; g.add(lid); box(.8, .08, .5, 'wood', 0, 0, .25, lid); box(.82, .1, .05, iron(), 0, 0, .48, lid); return y + .95; },
   woolBasket: (g, x, y, z) => { const top = (MODELS.stall ? placePart(g, 'stall', 'Cylinder133', x, y, z, .75) : (cyl(.38, .3, .45, 10, 'basket', x, y, z, g), y + .45));
