@@ -217,9 +217,63 @@ Object.assign(P, {
   rack2: (g, x, y, z) => { for (const sx of [-.7, .7]) { box(.07, 1.75, .07, 'woodLt', x + sx, y, z, g); box(.07, .07, .5, 'wood', x + sx, y, z, g); } box(1.5, .06, .06, 'woodLt', x, y + 1.72, z, g);
     ['#b8331f', '#d9a640', '#2f5f9a'].forEach((c, i) => { const tx = x - .42 + i * .42, m = mat('tunic' + c, c, { map: TEX.cloth }); const hg = add(new THREE.TorusGeometry(.13, .012, 4, 8, Math.PI), 'wood', tx, y + 1.53, z, g);
       box(.03, .1, .03, 'wood', tx, y + 1.62, z, g); const t = add(new THREE.CylinderGeometry(.13, .19, .8, 8), m, tx, y + 1.1, z, g); t.scale.z = .45; for (const sd of [-1, 1]) { const sl = box(.12, .26, .1, m, tx + sd * .18, y + 1.25, z, g); sl.rotation.z = sd * .5; } }); return y + 1.8; },
-  oven2: (g, x, y, z) => { box(1.3, .45, 1.2, mat('ovenBase', '#d8c7a6'), x, y, z, g); const d = add(new THREE.SphereGeometry(.62, 12, 8, 0, Math.PI * 2, 0, Math.PI / 2), mat('ovenDome', '#d9c2a0'), x, y + .45, z - .05, g);
-    const mouth = add(new THREE.CircleGeometry(.26, 10, 0, Math.PI), new THREE.MeshStandardMaterial({ color: '#ff9a3a', emissive: '#e8681a', emissiveIntensity: 1.1 }), x, y + .47, z + .56, g); mouth.userData.dyn = 1;
-    const lf = add(new THREE.IcosahedronGeometry(.13, 1), mat('loaf', '#c88a4a'), x, y + .55, z + .5, g); lf.scale.set(1.5, .7, 1); box(.6, .05, .25, 'wood', x, y + .43, z + .62, g); return y + 1.1; },
+  // Domed household bread oven: a hand-built mud dome (lumpy, leaning a little, soot above the mouth and round the vent) on a plinth of
+  // mud-brick courses, a thick arched mouth facing +z with glowing embers and two small flames, scored round loaves on the front ledge,
+  // a wooden peel leaning on the right and a few split logs at the back. Footprint about 1.6 × 1.45 m, dome top about 1.1 m.
+  oven2: (g, x, y, z) => {
+    const H = .45, PW = 1.3, ZB = -.62, ZF = .8, DZ = z - .2, DR = .57, MZ = DZ + .44, MD = .22;   // plinth height/width/back/front, dome centre and radius, mouth frame start and depth
+    const hsh = (a, b, c) => { const s = Math.sin(Math.round(a * 1e3) * 12.9898 + Math.round(b * 1e3) * 78.233 + Math.round(c * 1e3) * 37.719) * 43758.5453; return s - Math.floor(s); };   // stable per-position noise
+    let q = 0; const rr = (lo, hi) => lo + hsh(q++, .37, 1.1) * (hi - lo);   // own fixed jitter: R() would shift the town's shared random sequence
+    const C = s => new THREE.Color(s), tint = (geo, fn) => { const p = geo.attributes.position, col = new Float32Array(p.count * 3); for (let i = 0; i < p.count; i++) fn(p.getX(i), p.getY(i), p.getZ(i)).toArray(col, i * 3); geo.setAttribute('color', new THREE.BufferAttribute(col, 3)); return geo; };
+    const soot = C('#2b2019'), clay = C('#cfab80'), rimC = C('#c39468'), sm = (a, b, v) => { const t = Math.min(1, Math.max(0, (v - a) / (b - a))); return t * t * (3 - 2 * t); };
+    // plinth: a mortar core, a plastered top slab and three courses of chunky, uneven mud bricks
+    box(PW - .06, H - .03, ZF - ZB - .06, mat('ovenMortar', '#7e6046'), x, y, z + (ZB + ZF) / 2, g);
+    const bm = ['#b07e52', '#9d6f47', '#bf9065', '#a7764b'].map((c, i) => mat('ovenBrick' + i, c, { map: TEX.plaster }));
+    for (let c = 0; c < 3; c++) { const by = y + c * .145, bh = .13;
+      for (const side of [-1, 1]) { const zz = z + (side < 0 ? ZB : ZF) + side * -.035;   // front and back faces, bricks along x
+        for (let bx = -PW / 2 + (c % 2 ? .16 : 0); bx < PW / 2 - .02; bx += .32) { const l = Math.min(.3, PW / 2 - bx) - rr(0, .03); if (l < .08) continue; const b = box(l, bh - rr(0, .02), .1, bm[(c * 7 + Math.round(bx * 10) + side) & 3], x + bx + l / 2 + .01, by, zz + rr(-.01, .01), g); b.rotation.y = rr(-.03, .03); } }
+      for (const side of [-1, 1]) { const xx = x + side * (PW / 2 - .035);   // left and right faces, bricks along z
+        for (let bz = ZB + (c % 2 ? 0 : .17); bz < ZF - .02; bz += .34) { const l = Math.min(.32, ZF - bz) - rr(0, .03); if (l < .08) continue; const b = box(.1, bh - rr(0, .02), l, bm[(c * 5 + Math.round(bz * 10) + side + 4) & 3], xx + rr(-.01, .01), by, z + bz + l / 2 + .01, g); b.rotation.y = rr(-.03, .03); } } }
+    box(PW + .04, .06, ZF - ZB + .04, mat('ovenSlab', '#c7a57c', { map: TEX.plaster }), x, y + H - .045, z + (ZB + ZF) / 2, g);
+    // dome: a lathed beehive profile pushed in and out by smooth bumps and noise, leaning slightly; soot shading in vertex colours
+    const prof = [[1, 0], [1.03, .1], [1.0, .26], [.93, .43], [.81, .6], [.63, .76], [.42, .88], [.22, .95], [.13, .96]].map(([r, h]) => new THREE.Vector2(r * DR, h * DR * 1.1));
+    const dg = new THREE.LatheGeometry(prof, 16, Math.PI / 16), dp = dg.attributes.position;
+    for (let i = 0; i < dp.count; i++) { const px = dp.getX(i), py = dp.getY(i), pz = dp.getZ(i), a = Math.atan2(pz, px), t = py / (DR * 1.056);
+      const k = 1 + .045 * Math.sin(3 * a + 1.3) + .03 * Math.sin(5 * a + t * 4) + (hsh(px, py, pz) - .5) * .05 * Math.min(1, t * 4);
+      const dent = pz > 0 && Math.abs(px) < .2 && py < .4;   // the dome wall is pushed in behind the mouth so the arch opens onto a dark oven chamber
+      dp.setXYZ(i, px * k + .035 * t * t, py * (1 + (hsh(pz, px, 1) - .5) * .03), dent ? .24 : pz * k - .02 * t * t); }
+    tint(dg, (px, py, pz) => { const front = sm(.25, .85, pz / DR) * Math.exp(-px * px / .06) * sm(.12, .3, py) * (1 - sm(.62, .9, py / DR)), top = sm(.8, .96, py / DR) * .7, base = (1 - sm(0, .12, py)) * .25;
+      const c = clay.clone().multiplyScalar(.93 + hsh(px, pz, py) * .12); return c.lerp(soot, Math.min(.85, front * .9 + top + base)); });
+    add(dg, mat('ovenDome', '#ffffff', { vertexColors: true, map: TEX.plaster, roughness: .95 }), x, y + H + .005, DZ, g);
+    // vent: a small chimney collar at the crown, black inside, with a faint wisp of smoke
+    const vx = x + .035, vy = y + H + DR * 1.056 - .02;
+    cyl(.065, .09, .08, 7, mat('ovenRimSoot', '#4a372a', { map: TEX.plaster }), vx, vy, DZ - .02, g); add(new THREE.CircleGeometry(.05, 7), mat('ovenHole', '#120c08'), vx, vy + .082, DZ - .02, g).rotation.x = -Math.PI / 2;
+    { const pts = []; for (let i = 0; i <= 14; i++) { const t = i / 14; pts.push(new THREE.Vector3(Math.sin(t * 6) * .05 * (1 + t), t * .3, Math.cos(t * 5) * .03 - t * .04)); }
+      const w = add(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 18, .03, 5), new THREE.MeshStandardMaterial({ color: '#cfc8bc', transparent: true, opacity: .45, depthWrite: false }), vx, vy + .1, DZ - .02, g); w.castShadow = false; w.userData.dyn = 1; }
+    // mouth: a thick horseshoe arch of fired clay pushed out from the dome, its inside and lintel blackened by smoke
+    const AR = .18, AO = .29, AS = .18, sh = new THREE.Shape();   // inner and outer arch radius, springing height
+    sh.moveTo(-AO, 0); sh.lineTo(-AO, AS); sh.absarc(0, AS, AO, Math.PI, 0, true); sh.lineTo(AO, 0); sh.lineTo(AR, 0); sh.lineTo(AR, AS); sh.absarc(0, AS, AR, 0, Math.PI, false); sh.lineTo(-AR, 0); sh.closePath();
+    const ag = new THREE.ExtrudeGeometry(sh, { depth: MD, bevelEnabled: true, bevelThickness: .025, bevelSize: .025, bevelSegments: 1, curveSegments: 7 });
+    tint(ag, (px, py, pz) => { const d = Math.hypot(px, Math.max(0, py - AS)), inner = 1 - sm(AR + .01, AR + .09, d), lintel = sm(AS, AO + AS, py) * Math.exp(-px * px / .05) * .75;
+      return rimC.clone().multiplyScalar(.92 + hsh(px, py, pz) * .14).lerp(soot, Math.min(.9, inner * .95 + lintel)); });
+    add(ag, mat('ovenRim', '#ffffff', { vertexColors: true, map: TEX.plaster }), x, y + H, MZ, g);
+    // inside the mouth: a dark glowing back, a bed of embers and two small flickering flames, with a warm light spilling onto the ledge
+    const ib = new THREE.Shape(); ib.moveTo(-AR, 0); ib.lineTo(-AR, AS); ib.absarc(0, AS, AR, Math.PI, 0, true); ib.lineTo(AR, 0); ib.closePath();
+    const back = add(new THREE.ShapeGeometry(ib, 7), new THREE.MeshStandardMaterial({ color: '#1c0e07', emissive: '#8a2a08', emissiveIntensity: 1.3, roughness: 1 }), x, y + H, DZ + .25, g); back.userData.dyn = 1; back.castShadow = false;
+    const em = new THREE.MeshStandardMaterial({ color: '#ff8a2a', emissive: '#ff5a10', emissiveIntensity: 1.8, roughness: 1, flatShading: true }), emD = new THREE.MeshStandardMaterial({ color: '#3a1c10', emissive: '#a8300a', emissiveIntensity: .8, roughness: 1, flatShading: true });
+    for (let i = 0; i < 16; i++) { const e = add(new THREE.IcosahedronGeometry(rr(.03, .055), 0), i % 3 ? em : emD, x + rr(-.14, .14), y + H + .02, DZ + rr(.3, .5), g); e.scale.y = .6; e.userData.dyn = 1; e.castShadow = false; }
+    const fm = new THREE.MeshStandardMaterial({ color: '#ff9a2a', emissive: '#ff5a0a', emissiveIntensity: 1.5, roughness: 1, flatShading: true });
+    for (const [fx, fz, s] of [[-.05, .36, 1.4], [.07, .4, 1.05], [-.02, .45, .8]]) { const f = add(new THREE.ConeGeometry(.045 * s, .17 * s, 5), fm, x + fx, y + H + .085 * s, DZ + fz, g); f.castShadow = false; f.userData.dyn = 1; (window.__fire ||= []).push(f); }
+    { const pl = new THREE.PointLight('#ff8a3a', 1.8, 2.2, 2); pl.position.set(x, y + H + .18, MZ + MD + .12); g.add(pl); }
+    // two round loaves, scored into eight wedges as Roman bakers did, on the ledge in front of the mouth
+    const loaf = (lx, ly, lz, s, ry = 0) => { const l = add(new THREE.SphereGeometry(.12 * s, 9, 4, 0, Math.PI * 2, 0, Math.PI / 2), mat('ovenLoaf', '#b8743a', { roughness: .8 }), lx, ly, lz, g); l.scale.y = .7; l.rotation.y = ry;
+      for (let k = 0; k < 4; k++) { const cut = box(.15 * s, .01, .012, mat('ovenLoafCut', '#8f5a2c'), lx, ly + .074 * s, lz, g); cut.rotation.y = ry + k * Math.PI / 4; } };
+    loaf(x - .43, y + H + .01, z + ZF - .17, 1, .2); loaf(x + .44, y + H + .01, z + ZF - .19, .9, .5);
+    // a wooden peel leaning against the right of the dome, blade up, and a few split logs stacked at the back
+    { const pe = new THREE.Group(); pe.position.set(x + .8, y, z - .12); pe.rotation.z = .3; g.add(pe);
+      cyl(.022, .026, .82, 6, 'woodLt', 0, 0, 0, pe); const bl = add(new THREE.CylinderGeometry(.15, .15, .025, 9), 'woodLt', 0, .95, 0, pe); bl.rotation.z = Math.PI / 2; bl.scale.set(1, 1, 1.15); box(.04, .1, .07, 'woodLt', 0, .78, 0, pe); }
+    for (const [lx, ly, lz] of [[-.36, 0, -.04], [-.36, 0, .07], [-.36, .1, .015], [.0, 0, 0]]) { const lg = add(new THREE.CylinderGeometry(.05, .055, .42, 6), 'wood', x + lx + (lz > .05 ? .05 : 0), y + ly + .05, z + ZB - .1 + lz, g); lg.rotation.z = Math.PI / 2; lg.rotation.y = rr(-.15, .15); }
+    return y + H + DR * 1.056 + .07; },
   herbRack: (g, x, y, z) => { for (const sx of [-.65, .65]) { box(.07, 1.6, .07, 'wood', x + sx, y, z, g); const ft = box(.07, .07, .55, 'wood', x + sx, y, z, g); } box(1.45, .06, .06, 'wood', x, y + 1.55, z, g);
     for (let i = 0; i < 6; i++) { const hx = x - .55 + i * .22; box(.01, .15, .01, 'straw', hx, y + 1.4, z, g); const c = i === 3 ? '#9a6a3a' : ['#5f7a3e', '#7c9450', '#6f8a46'][i % 3];
       for (let k = 0; k < 4; k++) { const lf = add(new THREE.ConeGeometry(.04, .32, 4), mat('herb' + c, c), hx + R(-.04, .04), y + 1.22, z + R(-.04, .04), g); lf.rotation.x = Math.PI + R(-.2, .2); } } return y + 1.6; },
