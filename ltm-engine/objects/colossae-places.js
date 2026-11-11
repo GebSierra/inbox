@@ -11,7 +11,10 @@
   const T = (fn, id, label, origin, kind, tags, args) => defObject(id, fn, { label, origin, tags, args, kind });
 
   // ================= 1.1 the city gate (colossae-shared.js cityGate/spearRack/romanSeal, used by colossae-ltm/world/gate.js and market.js) =================
-  T((g, x, y, z) => viaScene(g, x, y, z, () => cityGate(0)), 'city-gate', 'City gate: two towers and a vaulted arch', 'colossae 1.1', 'structure', ['gate', 'wall', 'stone']);
+  // cityGate(GZ, options): see its comment in colossae-shared.js; the options are all optional and none = Colossae's gate. 'city-gate-james' is James's agora gate (style 'james', which James's town builds from the same function).
+  const gateOf = o => (g, x, y, z) => viaScene(g, x, y, z, () => cityGate(0, o));
+  T(gateOf({}), 'city-gate', 'City gate: two towers and a vaulted arch', 'colossae 1.1', 'structure', ['gate', 'wall', 'stone']);
+  T(gateOf({ style: 'james' }), 'city-gate-james', 'City gate (James\u2019s agora variant)', 'james 1', 'structure', ['gate', 'wall', 'stone', 'variant']);
   T(spearRack, 'spear-rack', 'Rack of spears', 'colossae 1.1', 'object', ['gate', 'war', 'wood']);
   T(romanSeal, 'roman-seal', 'Roman seal set into the paving', 'colossae 1.1', 'object', ['gate', 'metal', 'writing']);
   T((g, x, y, z) => { amph(g, x, z, 1.05, y); return y + 1.43; }, 'amphora', 'Big clay amphora', 'colossae 1.1', 'object', ['pottery', 'container', 'gate']);

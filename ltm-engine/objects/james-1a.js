@@ -13,17 +13,41 @@ export function propsA(K) {
   const water = () => M('water', '#6cc0ee', { roughness: .15, metalness: .1 });
   const dk = () => M('mdark', '#1a0e08');
   const rotz = (o, r) => { o.rotation.z = r; return o; };
+  // deterministic wobble for hand-made irregularity: never touches R(), so the town's random stream (and every later object) does not move
+  const nz = i => { const q = Math.sin(i * 127.1 + 311.7) * 43758.5453; return q - Math.floor(q); };
+  // a box whose top face is scaled to wT x dT: a trapezoid prism, a bevel, a chamfer (y = bottom)
+  const tbox = (wB, dB, wT, dT, h, m, x, y, z, g) => { const geo = new THREE.BoxGeometry(wB, h, dB), p = geo.attributes.position;
+    for (let i = 0; i < p.count; i++) if (p.getY(i) > 0) { p.setX(i, p.getX(i) * wT / wB); p.setZ(i, p.getZ(i) * dT / dB); }
+    geo.computeVertexNormals(); return add(geo, m, x, y + h / 2, z, g); };
+  // a roll lying along x (r, length) with its centre at (x, yc, z)
+  const rod = (r, len, seg, m, x, yc, z, g) => { const o = add(new THREE.CylinderGeometry(r, r, len, seg), m, x, yc, z, g); o.rotation.z = Math.PI / 2; return o; };
 
   return {
     letter(g, x, y, z) {
+      // a courier's stone shelf with a wooden board; a sealed papyrus scroll (rolled layers at the ends, cord, red wax seal), a second scroll behind and a folded packet
       const t = plinth(g, x, y, z, .8, .8);
-      const pap = M('pap', '#f4e2b0'), pap2 = M('pap2', '#d8bf84');
-      const sc = cyl(.12, .12, .7, 8, pap, x, t + .12, z, g); sc.rotation.z = Math.PI / 2;
-      for (const s of [-1, 1]) { const e = cyl(.09, .09, .04, 8, pap2, x + s * .35, t + .12, z, g); e.rotation.z = Math.PI / 2; }
-      cyl(.135, .135, .05, 10, M('wax', '#c81818'), x, t + .12, z, g).rotation.z = Math.PI / 2;
-      const rb = M('rib', '#a03030');
-      for (const [dx, dz, r] of [[.04, .2, .3], [-.04, .22, -.3], [.0, .14, 0]]) { const b = box(.035, .015, .2, rb, x + dx, t + .02, z + dz, g); b.rotation.y = r; }
-      return t + .26;
+      const pap = M('pap', '#f8e8b8'), pap2 = M('pap2', '#b99a5c'), pap3 = M('pap3', '#ead29a'), wax = M('wax', '#c81818'), waxD = M('waxD', '#8e1010'), cord = M('rib', '#a03030'), wd = M('postB', '#a8743a');
+      box(.72, .035, .6, M('trayW', '#b98a52'), x, t, z, g);
+      const T = t + .035;
+      // a papyrus roll along x: body, three rolled layers showing at each end, and the little wooden handle knobs of the rod
+      const roll = (cx, cz, r, len, rot) => { const gr = new THREE.Group(); gr.position.set(cx, T + r, cz); gr.rotation.y = rot; g.add(gr);
+        rod(r, len, 10, pap, 0, 0, 0, gr);
+        for (const s of [-1, 1]) { rod(r * .9, .02, 10, pap2, s * (len / 2 + .008), 0, 0, gr); rod(r * .64, .028, 8, pap, s * (len / 2 + .012), 0, 0, gr); rod(r * .38, .036, 8, pap2, s * (len / 2 + .016), 0, 0, gr); rod(r * .2, .05 + r * .6, 6, wd, s * (len / 2 + .03), 0, 0, gr); }
+        return gr; };
+      // main scroll, tied with a cord and sealed
+      const m1 = roll(x, z + .03, .125, .64, .04);
+      for (const dx of [-.085, .085]) { const c = add(new THREE.TorusGeometry(.132, .014, 4, 10), cord, dx, 0, 0, m1); c.rotation.y = Math.PI / 2; }
+      cyl(.072, .076, .035, 10, wax, 0, .115, 0, m1); cyl(.042, .042, .014, 8, waxD, 0, .15, 0, m1);
+      ico(.03, 0, wax, .05, .09, .05, m1, 1, .5, 1);
+      for (const [dx, r] of [[.02, .55], [-.015, .75]]) { const b = box(.02, .012, .17, cord, dx, .06, .11, m1); b.rotation.x = r; }
+      // the unrolled edge of the sheet flat on the board
+      box(.5, .01, .15, pap3, x - .02, T, z + .2, g).rotation.y = .05;
+      // second scroll, behind and askew, with a small seal
+      const m2 = roll(x - .1, z - .21, .062, .46, -.35); const c2 = add(new THREE.TorusGeometry(.068, .009, 4, 8), cord, .02, 0, 0, m2); c2.rotation.y = Math.PI / 2; cyl(.034, .036, .02, 8, wax, .02, .058, 0, m2);
+      // a folded packet, cross-tied
+      const pk = new THREE.Group(); pk.position.set(x + .22, T, z - .2); pk.rotation.y = -.4; g.add(pk);
+      box(.24, .02, .17, pap3, 0, 0, 0, pk); box(.24, .005, .035, cord, 0, .02, 0, pk); box(.03, .005, .17, cord, 0, .02, 0, pk); cyl(.03, .032, .012, 8, wax, 0, .02, 0, pk);
+      return t + .3;
     },
     mask(g, x, y, z) {
       const bz = bronzeM(), d = dk(), wood = M('post', '#c98f50');
@@ -46,34 +70,88 @@ export function propsA(K) {
       return y + 1.8;
     },
     goldIngot(g, x, y, z) {
+      // a cast gold ingot (trapezoid body, chamfered top, stamped mark) and a spare bar, on a polished black touchstone with gold assay streaks
       const t = plinth(g, x, y, z, .9, .75);
-      box(1.1, .08, .8, M('touch', '#141418'), x, t, z, g);
-      const b = cyl(.2, .27, .3, 4, gold(), x, t + .08, z, g); b.rotation.y = Math.PI / 4; b.scale.set(2.4, 1, 1.35);
-      return t + .38;
+      const stone = M('touchP', '#1d1e26', { roughness: .2, metalness: .3 }), goldM = M('goldM', '#ffd23c', { metalness: .35, roughness: .3, emissive: '#8a6412', emissiveIntensity: .9 });
+      const goldD = M('goldD', '#b98a14', { metalness: .4, roughness: .45, emissive: '#2a1c00', emissiveIntensity: .4 }), streak = M('streak', '#e0b030', { metalness: .3, roughness: .4, emissive: '#3a2800', emissiveIntensity: .6 });
+      tbox(1.1, .8, 1.02, .72, .08, stone, x, t, z, g);
+      const T = t + .08;
+      for (const [dx, dz, len, r] of [[-.42, .27, .26, .12], [-.38, .32, .2, .1], [-.3, .35, .12, .08], [.0, .3, .22, -.06], [.06, .35, .15, -.05], [.3, .32, .14, .1]]) { const sk = box(len, .005, .018, streak, x + dx, T, z + dz, g); sk.rotation.y = r; }
+      const ig = new THREE.Group(); ig.position.set(x - .14, T, z - .03); ig.rotation.y = .08; g.add(ig);
+      tbox(.74, .36, .62, .27, .17, goldM, 0, 0, 0, ig); tbox(.62, .27, .54, .2, .05, goldM, 0, .17, 0, ig);
+      box(.22, .01, .11, goldD, -.08, .22, 0, ig); box(.15, .016, .05, goldM, -.08, .22, 0, ig);
+      const sp = new THREE.Group(); sp.position.set(x + .38, T, z + .07); sp.rotation.y = -.25; g.add(sp);
+      tbox(.28, .17, .23, .12, .1, goldM, 0, 0, 0, sp); tbox(.23, .12, .19, .08, .03, goldM, 0, .1, 0, sp);
+      return T + .237;
     },
     amphoraBlue(g, x, y, z) {
+      // a hand-thrown amphora: a lathe profile with a toe, belly, neck and flared lip, warped ring by ring (wobble, lean, a slightly oval section), glaze that pools and streaks
+      // (vertex colours, a bare clay foot), painted bands, and two uneven handles
       const t = plinth(g, x, y, z, .6, .55);
-      const bl = M('blue', '#3a72d0', { roughness: .3, metalness: .1 });
-      lathe([[0, 0], [.1, 0], [.2, .08], [.3, .3], [.31, .5], [.24, .75], [.13, .98], [.12, 1.08], [.13, 1.14], [.19, 1.18], [.19, 1.22], [0, 1.22]], 14, bl, x, t, z, g);
-      for (const s of [-1, 1]) { const h = add(new THREE.TorusGeometry(.17, .035, 4, 8, Math.PI), bl, x + s * .15, t + .95, z, g); h.rotation.z = s * Math.PI / 2; }
+      const pts = [[0, 0], [.1, 0], [.115, .02], [.112, .05], [.125, .085], [.17, .14], [.215, .22], [.275, .36], [.31, .51], [.3, .64], [.25, .78], [.165, .9], [.108, .98], [.092, 1.03], [.1, 1.08], [.125, 1.125], [.152, 1.16], [.155, 1.19], [.14, 1.2], [.112, 1.185], [0, 1.17]];
+      const crv = new THREE.SplineCurve(pts.map(([a, b]) => new THREE.Vector2(a, b))); let prof = crv.getPoints(30).map(v => [Math.max(0, v.x), v.y]); prof[0][0] = 0; prof[prof.length - 1][0] = 0;
+      const wob = (a, yy) => 1 + .014 * Math.sin(yy * 9 + 1.3) + .009 * Math.sin(yy * 23 + 4) + .016 * Math.sin(2 * a + yy * 3 + .7) + .008 * Math.sin(3 * a - yy * 5);
+      const warp = geo => { const p = geo.attributes.position; for (let i = 0; i < p.count; i++) { const px = p.getX(i), py = p.getY(i), pz = p.getZ(i), a = Math.atan2(pz, px), r = Math.hypot(px, pz) * wob(a, py);
+        p.setXYZ(i, Math.cos(a) * r + .014 * Math.sin(py * 4.2) + py * .018, py, Math.sin(a) * r * 1.03 + .008 * Math.sin(py * 5.1 + 2)); } };
+      const body = new THREE.LatheGeometry(prof.map(([a, b]) => new THREE.Vector2(a, b)), 18); warp(body);
+      const col = new Float32Array(body.attributes.position.count * 3), c = new THREE.Color(), np = prof.length;
+      for (let i = 0; i < body.attributes.position.count; i++) { const col_i = Math.floor(i / np), j = i % np, yy = body.attributes.position.getY(i);
+        const bare = yy < .06 ? 1 : 0, glaze = .5 + .5 * Math.sin(yy * 6 + 1) , streak = nz(col_i % 18 * 3.7 + 1) * Math.max(0, .75 - yy) * .5;
+        c.set('#4279d9').lerp(new THREE.Color('#2a4fa8'), .22 * (1 - yy / 1.2) + streak * .6).lerp(new THREE.Color('#4f84d6'), .35 * Math.max(0, yy - .85) + .12 * glaze * (yy > .5 ? 1 : 0));
+        if (yy < .16 && !bare) c.lerp(new THREE.Color('#2a4f9a'), .0).lerp(new THREE.Color('#8a6a48'), Math.max(0, (.16 - yy) / .09) * .5);
+        if (bare) c.set('#b98a5a'); col.set([c.r, c.g, c.b], i * 3); }
+      body.setAttribute('color', new THREE.BufferAttribute(col, 3));
+      const glz = M('amphV', '#ffffff', { vertexColors: true, flatShading: false, roughness: .3, metalness: .06 });
+      const am = new THREE.Group(); am.position.set(x, t, z); am.rotation.z = .012; am.rotation.x = -.008; g.add(am);
+      add(body, glz, 0, 0, 0, am);
+      // painted bands (thin shells over the body, warped the same way)
+      const rAt = yy => { let lo = prof[0]; for (const q of prof) { if (q[1] >= yy) { const f = (yy - lo[1]) / Math.max(1e-4, q[1] - lo[1]); return lo[0] + (q[0] - lo[0]) * f; } lo = q; } return lo[0]; };
+      const band = (y0, y1, hex, out = .006) => { const bp = []; for (let k = 0; k <= 2; k++) { const yy = y0 + (y1 - y0) * k / 2; bp.push(new THREE.Vector2(rAt(yy) + out, yy)); } const bg = new THREE.LatheGeometry(bp, 18); warp(bg); return add(bg, M('band' + hex, hex, { roughness: .4, flatShading: false }), 0, 0, 0, am); };
+      const cream = '#ead9a8', navy = '#17306c', rust = '#a4502c';
+      band(1.0, 1.03, cream); band(.745, .78, cream); band(.715, .735, navy); band(.49, .53, cream, .007); band(.47, .485, rust, .007); band(.3, .325, navy); band(.15, .165, cream);
+      band(1.15, 1.17, cream, .004);
+      // two handles, a little different from each other (neck to shoulder)
+      for (const s of [-1, 1]) { const k = s > 0 ? 1 : 0, w = (a, b) => a + (nz(k * 7 + b) - .5) * .02;
+        const cv = new THREE.CatmullRomCurve3([new THREE.Vector3(s * .094, w(1.0, 1), 0), new THREE.Vector3(s * w(.17, 2), w(1.04, 3), 0), new THREE.Vector3(s * w(.225, 4), w(.94, 5), 0), new THREE.Vector3(s * w(.235, 6), w(.84, 7), 0), new THREE.Vector3(s * .2, w(.76, 8), 0)]);
+        add(new THREE.TubeGeometry(cv, 10, .029, 6), M('amphH', '#2f63c0', { roughness: .3, metalness: .06 }), 0, 0, 0, am); }
       return t + 1.2;
     },
     lionFountain(g, x, y, z) {
-      lathe([[0, 0], [.55, 0], [.58, .3], [.52, .42], [.45, .42], [.45, .1], [0, .1]], 12, sandA(), x, y, z, g);
-      cyl(.46, .46, .02, 12, water(), x, y + .3, z, g).userData.dyn = 1;
-      box(.4, 1.4, .36, sandA(), x, y, z, g);
-      box(.48, .08, .44, sandB(), x, y + 1.4, z, g);
-      const bz = bronzeM(), mane = M('mane', '#b8782e', { metalness: .2, roughness: .5 });
-      const ly = y + 1.08, lz = z + .2;
-      for (let i = 0; i < 10; i++) { const a = i / 10 * Math.PI * 2; ico(.12, 0, mane, x + Math.cos(a) * .2, ly + Math.sin(a) * .2, lz - .02, g, 1, 1, .9); }
-      ico(.2, 0, mane, x, ly, lz - .04, g);
-      box(.3, .3, .2, bz, x, ly - .15, lz + .08, g);
-      box(.2, .15, .18, bz, x, ly - .22, lz + .26, g);
-      box(.14, .07, .06, dk(), x, ly - .07, lz + .36, g);
-      box(.34, .06, .1, bz, x, ly + .02, lz + .22, g);
-      for (const s of [-1, 1]) { ico(.04, 0, dk(), x + s * .08, ly - .02, lz + .3, g); ico(.06, 0, bz, x + s * .17, ly + .15, lz + .03, g); }
-      box(.1, .07, .08, dk(), x, ly - .3, lz + .34, g);
-      const st = box(.12, .62, .1, M('stream', '#9bd4f2', { roughness: .1, transparent: true, opacity: .85 }), x, y + .34, z + .5, g); st.userData.dyn = 1;
+      // a lion-head wall fountain: a stone stele with a round plaque, a bronze lion's face (spiked mane rays in two rings, domed head, heavy brows, eyes, bridge, muzzle, nose, open mouth
+      // with fangs and a tongue) whose mouth pours a stream into the round basin in front
+      const sA = sandA(), sB = sandB();
+      lathe([[0, 0], [.55, 0], [.58, .3], [.52, .42], [.45, .42], [.45, .1], [0, .1]], 14, sA, x, y, z, g);
+      torus(.52, .05, sB, x, y + .42, z, g);
+      cyl(.46, .46, .02, 14, water(), x, y + .3, z, g).userData.dyn = 1;
+      const pz = z - .3;
+      box(.7, .1, .46, sB, x, y, pz, g); box(.56, 1.32, .36, sA, x, y + .1, pz, g); box(.7, .08, .46, sB, x, y + 1.42, pz, g);
+      const faceZ = pz + .18, cy = y + 1.0;
+      const plaq = cyl(.3, .3, .05, 16, M('plaq', '#a98a5c'), 0, 0, 0, g); plaq.rotation.x = Math.PI / 2; plaq.position.set(x, cy, faceZ + .02);
+      const L = new THREE.Group(); L.position.set(x, cy, faceZ + .05); L.scale.setScalar(1.15); g.add(L);
+      const mane = M('mane', '#a9692a', { metalness: .2, roughness: .5 }), maneL = M('maneL', '#d99a42', { metalness: .2, roughness: .5 }), face = M('lface', '#eeb95c', { metalness: .2, roughness: .5 }), faceD = M('lfaceD', '#b8792c', { metalness: .2, roughness: .5 }), muz = M('lmuz', '#f0c77a', { metalness: .1, roughness: .55 });
+      const tooth = M('teeth', '#f4ecd4'), nose = M('lnose', '#3e2412');
+      const ray = (rad, len, wd, a, m, zz) => { const o = add(new THREE.ConeGeometry(wd, len, 4), m, Math.cos(a) * (rad + len / 2), Math.sin(a) * (rad + len / 2), zz, L); o.rotation.z = a - Math.PI / 2; o.scale.z = .6; };
+      for (let i = 0; i < 18; i++) { const a = i / 18 * Math.PI * 2 + .1, bot = Math.max(0, -Math.sin(a)); ray(.19, .1 + .06 * bot + .02 * nz(i), .06, a, mane, 0); }
+      for (let i = 0; i < 14; i++) { const a = (i + .5) / 14 * Math.PI * 2 + .1, bot = Math.max(0, -Math.sin(a)); ray(.14, .08 + .04 * bot, .05, a, maneL, .03); }
+      ico(.17, 1, face, 0, .01, .05, L, 1, 1.05, .62);
+      for (const s of [-1, 1]) { ico(.05, 0, faceD, s * .15, .19, .02, L); ico(.085, 0, face, s * .105, -.07, .1, L, 1, .9, .75);
+        const br = box(.15, .05, .09, faceD, s * .08, .06, .14, L); br.rotation.z = s * .3;
+        box(.065, .035, .05, dk(), s * .075, .03, .17, L); ico(.022, 0, M('eyeG', '#ffd45a', { emissive: '#8a5a10', emissiveIntensity: .8 }), s * .075, .028, .2, L);
+        ico(.06, 0, muz, s * .06, -.12, .185, L, 1, .8, .9);
+      }
+      box(.06, .15, .08, face, 0, .0, .15, L);
+      box(.2, .1, .13, muz, 0, -.1, .17, L);
+      tbox(.1, .06, .08, .045, .05, nose, 0, -.075, .225, L);
+      box(.15, .085, .09, dk(), 0, -.215, .19, L);
+      box(.12, .035, .1, faceD, 0, -.283, .2, L).rotation.x = .2;
+      box(.07, .015, .07, M('tongue', '#b04838'), 0, -.255, .22, L);
+      for (const s of [-1, 1]) { cone(.017, .055, 4, tooth, s * .05, -.185, .245, L).rotation.z = Math.PI; cone(.015, .045, 4, tooth, s * .045, -.255, .245, L); }
+      // the stream: out of the mouth, arcing down into the basin, with a foam ring where it lands
+      const mz = faceZ + .05 + .24, my = cy - .235 + 0;
+      const sm = M('stream', '#9bd4f2', { roughness: .1, transparent: true, opacity: .85 });
+      const arc = new THREE.CatmullRomCurve3([new THREE.Vector3(x, my, mz), new THREE.Vector3(x, my - .03, mz + .1), new THREE.Vector3(x, my - .15, mz + .16), new THREE.Vector3(x, y + .5, mz + .19), new THREE.Vector3(x, y + .31, mz + .2)]);
+      add(new THREE.TubeGeometry(arc, 10, .028, 5), sm, 0, 0, 0, g).userData.dyn = 1;
+      const foam = torus(.1, .025, M('foam', '#e8f6fb', { transparent: true, opacity: .85 }), x, y + .315, mz + .2, g); foam.userData.dyn = 1;
       return y + 1.5;
     },
     seaBarrel(g, x, y, z) {

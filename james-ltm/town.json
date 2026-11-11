@@ -35,6 +35,7 @@
     "obj:colossae",
     "obj:james",
     "obj:james-shared",
+    "obj:colossae-shared",
     "world/gate.js",
     "ltm:kit",
     "ltm:crates",

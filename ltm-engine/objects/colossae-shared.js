@@ -4,19 +4,37 @@
 // Loaded before the world parts (town.json "obj:colossae-shared"), so everything here is a function declaration: they only run when called.
 // Random numbers (R/rnd) are drawn exactly where the old inline code drew them, so a town's random stream does not move.
 
-// the city gate: two towers, the lintel and the vaulted arch, centred on x = 0 at z = GZ
-function cityGate(GZ) {
+// the city gate: two towers, the lintel and the vaulted arch, centred on x = 0 at z = GZ. Returns nothing (the parts go into `scene`).
+// Every option is optional; with none, this is exactly Colossae's gate. No random numbers are drawn.
+//   style      a named preset merged under your own options: 'colossae' (the defaults) or 'james' (James's agora gate, which is built the same way: see GATE_STYLES)
+//   towerH     tower height in metres (10); the merlons sit on top of it
+//   battlements  false leaves the towers and the lintel without merlons (true)
+//   voussoirs  false leaves the dark arch-stones off both faces of the arch (true)
+//   keystone   false leaves the marble plaque over the arch off (true)
+//   slits      false leaves the dark arrow-slit door on the front of each tower off (true)
+//   torches    true adds a bracket torch (bronze cup, emissive flame, no light) on each side of the arch, facing +z (false)
+//   banners    true hangs a cloth banner from each tower, facing +z (false)
+//   stone, stoneDk, trim, dark   material keys or materials for the wall stone, the dark merlon stone, the keystone and the slits ('stone', 'stoneDk', 'marble', 'dark')
+//   bannerColor  banner cloth colour ('#a83a2a'),  bannerTrim  its fringe ('#d9a640')
+const GATE_STYLES = { colossae: {}, james: {} };
+function cityGate(GZ, opts = {}) {
+  const o = Object.assign({ towerH: 10, battlements: true, voussoirs: true, keystone: true, slits: true, torches: false, banners: false,
+    stone: 'stone', stoneDk: 'stoneDk', trim: 'marble', dark: 'dark', bannerColor: '#a83a2a', bannerTrim: '#d9a640' }, GATE_STYLES[opts.style || 'colossae'], opts);
+  const H = o.towerH;
   const tower = (x) => { const g = new THREE.Group(); g.position.set(x, heightAt(x, GZ), GZ); scene.add(g);
-    box(6, 10, 6, 'stone', 0, 0, 0, g);
-    for (let i = -1; i <= 1; i++) for (const [a, b] of [[i * 2, 2.6], [i * 2, -2.6], [2.6, i * 2], [-2.6, i * 2]]) box(1, 1, 1, 'stoneDk', a, 10, b, g);
-    box(.9, 1.6, .2, 'dark', 0, 6, 3.02, g); };
+    box(6, H, 6, o.stone, 0, 0, 0, g);
+    if (o.battlements) for (let i = -1; i <= 1; i++) for (const [a, b] of [[i * 2, 2.6], [i * 2, -2.6], [2.6, i * 2], [-2.6, i * 2]]) box(1, 1, 1, o.stoneDk, a, H, b, g);
+    if (o.slits) box(.9, 1.6, .2, o.dark, 0, 6, 3.02, g);
+    if (o.banners) { const sd = Math.sign(x), bx = -sd * 1.4; box(1.5, 2.6, .06, mat('gateBanner', o.bannerColor, { side: THREE.DoubleSide }), bx, 3.4, 3.06, g); box(1.5, .14, .08, mat('gateBannerTrim', o.bannerTrim), bx, 3.26, 3.07, g); box(1.7, .1, .1, 'wood', bx, 6.1, 3.08, g); } };
   tower(-6.5); tower(6.5);
-  box(7, 3, 6, 'stone', 0, 6.5, GZ); for (let i = -2; i <= 2; i++) box(.9, .9, .9, 'stoneDk', i * 1.5, 9.5, GZ + 2.5);
+  box(7, 3, 6, o.stone, 0, 6.5, GZ); if (o.battlements) for (let i = -2; i <= 2; i++) box(.9, .9, .9, o.stoneDk, i * 1.5, 9.5, GZ + 2.5);
   { const gy0 = heightAt(0, GZ), sh = new THREE.Shape(); sh.moveTo(-3.5, 0); sh.lineTo(3.5, 0); sh.lineTo(3.5, 6.6); sh.lineTo(-3.5, 6.6); sh.lineTo(-3.5, 0);
     const hole = new THREE.Path(); hole.moveTo(-3.3, 0); hole.lineTo(-3.3, 3.2); hole.absarc(0, 3.2, 3.3, Math.PI, 0, true); hole.lineTo(3.3, 0); hole.lineTo(-3.3, 0); sh.holes.push(hole);
-    const vg = new THREE.ExtrudeGeometry(sh, { depth: 6, bevelEnabled: false, curveSegments: 14 }); vg.translate(0, 0, -3); add(vg, 'stone', 0, gy0, GZ);
-    for (const zz of [GZ + 3.02, GZ - 3.02]) { for (let k = 0; k <= 10; k++) { const a = Math.PI * k / 10; const v = box(.55, .75, .2, 'stoneDk', Math.cos(a) * 3.55, gy0 + 3.2 + Math.sin(a) * 3.55 - .37, zz); v.rotation.z = a - Math.PI / 2; } }
-    box(.9, .7, .25, 'marble', 0, gy0 + 6.75, GZ + 3.05); }
+    const vg = new THREE.ExtrudeGeometry(sh, { depth: 6, bevelEnabled: false, curveSegments: 14 }); vg.translate(0, 0, -3); add(vg, o.stone, 0, gy0, GZ);
+    if (o.voussoirs) for (const zz of [GZ + 3.02, GZ - 3.02]) { for (let k = 0; k <= 10; k++) { const a = Math.PI * k / 10; const v = box(.55, .75, .2, o.stoneDk, Math.cos(a) * 3.55, gy0 + 3.2 + Math.sin(a) * 3.55 - .37, zz); v.rotation.z = a - Math.PI / 2; } }
+    if (o.keystone) box(.9, .7, .25, o.trim, 0, gy0 + 6.75, GZ + 3.05);
+    if (o.torches) for (const sx of [-3.9, 3.9]) { box(.1, .9, .1, 'wood', sx, gy0 + 2.2, GZ + 3.1); cyl(.14, .09, .2, 7, mat('bronze', '#7a5230', { metalness: .4, roughness: .5 }), sx, gy0 + 3.05, GZ + 3.1);
+      add(new THREE.SphereGeometry(.15, 7, 5), mat('lampGlow', '#ffd27a', { emissive: '#ff9a3a', emissiveIntensity: 1.4 }), sx, gy0 + 3.4, GZ + 3.1).castShadow = false; } }
 }
 
 // a rack of spears (g, x, y, z) => top y
