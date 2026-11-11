@@ -5,7 +5,7 @@ const WALKWAYS = [[-2.6, GZ - 4, 2.6, GZ + 4], [-3.6, TZ + 13.5, 3.6, TZ + 16.5]
   const MER = [['#7a3b6a', 0, 1], ['#3f6f9a', 1, 2], ['#e8dcc4', 2, 3], ['#9a5a3a', 0, 0], ['#c43a2e', 1, 1], ['#5a4a6a', 2, 2]];
   M1.forEach(([sx, sz, face], i) => { if (i === 2 || i === 3) return; const [c, sk, hr] = MER[i]; const ox = -2.75, oz = .9, lx = sx + ox * Math.cos(face) + oz * Math.sin(face), lz = sz - ox * Math.sin(face) + oz * Math.cos(face); person(lx, lz, face - .5, c, { skin: sk, hair: hr, armsUp: i % 3 === 0 }); });
   // people in the street and around town
-  const P0 = [[-2.1, 56.2, .5, '#d9c39a', { carry: 'jar', veil: '#e8dcc4', skin: 1 }], [-3.3, 47, .3, '#8a5a3a', { cloak: '#5a3a2a', hair: 3 }], [3.3, 33, -2.4, '#3f6f9a', { carry: 'basket', skin: 2 }],
+  const P0 = [ /* the water carrier at the well is built in world/market.js */ [-3.3, 47, .3, '#8a5a3a', { cloak: '#5a3a2a', hair: 3 }], [3.3, 33, -2.4, '#3f6f9a', { carry: 'basket', skin: 2 }],
     [-3, 6, 1, '#efe6d4', { cloak: '#9a2a2a', hair: 3 }], [3.5, 12, -2, '#e8dcc4', { armsUp: true }], [-6, 11, .4, '#c79a3a', { veil: '#3f6f9a', skin: 2 }],
     [HX + 2.5, HZ + 1, 2.2, '#9a4a3a', { veil: '#e0b44a', skin: 2 }], [HX + 1, HZ + 13, 0, '#5a6a3a', {}], [BX + 2, BZ + .8, 1.57, '#8a6a4a', { cloak: '#6a4a2a', carry: 'basket' }], [BX + 47, BZ + 1, 3.4, '#5a4a3a', { hair: 1 }],
     [-12, 30, 1.2, '#c9a46a', { carry: 'jar', veil: '#c43a2e' }], [20, 40, 2, '#7a8a5a', {}], [-22, 62, -1, '#a8714c', { cloak: '#3a4a6a' }]];

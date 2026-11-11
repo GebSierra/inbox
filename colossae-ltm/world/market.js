@@ -13,9 +13,7 @@ defBuilder('colossae.gate', r => { // ROOM 1 — the city gate (seen from outsid
   const gy = heightAt(0, GZ), g = new THREE.Group(); g.position.set(0, gy, GZ); scene.add(g);
   const at = (x, z, top, what) => ({ x, y: gy + top, z: GZ + z, what });
   // 1 near-left: a guard with spear and shield
-  person(-2.3, GZ + 2.4, Math.PI * .15, '#9a2a2a', { cloak: '#6a1a1a', hair: 1, y: gy });
-  box(.05, 2.4, .05, 'wood', -2.0, 0, 2.6, g); add(new THREE.ConeGeometry(.07, .3, 4), mat('iron', '#3c3a38', { metalness: .4, roughness: .6 }), -2.0, 2.55, 2.6, g);
-  { const sh = add(new THREE.CylinderGeometry(.42, .42, .08, 14), mat('shield', '#9a2a2a'), -2.65, .75, 2.45, g); sh.rotation.z = Math.PI / 2; sh.rotation.y = .3; add(new THREE.SphereGeometry(.1, 8, 5), mat('brass', '#b8893a', { metalness: .5, roughness: .4 }), -2.7, .75, 2.45, g); }
+  gateGuardModel(g, -2.3, 0, 2.4);
   // 2 far-left: a big pot in the corner
   { const jg = new THREE.Group(); jg.position.set(-2.4, 0, -2.4); g.add(jg); amph(jg, 0, 0, 1.05); }
   // 3 far-right: a burning torch on a post
@@ -79,6 +77,7 @@ defBuilder('colossae.well', r => {   // ROOM 6 — the well (seen from the gate 
   villageWell(scene, 0, heightAt(0, z), z);
   stoneBench(scene, 2.6, heightAt(3, z), z + 2.6);
   waterPail(scene, -2, heightAt(-2, z + 2), z + 2);
+  waterCarrierModel(scene, -2.1, heightAt(-2.1, z - 1.8), z - 1.8);   // the woman at the well (was a townsperson in town.js)
   tree(2.5, z - 1.5, .9);
 }
 });

@@ -7,15 +7,11 @@
   const T = (fn, id, label, origin, kind, tags, args) => defObject(id, fn, { label, origin, tags, args, kind });
 
   // Colossae 1.1: the guard at the city gate (the spear and the shield are his, as in the gate room)
-  const gateGuard = (g, x, y, z) => viaScene(g, x, y, z, sub => {
-    person(0, 0, Math.PI * .15, '#9a2a2a', { cloak: '#6a1a1a', hair: 1, y: 0 });
-    box(.05, 2.4, .05, 'wood', .3, 0, .2, sub); add(new THREE.ConeGeometry(.07, .3, 4), mat('iron', '#3c3a38', { metalness: .4, roughness: .6 }), .3, 2.55, .2, sub);
-    const sh = add(new THREE.CylinderGeometry(.42, .42, .08, 14), mat('shield', '#9a2a2a'), -.35, .75, .05, sub); sh.rotation.z = Math.PI / 2; sh.rotation.y = .3;
-    add(new THREE.SphereGeometry(.1, 8, 5), mat('brass', '#b8893a', { metalness: .5, roughness: .4 }), -.4, .75, .05, sub); });
+  const gateGuard = (g, x, y, z) => gateGuardModel(g, x, y, z);   // colossae-shared.js
   T(gateGuard, 'gate-guard', 'Gate guard with spear and shield', 'colossae 1.1', 'person', ['guard', 'gate', 'war']);
 
   // Colossae 1.6: the woman at the well
-  T(folk('#d9c39a', { carry: 'jar', veil: '#e8dcc4', skin: 1 }, .5), 'woman-with-water-jar', 'Woman carrying a water jar on her head', 'colossae 1.6', 'person', ['well', 'water', 'woman']);
+  T((g, x, y, z) => waterCarrierModel(g, x, y, z), 'woman-with-water-jar', 'Woman carrying a water jar on her head', 'colossae 1.6', 'person', ['well', 'water', 'woman']);
 
   // the merchants who stand behind the market stalls (Colossae 1.2 to 1.5)
   T(folk('#7a3b6a', { skin: 0, hair: 1, armsUp: true }, -.5), 'merchant-purple-tunic', 'Merchant in a purple tunic, arms raised to call his wares', 'colossae 1.2', 'person', ['market', 'merchant', 'man']);

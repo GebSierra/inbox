@@ -50,24 +50,36 @@ export function propsA(K) {
       return t + .3;
     },
     mask(g, x, y, z) {
+      // A comic theatre mask of the Greek New Comedy kind, hung on a post: an oval domed face with real openings for the slanting eyes and a wide upturned
+      // grin, high arched brows, raised cheeks, a broad nose, curls of hair on top and a curly beard. (It used to be puffed cheeks and buck teeth, which read as a chipmunk.)
       const bz = bronzeM(), d = dk(), wood = M('post', '#c98f50');
       box(.34, .1, .34, M('postB', '#a8743a'), x, y, z, g);
       box(.26, 1.7, .26, wood, x, y + .1, z, g);
       box(.36, .1, .36, M('postB', '#a8743a'), x, y + 1.7, z, g);
-      const grp = new THREE.Group(); grp.position.set(x, y + 1.42, z + .15); grp.rotation.z = .08; grp.rotation.x = -.08; g.add(grp);
-      ico(.34, 1, bz, 0, 0, 0, grp, .85, 1.15, .5);
-      box(.5, .7, .1, bz, 0, 0, -.12, grp);
-      for (const s of [-1, 1]) {
-        ico(.14, 1, bz, s * .2, -.08, .13, grp, 1, .9, .8);
-        box(.14, .07, .12, d, s * .14, .14, .2, grp).rotation.z = -s * .3;
-        box(.18, .05, .08, bz, s * .15, .21, .2, grp).rotation.z = s * .35;
+      const grp = new THREE.Group(); grp.position.set(x, y + 1.42, z + .15); grp.rotation.z = .05; g.add(grp);
+      const A = .3, B = .38, front = (px, py) => .13 * (1 - Math.min(1, (px / A) ** 2 + (py / B) ** 2)) + .07;      // height of the domed face at (px, py)
+      const shape = new THREE.Shape(); shape.absellipse(0, 0, A, B, 0, Math.PI * 2, false);
+      for (const s of [-1, 1]) {                                                                                  // eye openings, slanted up at the outer corners
+        const h = new THREE.Path(), t = s * .3; for (let i = 0; i < 20; i++) { const a = i / 20 * Math.PI * 2, ex = Math.cos(a) * .072, ey = Math.sin(a) * .036; const px = s * .125 + ex * Math.cos(t) - ey * Math.sin(t), py = .09 + ex * Math.sin(t) + ey * Math.cos(t); i ? h.lineTo(px, py) : h.moveTo(px, py); } h.closePath(); shape.holes.push(h);
       }
-      box(.08, .26, .12, bz, 0, .0, .26, grp);
-      ico(.07, 0, bz, 0, -.1, .27, grp, 1.2, .7, 1);
-      box(.3, .14, .1, d, 0, -.22, .22, grp);
-      for (const s of [-1, 1]) box(.14, .1, .1, d, s * .2, -.16, .2, grp).rotation.z = s * .6;
-      box(.22, .03, .05, M('teeth', '#f4ecd4'), 0, -.17, .27, grp);
-      return y + 1.8;
+      const mouth = (t, edge) => [t * .2, -.16 + .1 * t * t - (edge ? .11 * Math.pow(1 - t * t, .7) : 0)];            // a wide crescent grin, corners turned up
+      { const h = new THREE.Path(); for (let i = 0; i <= 16; i++) { const [px, py] = mouth(-1 + 2 * i / 16, 0); i ? h.lineTo(px, py) : h.moveTo(px, py); } for (let i = 15; i >= 1; i--) { const [px, py] = mouth(-1 + 2 * i / 16, 1); h.lineTo(px, py); } h.closePath(); shape.holes.push(h); }
+      const geo = new THREE.ExtrudeGeometry(shape, { depth: .05, bevelEnabled: true, bevelThickness: .02, bevelSize: .02, bevelSegments: 2, curveSegments: 24 });
+      const pos = geo.attributes.position; for (let i = 0; i < pos.count; i++) pos.setZ(i, pos.getZ(i) + .13 * (1 - Math.min(1, (pos.getX(i) / A) ** 2 + (pos.getY(i) / B) ** 2))); geo.computeVertexNormals();
+      add(geo, bz, 0, 0, 0, grp);
+      const back = add(new THREE.CylinderGeometry(.27, .27, .03, 20), [bz, d, bz], 0, 0, -.015, grp); back.rotation.x = Math.PI / 2; back.scale.z = 1.3;     // the dark behind the openings
+      const tube = (pts, r, m) => add(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts.map(([px, py]) => new THREE.Vector3(px, py, front(px, py) + .015))), 20, r, 5, false), m, 0, 0, 0, grp);
+      for (const s of [-1, 1]) {
+        tube([[s * .04, .2], [s * .11, .265], [s * .19, .28], [s * .26, .21]], .02, bz);                       // high arched, slanting brows
+        tube([[s * .06, .035], [s * .125, .035], [s * .19, .085]], .011, d);                                    // lid line under each eye
+        ico(.075, 1, bz, s * .17, -.065, front(s * .17, -.065) - .0, grp, 1, .9, .55);                          // cheek, pushed up by the grin
+        tube([[s * .05, .05], [s * .03, -.04], [s * .045, -.09]], .012, bz);                                    // nose fold
+      }
+      ico(.05, 1, bz, 0, -.03, front(0, -.03) + .03, grp, .95, 1.35, .9); for (const s of [-1, 1]) ico(.03, 1, bz, s * .045, -.085, front(s * .045, -.085) + .01, grp, 1, .8, .8);   // broad nose with flared nostrils
+      tube(Array.from({ length: 9 }, (_, i) => mouth(-1 + 2 * i / 8, 0)), .016, bz); tube(Array.from({ length: 9 }, (_, i) => mouth(-1 + 2 * i / 8, 1)), .016, bz);   // lips round the opening
+      for (let i = 0; i < 7; i++) { const a = Math.PI * (.12 + i * .76 / 6); ico(.062, 1, bz, Math.cos(a) * .27, Math.sin(a) * .35 + .04, front(0, .3) - .01, grp, 1, 1, .8); }   // curls of hair across the top
+      for (let i = 0; i < 6; i++) { const a = Math.PI * (1.15 + i * .7 / 5); ico(.052, 1, bz, Math.cos(a) * .2, Math.sin(a) * .3 - .1, front(Math.cos(a) * .2, -.3) - .0, grp, 1, 1.1, .8); }   // beard
+      return y + 1.9;
     },
     goldIngot(g, x, y, z) {
       // a cast gold ingot (trapezoid body, chamfered top, stamped mark) and a spare bar, on a polished black touchstone with gold assay streaks
