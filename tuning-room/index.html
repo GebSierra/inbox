@@ -169,6 +169,7 @@ body.focus #stage{min-height:60vh}
   </div>
 
   <div id="songView" hidden>
+    <div class="card" id="spotCard"></div>
     <div class="card">
       <div class="row between"><h2>Your songs</h2><button class="primary" id="addSong">Add a song file</button></div>
       <input type="file" id="songFile" accept="audio/*" hidden>
@@ -440,7 +441,7 @@ function home(){
     <div class="steps">
       <div class="step"><span class="num muted">1</span><div><b>Warm up</b><br><span class="muted">Yawns, vowels, lip trills. Straw optional.</span></div><span class="num">3 min</span></div>
       <div class="step"><span class="num muted">2</span><div><b>Bridge drills</b><br><span class="muted">Lip trill, Nay, Mum or Gee, Woo down. Each climbs through your break.</span></div><span class="num">6 min</span></div>
-      <div class="step"><span class="num muted">3</span><div><b>Real song</b><br><span class="muted">A hymn line with its high note set at your break. Or one of your own songs.</span></div><span class="num">1 min</span></div>
+      <div class="step"><span class="num muted">3</span><div><b>Real song</b><br><span class="muted">${S.spots&&S.spots.length?"One hard spot from your songs, on its ladder.":"A hymn line with its high note set at your break. Load your song file in the Songs tab to use your own songs."}</span></div><span class="num">1 min</span></div>
       <div class="step"><span class="num muted">4</span><div><b>Check in</b><br><span class="muted">Did it feel blended? Any strain?</span></div><span class="num">10 s</span></div>
     </div>
     ${lastMix?`<p class="muted">Last time: ${lastMix.n?Math.round((1-lastMix.cracks/lastMix.n)*100):0}% clean notes, highest clean ${lastMix.best!=null?noteName(lastMix.best):"–"}.</p>`:""}
@@ -776,7 +777,7 @@ function sirenDraw(cv,fr){const {c,W,H}=setupCanvas(cv);const lo=(S.range?S.rang
   fr.forEach(f=>{if(f.m==null){pen=false;return}const x=f.t/T*W;pen?c.lineTo(x,y(f.m)):c.moveTo(x,y(f.m));pen=true});c.stroke()}
 
 // Rounds climb so the top note goes from below your break to a little past it.
-function mixRoots(d){const b=bridgeNote(),mx=Math.max(...d.steps),reach=Math.min(S.mixReach,d.wide?3:5),roots=[];
+function mixRoots(d){if(d.roots)return d.roots;const b=bridgeNote(),mx=Math.max(...d.steps),reach=Math.min(S.mixReach,d.wide?3:5),roots=[];
   if(d.down){for(let top=b+reach;top>=b-3&&roots.length<5;top--)roots.push(top-mx);return roots}
   for(let top=b-3;top<=b+reach&&roots.length<6;top++)roots.push(top-mx);return roots}
 // Screen off every other round (some drills: 3 of 4). Round 1 is always on.
@@ -850,6 +851,14 @@ async function mixSession(){
     <div class="row" style="margin-top:12px"><button class="primary" id="go">Start drills</button></div>`;
   await new Promise(r=>$("go").onclick=r);
   for(let i=0;i<plan.length;i++){session.label=`Drill ${i+1} of ${plan.length}`;const r=await mixRun(plan[i]);session.results.push(r);if(r.stopped&&i<plan.length-1){/* keep going */}}
+  if(S.spots.length){const sp=S.spots[S.mix.length%S.spots.length];
+    stage.innerHTML=`<span class="label">Real song</span><h2>${esc(sp.song)}</h2><p>“${esc(sp.words)}.” Step ${(S.spotLvl[sp.id]||0)+1} of ${RUNGS.length}: ${RUNGS[S.spotLvl[sp.id]||0].name}.</p>
+      <div class="row" style="margin-top:12px"><button class="primary" id="go">Sing it</button><button id="skip">Skip</button></div>`;
+    const c2=await new Promise(r=>{$("go").onclick=()=>r(1);$("skip").onclick=()=>r(0)});
+    if(c2){const r=await runSpot(sp);session.songReg=r.reg}
+    stage.innerHTML=`<h2>How did your voice feel overall?</h2><p class="muted">Strain is the thing to watch in mix work.</p>
+      <div class="efforts">${EFFORT.map((e,i)=>`<button data-e="${i}">${e}</button>`).join("")}</div>`;
+    return mixFinish(await new Promise(r=>stage.querySelectorAll("[data-e]").forEach(x=>x.onclick=()=>r(+x.dataset.e))));}
   // real song line, set so its top note sits right at your break
   const h=HYMNS[S.mix.length%HYMNS.length],mx=Math.max(...h.steps),top=bridgeNote()+(S.mixReach>=3?0:-1);
   stage.innerHTML=`<span class="label">Real song</span><h2>${h.name}</h2><p>Its highest note is set to <b>${noteName(top)}</b>, right at your break. Same rules: lighter and narrower as it climbs.</p>
@@ -865,6 +874,43 @@ async function mixSession(){
   const effort=await new Promise(r=>stage.querySelectorAll("[data-e]").forEach(x=>x.onclick=()=>r(+x.dataset.e)));
   mixFinish(effort);
 }
+/* ================= song spots: the exact places your songs cross your break ================= */
+// Loaded from a file on your computer, kept in this browser only. Copyrighted melodies never go in the app's code.
+S.spots=S.spots||[];S.spotLvl=S.spotLvl||{};S.spotLog=S.spotLog||[];
+const RUNGS=[
+ {name:"Lip trill",sub:"Melody on a lip trill, starting 3 half steps low and climbing to the real key.",syl:()=>["Brr"],shift:[-3,-2,-1,0],tip:TIPS.bridge[0]},
+ {name:"Nay",sub:"Melody on a bratty “nay,” climbing from 2 half steps low.",syl:()=>["Nay"],shift:[-2,-1,0],tip:TIPS.head[1]},
+ {name:"Narrow vowels",sub:"The real words, with the high vowels narrowed. Sing what's written on the notes.",syl:s=>s.narrow,shift:[-1,0,0],tip:TIPS.bridge[1]},
+ {name:"Real words",sub:"The words as written, in the real key. Keep the narrow feel on the high notes.",syl:s=>s.syl,shift:[0,0,0],tip:TIPS.bridge[2]},
+ {name:"Real words, mostly screen off",sub:"Same, with the screen off 3 rounds out of 4. Each round's result shows when it ends.",syl:s=>s.syl,shift:[0,0,0,0],off:.75,tip:TIPS.bridge[4]}];
+function spotDrill(s,k){const R=RUNGS[k],base=s.notes[0];
+  return {id:"spot:"+s.id,name:`${s.song}: ${R.name}`,steps:s.notes.map(m=>m-base),beats:s.beats,syl:R.syl(s),how:`“${s.words}.” ${R.sub}`,tip:R.tip,off:R.off,roots:R.shift.map(x=>base+x)}}
+async function runSpot(s){
+  const k=Math.min(S.spotLvl[s.id]||0,RUNGS.length-1);session=session&&session.results?session:{results:[]};session.label=`${s.song} · step ${k+1} of ${RUNGS.length}`;
+  const r=await mixRun(spotDrill(s,k));
+  const up=!r.stopped&&r.cracks===0&&r.reg<=1&&k<RUNGS.length-1, down=r.reg===3&&r.cracks>1&&k>0;
+  S.spotLvl[s.id]=k+(up?1:down?-1:0);S.spotLog.push({date:new Date().toISOString(),id:s.id,rung:k,cracks:r.cracks,n:r.n,reg:r.reg});save();
+  stage.innerHTML=`<span class="label">${s.song}</span><h2>${up?"Next time: "+RUNGS[k+1].name:down?"Next time: back to "+RUNGS[k-1].name:k===RUNGS.length-1&&!r.cracks&&r.reg<=1?"Top step, clean":"Same step next time"}</h2>
+    <p class="muted">${up?"No cracks and it felt chest or blended, so you move up.":down?"It cracked and you felt it crack, so you step back one.":"You move up after a run with no cracks that felt chest or blended."}</p>
+    <div class="row" style="margin-top:12px"><button class="primary" id="go">Continue</button></div>`;
+  await new Promise(x=>$("go").onclick=x);return r}
+function spotsHTML(){
+  return `<div class="row between"><h2>Hard spots in your songs</h2><span class="row"><button id="spotLoad">${S.spots.length?"Replace song file":"Load song file"}</button></span></div>
+    <input type="file" id="spotFile" accept=".json,application/json" hidden>
+    <p class="muted">The exact lines where your songs cross your break. Each one climbs a five-step ladder: lip trill, nay, narrow vowels, real words, then real words mostly screen off. Stored only in this browser.</p>
+    <div class="list">${S.spots.length?S.spots.map(s=>{const k=S.spotLvl[s.id]||0,top=Math.max(...s.notes);
+      return `<div class="item"><span class="grow"><b>${esc(s.song)}</b> <span class="muted">· ${esc(s.key)} · “${esc(s.words)}” · top ${noteName(top)} · step ${k+1}/${RUNGS.length}: ${RUNGS[k].name}</span></span><button data-spot="${esc(s.id)}">Practice</button></div>`}).join(""):`<p class="muted">No song file loaded yet.</p>`}</div>
+    <p id="spotMsg" class="muted"></p>`}
+function renderSpots(){const c=$("spotCard");if(!c)return;c.innerHTML=spotsHTML();
+  $("spotLoad").onclick=()=>$("spotFile").click();
+  $("spotFile").onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const d=JSON.parse(await f.text());
+      if(d.kind!=="tuningRoomSpots"||!Array.isArray(d.spots))throw 0;
+      S.spots=d.spots.filter(s=>s.id&&s.notes&&s.beats&&s.syl&&s.notes.length===s.beats.length&&s.syl.length===s.notes.length).map(s=>({...s,narrow:s.narrow&&s.narrow.length===s.notes.length?s.narrow:s.syl}));save();renderSpots();
+      $("spotMsg").textContent=`Loaded ${S.spots.length} spots.`}catch(_){$("spotMsg").innerHTML=`<span class="bad">That file isn't a song-spot file.</span>`}};
+  c.querySelectorAll("[data-spot]").forEach(b=>b.onclick=async()=>{const s=S.spots.find(x=>x.id===b.dataset.spot);if(!await needAudio())return;
+    const home0=stage;c.innerHTML=`<section id="spotStage"></section>`;stage=$("spotStage");setFocus(true);session={results:[]};
+    try{await runSpot(s)}finally{stage=home0;setFocus(false);renderSpots()}})}
+
 /* ================= diagnostic self-test ================= */
 // Six sirens: three volumes on "oo", three on "ah". The detector marks cracks; you report what you felt.
 S.diag=S.diag||[];
@@ -1209,7 +1255,7 @@ function showTab(which){
   ["Train","Ex","Songs","Prog"].forEach(n=>$("tab"+n).setAttribute("aria-selected",n===which));
   $("trainView").hidden=which!=="Train";$("exView").hidden=which!=="Ex";$("songView").hidden=which!=="Songs";$("progView").hidden=which!=="Prog";
   exStop=true;stopAll();
-  if(which==="Songs")loadSongs();else if(which==="Ex")exHome();else if(which==="Prog")refresh();else home()
+  if(which==="Songs"){renderSpots();loadSongs()}else if(which==="Ex")exHome();else if(which==="Prog")refresh();else home()
 }
 $("tabTrain").onclick=()=>showTab("Train");$("tabEx").onclick=()=>showTab("Ex");$("tabSongs").onclick=()=>showTab("Songs");$("tabProg").onclick=()=>showTab("Prog");
 
