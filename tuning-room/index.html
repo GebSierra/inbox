@@ -897,10 +897,15 @@ async function runSpot(s){
 function spotsHTML(){
   return `<div class="row between"><h2>Hard spots in your songs</h2><span class="row"><button id="spotLoad">${S.spots.length?"Replace song file":"Load song file"}</button></span></div>
     <input type="file" id="spotFile" accept=".json,application/json" hidden>
-    <p class="muted">The exact lines where your songs cross your break. Each one climbs a five-step ladder: lip trill, nay, narrow vowels, real words, then real words mostly screen off. Stored only in this browser.</p>
+    <p class="muted">The exact lines where your songs cross your break. Each one climbs a five-step ladder: lip trill, nay, narrow vowels, real words, then real words mostly screen off. Loads automatically from the song file next to the app. Your progress is kept in this browser.</p>
     <div class="list">${S.spots.length?S.spots.map(s=>{const k=S.spotLvl[s.id]||0,top=Math.max(...s.notes);
       return `<div class="item"><span class="grow"><b>${esc(s.song)}</b> <span class="muted">· ${esc(s.key)} · “${esc(s.words)}” · top ${noteName(top)} · step ${k+1}/${RUNGS.length}: ${RUNGS[k].name}</span></span><button data-spot="${esc(s.id)}">Practice</button></div>`}).join(""):`<p class="muted">No song file loaded yet.</p>`}</div>
     <p id="spotMsg" class="muted"></p>`}
+// Load the song file that sits next to the app, so every device gets it. Your ladder progress stays per browser.
+async function autoSpots(){try{const r=await fetch("trinity-song-spots.json",{cache:"no-cache"});if(!r.ok)return;const d=await r.json();
+  if(d.kind!=="tuningRoomSpots"||!Array.isArray(d.spots))return;
+  S.spots=d.spots.filter(s=>s.id&&s.notes&&s.beats&&s.syl&&s.notes.length===s.beats.length&&s.syl.length===s.notes.length).map(s=>({...s,narrow:s.narrow&&s.narrow.length===s.notes.length?s.narrow:s.syl}));save();
+  if(!$("songView").hidden)renderSpots();if(!$("trainView").hidden&&!document.body.classList.contains("focus"))home()}catch(e){}}
 function renderSpots(){const c=$("spotCard");if(!c)return;c.innerHTML=spotsHTML();
   $("spotLoad").onclick=()=>$("spotFile").click();
   $("spotFile").onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const d=JSON.parse(await f.text());
@@ -1486,7 +1491,7 @@ async function playTake(id,mix){
   me.play();
 }
 
-refresh();home();addEventListener("resize",()=>{refresh();if(cur&&!$("songView").hidden)drawWave()});
+refresh();home();autoSpots();addEventListener("resize",()=>{refresh();if(cur&&!$("songView").hidden)drawWave()});
 </script>
 </body>
 </html>
