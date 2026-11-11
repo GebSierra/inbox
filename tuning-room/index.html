@@ -717,14 +717,16 @@ const TIPS={
   "If it cracks, that's fine. Go quieter and try again. Never force through.",
   "On the break notes (C♯4 to E4 for you), round the vowel a little. Slightly thinner, slightly covered. Not wide open, not pinched shut."],
  // Short phrases to carry in your head while you sing. Drawn from voice coaches and experienced singers.
- models:["<b>Thin out, don't push up.</b> High notes come from lighter cords, not more force.",
-  "<b>Lighter going up, heavier coming down.</b> On every slide, add a little head as you rise and a little chest as you fall.",
-  "<b>Every note has a bit of both.</b> Your low notes carry a drop of head voice; your high notes keep a drop of chest.",
-  "<b>Same place, different amount.</b> High notes are made where low notes are made. Only the weight and the air change.",
-  "<b>Start light and add.</b> Begin a high note soft, even falsetto-light, then add buzz. Never start heavy and try to lighten.",
-  "<b>Clean vowels fix pitch.</b> When a note is off, check the vowel first. A pure, steady vowel usually lands in tune.",
-  "<b>Calm Adam's apple.</b> Rest a finger on your larynx. If it jumps up as you climb, you're reaching. Go lighter.",
-  "<b>Loose jaw, open space.</b> A tight jaw makes high notes thin and pinched. Let it hang."],
+ models:["<b>Thin out, don't push up.</b> The goal is to stop pushing heavy chest weight upward and instead coordinate the vocal folds to thin out. Think of your chest voice as a thick rubber band. To get a higher note, you don't pull it harder; you let it get thinner. Pushing is what makes your voice crack at D4. Thinning out is what lets it keep going.",
+  "<b>Lighter going up, heavier coming down.</b> Practice slides and sirens very slowly, imagining each ascending note gets lighter with more head voice and each descending note gets heavier with more chest voice. Don't flip from one to the other at a single spot. Change a tiny bit on every note, like turning a dimmer switch instead of flipping a light switch.",
+  "<b>Every note has a bit of both.</b> The key is to learn mixed voice, where even your low notes have a bit of head voice in them, and even your high notes have just a drop of chest voice. Mix isn't a third voice you find somewhere. It's chest and head blended, with the recipe changing as you go up and down.",
+  "<b>Same place, different amount.</b> As singers improve, they begin to notice that their notes, even high notes, are being created pretty much in the same place. High notes are not made higher in your throat or by reaching up. They come from the same spot as low notes, with different amounts of air and weight. Keep your breath support steady the whole way.",
+  "<b>Start light and add.</b> Start lightly in falsetto and slowly add in, or shift into, a mixture of your head voice. It will feel awkward at first. That's normal. It's much easier to add buzz to a light sound than to take weight off a heavy, shouted one. Begin small and build.",
+  "<b>Clean vowels fix pitch.</b> Focus on vowel purity and resonance; it almost always fixes pitch issues. When a note comes out flat or sharp, don't chase the pitch first. Check the vowel. Is your “ah” a clear “ah,” held steady the whole note? A pure, steady vowel usually lands in tune by itself.",
+  "<b>Calm Adam's apple.</b> Keep your hand on your Adam's apple, your larynx, and make sure it's not bobbing up and down. If it rises as you climb, you're trying to push chest voice higher, and that creates tension. Stay at the same easy height. Go lighter or quieter until it stays put.",
+  "<b>Loose jaw, open space.</b> Open proper mouth space and release jaw tension to keep upper notes sounding rich rather than pinched. A clenched jaw squeezes the sound. Let your jaw hang loose, like you're about to yawn. You should be able to wiggle it gently even on your highest note.",
+  "<b>Cover the break notes.</b> Passaggio notes, like your D4, have to be covered in most singers. That means making the vowel a little more round and the sound slightly thinner and more controlled, rather than wide open or squeezed shut. For example, let “ah” lean toward “uh,” and “ee” lean toward “ih.”",
+  "<b>It takes time, and that's normal.</b> The D4 to F4 area is the first passaggio, the common break for men. Singers spend their entire careers trying to optimize the break. A crack isn't failure; it's a sign you're working right where the work is."],
  checks:["Finger on your Adam's apple: does it stay put as you climb?","Jaw loose? Wiggle it gently on the top note.","Shoulders down, neck long.","Breath steady: same easy flow on the high notes as the low ones."]};
 const thought=()=>TIPS.models[Math.floor(Date.now()/864e5)%TIPS.models.length];
 function diagHTML(){if(S.bridge==null)return "";const last=S.diag&&S.diag[S.diag.length-1],days=last?(Date.now()-new Date(last.date))/864e5:Infinity;
