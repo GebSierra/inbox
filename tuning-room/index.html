@@ -444,10 +444,12 @@ function home(){
       <div class="step"><span class="num muted">4</span><div><b>Check in</b><br><span class="muted">Did it feel blended? Any strain?</span></div><span class="num">10 s</span></div>
     </div>
     ${lastMix?`<p class="muted">Last time: ${lastMix.n?Math.round((1-lastMix.cracks/lastMix.n)*100):0}% clean notes, highest clean ${lastMix.best!=null?noteName(lastMix.best):"–"}.</p>`:""}
+    ${diagHTML()}
     ${tipsHTML(false)}
     ${weeklyHTML()}
     <div style="height:14px"></div>
     <div class="row"><button class="primary" id="go">${S.bridge==null?"Find my break first":"Start session"}</button><button id="skip">Skip warm-up</button><button class="ghost" id="pitch">Pitch drill instead</button></div>`;
+  if($("diagBtn"))$("diagBtn").onclick=diagFlow;
   $("go").onclick=()=>S.bridge==null?sirenFlow():warmup(mixSession);$("skip").onclick=mixSession;$("pitch").onclick=()=>{if(!S.ownRef&&!S.test&&S.stage===1){home.needOwn=true;return home()}warmup(drill)};
   $("weekly").onclick=weeklyFlow;if($("blindBtn"))$("blindBtn").onclick=blindFlow;
 }
@@ -539,7 +541,7 @@ function mapHTML(){if(!S.range)return"";const [lo,hi]=trainRange();let cols="";
     const extra=a==null?"border:1.5px dashed var(--line);":"";
     cols+=`<div title="${noteName(m)}: ${a==null?"not tried yet":tuneWord(a)+" on average"}"><i style="height:${h}px;background:${col};${extra}"></i><span>${noteName(m).replace(/\d/,"")}</span></div>`}
   return `<div class="label" style="margin-top:6px">Your pitch map · taller bars are stronger notes · dashed = not tried yet</div><div class="map">${cols}</div>`}
-const screenOnShare=()=>Math.max(.25,.5-S.sessions.filter(s=>s.stage===S.stage).length*.05);
+const screenOnShare=()=>.5; // screen on every other try: steady, predictable feedback
 
 let session=null;
 async function drill(){
@@ -711,6 +713,8 @@ const TIPS={
   "Let it change. Your voice is meant to get lighter as you rise. Trying to keep it exactly the same is what makes it snap.",
   "Coming down is easier than going up. Start high and light, and carry that feel down into your chest notes.",
   "If it cracks, that's fine. Go quieter and try again. Never force through."]};
+function diagHTML(){if(S.bridge==null)return "";const last=S.diag&&S.diag[S.diag.length-1],days=last?(Date.now()-new Date(last.date))/864e5:Infinity;
+  return `<div class="item" style="margin-top:14px"><span class="grow"><b>Crack diagnostic</b> <span class="muted">· ${last?"focus: "+CAUSES[last.cause].toLowerCase()+(days>=14?" · due again":""):"not taken yet. Take it before your next session."}</span></span><button id="diagBtn">${last&&days<14?"Retake":"Take it"}</button></div>`}
 function tipsHTML(open){const sec=(t,a)=>`<p style="margin:10px 0 2px"><b>${t}</b></p><ul style="margin:4px 0;padding-left:20px">${a.map(x=>`<li>${x}</li>`).join("")}</ul>`;
   return `<details ${open?"open":""} style="margin-top:12px"><summary class="label" style="cursor:pointer">Tips: chest, head, and the switch</summary>${sec("Chest voice",TIPS.chest)}${sec("Head voice (not falsetto)",TIPS.head)}${sec("Crossing the break",TIPS.bridge)}</details>`}
 const MIX=[
@@ -775,6 +779,8 @@ function sirenDraw(cv,fr){const {c,W,H}=setupCanvas(cv);const lo=(S.range?S.rang
 function mixRoots(d){const b=bridgeNote(),mx=Math.max(...d.steps),reach=Math.min(S.mixReach,d.wide?3:5),roots=[];
   if(d.down){for(let top=b+reach;top>=b-3&&roots.length<5;top--)roots.push(top-mx);return roots}
   for(let top=b-3;top<=b+reach&&roots.length<6;top++)roots.push(top-mx);return roots}
+// Screen off every other round (some drills: 3 of 4). Round 1 is always on.
+function isOff(d,ri){return d.off===.75?ri%4!==0:ri%2===1}
 async function mixRun(d){
   const beat=600,roots=mixRoots(d),notes=[];let t=0;
   roots.forEach(r=>{notes.push({m:r+d.steps[0],start:t,end:t+beat*.9,cue:true,syl:"♪"});t+=beat*2;
@@ -786,6 +792,7 @@ async function mixRun(d){
     <div class="row between" style="margin-top:8px"><span id="mNow" class="prompt" style="font-size:1.3rem;margin:0">Get ready</span><span class="muted">Shaded band = your break · <span class="bad">red</span> = crack</span></div>`;
   let stop=false;$("mEnd").onclick=()=>{stop=true};
   const t0=ctx.currentTime+1.2;notes.forEach(n=>scheduleTone(n.m,t0+n.start/1000,(n.end-n.start)/1000,n.cue?0.2:0.1));
+  const reported=new Set();let flash="",flashUntil=-1;
   const frames=[],LAG=140,cv=$("lane"),all=notes.map(n=>n.m),lo=Math.min(...all)-2,hi=Math.max(...all)+2,b=bridgeNote();
   await frameLoop(r=>{
     if(stop||!$("lane"))return false;const now=(ctx.currentTime-t0)*1000;
@@ -795,10 +802,18 @@ async function mixRun(d){
       const sp=n.end-n.start,ms=frames.filter(f=>f.m!=null&&f.t>n.start+sp*.3&&f.t<n.end-sp*.08).map(f=>f.m).filter(x=>Math.abs(x-n.m)<=7);
       n.crack=findCracks(frames,n.start+sp*.15,n.end).length>0;
       n.grade=n.crack?999:ms.length>=3?(median(ms)-n.m)*100:null}});
-    drawLane(cv,notes,frames,now,lo,hi);
+    const ri=Math.max(0,roots.indexOf(cur.round)),off=isOff(d,ri);
+    // report each finished round right away, so feedback is never far off
+    roots.forEach((r,k)=>{if(reported.has(k))return;const rn=notes.filter(n=>n.round===r&&!n.cue);if(rn.length&&rn.every(n=>n.grade!==undefined)){reported.add(k);
+      const cr=rn.filter(n=>n.crack);flash=`Round ${k+1}: ${cr.length?"crack on "+noteName(cr[0].m):"clean"}`;flashUntil=now+1800}});
+    if(off){const g=cv.getContext("2d"),dpr=devicePixelRatio||1;cv.width=cv.clientWidth*dpr;cv.height=cv.clientHeight*dpr;g.scale(dpr,dpr);
+      g.fillStyle=css("--ink");g.fillRect(0,0,cv.clientWidth,cv.clientHeight);g.fillStyle=css("--surface");g.textAlign="center";
+      g.font=`800 22px ${css("--display")}`;g.fillText("Screen off",cv.clientWidth/2,cv.clientHeight/2-6);
+      g.font=`15px ${css("--body")}`;g.fillText("Feel it. Result shows when the round ends.",cv.clientWidth/2,cv.clientHeight/2+20)}
+    else{drawLane(cv,notes,frames,now,lo,hi);
     const {c,W,H}={c:cv.getContext("2d"),W:cv.clientWidth,H:cv.clientHeight},rh=H/(hi-lo),yy=m=>H-(m-lo)*rh-rh/2;
-    c.fillStyle=css("--accent");c.globalAlpha=.1;c.fillRect(36,yy(b+0.5),W,rh);c.globalAlpha=1;
-    $("mNow").textContent=now<0?"Get ready":cur&&!cur.cue&&now-LAG>=cur.start?cur.syl+" · "+noteName(cur.m):"Listen";
+    c.fillStyle=css("--accent");c.globalAlpha=.1;c.fillRect(36,yy(b+0.5),W,rh);c.globalAlpha=1}
+    $("mNow").textContent=now<flashUntil?flash:now<0?"Get ready":cur&&!cur.cue&&now-LAG>=cur.start?cur.syl+(off?"":" · "+noteName(cur.m)):"Listen";
     return now<total+400});
   const sung=notes.filter(n=>!n.cue),cracks=sung.filter(n=>n.crack).length;
   const clean=sung.filter(n=>!n.crack&&n.grade!=null&&Math.abs(n.grade)<=100).map(n=>n.m);
@@ -814,7 +829,18 @@ async function mixRun(d){
   const reg=await new Promise(r=>stage.querySelectorAll("[data-r]").forEach(x=>x.onclick=()=>r(+x.dataset.r)));
   return {id:d.id,cracks,n:sung.length,best,reg,stopped:stop};
 }
-function mixPlan(){const day=S.mix.length;return [MIX[0],MIX[1],day%2?MIX[3]:MIX[2],MIX[4]]}
+MIX.push(
+ {id:"mswell",name:"Swell (messa di voce)",steps:[0],beats:[7],syl:["Oo"],how:"One note. Start soft, grow to medium, shrink back to soft over the whole note. Pitch stays put.",tip:"If it cracks as you get louder, you're pushing. Find the loudest you can go without it changing.",one:"volume"},
+ {id:"mvowel",name:"Vowel shift",steps:[0,0,0,0],beats:[2,2,2,2],syl:["Ee","Ih","Ah","Uh"],how:"One note, soft, one breath. Only your mouth changes. Slide the vowel slowly from one to the next.",tip:"If one vowel cracks, that's the one to narrow. Sing that word toward the next vowel in the row.",one:"vowel"},
+ {id:"mdown",name:"Head down into chest",steps:[7,5,4,2,0],beats:[1,1,1,1,3],syl:["Oo"],how:"Start light and high. Keep the same light feel as you step down. Let chest come in by itself.",tip:TIPS.bridge[3],down:true,off:.75,one:"weight"});
+const CAUSES={volume:"Pushing volume as you climb",vowel:"The vowel fighting the note",weight:"Carrying heavy chest too high",squeeze:"Throat squeeze or a rising larynx",airy:"Too little closure (flips airy)",unclear:"No clear pattern yet"};
+const byId=id=>MIX.find(m=>m.id===id);
+function mixPlan(){const day=S.mix.length,c=S.diag&&S.diag.length?S.diag[S.diag.length-1].cause:null;
+  if(c==="volume")return ["mtrill","mswell","mnay","mwoo"].map(byId);
+  if(c==="vowel")return ["mtrill","mvowel","mnay","mwoo"].map(byId);
+  if(c==="weight"||c==="squeeze")return ["mtrill","mmum","mdown","mswell"].map(byId);
+  if(c==="airy")return ["mtrill","mnay","mgee","mwoo"].map(byId);
+  return [MIX[0],MIX[1],day%2?MIX[3]:MIX[2],MIX[4]]}
 async function mixSession(){
   if(!await needAudio())return;setFocus(true);
   if(S.bridge==null)return sirenFlow();
@@ -839,6 +865,60 @@ async function mixSession(){
   const effort=await new Promise(r=>stage.querySelectorAll("[data-e]").forEach(x=>x.onclick=()=>r(+x.dataset.e)));
   mixFinish(effort);
 }
+/* ================= diagnostic self-test ================= */
+// Six sirens: three volumes on "oo", three on "ah". The detector marks cracks; you report what you felt.
+S.diag=S.diag||[];
+const DIAG=[["oo","soft"],["oo","medium"],["oo","full"],["ah","soft"],["ah","medium"],["ah","full"]];
+const FELT=["Easy","Pushed","Squeezed","Airy or hooty"];
+async function diagFlow(){
+  if(!await needAudio())return;setFocus(true);
+  stage.innerHTML=`<span class="label">Diagnostic</span><h2>What causes your crack?</h2>
+    <p>Six slow sirens, low to as high as is comfortable and back down. Three on “oo,” three on “ah,” each at a different volume. After each, say what you felt.</p>
+    <p class="muted">Only one thing changes between sirens, so we can see what moves the crack. About 3 minutes.</p>
+    <div class="row" style="margin-top:12px"><button class="primary" id="go">Start</button><button class="ghost" id="back">Not now</button></div>`;
+  if(!await new Promise(r=>{$("go").onclick=()=>r(1);$("back").onclick=()=>r(0)}))return home();
+  const out=[];
+  for(let k=0;k<DIAG.length;k++){const [v,vol]=DIAG[k];
+    stage.innerHTML=`<span class="label">Siren ${k+1} of 6</span><div class="prompt">“${v}” · ${vol}</div>
+      <canvas class="trace" id="tr"></canvas><div class="meter"><i id="lvl"></i></div><div class="row" style="margin-top:12px"><button id="done" class="primary">Done</button></div>`;
+    let stop=false,on=null;$("done").onclick=()=>{stop=true};const fr=[],lv=[];
+    await frameLoop((r,t)=>{if(stop)return false;$("lvl").style.width=r.level*100+"%";
+      if(on==null&&r.m!=null)on=t;if(on!=null){fr.push({t:t-on,m:r.m,lv:r.level});if(r.m!=null)lv.push(r.level);
+        if(t-on>1500&&fr.slice(-45).every(f=>f.m==null))return false}
+      if(fr.length%4===0)sirenDraw($("tr"),fr);return t<20000});
+    const vv=fr.filter(f=>f.m!=null);let p=null;vv.forEach(f=>{f.m=p==null?f.m:toward(f.m,p);p=f.m});
+    const pk=vv.length?vv.reduce((b,f,i)=>f.m>vv[b].m?i:b,0):0,c=vv.length>20?findCracks(vv.slice(0,pk+1),0,1e9).filter(c=>c.at>S.range.lo+5):[];
+    stage.innerHTML=`<span class="label">Siren ${k+1} of 6 · “${v}” ${vol}</span><h2>${c.length?"I heard a crack near "+noteName(c[0].at):"I didn't hear a crack"}</h2>
+      <p><b>Did it crack or flip?</b></p><div class="row" id="q1"><button data-a="1">Yes</button><button data-a="0">No</button></div>
+      <p style="margin-top:12px"><b>Up high, it felt:</b></p><div class="efforts" style="grid-template-columns:repeat(4,1fr)" id="q2">${FELT.map((f,i)=>`<button data-f="${i}">${f}</button>`).join("")}</div>`;
+    const cracked=await new Promise(r=>$("q1").querySelectorAll("button").forEach(b=>b.onclick=()=>{$("q1").querySelectorAll("button").forEach(x=>x.classList.remove("primary"));b.classList.add("primary");r(+b.dataset.a)}));
+    const felt=await new Promise(r=>$("q2").querySelectorAll("button").forEach(b=>b.onclick=()=>r(+b.dataset.f)));
+    out.push({v,vol,cracked,detAt:c.length?c[0].at:null,felt,top:vv.length?vv[pk].m:null,lvl:lv.length?median(lv):null});
+  }
+  const cause=diagnose(out);S.diag.push({date:new Date().toISOString(),runs:out,cause});save();
+  const row=r=>`<tr><td>“${r.v}” ${r.vol}</td><td>${r.cracked?"Cracked":"Clean"}</td><td>${r.detAt!=null?noteName(r.detAt):"–"}</td><td>${FELT[r.felt]}</td></tr>`;
+  stage.innerHTML=`<span class="label">Diagnostic result</span><h2>Most likely: ${CAUSES[cause]}</h2>
+    <p>${DIAG_WHY[cause]}</p>
+    <div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;margin:10px 0"><tr class="label"><td>Siren</td><td>You said</td><td>App heard</td><td>Felt</td></tr>${out.map(row).join("")}</table></div>
+    <p class="muted">This is a best guess from six sirens, not a diagnosis. Your next sessions now lean on drills for this cause. Retake in two weeks, or sooner if things change. A voice teacher can confirm it in one lesson.</p>
+    <div class="row" style="margin-top:12px"><button class="primary" id="go">Done</button></div>`;
+  $("go").onclick=home;
+}
+const DIAG_WHY={volume:"You cracked more as the volume went up. Sessions now include the Swell drill: find the loudest you can go at your break without it changing, and grow that slowly.",
+  vowel:"The crack depended on the vowel more than the volume. Sessions now include the Vowel shift drill. In songs, narrow the vowel on the high word.",
+  weight:"You cracked even at soft volume and on both vowels. That points to chest weight carried too high. Sessions now start from the top and bring the light feel down.",
+  squeeze:"You often felt squeezed up high. Back off volume, keep the jaw loose, and lean on lip trills and Mum. If it feels squeezed in speech too, mention it to a doctor.",
+  airy:"Up high it went airy or hooty. That's falsetto, not head voice. Sessions lean on bratty Nay, whose twang keeps the cords together.",
+  unclear:"No single factor moved the crack. Keep the standard drills and retake the test in two weeks. A teacher hearing you live is the fastest way to sort this out."};
+function diagnose(o){const cr=r=>r.cracked||r.detAt!=null?1:0,by=f=>o.filter(f).reduce((a,r)=>a+cr(r),0);
+  const soft=by(r=>r.vol==="soft"),full=by(r=>r.vol==="full"),oo=by(r=>r.v==="oo"),ah=by(r=>r.v==="ah");
+  const felt=i=>o.filter(r=>r.felt===i).length;
+  if(felt(3)>=3)return "airy";if(felt(2)>=3)return "squeeze";
+  if(full-soft>=2||(full===2&&soft===0))return "volume";
+  if(Math.abs(oo-ah)>=2)return "vowel";
+  if(soft===2&&oo+ah>=4)return "weight";
+  if(felt(1)>=3)return "volume";
+  return "unclear"}
 async function songCount(){try{return (await DB.all("songs")).length}catch(e){return 0}}
 function mixFinish(effort){
   const R=session.results,cracks=R.reduce((a,r)=>a+r.cracks,0),n=R.reduce((a,r)=>a+r.n,0);
