@@ -800,17 +800,30 @@ function mixRoots(d){if(d.roots)return d.roots;const b=bridgeNote(),mx=Math.max(
   for(let top=b-3;top<=b+reach&&roots.length<6;top++)roots.push(top-mx);return roots}
 // Screen off every other round (some drills: 3 of 4). Round 1 is always on.
 function isOff(d,ri){return d.off===.75?ri%4!==0:ri%2===1}
+const TEMPO={slow:1000,medium:780,quick:620};
 async function mixRun(d){
-  const beat=600,roots=mixRoots(d),notes=[];let t=0;
-  roots.forEach(r=>{notes.push({m:r+d.steps[0],start:t,end:t+beat*.9,cue:true,syl:"♪"});t+=beat*2;
-    d.steps.forEach((s,i)=>{const du=d.beats[i]*beat;notes.push({m:r+s,start:t,end:t+du*.94,syl:d.syl[i%d.syl.length],round:r});t+=du});t+=beat*1.3});
+  const roots=mixRoots(d),check=TIPS.checks[(S.mix.length+session.results.length)%TIPS.checks.length];
+  // 1. Explain the drill and let you hear it before anything starts
+  S.mixTempo=S.mixTempo||"slow";
+  stage.innerHTML=`<span class="label">${session.label}</span><h2>${d.name}</h2><p>${d.how}</p>
+    <p class="muted"><b>Tip:</b> ${d.tip}<br><b>Check:</b> ${check}</p>
+    <p><b>How it runs:</b> before each round you'll <b>hear the pattern</b> (gray notes), then <b>sing it</b> (white notes). ${roots.length} rounds${d.down?"":", each a half step higher"}. Starts on ${noteName(roots[0]+d.steps[0])}.</p>
+    <div class="row" style="margin-top:6px"><span class="label">Speed</span>${Object.keys(TEMPO).map(k=>`<button data-tp="${k}" class="${k===S.mixTempo?"primary":""}">${k[0].toUpperCase()+k.slice(1)}</button>`).join("")}</div>
+    <div class="row" style="margin-top:14px"><button id="hear">▶ Hear the pattern</button><button class="primary" id="ok">OK, start</button></div>`;
+  stage.querySelectorAll("[data-tp]").forEach(x=>x.onclick=()=>{S.mixTempo=x.dataset.tp;save();stage.querySelectorAll("[data-tp]").forEach(y=>y.classList.toggle("primary",y===x))});
+  $("hear").onclick=()=>{const bt=TEMPO[S.mixTempo]/1000;let tt=ctx.currentTime+.1;d.steps.forEach((st,i)=>{scheduleTone(roots[0]+st,tt,d.beats[i]*bt*.94,0.2);tt+=d.beats[i]*bt})};
+  await new Promise(r=>$("ok").onclick=r);
+  // 2. Each round: listen to the whole pattern, short gap, then sing it
+  const beat=TEMPO[S.mixTempo],notes=[];let t=0;
+  roots.forEach(r=>{d.steps.forEach((st,i)=>{const du=d.beats[i]*beat;notes.push({m:r+st,start:t,end:t+du*.94,cue:true,syl:"listen"});t+=du});t+=beat*1.5;
+    d.steps.forEach((st,i)=>{const du=d.beats[i]*beat;notes.push({m:r+st,start:t,end:t+du*.94,syl:d.syl[i%d.syl.length],round:r});t+=du});t+=beat*1.5});
   const total=t;
   stage.innerHTML=`<div class="row between"><span class="label">${session.label}</span><button class="ghost" id="mEnd">End drill</button></div>
-    <h2>${d.name}</h2><p>${d.how}</p><p class="muted"><b>Tip:</b> ${d.tip}<br><b>Check:</b> ${TIPS.checks[(S.mix.length+session.results.length)%TIPS.checks.length]}</p>
+    <h2>${d.name}</h2><p class="muted"><b>Check:</b> ${check}</p>
     <canvas id="lane" style="width:100%;height:min(52vh,440px);display:block;border-radius:12px;background:var(--raise);margin-top:8px"></canvas>
     <div class="row between" style="margin-top:8px"><span id="mNow" class="prompt" style="font-size:1.3rem;margin:0">Get ready</span><span class="muted">Shaded band = your break · <span class="bad">red</span> = crack</span></div>`;
   let stop=false;$("mEnd").onclick=()=>{stop=true};
-  const t0=ctx.currentTime+1.2;notes.forEach(n=>scheduleTone(n.m,t0+n.start/1000,(n.end-n.start)/1000,n.cue?0.2:0.1));
+  const t0=ctx.currentTime+2;notes.forEach(n=>scheduleTone(n.m,t0+n.start/1000,(n.end-n.start)/1000,n.cue?0.2:0.08));
   const reported=new Set();let flash="",flashUntil=-1;const stopRec=startRecorder();
   const frames=[],LAG=140,cv=$("lane"),all=notes.map(n=>n.m),lo=Math.min(...all)-2,hi=Math.max(...all)+2,b=bridgeNote();
   await frameLoop(r=>{
