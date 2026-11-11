@@ -189,6 +189,10 @@ body.focus #stage{min-height:60vh}
       <label for="inpGap">Memory gap</label><input id="inpGap" type="number" min="0" max="8" step="1" style="width:70px"><span class="muted">seconds</span>
     </div>
     <div class="row" style="margin-top:14px">
+      <div style="width:100%"><span class="label">Microphone</span>
+        <div class="row" style="margin-top:4px"><select id="selMic" style="max-width:100%;min-width:0;flex:1"></select><button id="btnMic">Test mic</button></div>
+        <p class="muted small" id="micNow">Pick the mic you sing into. Headset or earbud mics work best.</p>
+        <div class="meter" style="margin-bottom:10px"><i id="micLvl"></i></div></div>
       <button id="btnTuner">Open tuner</button>
       <button id="btnRange">Find my range again</button>
       <button id="btnBreak">Find my break again</button>
@@ -263,15 +267,27 @@ function yin(buf,sr,minF=55,maxF=1100){
 }
 
 /* ================= audio ================= */
-let ctx=null,stream=null,analyser=null,buf=null;
+let ctx=null,stream=null,analyser=null,buf=null,micSrc=null;
+const AUDIO={echoCancellation:false,noiseSuppression:false,autoGainControl:true};
+async function openMic(){
+  // use the mic you picked in Settings; fall back to the system default if it's unplugged
+  try{stream=await navigator.mediaDevices.getUserMedia({audio:S.micId?{...AUDIO,deviceId:{exact:S.micId}}:AUDIO})}
+  catch(e){if(!S.micId)throw e;stream=await navigator.mediaDevices.getUserMedia({audio:AUDIO})}
+  if(micSrc)micSrc.disconnect();micSrc=ctx.createMediaStreamSource(stream);micSrc.connect(analyser);
+}
 async function ensureAudio(){
   if(ctx){if(ctx.state==="suspended")await ctx.resume();return}
   ctx=new (window.AudioContext||window.webkitAudioContext)();
-  stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:true}});
-  const src=ctx.createMediaStreamSource(stream);
-  analyser=ctx.createAnalyser();analyser.fftSize=2048;src.connect(analyser);
-  buf=new Float32Array(analyser.fftSize);
+  analyser=ctx.createAnalyser();analyser.fftSize=2048;buf=new Float32Array(analyser.fftSize);
+  await openMic();fillMics();
 }
+function micName(){const t=stream&&stream.getAudioTracks()[0];return t?t.label:"not started"}
+async function fillMics(){const sel=$("selMic");if(!sel)return;
+  let devs=[];try{devs=(await navigator.mediaDevices.enumerateDevices()).filter(d=>d.kind==="audioinput")}catch(e){}
+  const cur=stream&&stream.getAudioTracks()[0]&&stream.getAudioTracks()[0].getSettings().deviceId;
+  sel.innerHTML=devs.length&&devs[0].label?devs.map(d=>`<option value="${d.deviceId}" ${d.deviceId===(S.micId||cur)?"selected":""}>${esc(d.label)}</option>`).join(""):`<option>Click “Test mic” to list your microphones</option>`;
+  $("micNow").textContent="In use: "+micName()}
+async function switchMic(id){S.micId=id;save();if(!ctx)return;stream.getTracks().forEach(t=>t.stop());await openMic();fillMics()}
 // one reading: {m: midi or null, level 0..1}
 function read(){
   analyser.getFloatTimeDomainData(buf);
@@ -1052,6 +1068,10 @@ $("btnTest").onclick=()=>{
     const p=yin(b,sr),e=p.f?Math.abs(1200*Math.log2(p.f/f)):Infinity;worst=Math.max(worst,e);rows.push(`${noteName(hzToMidi(f))} ${p.f?e.toFixed(1):"miss"}¢`)});
   $("msg").innerHTML=`Engine check, 8 test voices from low E to high D: worst error <b class="num">${worst.toFixed(1)}¢</b>. ${worst<5?"Accurate.":"Something is off."}<br><small class="num">${rows.join(" · ")}</small>`;
 };
+$("selMic").onchange=e=>switchMic(e.target.value).then(()=>{$("msg").textContent="Switched to "+micName()+".";micTest()});
+async function micTest(){if(!await needAudio())return;fillMics();
+  await frameLoop((r,t)=>{$("micLvl").style.width=r.level*100+"%";if(t>6000){$("micLvl").style.width="0";return false}return true});}
+$("btnMic").onclick=()=>{$("msg").textContent="Sing or talk for a few seconds. The bar should move with your voice.";micTest()};
 $("btnBreak").onclick=()=>{stage.scrollIntoView({behavior:"smooth"});sirenFlow()};
 $("btnRange").onclick=()=>{S.range=null;save();refresh();home();stage.scrollIntoView({behavior:"smooth"})};
 $("btnOwn").onclick=()=>{S.ownRef=null;ownBuffer=null;save();home();stage.scrollIntoView({behavior:"smooth"})};
@@ -1527,7 +1547,7 @@ async function playTake(id,mix){
   me.play();
 }
 
-refresh();home();autoSpots();addEventListener("resize",()=>{refresh();if(cur&&!$("songView").hidden)drawWave()});
+refresh();home();autoSpots();fillMics();addEventListener("resize",()=>{refresh();if(cur&&!$("songView").hidden)drawWave()});
 </script>
 </body>
 </html>
