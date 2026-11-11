@@ -46,7 +46,7 @@ var P; P = {
   wheel: (g, x, y, z) => { cyl(.12, .12, .5, 6, 'wood', x, y, z, g); cyl(.4, .4, .07, 12, 'woodLt', x, y + .5, z, g); P.bowl(g, x, y + .57, z); return y + .75; },
   bowl: (g, x, y, z) => { add(new THREE.LatheGeometry([[0, 0], [.14, 0], [.2, .1], [.22, .16]].map(([a, b]) => new THREE.Vector2(a, b)), 9), mat('wetclay', '#9a5a3a', { side: THREE.DoubleSide }), x, y, z, g); return y + .2; },
   kiln: (g, x, y, z) => { const d = add(new THREE.SphereGeometry(.55, 8, 5, 0, Math.PI * 2, 0, Math.PI / 2), 'clay', x, y, z, g); box(.3, .3, .1, mat('ember', '#ff8a3a', { emissive: '#c84a10', emissiveIntensity: 1 }), x, y + .05, z + .5, g); return y + .6; },
-  bowlStack: (g, x, y, z) => { for (let i = 0; i < 5; i++) { const b = add(new THREE.LatheGeometry([[0, 0], [.14, 0], [.2, .1], [.22, .14]].map(([a, b2]) => new THREE.Vector2(a, b2)), 9), 'clay', x, y + i * .06, z, g); } return y + .4; },
+  bowlStack: (g, x, y, z) => { const m = mat('bowlStackClay', '#b9693f', { side: THREE.DoubleSide }); for (let i = 0; i < 5; i++) { add(new THREE.LatheGeometry([[0, 0], [.14, 0], [.2, .1], [.22, .14]].map(([a, b2]) => new THREE.Vector2(a, b2)), 9), m, x, y + i * .06, z, g); } return y + .4; },  // double-sided: a lathe is a single wall, so the far side and inside vanished from the back
   jarPyramid: (g, x, y, z) => { for (let i = 0; i < 3; i++) amph(g, x - .3 + i * .3, z, .45); g.children.slice(-3).forEach(o => o.position.y = y); for (let i = 0; i < 2; i++) amph(g, x - .15 + i * .3, z, .45); g.children.slice(-2).forEach(o => o.position.y = y + .6); return y + 1.2; },
   clay: (g, x, y, z) => { add(new THREE.DodecahedronGeometry(.3, 0), mat('wetclay', '#9a5a3a'), x, y + .22, z, g).scale.y = .7; box(.3, .03, .1, 'woodLt', x + .3, y, z, g); return y + .45; },
   press: (g, x, y, z) => { cyl(.35, .38, .3, 9, 'stone', x, y, z, g); box(.08, .7, .08, 'wood', x, y + .3, z, g); box(.8, .07, .07, 'wood', x, y + .95, z, g); cyl(.2, .2, .03, 9, mat('juice', '#8a1f2a', { roughness: .2 }), x, y + .3, z, g); return y + 1; },
@@ -66,7 +66,14 @@ Object.assign(P, {
     for (let i = 1; i < 14; i += 2) add(new THREE.IcosahedronGeometry(.06, 0), mat('flowerR', i % 4 ? '#e0b44a' : '#c43a2e'), pts[i].x, pts[i].y - .05, pts[i].z + .05, g);
     for (const sx of [-.55, .55]) for (const [c, o] of [['#c43a2e', 0], ['#3f6f9a', .08], ['#e0b44a', -.08]]) box(.06, .7, .01, mat('rib' + c, c), x + sx + o, y + 1.05, z + .05, g); return y + 1.85; },
   wreath: (g, x, y, z) => { cyl(.05, .07, 1.0, 8, bronze(), x, y, z, g); const w = add(new THREE.TorusGeometry(.28, .07, 6, 16), mat('laurel', '#5f8a3e'), x, y + 1.32, z, g); for (let i = 0; i < 10; i++) { const a = i / 10 * Math.PI * 2; add(new THREE.ConeGeometry(.05, .16, 4), mat('laurelLt', '#7ca050'), x + Math.cos(a) * .28, y + 1.32 + Math.sin(a) * .28, z + .04, g).rotation.z = a; } return y + 1.7; },
-  wineJugs: (g, x, y, z) => { for (const [dx, dz, sc] of [[-.25, 0, .65], [.2, .1, .55], [0, -.25, .5]]) { const j = new THREE.Group(); j.position.set(x + dx, y, z + dz); g.add(j); amph(j, 0, 0, sc); } cyl(.3, .3, .04, 12, mat('wineSpill', '#6a1a2a', { roughness: .2 }), x, y + .01, z + .3, g); return y + .95; },
+  wineJugs: (g, x, y, z) => { for (const [dx, dz, sc] of [[-.25, 0, .65], [.2, .1, .55], [0, -.25, .5]]) { const j = new THREE.Group(); j.position.set(x + dx, y, z + dz); g.add(j); amph(j, 0, 0, sc); } // spilled wine: an irregular, lobed puddle (fixed sine wobble, no random numbers, so the town's seeded layout is untouched),
+    // longer one way than the other, with a few splashed drops around it
+    const wine = mat('wineSpill', '#6a1a2a', { roughness: .2 }), pts = [];
+    for (let i = 0; i < 48; i++) { const a = i / 48 * Math.PI * 2, r = .3 * (1 + .16 * Math.sin(3 * a + .7) + .1 * Math.sin(5 * a + 2.1) + .06 * Math.sin(9 * a + .3) + .05 * Math.sin(13 * a + 1.2));
+      pts.push(new THREE.Vector2(Math.cos(a) * r * 1.2, Math.sin(a) * r * .85)); }
+    const puddle = new THREE.ShapeGeometry(new THREE.Shape(pts)); puddle.rotateX(-Math.PI / 2); add(puddle, wine, x, y + .01, z + .3, g);
+    for (const [dx, dz, s] of [[.4, .12, .035], [.36, .42, .025], [-.3, .45, .03], [.1, .55, .02]]) cyl(s, s, .02, 7, wine, x + dx, y + .01, z + dz, g);
+    return y + .95; },
   brazier: (g, x, y, z) => { for (let i = 0; i < 3; i++) { const a = i / 3 * Math.PI * 2, l = box(.05, 1, .05, bronze(), x + Math.cos(a) * .22, y, z + Math.sin(a) * .22, g); l.rotation.z = Math.cos(a) * .15; } add(new THREE.LatheGeometry([[0, 0], [.22, .02], [.34, .18], [.36, .24]].map(([a, b]) => new THREE.Vector2(a, b)), 14), bronze(), x, y + 1, z, g);
     const f = makeFire(THREE, { scale: .2, light: false }); f.position.set(x, y + 1.16, z); f.traverse(o => o.userData.dyn = 1); g.add(f); FIRES.push(f); return y + 1.7; },
   offerings: (g, x, y, z) => { add(new THREE.LatheGeometry([[0, 0], [.2, 0], [.32, .08], [.34, .12]].map(([a, b]) => new THREE.Vector2(a, b)), 14), mat('bowlM', '#e9dcc0', { side: THREE.DoubleSide, map: TEX.pot }), x, y, z, g);
@@ -83,7 +90,7 @@ Object.assign(P, {
     for (const dx of [-.25, 0, .25]) { if (realBird(g, x + dx, y + 1.28, z, .42, R(0, 6))) continue; add(new THREE.IcosahedronGeometry(.09, 1), mat('dove', '#f4f1ea'), x + dx, y + 1.36, z, g).scale.set(1.4, 1, 1); add(new THREE.IcosahedronGeometry(.055, 1), mat('dove', '#f4f1ea'), x + dx + .1, y + 1.45, z, g); add(new THREE.ConeGeometry(.015, .04, 4), mat('beak', '#e0a03a'), x + dx + .16, y + 1.45, z, g).rotation.z = -Math.PI / 2; } return y + 1.55; },
   coinTable: (g, x, y, z) => { box(.8, .06, .55, 'woodLt', x, y + .7, z, g); for (const [a, b] of [[-.35, -.22], [.35, -.22], [-.35, .22], [.35, .22]]) box(.05, .7, .05, 'wood', x + a, y, z + b, g);
     for (let st = 0; st < 5; st++) for (let i = 0; i < 3 + st % 3; i++) cyl(.05, .05, .015, 10, mat('coin', '#e0b84a', { metalness: .7, roughness: .3 }), x - .25 + st * .12, y + .76 + i * .016, z - .1 + (st % 2) * .15, g); box(.2, .1, .14, mat('leather', '#7a4a2a'), x + .25, y + .76, z + .12, g); return y + .9; },
-  bigChest: (g, x, y, z) => { box(1.1, .6, .65, 'wood', x, y, z, g); const lid = add(new THREE.CylinderGeometry(.33, .33, 1.1, 12, 1, false, 0, Math.PI), 'wood', x, y + .6, z, g); lid.rotation.z = Math.PI / 2; lid.rotation.y = Math.PI / 2; lid.rotation.order = 'YZX';
+  bigChest: (g, x, y, z) => { box(1.1, .6, .65, 'wood', x, y, z, g); const lid = add(new THREE.CylinderGeometry(.33, .33, 1.1, 12, 1, false, 0, Math.PI), 'wood', x, y + .6, z, g); lid.rotation.z = Math.PI / 2;  // half-pipe lid: its length runs along the chest's length (x), arch up
     for (const k of [-.4, 0, .4]) { box(.07, .62, .67, mat('brass', '#b8893a', { metalness: .55, roughness: .35 }), x + k, y - .01, z, g); const st = add(new THREE.TorusGeometry(.335, .03, 4, 12, Math.PI), mat('brass', '#b8893a'), x + k, y + .6, z, g); st.rotation.y = Math.PI / 2; }
     box(.22, .26, .06, iron(), x, y + .4, z + .34, g); const lk = add(new THREE.TorusGeometry(.07, .02, 5, 10), iron(), x, y + .32, z + .37, g); return y + 1.0; },
   ropeBarrier: (g, x, y, z) => { for (const sx of [-.5, .5]) { cyl(.06, .08, .9, 8, bronze(), x + sx, y, z, g); add(new THREE.SphereGeometry(.07, 8, 5), bronze(), x + sx, y + .95, z, g); }
@@ -95,7 +102,7 @@ Object.assign(P, {
   barrel: (g, x, y, z) => { add(new THREE.LatheGeometry([[0, 0], [.28, 0], [.33, .2], [.35, .4], [.33, .6], [.28, .8], [0, .8]].map(([a, b]) => new THREE.Vector2(a, b)), 14), 'wood', x, y, z, g); for (const h of [.12, .4, .68]) { const r = h === .4 ? .355 : .31; const t = add(new THREE.TorusGeometry(r, .018, 4, 16), mat('iron', '#3c3a38', { metalness: .4, roughness: .6 }), x, y + h, z, g); t.rotation.x = Math.PI / 2; } return y + .82; },
   plank: (g, x, y, z, r = 0) => { const b = box(1.4, .05, .22, 'woodLt', x, y, z, g); b.rotation.y = r; return y + .05; },
 });
-P.chest = (g, x, y, z) => { box(.7, .4, .45, 'wood', x, y, z, g); const lid = add(new THREE.CylinderGeometry(.225, .225, .7, 10, 1, false, 0, Math.PI), 'wood', x, y + .4, z, g); lid.rotation.z = Math.PI / 2; lid.rotation.y = Math.PI / 2; lid.rotation.order = 'YZX';
+P.chest = (g, x, y, z) => { box(.7, .4, .45, 'wood', x, y, z, g); const lid = add(new THREE.CylinderGeometry(.225, .225, .7, 10, 1, false, 0, Math.PI), 'wood', x, y + .4, z, g); lid.rotation.z = Math.PI / 2;  // half-pipe lid: its length runs along the chest's length (x), arch up
   for (const k of [-.24, 0, .24]) { box(.05, .42, .47, mat('iron', '#3c3a38', { metalness: .4, roughness: .6 }), x + k, y - .005, z, g); const st = add(new THREE.TorusGeometry(.228, .02, 4, 10, Math.PI), mat('iron', '#3c3a38'), x + k, y + .4, z, g); st.rotation.y = Math.PI / 2; }
   box(.1, .12, .03, mat('brass', '#b8893a', { metalness: .5, roughness: .4 }), x, y + .32, z + .24, g); return y + .65; };
 P.bucket = (g, x, y, z) => { add(new THREE.LatheGeometry([[0, 0], [.2, 0], [.25, .42], [.24, .44], [0, .44]].map(([a, b]) => new THREE.Vector2(a, b)), 14), 'wood', x, y, z, g); for (const h of [.08, .34]) { const t = add(new THREE.TorusGeometry(h > .2 ? .245 : .21, .016, 4, 16), mat('iron', '#3c3a38', { metalness: .4, roughness: .6 }), x, y + h, z, g); t.rotation.x = Math.PI / 2; }
@@ -198,7 +205,11 @@ Object.assign(P, {
       const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(p, 3)); geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); geo.setIndex(ix); geo.computeVertexNormals();
       add(geo, mat('bpTail' + c, c, { map: TEX.cloth, side: THREE.DoubleSide }), 0, 0, 0, t); }
     return y + 1.0; },
-  chestOpen: (g, x, y, z) => { box(.8, .45, .5, 'wood', x, y, z, g); for (const k of [-.3, .3]) box(.05, .47, .52, iron(), x + k, y - .01, z, g); box(.7, .02, .4, mat('chestIn', '#5a3a26'), x, y + .3, z, g);
+  chestOpen: (g, x, y, z) => { const H = .45, t = .05;   // open-topped box: floor and four walls, so the mouth shows the dark inside (no solid top)
+    box(.8, t, .5, 'wood', x, y, z, g); box(.8, H, t, 'wood', x, y, z - .25 + t / 2, g); box(.8, H, t, 'wood', x, y, z + .25 - t / 2, g);
+    box(t, H, .5 - 2 * t, 'wood', x - .4 + t / 2, y, z, g); box(t, H, .5 - 2 * t, 'wood', x + .4 - t / 2, y, z, g);
+    for (const k of [-.3, .3]) for (const s of [-.26, .26]) box(.05, H + .02, .02, iron(), x + k, y - .01, z + s, g);   // iron bands on the front and back walls only
+    box(.7, .02, .4, mat('chestIn', '#5a3a26'), x, y + .1, z, g);   // inside floor, well below the rim
     const lid = new THREE.Group(); lid.position.set(x, y + .45, z - .25); lid.rotation.x = -1.85; g.add(lid); box(.8, .08, .5, 'wood', 0, 0, .25, lid); box(.82, .1, .05, iron(), 0, 0, .48, lid); return y + .95; },
   woolBasket: (g, x, y, z) => { const top = (MODELS.stall ? placePart(g, 'stall', 'Cylinder133', x, y, z, .75) : (cyl(.38, .3, .45, 10, 'basket', x, y, z, g), y + .45));
     for (let i = 0; i < 7; i++) add(new THREE.IcosahedronGeometry(R(.12, .18), 1), 'wool', x + R(-.22, .22), top - .05 + R(0, .1), z + R(-.22, .22), g);
