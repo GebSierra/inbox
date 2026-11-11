@@ -21,9 +21,9 @@
     "stone": "#c9b9a2",
     "stoneDk": "#a8987f",
     "avgCentre": true,
-    "bannerClear": false,
-    "tutRoomRelative": false,
-    "tutDisc": 0.75,
+    "bannerClear": true,
+    "tutRoomRelative": true,
+    "tutDisc": 0.6,
     "fly": { "p": [25, 20], "l": [22, 22] }
   },
   "parts": [
