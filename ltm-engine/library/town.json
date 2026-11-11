@@ -1,0 +1,38 @@
+{
+  "name": "Object library",
+  "book": "Library",
+  "store": "library",
+  "verses": [],
+  "zones": [],
+  "built": 0,
+  "books": [
+    { "name": "Colossians", "town": "colossae-ltm", "path": "../../colossae-ltm/books/colossians.json" },
+    { "name": "James", "town": "james-ltm", "path": "../../james-ltm/books/james.json" }
+  ],
+  "theme": {
+    "loadName": "the object library",
+    "exposure": 1.0,
+    "sky": "#efe6d6",
+    "fog": [220, 560],
+    "skyTop": "#efe6d6",
+    "skyBot": "#efe6d6",
+    "hemi": ["#fff1d8", "#8f8462", 1.25],
+    "sun": { "color": "#ffd3a0", "intensity": 3.1, "pos": [-90, 70, 50] },
+    "leaf": "#7c9450",
+    "leafDk": "#5f7a3e",
+    "cypress": "#4f6a38",
+    "stone": "#c9b9a2",
+    "stoneDk": "#a8987f"
+  },
+  "parts": [
+    "ltm:core",
+    "world.js",
+    "ltm:props",
+    "ltm:kit",
+    "ltm:house",
+    "ltm:rooms",
+    "obj:colossae",
+    "obj:james",
+    "library.js"
+  ]
+}
