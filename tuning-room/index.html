@@ -110,7 +110,7 @@ body.focus #stage{min-height:60vh}
   <header>
     <div>
       <h1>Tuning Room</h1>
-      <p class="sub">The goal: sing in tune with the screen off.</p>
+      <p class="sub">The goal: chest to head without a crack, in real songs.</p>
     </div>
     <span class="chip">🎧 Wear wired headphones</span>
   </header>
@@ -127,7 +127,7 @@ body.focus #stage{min-height:60vh}
   <div id="progView" hidden>
     <div class="card">
       <div class="stats">
-        <div class="stat"><div class="label">Stage</div><div class="v" id="stStage">1</div></div>
+        <div class="stat"><div class="label">Your break</div><div class="v" id="stStage">–</div></div>
         <div class="stat"><div class="label">Range</div><div class="v" id="stRange">–</div></div>
         <div class="stat"><div class="label">Last screen-off</div><div class="v" id="stErr">–</div></div>
         <div class="stat"><div class="label">Usual landing time</div><div class="v" id="stLand">–</div></div>
@@ -145,6 +145,15 @@ body.focus #stage{min-height:60vh}
         <div id="cal" class="cal"></div>
       </div>
 
+      <div class="pblock">
+        <div class="row between"><h2>Highest clean note</h2><span class="label">vs. your break · higher is better</span></div>
+        <p class="muted">The highest note you sang without a crack in each mix session. Getting above the "your break" line is the goal. Dots: how strained it felt.</p>
+        <canvas id="mixChart" class="pchart"></canvas>
+      </div>
+      <div class="pblock">
+        <div class="row between"><h2>Clean notes</h2><span class="label">no crack heard · higher is better</span></div>
+        <canvas id="crackChart" class="pchart"></canvas>
+      </div>
       <div class="pblock">
         <div class="row between"><h2>Pitch accuracy</h2><span class="label">screen off · higher is better</span></div>
         <p class="muted">Solid line: drills. Dashed line: the hymn line. Dots along the bottom: how strained each session felt.</p>
@@ -181,6 +190,7 @@ body.focus #stage{min-height:60vh}
     <div class="row" style="margin-top:14px">
       <button id="btnTuner">Open tuner</button>
       <button id="btnRange">Find my range again</button>
+      <button id="btnBreak">Find my break again</button>
       <button id="btnOwn">Re-record my note</button>
       <button id="btnTest">Check pitch engine</button>
       <button id="btnExport">Copy my data</button>
@@ -350,7 +360,7 @@ function holdNote({title,body,need=3000,target=null,onCancel,replay=null}){
 /* ================= progress ================= */
 S.goal=S.goal||3;
 const dayKey=d=>{const x=new Date(d);return `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}-${String(x.getDate()).padStart(2,"0")}`};
-function practiceDays(){return new Set([...S.sessions.map(s=>s.date),...S.weekly.map(w=>w.date),...Object.values(S.ex||{}).flat().map(e=>e.date)].map(dayKey))}
+function practiceDays(){return new Set([...S.sessions.map(s=>s.date),...S.weekly.map(w=>w.date),...Object.values(S.ex||{}).flat().map(e=>e.date),...(S.mix||[]).map(e=>e.date)].map(dayKey))}
 function mondayOf(d){const m=new Date(d);m.setHours(0,0,0,0);m.setDate(m.getDate()-((m.getDay()+6)%7));return m}
 function weekCount(){const days=practiceDays(),mon=mondayOf(new Date());let n=0;for(let i=0;i<7;i++){const d=new Date(mon);d.setDate(d.getDate()+i);if(days.has(dayKey(d)))n++}return n}
 function streaks(){
@@ -370,7 +380,7 @@ function drawCal(){
   $("cal").innerHTML=h;
 }
 function refresh(){
-  $("stStage").textContent=S.stage;
+  $("stStage").textContent=S.bridge!=null?noteName(S.bridge):"–";
   $("stRange").textContent=S.range?noteName(S.range.lo)+"–"+noteName(S.range.hi):"–";
   const last=[...S.sessions].reverse().find(s=>s.offErr!=null);
   $("stErr").textContent=last?tuneWord(last.offErr):"–";
@@ -380,14 +390,14 @@ function refresh(){
   $("selGoal").innerHTML=[2,3,4,5,6,7].map(n=>`<option value="${n}" ${n===S.goal?"selected":""}>${n} days a week</option>`).join("");
   $("selStage").innerHTML=STAGES.map(s=>`<option value="${s.n}" ${s.n===S.stage?"selected":""}>${s.n}. ${s.name}</option>`).join("");
   $("inpGap").value=S.gap;
-  if(!$("progView").hidden){drawCal();drawChart();drawLand()}
+  if(!$("progView").hidden){drawCal();drawMixChart();drawChart();drawLand()}
 }
 function setupCanvas(cv){const dpr=devicePixelRatio||1,W=cv.clientWidth,H=cv.clientHeight;cv.width=W*dpr;cv.height=H*dpr;const c=cv.getContext("2d");c.scale(dpr,dpr);return {c,W,H}}
 // shared line chart: values where higher on screen = better. ticks: [[value,label]]
 function lineChart(cv,series,ticks,{min,max,dots}={}){
   const {c,W,H}=setupCanvas(cv);c.font=`12px ${css("--mono")}`;
   const n=Math.max(...series.map(s=>s.v.length),0);
-  if(!n||!series.some(s=>s.v.some(v=>v!=null))){c.fillStyle=css("--muted");c.fillText("Finish a training session to see this chart.",8,H/2);return}
+  if(!n||!series.some(s=>s.v.some(v=>v!=null))){c.fillStyle=css("--muted");c.fillText("Finish a session to see this chart.",8,H/2);return}
   const L=92,B=dots?26:10,T=10,y=v=>T+(1-(Math.max(min,Math.min(max,v))-min)/(max-min))*(H-B-T),x=i=>L+(n===1?.5:i/(n-1))*(W-L-14);
   ticks.forEach(([v,l])=>{c.strokeStyle=css("--line");c.lineWidth=1;c.beginPath();c.moveTo(L,y(v));c.lineTo(W-6,y(v));c.stroke();c.fillStyle=css("--muted");c.fillText(l,2,y(v)+4)});
   series.forEach(sr=>{c.setLineDash(sr.dash?[5,5]:[]);c.strokeStyle=sr.color;c.lineWidth=sr.dash?2:2.5;c.beginPath();let pen=false;
@@ -421,23 +431,24 @@ function home(){
     <p>You'll hold two notes: your lowest comfortable note and your highest comfortable note. Comfortable means you could sing it all day, not the edge of what you can reach.</p>
     <p class="muted">The app waits until you hold each note steady for 3 seconds.</p>
     <div class="row" style="margin-top:14px"><button class="primary" id="go">Start</button></div>`;$("go").onclick=rangeFlow;return}
-  if(!S.ownRef&&!S.test){stage.innerHTML=`<h2>Record your own target note</h2>
+  if(home.needOwn&&!S.ownRef&&!S.test){home.needOwn=false;stage.innerHTML=`<h2>Record your own target note</h2>
     <p>People match their own voice more accurately than a piano tone. Stage 1 plays your own voice back as the target.</p>
     <div class="row" style="margin-top:14px"><button class="primary" id="go">Record my note</button></div>`;$("go").onclick=ownFlow;return}
-  const st=STAGES[S.stage-1];
-  stage.innerHTML=`<div class="row between"><span class="label">This week: ${weekCount()} of ${S.goal} days</span><span class="label">Stage ${st.n} of 5</span></div>
-    <h2>${st.name}</h2>
+  const lastMix=S.mix[S.mix.length-1];
+  stage.innerHTML=`<div class="row between"><span class="label">This week: ${weekCount()} of ${S.goal} days</span><span class="label">Your break: ${S.bridge!=null?noteName(S.bridge):"not found yet"}</span></div>
+    <h2>Mix: chest to head without cracking</h2>
     <div class="steps">
-      <div class="step"><span class="num muted">1</span><div><b>Warm up</b><br><span class="muted">5 yawns, vowels 3 times, lip trills. Straw optional.</span></div><span class="num">3 min</span></div>
-      <div class="step"><span class="num muted">2</span><div><b>Pitch work</b><br><span class="muted">12 tries. Screen on for some, off for others.</span></div><span class="num">7 min</span></div>
-      <div class="step"><span class="num muted">3</span><div><b>Real singing test</b><br><span class="muted">One hymn line, screen off: ${HYMN.words}.</span></div><span class="num">1 min</span></div>
-      <div class="step"><span class="num muted">4</span><div><b>Check in</b><br><span class="muted">How did your voice feel?</span></div><span class="num">10 s</span></div>
+      <div class="step"><span class="num muted">1</span><div><b>Warm up</b><br><span class="muted">Yawns, vowels, lip trills. Straw optional.</span></div><span class="num">3 min</span></div>
+      <div class="step"><span class="num muted">2</span><div><b>Bridge drills</b><br><span class="muted">Lip trill, Nay, Mum or Gee, Woo down. Each climbs through your break.</span></div><span class="num">6 min</span></div>
+      <div class="step"><span class="num muted">3</span><div><b>Real song</b><br><span class="muted">A hymn line with its high note set at your break. Or one of your own songs.</span></div><span class="num">1 min</span></div>
+      <div class="step"><span class="num muted">4</span><div><b>Check in</b><br><span class="muted">Did it feel blended? Any strain?</span></div><span class="num">10 s</span></div>
     </div>
-    ${mapHTML()}
+    ${lastMix?`<p class="muted">Last time: ${lastMix.n?Math.round((1-lastMix.cracks/lastMix.n)*100):0}% clean notes, highest clean ${lastMix.best!=null?noteName(lastMix.best):"–"}.</p>`:""}
+    ${tipsHTML(false)}
     ${weeklyHTML()}
     <div style="height:14px"></div>
-    <div class="row"><button class="primary" id="go">Start session</button><button id="skip">Skip warm-up</button><span class="muted">Headphones in?</span></div>`;
-  $("go").onclick=warmup;$("skip").onclick=drill;
+    <div class="row"><button class="primary" id="go">${S.bridge==null?"Find my break first":"Start session"}</button><button id="skip">Skip warm-up</button><button class="ghost" id="pitch">Pitch drill instead</button></div>`;
+  $("go").onclick=()=>S.bridge==null?sirenFlow():warmup(mixSession);$("skip").onclick=mixSession;$("pitch").onclick=()=>{if(!S.ownRef&&!S.test&&S.stage===1){home.needOwn=true;return home()}warmup(drill)};
   $("weekly").onclick=weeklyFlow;if($("blindBtn"))$("blindBtn").onclick=blindFlow;
 }
 
@@ -488,16 +499,16 @@ const WARMUP=[
  {name:"Lip trills",count:5,unit:"slide",how:"Let your lips flutter like a motorboat. Slide from low to high and back down. Keep the flutter going the whole way."},
  {name:"Straw (optional)",count:0,time:120,how:"<strong>How to do it right:</strong><br><small><strong>Breathing & airflow:</strong> Inhale through your nose. Exhale steadily through the straw—never breathe in through it. Feel consistent airflow at the straw tip or watch for steady bubbles. No air leaks around your lips or nose.<br><strong>Muscle use:</strong> Support from your abdomen, not your throat. Keep vocal effort like normal speech.<br><strong>What to feel:</strong> Vibrations around your mouth and lips, and inside the straw. Voice centered in your head, not chest or throat.<br><strong>Exercises:</strong> Single pitch (hold one note), glides (slide low to high), pulsations (small bumps at one pitch), scales & songs. Dip the straw in 1–2 cm of water for visual feedback.<br></small><a href=\"https://www.youtube.com/watch?v=eC_BFfTzhYE\" target=\"_blank\" rel=\"noopener\">Watch how to do it (Fauquier ENT, video)</a>. Skip if short on time."},
 ];
-async function warmup(){
+async function warmup(next=mixSession){
   if(!await needAudio())return;
   setFocus(true);
   for(let i=0;i<WARMUP.length;i++){
     const w=WARMUP[i];let n=0,left=w.time||0,tm=null;
-    stage.innerHTML=`<div class="row between"><span class="label">Warm up · step ${i+1} of ${WARMUP.length}</span><button class="ghost" id="wSkipAll">Skip to pitch work</button></div>
+    stage.innerHTML=`<div class="row between"><span class="label">Warm up · step ${i+1} of ${WARMUP.length}</span><button class="ghost" id="wSkipAll">Skip warm-up</button></div>
       <div class="dots">${WARMUP.map((_,j)=>`<span class="${j<i?"done":j===i?"on":""}"></span>`).join("")}</div>
       <h2 style="font-size:1.8rem">${w.name}</h2><p>${w.how}</p>
       <div class="prompt num" id="wCount">${w.count?`0 / ${w.count}`:fmtT(left)}</div>
-      <div class="row" style="margin-top:12px">${w.count?`<button class="primary" id="wTap">Done one ${w.unit}</button>`:""}<button ${w.count?"":'class="primary"'} id="wNext">${i===WARMUP.length-1?"Start pitch work":"Next"}</button></div>
+      <div class="row" style="margin-top:12px">${w.count?`<button class="primary" id="wTap">Done one ${w.unit}</button>`:""}<button ${w.count?"":'class="primary"'} id="wNext">${i===WARMUP.length-1?"Start drills":"Next"}</button></div>
       ${w.count?`<p class="muted">Tap after each ${w.unit}, or press Space.</p>`:""}`;
     const res=await new Promise(r=>{
       $("wSkipAll").onclick=()=>r("skip");$("wNext").onclick=()=>r("next");
@@ -506,7 +517,7 @@ async function warmup(){
     });
     clearInterval(tm);if(res==="skip")break;
   }
-  drill();
+  next();
 }
 const fmtT=s=>`${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`;
 
@@ -684,6 +695,176 @@ function finish(effort){
   $("go").onclick=home;
 }
 
+/* ================= mix: chest to head without cracking ================= */
+// The app can hear cracks (sudden pitch jumps or dropouts mid-note). It can't hear which register you're in, so you rate that.
+S.mix=S.mix||[];S.mixReach=S.mixReach??1;
+const REG=["Felt like chest","Blended","Flipped to falsetto","Cracked"];
+const TIPS={
+ chest:["Speak, then sing. Chest voice should feel like your talking voice, just held longer. If it feels like shouting, back off.",
+  "Volume comes from steady breath, not a tight throat. Keep your neck and jaw loose.",
+  "Don't carry heavy chest up to the top. As you rise, let it get lighter and a bit quieter."],
+ head:["Head voice is not falsetto. Falsetto sounds airy and hooty. Head voice is lighter but still buzzy and clear.",
+  "Find it with a bratty “nay” or a whiny “nyeh.” The twang keeps the cords together so it doesn't go breathy.",
+  "Feel the buzz behind your nose and upper teeth, not in your throat."],
+ bridge:["Get quieter as you go up. Pushing volume through the break is the number one cause of cracks.",
+  "Narrow the vowel up high: “ah” toward “uh,” “ay” toward “eh,” “ee” toward “ih.” Wide vowels pull you into a yell.",
+  "Let it change. Your voice is meant to get lighter as you rise. Trying to keep it exactly the same is what makes it snap.",
+  "Coming down is easier than going up. Start high and light, and carry that feel down into your chest notes.",
+  "If it cracks, that's fine. Go quieter and try again. Never force through."]};
+function tipsHTML(open){const sec=(t,a)=>`<p style="margin:10px 0 2px"><b>${t}</b></p><ul style="margin:4px 0;padding-left:20px">${a.map(x=>`<li>${x}</li>`).join("")}</ul>`;
+  return `<details ${open?"open":""} style="margin-top:12px"><summary class="label" style="cursor:pointer">Tips: chest, head, and the switch</summary>${sec("Chest voice",TIPS.chest)}${sec("Head voice (not falsetto)",TIPS.head)}${sec("Crossing the break",TIPS.bridge)}</details>`}
+const MIX=[
+ {id:"mtrill",name:"Lip trill slide",steps:[0,7,0],beats:[1,2,2],syl:["Brr"],how:"Slide smoothly up and down. Easiest way through the break: the lips take the pressure off.",tip:TIPS.bridge[0]},
+ {id:"mnay",name:"Bratty Nay",steps:[0,4,7,4,0],beats:[1,1,2,1,2],syl:["Nay"],how:"Whiny and bright, like a teasing kid. Stay quiet. Twang holds the voice together at the top.",tip:TIPS.head[1]},
+ {id:"mmum",name:"Mum 1-5-1",steps:[0,7,0],beats:[1,2,2],syl:["Mum"],how:"Lips closed on each “m.” Feel the buzz on your lips as you go up.",tip:TIPS.head[2]},
+ {id:"mgee",name:"Gee arpeggio",steps:[0,4,7,12,7,4,0],beats:[1,1,1,2,1,1,2],syl:["Gee"],how:"Sing “gee” with a slight “ih.” Get lighter on the way up. Small mouth at the top.",tip:TIPS.bridge[1],wide:true},
+ {id:"mwoo",name:"Woo down",steps:[7,5,4,2,0],beats:[1,1,1,1,2],syl:["Woo"],how:"Start light and high, like an owl. Keep that ease as you step down into your speaking range.",tip:TIPS.bridge[3],down:true},
+];
+function bridgeNote(){return S.bridge??(S.range?S.range.hi+3:60)}
+// Find jumps and dropouts. Readings that sit a harmonic away are mic errors, not cracks, so they're folded first.
+function findCracks(frames,from,to){
+  let prev=null,lastT=null,cracks=[],pend=null;
+  for(const f of frames){if(f.t<from||f.t>to)continue;
+    if(f.m==null){if(prev!=null&&f.lv>0.08&&lastT!=null&&f.t-lastT>110&&f.t-lastT<600&&!pend){cracks.push({t:f.t,at:prev,kind:"drop"});pend=1}continue}
+    const m=prev==null?f.m:toward(f.m,prev);
+    if(prev!=null&&Math.abs(m-prev)>1.6&&f.t-lastT<80)cracks.push({t:f.t,at:Math.min(m,prev),kind:"jump"});
+    prev=m;lastT=f.t;pend=null}
+  // merge cracks within 300 ms
+  return cracks.filter((c,i)=>!i||c.t-cracks[i-1].t>300)}
+async function sirenFlow(){
+  if(!await needAudio())return;setFocus(true);
+  stage.innerHTML=`<span class="label">Find your break</span><h2>Three slow sirens</h2>
+    <p>On “oo” or a lip trill, slide from a low easy note up as high as you comfortably can, then back down. Medium-soft volume. Don't push. Don't try to avoid the crack; this time we want to find it.</p>
+    <div class="row" style="margin-top:12px"><button class="primary" id="go">Start</button><button class="ghost" id="back">Not now</button></div>`;
+  if(!await new Promise(r=>{$("go").onclick=()=>r(1);$("back").onclick=()=>r(0)}))return home();
+  const found=[],tops=[];
+  for(let k=0;k<3;k++){
+    stage.innerHTML=`<span class="label">Siren ${k+1} of 3</span><div class="prompt" id="cue">Slide up, then down</div>
+      <canvas class="trace" id="tr"></canvas><div class="label" style="margin-top:10px">Mic level</div><div class="meter"><i id="lvl"></i></div>
+      <div class="row" style="margin-top:12px"><button id="done" class="primary">Done</button></div>`;
+    let stop=false,on=null;$("done").onclick=()=>{stop=true};const fr=[];
+    await frameLoop((r,t)=>{if(stop)return false;$("lvl").style.width=r.level*100+"%";
+      if(on==null&&r.m!=null)on=t;if(on!=null){fr.push({t:t-on,m:r.m,lv:r.level});
+        if(t-on>1500&&fr.slice(-45).every(f=>f.m==null))return false}
+      if(fr.length%4===0)sirenDraw($("tr"),fr);return t<20000});
+    const v=fr.filter(f=>f.m!=null);if(v.length<20)continue;
+    // fold mic errors along the track
+    let p=null;v.forEach(f=>{f.m=p==null?f.m:toward(f.m,p);p=f.m});
+    const peakI=v.reduce((b,f,i)=>f.m>v[b].m?i:b,0);tops.push(v[peakI].m);
+    const c=findCracks(v.slice(0,peakI+1),0,1e9).filter(c=>c.at>S.range.lo+5);
+    if(c.length)found.push(c[0].at);
+  }
+  const guess=found.length?Math.round(median(found)):null,top=tops.length?Math.round(Math.max(...tops)):null;
+  const opts=[];for(let m=(S.range?S.range.hi-4:50);m<=(S.range?S.range.hi+12:72);m++)opts.push(m);
+  const pick=guess??(top!=null?top:bridgeNote());
+  stage.innerHTML=`<span class="label">Find your break</span>
+    <h2>${guess!=null?`Your voice broke around <span class="num">${noteName(guess)}</span>`:"I didn't hear a clear crack"}</h2>
+    <p class="muted">${found.length}/3 sirens had a crack. Highest note reached: ${top!=null?noteName(top):"–"}. Mic detection is rough, so check it against what you felt.</p>
+    <p>Where did it feel like your voice flipped or got hard to hold?</p>
+    <div class="row"><select id="bsel">${opts.map(m=>`<option value="${m}" ${m===pick?"selected":""}>${noteName(m)}</option>`).join("")}</select>
+      <button class="primary" id="keep">Use this note</button><button id="redo">Redo</button></div>`;
+  $("redo").onclick=sirenFlow;
+  $("keep").onclick=()=>{S.bridge=+$("bsel").value;save();home()};
+}
+function sirenDraw(cv,fr){const {c,W,H}=setupCanvas(cv);const lo=(S.range?S.range.lo:40)-2,hi=(S.range?S.range.hi:58)+14,y=m=>H-(m-lo)/(hi-lo)*H;
+  if(S.bridge!=null){c.fillStyle=css("--accent-soft");c.fillRect(0,y(S.bridge+1),W,y(S.bridge-1)-y(S.bridge+1))}
+  c.strokeStyle=css("--accent");c.lineWidth=2.5;c.beginPath();let pen=false;const T=Math.max(4000,fr[fr.length-1]?.t||0);
+  fr.forEach(f=>{if(f.m==null){pen=false;return}const x=f.t/T*W;pen?c.lineTo(x,y(f.m)):c.moveTo(x,y(f.m));pen=true});c.stroke()}
+
+// Rounds climb so the top note goes from below your break to a little past it.
+function mixRoots(d){const b=bridgeNote(),mx=Math.max(...d.steps),reach=Math.min(S.mixReach,d.wide?3:5),roots=[];
+  if(d.down){for(let top=b+reach;top>=b-3&&roots.length<5;top--)roots.push(top-mx);return roots}
+  for(let top=b-3;top<=b+reach&&roots.length<6;top++)roots.push(top-mx);return roots}
+async function mixRun(d){
+  const beat=600,roots=mixRoots(d),notes=[];let t=0;
+  roots.forEach(r=>{notes.push({m:r+d.steps[0],start:t,end:t+beat*.9,cue:true,syl:"♪"});t+=beat*2;
+    d.steps.forEach((s,i)=>{const du=d.beats[i]*beat;notes.push({m:r+s,start:t,end:t+du*.94,syl:d.syl[i%d.syl.length],round:r});t+=du});t+=beat*1.3});
+  const total=t;
+  stage.innerHTML=`<div class="row between"><span class="label">${session.label}</span><button class="ghost" id="mEnd">End drill</button></div>
+    <h2>${d.name}</h2><p>${d.how}</p><p class="muted"><b>Tip:</b> ${d.tip}</p>
+    <canvas id="lane" style="width:100%;height:min(52vh,440px);display:block;border-radius:12px;background:var(--raise);margin-top:8px"></canvas>
+    <div class="row between" style="margin-top:8px"><span id="mNow" class="prompt" style="font-size:1.3rem;margin:0">Get ready</span><span class="muted">Shaded band = your break · <span class="bad">red</span> = crack</span></div>`;
+  let stop=false;$("mEnd").onclick=()=>{stop=true};
+  const t0=ctx.currentTime+1.2;notes.forEach(n=>scheduleTone(n.m,t0+n.start/1000,(n.end-n.start)/1000,n.cue?0.2:0.1));
+  const frames=[],LAG=140,cv=$("lane"),all=notes.map(n=>n.m),lo=Math.min(...all)-2,hi=Math.max(...all)+2,b=bridgeNote();
+  await frameLoop(r=>{
+    if(stop||!$("lane"))return false;const now=(ctx.currentTime-t0)*1000;
+    const cur=notes.find(n=>!n.cue&&now-LAG>=n.start&&now-LAG<n.end)||notes.find(n=>n.start>now)||notes[notes.length-1];
+    frames.push({t:now-LAG,m:toward(r.m,cur.m),lv:r.level});
+    notes.forEach(n=>{if(!n.cue&&n.grade===undefined&&now-LAG>n.end+60){
+      const sp=n.end-n.start,ms=frames.filter(f=>f.m!=null&&f.t>n.start+sp*.3&&f.t<n.end-sp*.08).map(f=>f.m).filter(x=>Math.abs(x-n.m)<=7);
+      n.crack=findCracks(frames,n.start+sp*.15,n.end).length>0;
+      n.grade=n.crack?999:ms.length>=3?(median(ms)-n.m)*100:null}});
+    drawLane(cv,notes,frames,now,lo,hi);
+    const {c,W,H}={c:cv.getContext("2d"),W:cv.clientWidth,H:cv.clientHeight},rh=H/(hi-lo),yy=m=>H-(m-lo)*rh-rh/2;
+    c.fillStyle=css("--accent");c.globalAlpha=.1;c.fillRect(36,yy(b+0.5),W,rh);c.globalAlpha=1;
+    $("mNow").textContent=now<0?"Get ready":cur&&!cur.cue&&now-LAG>=cur.start?cur.syl+" · "+noteName(cur.m):"Listen";
+    return now<total+400});
+  const sung=notes.filter(n=>!n.cue),cracks=sung.filter(n=>n.crack).length;
+  const clean=sung.filter(n=>!n.crack&&n.grade!=null&&Math.abs(n.grade)<=100).map(n=>n.m);
+  const best=clean.length?Math.max(...clean):null;
+  stage.innerHTML=`<span class="label">${session.label}</span><h2>${d.name}</h2>
+    <div class="stats" style="margin:10px 0"><div class="stat"><div class="label">Cracks heard</div><div class="v ${cracks?"warn":"good"}">${cracks}</div></div>
+    <div class="stat"><div class="label">Highest clean note</div><div class="v">${best!=null?noteName(best):"–"}</div><div class="muted small">your break: ${noteName(b)}</div></div></div>
+    <canvas id="lane" style="width:100%;height:200px;display:block;border-radius:12px;background:var(--raise)"></canvas>
+    <p style="margin-top:12px"><b>Up near ${noteName(b)}, how did it feel?</b></p>
+    <div class="efforts" style="grid-template-columns:repeat(4,1fr)">${REG.map((e,i)=>`<button data-r="${i}">${e}</button>`).join("")}</div>
+    <p class="muted small">Blended is the goal: lighter than chest, not airy like falsetto, no flip.</p>`;
+  drawLane($("lane"),notes,frames,null,lo,hi);
+  const reg=await new Promise(r=>stage.querySelectorAll("[data-r]").forEach(x=>x.onclick=()=>r(+x.dataset.r)));
+  return {id:d.id,cracks,n:sung.length,best,reg,stopped:stop};
+}
+function mixPlan(){const day=S.mix.length;return [MIX[0],MIX[1],day%2?MIX[3]:MIX[2],MIX[4]]}
+async function mixSession(){
+  if(!await needAudio())return;setFocus(true);
+  if(S.bridge==null)return sirenFlow();
+  const plan=mixPlan();session={results:[],label:"",song:null,songReg:null};
+  stage.innerHTML=`<span class="label">Mix work</span><h2>Four drills through your break (${noteName(bridgeNote())})</h2>
+    <p>Each drill climbs a half step at a time from below your break to ${S.mixReach} half step${S.mixReach>1?"s":""} past it. Speech volume or softer.</p>${tipsHTML(S.mix.length<3)}
+    <div class="row" style="margin-top:12px"><button class="primary" id="go">Start drills</button></div>`;
+  await new Promise(r=>$("go").onclick=r);
+  for(let i=0;i<plan.length;i++){session.label=`Drill ${i+1} of ${plan.length}`;const r=await mixRun(plan[i]);session.results.push(r);if(r.stopped&&i<plan.length-1){/* keep going */}}
+  // real song line, set so its top note sits right at your break
+  const h=HYMNS[S.mix.length%HYMNS.length],mx=Math.max(...h.steps),top=bridgeNote()+(S.mixReach>=3?0:-1);
+  stage.innerHTML=`<span class="label">Real song</span><h2>${h.name}</h2><p>Its highest note is set to <b>${noteName(top)}</b>, right at your break. Same rules: lighter and narrower as it climbs.</p>
+    <div class="row" style="margin-top:12px"><button class="primary" id="go">Sing it</button><button id="skip">Skip</button>${(await songCount())?`<button id="own">Use one of my songs instead</button>`:""}</div>`;
+  const ch=await new Promise(r=>{$("go").onclick=()=>r("go");$("skip").onclick=()=>r("skip");if($("own"))$("own").onclick=()=>r("own")});
+  if(ch==="go"){const res=await phraseTest({name:h.name,words:"“"+h.words+"”",notes:h.steps.map(s=>top-mx+s),beats:h.beats},false,"Real song");
+    session.song=res?res.mean:null;
+    stage.innerHTML=`<h2>On the high note, how did it feel?</h2><div class="efforts" style="grid-template-columns:repeat(4,1fr)">${REG.map((e,i)=>`<button data-r="${i}">${e}</button>`).join("")}</div>`;
+    session.songReg=await new Promise(r=>stage.querySelectorAll("[data-r]").forEach(x=>x.onclick=()=>r(+x.dataset.r)))}
+  if(ch==="own")session.ownSong=true;
+  stage.innerHTML=`<h2>How did your voice feel overall?</h2><p class="muted">Strain is the thing to watch in mix work.</p>
+    <div class="efforts">${EFFORT.map((e,i)=>`<button data-e="${i}">${e}</button>`).join("")}</div>`;
+  const effort=await new Promise(r=>stage.querySelectorAll("[data-e]").forEach(x=>x.onclick=()=>r(+x.dataset.e)));
+  mixFinish(effort);
+}
+async function songCount(){try{return (await DB.all("songs")).length}catch(e){return 0}}
+function mixFinish(effort){
+  const R=session.results,cracks=R.reduce((a,r)=>a+r.cracks,0),n=R.reduce((a,r)=>a+r.n,0);
+  const bests=R.map(r=>r.best).filter(v=>v!=null),best=bests.length?Math.max(...bests):null;
+  const blended=R.filter(r=>r.reg===1).length;
+  S.mix.push({date:new Date().toISOString(),bridge:bridgeNote(),reach:S.mixReach,cracks,n,best,regs:R.map(r=>r.reg),song:session.song,songReg:session.songReg,effort});
+  let msg="";
+  if(effort>=3){S.mixReach=Math.max(1,S.mixReach-1);msg=`<p class="warn">Next time the drills stop lower. Go quieter. ${effort>=4?"<b>Rest today.</b> If it hurts again or your speaking voice stays hoarse, see a voice doctor (ENT).":""}</p>`}
+  else if(n>=20&&!R.some(r=>r.stopped)&&cracks/n<=0.08&&blended>=2&&effort<=1&&S.mixReach<5){S.mixReach++;msg=`<p class="good"><b>Reaching higher next time:</b> ${S.mixReach} half steps past your break. Few cracks, blended, no strain.</p>`}
+  else msg=`<p class="muted">The drills go higher once a session has few cracks, at least two drills that felt blended, and no strain.</p>`;
+  save();refresh();
+  stage.innerHTML=`<h2>Session done</h2><div class="stats" style="margin:12px 0">
+    <div class="stat"><div class="label">Clean notes</div><div class="v">${n?Math.round((1-cracks/n)*100)+"%":"–"}</div><div class="muted small">no crack heard</div></div>
+    <div class="stat"><div class="label">Highest clean</div><div class="v">${best!=null?noteName(best):"–"}</div></div>
+    <div class="stat"><div class="label">Felt blended</div><div class="v">${blended} of ${R.length}</div></div>
+    <div class="stat"><div class="label">Song line</div><div class="v"><span class="${tuneCls(session.song)}">${tuneWord(session.song)}</span></div></div></div>
+    ${msg}<div class="row" style="margin-top:12px"><button class="primary" id="go">${session.ownSong?"Go to my songs":"Done"}</button></div>`;
+  $("go").onclick=()=>session.ownSong?showTab("Songs"):home();
+}
+function drawMixChart(){
+  const pts=S.mix;
+  lineChart($("mixChart"),[{v:pts.map(p=>p.best==null?null:p.best-p.bridge),color:css("--accent")}],
+    [[-3,"3 below"],[0,"your break"],[3,"3 above"],[5,"5 above"]],{min:-4,max:6,dots:pts.map(p=>p.effort)});
+  lineChart($("crackChart"),[{v:pts.map(p=>p.n?100*(1-p.cracks/p.n):null),color:css("--accent")}],[[100,"100%"],[75,"75%"],[50,"50%"]],{min:40,max:100});
+}
+
 /* ================= tuner ================= */
 $("btnTuner").onclick=async()=>{
   if(!await needAudio())return;
@@ -704,6 +885,7 @@ $("btnTest").onclick=()=>{
     const p=yin(b,sr),e=p.f?Math.abs(1200*Math.log2(p.f/f)):Infinity;worst=Math.max(worst,e);rows.push(`${noteName(hzToMidi(f))} ${p.f?e.toFixed(1):"miss"}¢`)});
   $("msg").innerHTML=`Engine check, 8 test voices from low E to high D: worst error <b class="num">${worst.toFixed(1)}¢</b>. ${worst<5?"Accurate.":"Something is off."}<br><small class="num">${rows.join(" · ")}</small>`;
 };
+$("btnBreak").onclick=()=>{stage.scrollIntoView({behavior:"smooth"});sirenFlow()};
 $("btnRange").onclick=()=>{S.range=null;save();refresh();home();stage.scrollIntoView({behavior:"smooth"})};
 $("btnOwn").onclick=()=>{S.ownRef=null;ownBuffer=null;save();home();stage.scrollIntoView({behavior:"smooth"})};
 $("btnExport").onclick=async()=>{const t=JSON.stringify({range:S.range,stage:S.stage,sessions:S.sessions},null,1);
@@ -934,11 +1116,11 @@ function testBanner(){let b=$("testBar");
   if(!S.test){if(b)b.remove();return}
   if(!b){b=document.createElement("div");b.id="testBar";b.className="card";b.style.borderColor="var(--warn)";
     document.querySelector("main").insertBefore(b,document.querySelector("nav.tabs"));}
-  b.innerHTML=`<div class="row between"><span><b class="warn">Test mode.</b> Sample range D♯2–A3. Nothing you do is saved.</span><button id="testOff">Leave test mode</button></div>`;
+  b.innerHTML=`<div class="row between"><span><b class="warn">Test mode.</b> Sample range D♯2–A3, break D4. Nothing you do is saved.</span><button id="testOff">Leave test mode</button></div>`;
   $("testOff").onclick=()=>location.reload();
 }
 $("btnTestMode").onclick=()=>{
-  S=JSON.parse(JSON.stringify(S));S.test=true;S.range={lo:39,hi:57};
+  S=JSON.parse(JSON.stringify(S));S.test=true;S.range={lo:39,hi:57};S.bridge=S.bridge??62;
   testBanner();refresh();showTab("Train");window.scrollTo({top:0,behavior:"smooth"});
 };
 
