@@ -1,0 +1,210 @@
+{
+ "kind": "tuningRoomSpots",
+ "version": 1,
+ "spots": [
+  {
+   "id": "btmv-best",
+   "song": "Be Thou My Vision",
+   "key": "D",
+   "where": "Every verse, line 3",
+   "words": "Thou my best thought, by",
+   "notes": [
+    59,
+    59,
+    61,
+    62,
+    61,
+    59,
+    57,
+    54
+   ],
+   "beats": [
+    1,
+    0.5,
+    0.5,
+    0.5,
+    0.5,
+    1,
+    1,
+    1
+   ],
+   "syl": [
+    "Thou",
+    "my",
+    "—",
+    "best",
+    "—",
+    "thought",
+    "—",
+    "by"
+   ],
+   "narrow": [
+    "Thou",
+    "my",
+    "—",
+    "bihst",
+    "—",
+    "thought",
+    "—",
+    "by"
+   ]
+  },
+  {
+   "id": "ica-fears",
+   "song": "In Christ Alone",
+   "key": "D",
+   "where": "Every verse, line 6 (\"when fears are stilled\", \"the wrath of God\")",
+   "words": "what depths of peace, when fears are stilled",
+   "notes": [
+    59,
+    57,
+    54,
+    52,
+    50,
+    62,
+    61,
+    59
+   ],
+   "beats": [
+    0.5,
+    0.5,
+    0.5,
+    1.5,
+    0.5,
+    0.5,
+    0.5,
+    1.5
+   ],
+   "syl": [
+    "what",
+    "depths",
+    "of",
+    "peace",
+    "when",
+    "fears",
+    "are",
+    "stilled"
+   ],
+   "narrow": [
+    "what",
+    "depths",
+    "of",
+    "peace",
+    "when",
+    "fihrz",
+    "uhr",
+    "stilled"
+   ]
+  },
+  {
+   "id": "gmj-bridge",
+   "song": "Give Me Jesus",
+   "key": "G",
+   "where": "Bridge",
+   "words": "Take this world and give me Jesus, in His cross",
+   "notes": [
+    59,
+    57,
+    55,
+    55,
+    59,
+    62,
+    62,
+    60,
+    59,
+    57,
+    55
+   ],
+   "beats": [
+    0.5,
+    0.5,
+    1.5,
+    0.5,
+    0.5,
+    0.5,
+    1,
+    1,
+    0.5,
+    0.5,
+    1.5
+   ],
+   "syl": [
+    "Take",
+    "this",
+    "world",
+    "and",
+    "give",
+    "me",
+    "Je",
+    "sus",
+    "in",
+    "His",
+    "cross"
+   ],
+   "narrow": [
+    "Take",
+    "this",
+    "world",
+    "and",
+    "give",
+    "mih",
+    "Jih",
+    "zuhs",
+    "in",
+    "His",
+    "cross"
+   ]
+  },
+  {
+   "id": "tye-lift",
+   "song": "Turn Your Eyes",
+   "key": "C",
+   "where": "Chorus",
+   "words": "Jesus, to You we lift our eyes",
+   "notes": [
+    55,
+    57,
+    57,
+    55,
+    60,
+    59,
+    57,
+    55,
+    52
+   ],
+   "beats": [
+    0.5,
+    0.5,
+    1,
+    0.5,
+    0.5,
+    0.5,
+    1,
+    1,
+    2.5
+   ],
+   "syl": [
+    "Je",
+    "—",
+    "sus",
+    "to",
+    "You",
+    "we",
+    "lift",
+    "our",
+    "eyes"
+   ],
+   "narrow": [
+    "Je",
+    "—",
+    "sus",
+    "to",
+    "You",
+    "we",
+    "lift",
+    "our",
+    "eyes"
+   ]
+  }
+ ]
+}
