@@ -35,6 +35,7 @@ You're building a **location-triggered memory palace (LTM)** for a book of the B
 Sketchfab models that use the old spec-gloss materials need converting to `pbrMetallicRoughness`, or they render grey.
 
 ## 4. Verify (every batch)
+- **Every change: `node ltm-engine/tests/fast.mjs <town>` (or `all`).** It runs the same per-room geometry checks as `acceptance.mjs --rooms` (clockwise order, centre inside the square, markers on objects, spots in frame, clear routes) by calculation, with no frame drawn: a few seconds for James, about a minute for Colossae. Same pass/fail as the slow test. Run `acceptance.mjs` only occasionally (screenshots, phone load time, frame rate, before a push). Both share their thresholds in `tests/geom.mjs`.
 - `node tests/acceptance.mjs`: for every room it checks the clockwise screen order, the centre inside the square, markers resting on objects, all spots in frame and clear walking routes. It also checks phone load time and frame rate and compares screenshots against `tests/baseline/`. Re-baseline with `--update-baseline` after approved visual changes. For a quick loop, use `--rooms --no-shots`.
 - **Critic:** `docs/CRITIC_RUBRIC.md`, a cheaper sub-agent, 3 runs averaged. Pass at 8 or more.
 - **Learners:** `docs/LEARNER_PROTOCOL.md`, recall of James 1:1–10 on day 1 and day 8.

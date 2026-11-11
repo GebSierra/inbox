@@ -73,6 +73,7 @@ function groundY(x, z) {
   for (const [cz, hz, cx, hx, top] of RAISED) if (Math.abs(z - cz) < hz && Math.abs(x - cx) < hx) y = Math.max(y, top);   // bridge decks etc. (town part)
   return y;
 }
+function placeCamera() { camera.position.set(player.x, groundY(player.x, player.z) + 1.7, player.z); camera.rotation.set(0, 0, 0); camera.rotation.order = 'YXZ'; camera.rotation.y = player.yaw; camera.rotation.x = player.pitch; }
 function frame() { window.__fc = (window.__fc || 0) + 1;
   const dt = Math.min(clock.getDelta(), .05), t = clock.elapsedTime; WATER_T.value = t; for (const sh of SHIPS) { sh.position.y = sh.userData.y0 + Math.sin(t * .9 + sh.userData.ph) * .12; sh.rotation.z = Math.sin(t * .7 + sh.userData.ph) * .03; } perf.n++; perf.sum += dt; if (perf.n === 90) { if (perf.sum / 90 > 1 / 28 && !window.__fixed) useAO = false; }
   if (window.__smoke) for (const sm of window.__smoke) { const ph = (t * .25 + sm.userData.ph) % 1; sm.position.y = heightAt(0, TZ + 7) + 2.6 + ph * 4; sm.position.x = Math.sin(ph * 6 + sm.userData.ph * 9) * .4 + ph * .8; sm.scale.setScalar(.6 + ph * 2.2); sm.material.opacity = .22 * (1 - ph) * Math.min(1, ph * 6); }
@@ -97,7 +98,7 @@ function frame() { window.__fc = (window.__fc || 0) + 1;
     doll.target.x = Math.max(-200, Math.min(240, doll.target.x)); doll.target.z = Math.max(-200, Math.min(220, doll.target.z)); doll.target.y = heightAt(doll.target.x, doll.target.z);
     const t = doll.target, want = new THREE.Vector3(t.x + Math.sin(doll.theta) * Math.cos(doll.phi) * doll.dist, t.y + Math.sin(doll.phi) * doll.dist, t.z + Math.cos(doll.theta) * Math.cos(doll.phi) * doll.dist);
     const minY = heightAt(want.x, want.z) + 3; if (want.y < minY) want.y = minY; camera.position.lerp(want, .18); camera.lookAt(t); }
-  else { if (mapbtn.textContent !== 'Bird’s-eye') mapbtn.textContent = 'Bird’s-eye'; camera.position.set(player.x, groundY(player.x, player.z) + 1.7, player.z); camera.rotation.set(0, 0, 0); camera.rotation.order = 'YXZ'; camera.rotation.y = player.yaw; camera.rotation.x = player.pitch; }
+  else { if (mapbtn.textContent !== 'Bird’s-eye') mapbtn.textContent = 'Bird’s-eye'; placeCamera(); }
   // HUD: nearest station
   const fpx = player.x - Math.sin(player.yaw) * 5.5, fpz = player.z - Math.cos(player.yaw) * 5.5;
   let best = null, bd = 1e9; for (const st of STATIONS) { const d = Math.hypot(st.x - fpx, st.z - fpz); if (d < bd) { bd = d; best = st; } for (const [li, lc] of st.loci.entries()) { lc.gem.rotation.y = t; lc.gem.position.y = lc.gy + .65 + Math.sin(t * 2 + lc.x) * .07;
@@ -134,12 +135,37 @@ window.__dump = () => ({ title: BOOK, translation: 'ESV', verses: VERSES, distri
   loci: st.loci.map(l => ({ verse: `${st.ch}:${l.v}`, object: l.where.split(' · ').slice(1).join(' · ') || l.where, pos: [l.x, l.fy ?? l.gy ?? 0, l.z].map(v => +v.toFixed(2)) })),
   stop: { back: st.back ?? null, pitch: st.pitch ?? null, look: st.look.map(v => +(+v).toFixed(2)) } })) });
 window.__snap = i => { idx = i - 1; go(1); if (tween) { tween.path = []; player.x = tween.x; player.z = tween.z; player.yaw = tween.yaw; player.pitch = tween.pitch; tween = null; } overview = false; };
+// Support rays (__measure) need speed without changing a single result. Every mesh gets a world box, built once (static geometry; skinned / instanced
+// meshes are always candidates), so only meshes over the spot are tested. Big merged meshes (the town's baked walls and roofs span the whole map) also
+// get an xz grid of their triangles; a ray then tests a temporary mesh made of just the triangles under it, through three's own Mesh.raycast.
+let SUPPORT = null; const BIG_TRIS = 4000, CELL = 3;
+function supportIndex(o) { const g = o.geometry, pos = g.attributes.position, ix = g.index, n = (ix ? ix.count : pos.count) / 3, e = o.matrixWorld.elements, cells = new Map();
+  const wx = i => e[0] * pos.getX(i) + e[4] * pos.getY(i) + e[8] * pos.getZ(i) + e[12], wz = i => e[2] * pos.getX(i) + e[6] * pos.getY(i) + e[10] * pos.getZ(i) + e[14];
+  for (let t = 0; t < n; t++) { const a = ix ? ix.getX(t * 3) : t * 3, b = ix ? ix.getX(t * 3 + 1) : t * 3 + 1, c = ix ? ix.getX(t * 3 + 2) : t * 3 + 2, xa = wx(a), xb = wx(b), xc = wx(c), za = wz(a), zb = wz(b), zc = wz(c);
+    const x0 = Math.floor(Math.min(xa, xb, xc) / CELL), x1 = Math.floor(Math.max(xa, xb, xc) / CELL), z0 = Math.floor(Math.min(za, zb, zc) / CELL), z1 = Math.floor(Math.max(za, zb, zc) / CELL);
+    if ((x1 - x0 + 1) * (z1 - z0 + 1) > 400) { (cells.get('big') || cells.set('big', []).get('big')).push(t); continue; }   // giant triangles are tested everywhere
+    for (let X = x0; X <= x1; X++) for (let Z = z0; Z <= z1; Z++) { const k = X + ',' + Z; (cells.get(k) || cells.set(k, []).get(k)).push(t); } }
+  return { cells, n, ix }; }
+function supportMesh(o, grid, x, z) { const ts = new Set(grid.cells.get('big') || []), m = .25;
+  for (let X = Math.floor((x - m) / CELL); X <= Math.floor((x + m) / CELL); X++) for (let Z = Math.floor((z - m) / CELL); Z <= Math.floor((z + m) / CELL); Z++) for (const t of grid.cells.get(X + ',' + Z) || []) ts.add(t);
+  if (!ts.size) return null; const src = o.geometry, idx = new Uint32Array(ts.size * 3); let k = 0;
+  for (const t of ts) for (let j = 0; j < 3; j++) idx[k++] = grid.ix ? grid.ix.getX(t * 3 + j) : t * 3 + j;
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', src.attributes.position); g.setIndex(new THREE.BufferAttribute(idx, 1)); g.boundingBox = src.boundingBox; g.boundingSphere = src.boundingSphere;
+  const pm = new THREE.Mesh(g, o.material); pm.matrixWorld.copy(o.matrixWorld); pm.userData = o.userData; return pm; }
+function supportCandidates(x, y0, y1, z) { if (!SUPPORT) { scene.updateMatrixWorld(true); SUPPORT = []; scene.traverse(o => { if (!o.isMesh || !o.geometry) return; if (o.isSkinnedMesh || o.isInstancedMesh) { SUPPORT.push({ o, box: null }); return; }
+      const g = o.geometry; if (!g.boundingBox) g.computeBoundingBox(); if (!g.boundingSphere) g.computeBoundingSphere(); const n = (g.index ? g.index.count : g.attributes.position.count) / 3;
+      SUPPORT.push({ o, box: g.boundingBox.clone().applyMatrix4(o.matrixWorld).expandByScalar(.05), big: n > BIG_TRIS && !g.morphAttributes.position, grid: null }); }); }
+  const out = []; for (const c of SUPPORT) { const b = c.box; if (b && !(x >= b.min.x - .3 && x <= b.max.x + .3 && z >= b.min.z - .3 && z <= b.max.z + .3 && y1 >= b.min.y && y0 <= b.max.y)) continue;
+    if (c.big) { c.grid ??= supportIndex(c.o); const pm = supportMesh(c.o, c.grid, x, z); if (pm) out.push(pm); } else out.push(c.o); }
+  return out; }
 window.__measure = i => { const st = STATIONS[i]; camera.updateMatrixWorld(); const rc = new THREE.Raycaster(), meshes = scene.children.filter(o => o.isMesh);
   const pts = st.loci.map(l => { const top = l.fy ?? l.gy ?? groundY(l.x, l.z), base = Math.min(top, groundY(l.x, l.z) + .3), mid = (top + base) / 2;
     const pb = new THREE.Vector3(l.x, base, l.z).project(camera), pm = new THREE.Vector3(l.x, mid, l.z).project(camera);
-    let support = null; for (const [ox, oz] of [[0, 0], [.15, 0], [-.15, 0], [0, .15], [0, -.15]]) { rc.set(new THREE.Vector3(l.x + ox, top + .05, l.z + oz), new THREE.Vector3(0, -1, 0)); rc.far = 3; const hit = rc.intersectObjects(scene.children, true).filter(h => !h.object.userData.isGem && h.object.isMesh)[0]; if (hit && (support === null || hit.distance < support)) support = +hit.distance.toFixed(2); }
+    let support = null; for (const [ox, oz] of [[0, 0], [.15, 0], [-.15, 0], [0, .15], [0, -.15]]) { rc.set(new THREE.Vector3(l.x + ox, top + .05, l.z + oz), new THREE.Vector3(0, -1, 0)); rc.far = 3; const hit = rc.intersectObjects(supportCandidates(l.x, top + .05 - 3, top + .05, l.z), false).filter(h => !h.object.userData.isGem && h.object.isMesh)[0]; if (hit && (support === null || hit.distance < support)) support = +hit.distance.toFixed(2); }
     return { sx: pb.x, sy: -pb.y, z: pb.z, mx: pm.x, my: -pm.y, mz: pm.z, support }; });
   return { name: st.name, ch: st.ch, room: st.room, pts }; };
+// tests/fast.mjs: jump to stop i, put the camera exactly where frame() would, and measure - no frame is drawn
+window.__stopMeasure = i => { window.__snap(i); placeCamera(); return window.__measure(i); };
 window.__state = () => ({ idx, x: player.x, z: player.z, hud: hudS.textContent, n: STATIONS.length, moving: !!tween });
 window.__blockers = () => { const out = [], rc = new THREE.Raycaster(); const meshes = scene.children.filter(o => o.isMesh && !o.userData.dyn);
   const view = st => { const yaw = Math.atan2(-(st.look[0] - st.x), -(st.look[2] - st.z)); const b = st.banner ? 5.6 : 6.2; return [st.x + Math.sin(yaw) * b, st.z + Math.cos(yaw) * b]; };
