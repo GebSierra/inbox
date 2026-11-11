@@ -851,7 +851,7 @@ async function mixSession(){
     <div class="row" style="margin-top:12px"><button class="primary" id="go">Start drills</button></div>`;
   await new Promise(r=>$("go").onclick=r);
   for(let i=0;i<plan.length;i++){session.label=`Drill ${i+1} of ${plan.length}`;const r=await mixRun(plan[i]);session.results.push(r);if(r.stopped&&i<plan.length-1){/* keep going */}}
-  if(S.spots.length){const sp=S.spots[S.mix.length%S.spots.length];
+  const daily=S.spots.filter(x=>Math.max(...x.notes)<=bridgeNote()+S.mixReach);if(daily.length){const sp=daily[S.mix.length%daily.length];
     stage.innerHTML=`<span class="label">Real song</span><h2>${esc(sp.song)}</h2><p>“${esc(sp.words)}.” Step ${(S.spotLvl[sp.id]||0)+1} of ${RUNGS.length}: ${RUNGS[S.spotLvl[sp.id]||0].name}.</p>
       <div class="row" style="margin-top:12px"><button class="primary" id="go">Sing it</button><button id="skip">Skip</button></div>`;
     const c2=await new Promise(r=>{$("go").onclick=()=>r(1);$("skip").onclick=()=>r(0)});
