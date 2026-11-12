@@ -103,6 +103,8 @@ details textarea{margin-top:8px}
 #filler.show{opacity:1;transform:scale(1)}
 #fillerCount{font-size:.8rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 .opt details{margin-top:6px}
+.more{border-top:1px solid var(--line);margin-top:10px;padding-top:6px}
+.more>.opt:first-of-type{margin-top:12px}
 .opt details textarea{min-height:90px;font-size:.9rem}
 
 /* ---------- results ---------- */
@@ -159,6 +161,12 @@ audio{width:100%;margin-bottom:14px}
         <option value="3">3</option><option value="5" selected>5</option><option value="8">8</option><option value="12">12</option>
       </select>
     </div>
+    <details>
+      <summary>Add your outline (shown while you preach)</summary>
+      <textarea id="notes" placeholder="Paste your sermon outline or key points here."></textarea>
+    </details>
+    <details class="more">
+      <summary>Additional settings</summary>
     <div class="opt" id="trOpt">
       <span class="label">Live transcript (shown faintly)</span>
       <div class="chips" data-for="optTranscript">
@@ -182,9 +190,6 @@ audio{width:100%;margin-bottom:14px}
       <select id="optFiller" class="hidden"><option value="on">On</option><option value="off">Off</option></select>
       <details><summary>Edit filler words (comma separated)</summary><textarea id="fillerList"></textarea></details>
     </div>
-    <details>
-      <summary>Add your outline (shown while you preach)</summary>
-      <textarea id="notes" placeholder="Paste your sermon outline or key points here."></textarea>
     </details>
     <button class="btn solid" id="go">Start preaching</button>
     <p class="err" id="startErr"></p>
@@ -229,11 +234,12 @@ audio{width:100%;margin-bottom:14px}
     <div class="row" id="downloads"></div>
     <label class="field"><span class="label">Ideas you jotted</span>
       <textarea id="ideasOut" placeholder="Anything that came to you while preaching."></textarea></label>
-    <label class="field" id="transcriptField"><span class="label">Transcript: paste your own (e.g. Raycast) or keep the browser's</span>
+    <label class="field" id="transcriptField"><span class="label">Transcript: paste your own or keep the browser's</span>
       <textarea id="transcriptOut" placeholder="Paste your transcript here."></textarea></label>
     <p id="saved"></p>
     <div class="actions">
-      <button class="btn" id="saveNotes">Download notes</button>
+      <button class="btn" id="saveNotes">Download your transcript and ideas</button>
+      <button class="btn" id="copyNotes">Copy transcript and ideas</button>
       <button class="btn solid" id="again">Preach again</button>
     </div>
   </div>
@@ -261,12 +267,14 @@ const DEFAULT_TIPS = [
   'Mean what you say, and say what you mean!', 'Speak like you believe what you\'re saying.',
   'Dare to be dull.'
 ].join('\n');
-const DEFAULT_FILLERS = 'um, uh, er, like, you know, basically, actually, literally, kind of, sort of, I mean';
+const DEFAULT_FILLERS = 'um, uh, er, you know, basically, actually, literally, kind of, sort of, I mean';
 
 function saved(key, fallback){ try { return localStorage.getItem(key) ?? fallback; } catch (e) { return fallback; } }
 function keep(key, val){ try { localStorage.setItem(key, val); } catch (e) {} }
 $('tipsList').value = saved('kp-tips', DEFAULT_TIPS);
-$('fillerList').value = saved('kp-fillers', DEFAULT_FILLERS);
+// "like" is often not a filler (similes), so drop it from any saved list too.
+$('fillerList').value = saved('kp-fillers', DEFAULT_FILLERS).split(',').map(w => w.trim())
+  .filter(w => w && w.toLowerCase() !== 'like').join(', ');
 $('tipsList').addEventListener('input', () => keep('kp-tips', $('tipsList').value));
 $('fillerList').addEventListener('input', () => keep('kp-fillers', $('fillerList').value));
 
@@ -571,8 +579,7 @@ $('ideas').addEventListener('input', () => {
 });
 $('ideasOut').addEventListener('input', () => store.set($('ideasOut').value));
 
-$('saveNotes').onclick = () => {
-  const date = new Date();
+function notesText(date){
   const parts = ['Sermon practice, ' + date.toLocaleString()];
   const outline = $('notes').value.trim();
   const ideas = $('ideasOut').value.trim();
@@ -580,7 +587,21 @@ $('saveNotes').onclick = () => {
   if (outline) parts.push('OUTLINE\n' + outline);
   if (ideas) parts.push('IDEAS\n' + ideas);
   if (tr) parts.push('TRANSCRIPT\n' + tr);
-  const url = URL.createObjectURL(new Blob([parts.join('\n\n')], { type: 'text/plain' }));
+  return parts.join('\n\n');
+}
+
+$('copyNotes').onclick = async () => {
+  try {
+    await navigator.clipboard.writeText(notesText(new Date()));
+    $('saved').textContent = 'Copied.';
+  } catch (e) {
+    $('saved').textContent = 'Could not copy. Try the download button.';
+  }
+};
+
+$('saveNotes').onclick = () => {
+  const date = new Date();
+  const url = URL.createObjectURL(new Blob([notesText(date)], { type: 'text/plain' }));
   const a = document.createElement('a');
   a.href = url;
   a.download = 'sermon-notes-' + date.toISOString().slice(0, 16).replace(/[:T]/g, '-') + '.txt';
