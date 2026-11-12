@@ -19,37 +19,43 @@ function ufUV(mesh, s0, y0) {
   uv.needsUpdate = true; return mesh;
 }
 function ufB(g, w, h, d, m, x, y, z, s0, y0) { const mesh = box(w, h, d, m, x, y, z, g); mesh.userData.nocol = 1; return ufUV(mesh, s0, y0); }
-// a square turret / pier: size s, rising `up` above the wall top, merlons on every corner (and between them when size > 2)
-function ufTurret(x, z, h, s, up, o, s0) {
-  const M2 = ufMats(o), gy = heightAt(x, z), g = new THREE.Group(); g.position.set(x, gy - .5, z); scene.add(g);
-  const hh = h + .5 + up, y0 = gy - .5, hs = s / 2;
+// the ground's highest and lowest point under a footprint of half-size r round (x, z)
+function ufGround(x, z, r) { let lo = 1e9, hi = -1e9; for (const [a, b] of [[0, 0], [1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [-1, 1], [1, -1], [-1, -1]]) { const y = heightAt(x + a * r, z + b * r); lo = Math.min(lo, y); hi = Math.max(hi, y); } return [lo, hi]; }
+// a square turret / pier: size s, rising `up` above the wall top, merlons on every corner (and between them when size > 2). It is always upright and its foot goes .5 below the lowest
+// ground under it; on a slope the plinth is made tall enough to meet the high side, and the top follows the highest ground within `reach` metres so the runs that join it never stand above it.
+function ufTurret(x, z, h, s, up, o, s0, reach = 0) {
+  const M2 = ufMats(o), [lo, hi] = ufGround(x, z, s / 2 + .3), top = reach ? Math.max(hi, ufGround(x, z, reach)[1]) : hi, g = new THREE.Group(); const y0 = lo - .5; g.position.set(x, y0, z); scene.add(g);
+  const hh = top + h + up - y0, hs = s / 2, ph = hi - y0 + .55;
   const core = ufUV(box(s, hh, s, M2.st, 0, 0, 0, g), s0, y0); core.userData.nocol = 1;
-  ufB(g, s + .3, 1.05, s + .3, M2.moss, 0, 0, 0, s0, y0); ufB(g, s + .34, .1, s + .34, M2.drd, 0, 1.05, 0, s0, y0);
+  ufB(g, s + .3, ph, s + .3, M2.moss, 0, 0, 0, s0, y0); ufB(g, s + .34, .1, s + .34, M2.drd, 0, ph, 0, s0, y0);
   ufB(g, s + .22, .1, s + .22, M2.drd, 0, hh - .7, 0, s0, y0); ufB(g, s + .4, .3, s + .4, M2.drl, 0, hh - .6, 0, s0, y0);
   const mer = [[-1, -1], [1, -1], [-1, 1], [1, 1]].map(([a, b]) => [a * (hs - .4), b * (hs - .4), 1]); if (s > 2) for (const q of [-1, 1]) { mer.push([q * (hs - .4), 0, 0], [0, q * (hs - .4), 0]); }
   for (const [a, b, c] of mer) ufB(g, c ? .8 : (a ? .6 : 1), .95, c ? .8 : (a ? 1 : .6), M2.sd, a, hh, b, s0, y0);
   return g;
 }
-// one straight run of city wall from (x0,z0) to (x1,z1), h metres above the ground (the gate's towers carry the same cornice line, see wallH in cityGate)
+// one straight run of city wall from (x0,z0) to (x1,z1), h metres above the ground (the gate's towers carry the same cornice line, see wallH in cityGate).
+// Every segment is upright (it turns about Y only, never leans) and its foot is .5 below the lowest ground under it, the plinth reaching up to meet the higher end. The cornice is level
+// within a section of 4 segments and steps between sections; where it steps a pier covers the joint, so there is never a gap or an overlap.
 function ufCityWall(x0, z0, x1, z1, h = 3.6, opts = {}) {
   const o = Object.assign({ stone: 'stone', stoneDk: 'stoneDk', centre: [15, 15], run: 0 }, opts), M2 = ufMats(o);
-  const L = Math.hypot(x1 - x0, z1 - z0), n = Math.ceil(L / 2.2), gr = [];
+  const L = Math.hypot(x1 - x0, z1 - z0), n = Math.ceil(L / 2.2), gr = [], SEC = 4;
   for (let i = 0; i <= n; i++) { const t = i / n; gr.push(heightAt(x0 + (x1 - x0) * t, z0 + (z1 - z0) * t)); }
-  const base = gr.map((_, i) => (gr[Math.max(0, i - 1)] + gr[i] + gr[Math.min(n, i + 1)]) / 3 - .5);   // smoothed foundation line: the cornice runs level, not in steps
+  const top = []; for (let i = 0; i < n; i++) { const k = Math.floor(i / SEC); if (top[k] === undefined) { let m = -1e9; for (let j = k * SEC; j <= Math.min(n, k * SEC + SEC); j++) m = Math.max(m, gr[j]); top[k] = m + h; } }
   for (let i = 0; i < n; i++) {
     if (!o.quiet) R(.85, 1.1);   // the old wall drew this for its random height; keep the stream where it was
     const ta = i / n, tb = (i + 1) / n, ax = x0 + (x1 - x0) * ta, az = z0 + (z1 - z0) * ta, bx = x0 + (x1 - x0) * tb, bz = z0 + (z1 - z0) * tb;
-    const dx = bx - ax, dz = bz - az, Lh = Math.hypot(dx, dz), dy = base[i + 1] - base[i], Ls = Math.hypot(Lh, dy), by0 = (base[i] + base[i + 1]) / 2;
-    const g = new THREE.Group(); g.position.set((ax + bx) / 2, by0, (az + bz) / 2); g.rotation.order = 'YZX'; g.rotation.y = -Math.atan2(dz, dx); g.rotation.z = Math.atan2(dy, Lh); scene.add(g);
-    const hh = h + .5, s0 = (i + .5) * L / n + o.run * 13.7, y0 = by0, out = Math.sign(-dz * ((ax + bx) / 2 - o.centre[0]) + dx * ((az + bz) / 2 - o.centre[1])) || 1;
-    const Lw = Ls * 1.02;
+    const dx = bx - ax, dz = bz - az, Lh = Math.hypot(dx, dz), gLo = Math.min(gr[i], gr[i + 1]), gHi = Math.max(gr[i], gr[i + 1]), by0 = gLo - .5, T = top[Math.floor(i / SEC)];
+    const g = new THREE.Group(); g.position.set((ax + bx) / 2, by0, (az + bz) / 2); g.rotation.y = -Math.atan2(dz, dx); scene.add(g);
+    const hh = T - by0, ph = gHi - by0 + .55, s0 = (i + .5) * L / n + o.run * 13.7, y0 = by0, out = Math.sign(-dz * ((ax + bx) / 2 - o.centre[0]) + dx * ((az + bz) / 2 - o.centre[1])) || 1;
+    const Lw = Lh * 1.02;
     const core = ufUV(add(new THREE.BoxGeometry(Lw, hh, .8), M2.st, 0, hh / 2, 0, g), s0, y0);                // the solid wall (this box is what blocks walking)
-    ufB(g, Lw, 1.05, 1.0, M2.moss, 0, 0, 0, s0, y0); ufB(g, Lw, .1, 1.04, M2.drd, 0, 1.05, 0, s0, y0);       // mossy plinth and its dressed cap, as on the gate towers
+    ufB(g, Lw, ph, 1.0, M2.moss, 0, 0, 0, s0, y0); ufB(g, Lw, .1, 1.04, M2.drd, 0, ph, 0, s0, y0);             // mossy plinth and its dressed cap, as on the gate towers
     ufB(g, Lw, .1, .92, M2.drd, 0, hh - .7, 0, s0, y0); ufB(g, Lw, .3, 1.2, M2.drl, 0, hh - .6, 0, s0, y0);  // moulded cornice, same line as the gate's
     ufB(g, 1.0, .95, .6, i % 5 === 3 ? M2.st : M2.sd, 0, hh, 0, s0, y0);                                       // one merlon per segment
-    if (i % 4 === 1) { ufB(g, 1.14, 1.05, 1.44, M2.moss, 0, 0, 0, s0, y0); ufB(g, 1.18, .1, 1.48, M2.drd, 0, 1.05, 0, s0, y0); ufB(g, 1.0, hh - 2.25, 1.3, M2.st, 0, 1.15, 0, s0, y0); ufB(g, 1.14, .1, 1.44, M2.drd, 0, hh - 1.1, 0, s0, y0); }   // a pilaster through both faces
-    if (i % 4 === 3) { ufB(g, .34, 1.4, .06, M2.dr, 0, hh * .5 + .2, out * .4, s0, y0); ufB(g, .13, 1.1, .08, 'dark', 0, hh * .5 + .35, out * .41, s0, y0); }   // arrow slit on the outer face
+    if (i % 4 === 1) { ufB(g, 1.14, ph, 1.44, M2.moss, 0, 0, 0, s0, y0); ufB(g, 1.18, .1, 1.48, M2.drd, 0, ph, 0, s0, y0); ufB(g, 1.0, hh - ph - 1.2, 1.3, M2.st, 0, ph + .1, 0, s0, y0); ufB(g, 1.14, .1, 1.44, M2.drd, 0, hh - 1.1, 0, s0, y0); }   // a pilaster through both faces
+    if (i % 4 === 3) { ufB(g, .34, 1.4, .06, M2.dr, 0, (ph + hh) / 2 - .2, out * .4, s0, y0); ufB(g, .13, 1.1, .08, 'dark', 0, (ph + hh) / 2 - .05, out * .41, s0, y0); }   // arrow slit on the outer face
   }
+  for (let k = 1; k * SEC < n; k++) { if (Math.abs(top[k] - top[k - 1]) < .08) continue; const t = k * SEC / n; ufTurret(x0 + (x1 - x0) * t, z0 + (z1 - z0) * t, 0, 1.5, Math.max(top[k], top[k - 1]) - ufGround(x0 + (x1 - x0) * t, z0 + (z1 - z0) * t, 1)[1] + .35, o, 120 + k * 7 + o.run * 31); }   // the pier that covers a step in the cornice
 }
 // the whole ring round a town whose gate stands at z = GZ: two runs from the gate towers (x = +-9.5), the three outer sides, corner turrets, and a pier on each side of the
 // opening in the east wall. The runs are drawn in the same order as the six stoneWall calls they replace.
@@ -57,6 +63,6 @@ function cityWallRing(GZ, opts = {}) {
   const o = Object.assign({ stone: 'stone', stoneDk: 'stoneDk', h: 3.6 }, opts), h = o.h;
   const runs = [[-9.5, GZ, -70, GZ - 10], [-70, GZ - 10, -70, -40], [-70, -40, 46, -40], [9.5, GZ, 46, GZ - 10], [46, GZ - 10, 46, 8], [46, -4, 46, -40]];
   runs.forEach((r, i) => ufCityWall(r[0], r[1], r[2], r[3], h, Object.assign({}, o, { run: i })));
-  [[-70, GZ - 10], [-70, -40], [46, -40], [46, GZ - 10]].forEach(([x, z], i) => ufTurret(x, z, h, 2.6, 1.0, o, 40 + i * 9));
-  [[46, 8], [46, -4]].forEach(([x, z], i) => ufTurret(x, z, h, 1.7, .4, o, 80 + i * 9));
+  [[-70, GZ - 10], [-70, -40], [46, -40], [46, GZ - 10]].forEach(([x, z], i) => ufTurret(x, z, h, 2.6, 1.0, o, 40 + i * 9, 9));
+  [[46, 8], [46, -4]].forEach(([x, z], i) => ufTurret(x, z, h, 1.7, .4, o, 80 + i * 9, 5));
 }

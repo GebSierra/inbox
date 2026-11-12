@@ -47,3 +47,5 @@ Log every instruction the moment it arrives, quoting the owner's words. Push onc
 - **Done:** method spec, rules, post-mortem, layout research, book schema and validator (`--strict`), `colossians.json` (matched to the live town), `james.json` starter, acceptance suite (99/99 on Colossians), critic rubric, learner protocol.
 - **Partly done:** the engine is separated from the page and checked against the book data, but the *rooms* are still placed in code, not generated from `book.json`. Generating rooms from data is the next refactor (map each object name to a `P.*` prop builder).
 - **Cold-start trial so far:** a fresh session given only this kit planned James chapter 1 (6 rooms, 30 objects, 6 reference prompts). It passed the validator on its first run, in 5 tool calls, and raised 3 real gaps, which have since been fixed in these docs. The 3D build of James chapter 1 to a critic score of 8 has **not** been run yet.
+
+- Upgrading objects: see docs/UPGRADING_OBJECTS.md

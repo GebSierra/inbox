@@ -156,7 +156,7 @@ function ueFishingBoat(g, x, y, z) {
   const ring = add(new THREE.RingGeometry(.62, .86, 28), new THREE.MeshBasicMaterial({ color: '#e8f6f2', transparent: true, opacity: .55, depthWrite: false, side: THREE.DoubleSide }), 0, 0, 0, ringG);
   ring.rotation.x = -Math.PI / 2; ring.scale.set(.52, 1.13, 1); ring.castShadow = false;
   // the boat group (bobs): origin on the waterline, the keel a hand below it
-  const b = new THREE.Group(); b.position.set(0, water, 0); b.rotation.y = .22; st.add(b); b.userData.y0 = water; b.userData.ph = (x * 7.1 + z * 3.3) % 6.28; b.userData.amp = .035;
+  const b = new THREE.Group(); b.position.set(0, water + .05, 0); b.rotation.y = .22; st.add(b); b.userData.y0 = water + .05; b.userData.ph = (x * 7.1 + z * 3.3) % 6.28; b.userData.amp = .035;
   if (typeof SHIPS !== 'undefined') SHIPS.push(b);
   const hull = mat('boatWood', '#8a5a34', { side: THREE.DoubleSide }), L = 1.05 * s, W = .42 * s, H = .38 * s, drop = .17 * s;
   const pos = [], idx = [], N = 16, S = [], V = (a, c, d) => { pos.push(a, c, d); return pos.length / 3 - 1; }, rail = [[], []];
@@ -164,6 +164,9 @@ function ueFishingBoat(g, x, y, z) {
     S.push({ bl: V(-bw, fl, zz), br: V(bw, fl, zz), tl: V(-wd, tp, zz), tr: V(wd, tp, zz) }); rail[0].push([-wd, tp + .005, zz]); rail[1].push([wd, tp + .005, zz]); }
   for (let i = 0; i < N; i++) { const p = S[i], q = S[i + 1]; idx.push(p.bl, p.br, q.br, p.bl, q.br, q.bl, p.br, p.tr, q.tr, p.br, q.tr, q.br, p.tl, q.bl, p.bl, p.tl, q.tl, q.bl); }
   const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); geo.setIndex(idx); geo.computeVertexNormals(); add(geo, hull, 0, 0, 0, b);
+  // a dry inner floor at the boat's own origin height, a hand above the river, so the river mesh does not show through the open hull (the boat floats on its draft, a third of its height)
+  { const fp = [], fi = []; for (let i = 0; i <= N; i++) { const t = -1 + 2 * i / N, e = Math.abs(t), zz = t * L, fl = -drop + .17 * s * e * e, tp = H - drop + .13 * s * e ** 3, bw = W * .7 * (1 - e ** 3) + .02, wd = W * (1 - e ** 4) + .015, k = Math.min(1, Math.max(0, (0 - fl) / (tp - fl))), hw = Math.max(.005, (bw + (wd - bw) * k) - .012); fp.push(-hw, 0, zz, hw, 0, zz); if (i) { const q = i * 2; fi.push(q - 2, q - 1, q + 1, q - 2, q + 1, q); } }
+    const fg = new THREE.BufferGeometry(); fg.setAttribute('position', new THREE.Float32BufferAttribute(fp, 3)); fg.setIndex(fi); fg.computeVertexNormals(); add(fg, mat('boatFloor', '#6b4526', { side: THREE.DoubleSide }), 0, 0, 0, b); }
   for (const rl of rail) ueLimb2(b, rl, .022, 'woodLt');
   const ty = H - drop - .1 * s;   // seats
   for (const tz of [-.38, .22]) box(W * 1.7, .035, .13, 'woodLt', 0, ty, tz * s * 1.2, b);
