@@ -1,4 +1,6 @@
-# James: layout fix and chapter 2 plan (waiting for the owner's approval)
+# James: layout fix and district plan
+
+**Status 2026-11-12:** B (agora fix) built. Synagogue model (D), rich man's house (D2), west gate and harbour gate built as models; no rooms placed in them yet. Next: owner review, then name the synagogue's six rooms.
 
 Pictures: `refs/plan/plan-agora.png` (the agora fix) and `refs/plan/plan-town.png` (where every chapter goes).
 Nothing below is built yet. Please mark changes by sketch over either picture.

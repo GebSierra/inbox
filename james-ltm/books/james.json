@@ -62,12 +62,12 @@
      "verses": "1:6–10",
      "kind": "vignette",
      "at": [
-      -11,
-      55
+      -17,
+      54.25
      ],
      "viewer": [
-      -4,
-      55
+      -9.5,
+      54.25
      ],
      "objects": [
       {
@@ -103,12 +103,12 @@
      "verses": "1:11–15",
      "kind": "vignette",
      "at": [
-      -11,
-      41
+      -17,
+      42.75
      ],
      "viewer": [
-      -4,
-      41
+      -9.5,
+      42.75
      ],
      "objects": [
       {
@@ -144,12 +144,12 @@
      "verses": "1:16–20",
      "kind": "vignette",
      "at": [
-      11,
-      41
+      17,
+      40.83
      ],
      "viewer": [
-      4,
-      41
+      9.5,
+      40.83
      ],
      "objects": [
       {
@@ -177,7 +177,16 @@
        "what": "boiling cauldron over coals",
        "desc": "boiling bronze cauldron over coals, steam pouring out"
       }
-     ]
+     ],
+     "layout": {
+      "minY": {
+       "ground": [
+        17,
+        40.83
+       ],
+       "plus": 0.4
+      }
+     }
     },
     {
      "room": 5,
@@ -185,12 +194,12 @@
      "verses": "1:21–25",
      "kind": "vignette",
      "at": [
-      11,
-      51.5
+      17,
+      48.5
      ],
      "viewer": [
-      4,
-      51.5
+      9.5,
+      48.5
      ],
      "objects": [
       {
@@ -226,12 +235,12 @@
      "verses": "1:26–27",
      "kind": "vignette",
      "at": [
-      11,
-      61.5
+      17,
+      56.17
      ],
      "viewer": [
-      4,
-      61.5
+      9.5,
+      56.17
      ],
      "objects": [
       {

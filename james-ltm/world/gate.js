@@ -2,7 +2,7 @@
 const GZ = 78;
 { // city wall + gate
   cityGate(GZ, { style: 'james' });   // the library's 'city-gate-james' (objects/colossae-shared.js)
-  cityWallRing(GZ);   // objects/up-f.js: the ring in the gate's own masonry, in this town's stone colours
+  var WALL_OPEN = cityWallRing(GZ, { gaps: { 1: [[93.5, 100.5]], 2: [[65.5, 74.5]] } });   // openings for the west gate (to the farm) and the harbour gate; see world/districts.js   // objects/up-f.js: the ring in the gate's own masonry, in this town's stone colours
 }
 const tex1 = stripeTex('#c1553b', '#efe2c4', 8), tex2 = stripeTex('#3f6f9a', '#efe7d4', 8), tex3 = stripeTex('#d9a640', '#c1553b', 6);
 // road / cobbles

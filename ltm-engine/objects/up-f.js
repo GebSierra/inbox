@@ -38,11 +38,13 @@ function ufTurret(x, z, h, s, up, o, s0, reach = 0) {
 // within a section of 4 segments and steps between sections; where it steps a pier covers the joint, so there is never a gap or an overlap.
 function ufCityWall(x0, z0, x1, z1, h = 3.6, opts = {}) {
   const o = Object.assign({ stone: 'stone', stoneDk: 'stoneDk', centre: [15, 15], run: 0 }, opts), M2 = ufMats(o);
-  const L = Math.hypot(x1 - x0, z1 - z0), n = Math.ceil(L / 2.2), gr = [], SEC = 4;
+  const L = Math.hypot(x1 - x0, z1 - z0), n = Math.ceil(L / 2.2), gr = [], SEC = 4, openings = [];
   for (let i = 0; i <= n; i++) { const t = i / n; gr.push(heightAt(x0 + (x1 - x0) * t, z0 + (z1 - z0) * t)); }
   const top = []; for (let i = 0; i < n; i++) { const k = Math.floor(i / SEC); if (top[k] === undefined) { let m = -1e9; for (let j = k * SEC; j <= Math.min(n, k * SEC + SEC); j++) m = Math.max(m, gr[j]); top[k] = m + h; } }
   for (let i = 0; i < n; i++) {
     if (!o.quiet) R(.85, 1.1);   // the old wall drew this for its random height; keep the stream where it was
+    if (o.gaps) { const m = (i + .5) * L / n; if (o.gaps.some(([a, b]) => m > a && m < b)) { const ta2 = i / n, tb2 = (i + 1) / n; const op = openings[openings.length - 1];
+      if (op && op.last === i - 1) { op.b = [x0 + (x1 - x0) * tb2, z0 + (z1 - z0) * tb2]; op.last = i; } else openings.push({ a: [x0 + (x1 - x0) * ta2, z0 + (z1 - z0) * ta2], b: [x0 + (x1 - x0) * tb2, z0 + (z1 - z0) * tb2], last: i }); continue; } }   // an opening (a gate): the R() above is still drawn
     const ta = i / n, tb = (i + 1) / n, ax = x0 + (x1 - x0) * ta, az = z0 + (z1 - z0) * ta, bx = x0 + (x1 - x0) * tb, bz = z0 + (z1 - z0) * tb;
     const dx = bx - ax, dz = bz - az, Lh = Math.hypot(dx, dz), gLo = Math.min(gr[i], gr[i + 1]), gHi = Math.max(gr[i], gr[i + 1]), by0 = gLo - .5, T = top[Math.floor(i / SEC)];
     const g = new THREE.Group(); g.position.set((ax + bx) / 2, by0, (az + bz) / 2); g.rotation.y = -Math.atan2(dz, dx); scene.add(g);
@@ -55,14 +57,17 @@ function ufCityWall(x0, z0, x1, z1, h = 3.6, opts = {}) {
     if (i % 4 === 1) { ufB(g, 1.14, ph, 1.44, M2.moss, 0, 0, 0, s0, y0); ufB(g, 1.18, .1, 1.48, M2.drd, 0, ph, 0, s0, y0); ufB(g, 1.0, hh - ph - 1.2, 1.3, M2.st, 0, ph + .1, 0, s0, y0); ufB(g, 1.14, .1, 1.44, M2.drd, 0, hh - 1.1, 0, s0, y0); }   // a pilaster through both faces
     if (i % 4 === 3) { ufB(g, .34, 1.4, .06, M2.dr, 0, (ph + hh) / 2 - .2, out * .4, s0, y0); ufB(g, .13, 1.1, .08, 'dark', 0, (ph + hh) / 2 - .05, out * .41, s0, y0); }   // arrow slit on the outer face
   }
-  for (let k = 1; k * SEC < n; k++) { if (Math.abs(top[k] - top[k - 1]) < .08) continue; const t = k * SEC / n; ufTurret(x0 + (x1 - x0) * t, z0 + (z1 - z0) * t, 0, 1.5, Math.max(top[k], top[k - 1]) - ufGround(x0 + (x1 - x0) * t, z0 + (z1 - z0) * t, 1)[1] + .35, o, 120 + k * 7 + o.run * 31); }   // the pier that covers a step in the cornice
+  for (let k = 1; k * SEC < n; k++) { if (Math.abs(top[k] - top[k - 1]) < .08) continue; if (o.gaps && o.gaps.some(([a, b]) => k * SEC * L / n > a - 1.5 && k * SEC * L / n < b + 1.5)) continue; const t = k * SEC / n; ufTurret(x0 + (x1 - x0) * t, z0 + (z1 - z0) * t, 0, 1.5, Math.max(top[k], top[k - 1]) - ufGround(x0 + (x1 - x0) * t, z0 + (z1 - z0) * t, 1)[1] + .35, o, 120 + k * 7 + o.run * 31); }   // the pier that covers a step in the cornice
+  return openings;   // [{ a: [x, z], b: [x, z] }] the ends of each opening cut by opts.gaps
 }
 // the whole ring round a town whose gate stands at z = GZ: two runs from the gate towers (x = +-9.5), the three outer sides, corner turrets, and a pier on each side of the
 // opening in the east wall. The runs are drawn in the same order as the six stoneWall calls they replace.
 function cityWallRing(GZ, opts = {}) {
   const o = Object.assign({ stone: 'stone', stoneDk: 'stoneDk', h: 3.6 }, opts), h = o.h;
   const runs = [[-9.5, GZ, -70, GZ - 10], [-70, GZ - 10, -70, -40], [-70, -40, 46, -40], [9.5, GZ, 46, GZ - 10], [46, GZ - 10, 46, 8], [46, -4, 46, -40]];
-  runs.forEach((r, i) => ufCityWall(r[0], r[1], r[2], r[3], h, Object.assign({}, o, { run: i })));
+  // opts.gaps (optional) = { runIndex: [[from, to], ...] } metres along that run to leave open for a gate; returns the openings per run. Without it nothing changes.
+  const openings = runs.map((r, i) => ufCityWall(r[0], r[1], r[2], r[3], h, Object.assign({}, o, { run: i, gaps: o.gaps && o.gaps[i] })));
   [[-70, GZ - 10], [-70, -40], [46, -40], [46, GZ - 10]].forEach(([x, z], i) => ufTurret(x, z, h, 2.6, 1.0, o, 40 + i * 9, 9));
   [[46, 8], [46, -4]].forEach(([x, z], i) => ufTurret(x, z, h, 1.7, .4, o, 80 + i * 9, 5));
+  return openings;
 }
