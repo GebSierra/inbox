@@ -10,6 +10,7 @@ Open each town on the phone, stand at the first stop, at the busiest stop and in
 | When | Phone | Colossae (first / busiest / bird's-eye) | James | Tabernacle | Sermon on the Mount |
 |---|---|---|---|---|---|
 | Baseline (before Wave 1) | | – / – / – | – / – / – | – / – / – | – / – / – |
+| 2026-11-12, Wave 1 + review flags | owner's phone | ≈60 fps capped, with `?solidglass` and with `?halftex` (a full three-stop reading of every town still to come) | | | |
 | After Wave 1 | | | | | |
 | After Wave 2 | | | | | |
 
@@ -83,3 +84,16 @@ Note for the plan: Colossae's texture memory is mostly the models' own images (�
 To approve: set `"solidGlass": true` and/or `"halfTex": true` in the town's `theme` in `town.json` (or make it the engine default), then re-baseline that town's screenshots.
 
 `perf.mjs` accepts page flags for comparisons: `node ltm-engine/tools/perf.mjs 'colossae-ltm?solidglass'`.
+
+### S1 and S7 approved (2026-11-12)
+
+Owner, on his phone: both links ran at about 60 fps (the phone's cap); half-size textures "look just fine"; he wants the glass black, not the brown of today's see-through panes. So Colossae's theme now has `"solidGlass": true, "halfTex": true`, and James, the Tabernacle and the Mount have `"halfTex": true` (phones only; desktop screenshots unchanged).
+
+| Town | Draw calls | Texture memory (phone) |
+|---|---|---|
+| Colossae | 1413 → 670 | ≈168 → ≈64 MB |
+| James | ≈350–400 | ≈24 → ≈12 MB |
+| Tabernacle | 194 | ≈19 → ≈8 MB |
+| Sermon on the Mount | 74 | ≈22 → ≈12 MB |
+
+After Wave 1 overall: Colossae 2476 → 670 draw calls, as the plan predicted.
