@@ -4,7 +4,7 @@
   "bookFile": "james",
   "store": "james",
   "verses": [27, 26, 18, 17, 20],
-  "zones": ["The Agora", "The Synagogue Courtyard", "The Craftsmen’s Street", "The Harbour Warehouses", "The Farm & Vineyard"],
+  "zones": ["The Agora", "The Synagogue Courtyard", "The Harbour", "The Craftsmen’s Street", "The Farm & Vineyard"],
   "built": 1,
   "theme": {
     "loadName": "James",

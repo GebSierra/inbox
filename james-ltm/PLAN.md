@@ -17,8 +17,8 @@ Nothing below is built yet. Please mark changes by sketch over either picture.
 5. The dirt, stray palms and gaps behind the stoas become **house blocks on a straight street grid**, the way Greek cities like Miletus and Priene were laid out, so streets read as streets.
 6. The altar stays at the centre of the square.
 
-## C. The town route (chapters 2–5, districts already approved)
-Gate → Agora (1) → out of the agora's south passage onto a **colonnaded avenue** → **Synagogue** (2), whose forecourt door opens off the north end of the avenue on the east side, as at Sardis → back out and down the avenue: **Craftsmen's Street** (3), shops on both sides → the avenue ends at the quay: **Harbour warehouses** (4), a horrea courtyard building beside the pier → out through a **new west postern gate** along the shore → **Farm & vineyard** (5) in the walled orchard outside the west wall.
+## C. The town route (chapters 2–5; 3 and 4 swapped at the owner's request)
+Gate → Agora (1) → out of the agora's south passage onto a **colonnaded avenue** → **Synagogue** (2), whose forecourt door opens off the avenue on the east side, as at Sardis → back out and down the avenue to the sea: **The Harbour** (3), the quay, pier and boats → from the quay, west along a **Craftsmen's Street** (4) of shops on both sides, ending at a **new west postern gate** → **Farm & vineyard** (5) in the walled orchard outside the west wall.
 
 ## D. Chapter 2: The Synagogue Courtyard (James 2, 26 verses, 6 rooms)
 Model: Sardis. Enter from the avenue into a colonnaded forecourt open to the sky. Porticoes run round the sides; the hall door is at the far end with a Torah shrine either side; a krater fountain stands in the centre.
@@ -49,4 +49,4 @@ Template from `ltm-engine/docs/REFERENCE_PROMPTS.md`. Shared setting line for al
 ## E. After approval
 1. Build the agora fix, check every stop (`fast.mjs all`, screenshots), push.
 2. Build chapter 2 to the approved sketch, push.
-3. Then plan chapter 3 (Craftsmen's Street) the same way and stop again; then 4, then 5.
+3. Then plan chapter 3 (The Harbour) the same way and stop again; then 4, then 5.
