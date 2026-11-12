@@ -48,3 +48,7 @@ Screenshots: Tabernacle, Mount and James match their S0 baselines (largest mean 
 ### S8: minified three.js (2026-11-12)
 
 The four towns and the library page load `ltm-engine/three.module.min.js` (r170, the same release as the full file, taken from the npm package). 260 KB → 171 KB gzipped: about 90 KB less per first visit, and less to parse. The full file stays for the tools pages. `fast.mjs all` passes; the Mount's screenshots match.
+
+### S6: compile shaders without freezing (2026-11-12)
+
+`renderer.compileAsync(scene, camera)` runs before the first frame while the loading bar creeps from 95% to 99%. Headless: Colossae ready 9.3 s → 7.4 s (finish.js 6.6 s → 4.7 s), Tabernacle 2.1 s → 1.9 s. Phones with parallel shader compile should gain more. `fast.mjs all` passes; Tabernacle screenshots match.

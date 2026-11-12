@@ -69,6 +69,11 @@ function birdFrame(dt, t) {
   bird.position.y += Math.sin(t * 11) * (glide ? 0 : .04);
 }
 { const el = document.getElementById('lpct'), bar = document.getElementById('lbar'); if (el) el.textContent = 'Lighting the lamps…'; if (bar) bar.style.width = '95%'; }
+// compile every shader program before the first frame without freezing the page (S6): the bar keeps moving, and phones that
+// compile in parallel (KHR_parallel_shader_compile) finish sooner
+{ const bar = document.getElementById('lbar'); let w = 95; const creep = setInterval(() => { w = Math.min(99, w + .25); if (bar) bar.style.width = w + '%'; }, 100);
+  try { await renderer.compileAsync(scene, camera); } catch (e) { console.warn('compileAsync failed; the first frame compiles instead', e); }
+  clearInterval(creep); }
 frame();
 // ---- the town stands still, so draw the sun's shadow map once and redraw it only when something changes (S2) ----
 // Twice a second a watcher looks at every shadow-casting mesh that was not merged. One that moves (a fire, a ship, an animated
