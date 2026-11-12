@@ -11,6 +11,8 @@ const LIB_NE = townNE({ THREE, scene, heightAt: (x, z) => heightAt(x, z), add, b
   // ---- plants ----
   T(via(() => tree(0, 0, 1)), 'olive-tree', 'Olive tree', 'colossae 1.6', 'plant', ['tree', 'garden']);
   T(via(() => tree(0, 0, .6)), 'young-olive-tree', 'Young olive tree', 'colossae kit', 'plant', ['tree', 'garden']);
+  T(via(() => upOlive(0, 0, 1, { style: 'a' })), 'olive-tree-gnarled', 'Olive tree, gnarled (option A)', 'plan L2', 'plant', ['tree', 'garden', 'field']);
+  T(via(() => upOlive(0, 0, 1, { style: 'b' })), 'olive-tree-soft', 'Olive tree, soft crown (option B)', 'plan L2', 'plant', ['tree', 'garden', 'field']);
   T(via(() => shrub(0, 0, 1.3)), 'shrub', 'Shrub', 'colossae kit', 'plant', ['bush', 'garden']);
   T(via(() => { shrub(-.6, 0, 1.2); shrub(.7, .3, 1.5); shrub(.1, -.6, 1); }), 'shrub-cluster', 'Cluster of shrubs', 'colossae kit', 'plant', ['bush', 'garden']);
   T(via(() => cypress(0, 0, 1)), 'cypress', 'Cypress', 'colossae 2.2', 'plant', ['tree', 'temple']);
