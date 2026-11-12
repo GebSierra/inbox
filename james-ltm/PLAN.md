@@ -20,33 +20,25 @@ Nothing below is built yet. Please mark changes by sketch over either picture.
 ## C. The town route (chapters 2–5; 3 and 4 swapped at the owner's request)
 Gate → Agora (1) → out of the agora's south passage onto a **colonnaded avenue** → **Synagogue** (2), whose forecourt door opens off the avenue on the east side, as at Sardis → back out and down the avenue to the sea: **The Harbour** (3), the quay, pier and boats → from the quay, west along a **Craftsmen's Street** (4) of shops on both sides, ending at a **new west postern gate** → **Farm & vineyard** (5) in the walled orchard outside the west wall.
 
-## D. Chapter 2: The Synagogue Courtyard (James 2, 26 verses, 6 rooms)
-Model: Sardis. Enter from the avenue into a colonnaded forecourt open to the sky. Porticoes run round the sides; the hall door is at the far end with a Torah shrine either side; a krater fountain stands in the centre.
-Rooms clockwise from the entrance, starting on the left. Objects are verse addresses (the learner makes their own images).
+## D. Chapter 2: The Synagogue (James 2, 26 verses, 6 rooms). ROOM NAMES ON HOLD
+The owner wants a working model of the synagogue first; rooms get named after that. Concept art: `refs/2-synagogue-concept-a.png` (a second image was mentioned but has not arrived yet).
 
-| Room | Where | Verses | 1 near-left | 2 far-left | 3 far-right | 4 near-right | 5 centre |
-|---|---|---|---|---|---|---|---|
-| 1 The Seat Porch | left portico, near | 2:1–5 | tipped bronze balance | fine purple robe and gold ring on a stand | cushioned seat of honour with a footstool | ivory judge's rod on a bracket | basket of small gold crowns (heirs of the kingdom) |
-| 2 The Elders' Bench | left portico, far | 2:6–10 | iron shackles on a hook | name plaque with chiselled-out letters | royal sceptre on a stand | cracked stone law tablet | bronze chain with one broken link |
-| 3 The West Torah Shrine | left of the hall door | 2:11–15 | two stone tablets of the law | open-doored birdcage (law of liberty) | judge's verdict board with an olive branch across it | ox yoke with no plough | threadbare cloak over an empty bread basket |
-| 4 The East Torah Shrine | right of the hall door | 2:16–20 | cold brazier with an empty pot | withered fig tree in a pot | glass display niche, empty | trembling bronze gong | broken plough share |
-| 5 The Abraham Portico | right portico | 2:21–25 | stone altar with bound firewood and a knife | arch with its capstone being set | bowl of sand under a star lamp | balanced scales | scarlet cord hanging from a window frame |
-| 6 The Fountain | centre of the forecourt | 2:26 | the krater fountain, an empty tunic over its rim | | | | |
+The model to build (owner's brief, 2026-11-12):
+- **Main assembly hall:** an open paved stone floor in the middle, with **multi-tiered stone benches on all four walls facing inward**. **Two wooden reading lecterns** in the middle of the floor, with readers holding unrolled scrolls.
+- **Interior colonnade:** sturdy stone columns with simple Doric capitals along the inner edge of the benches, carrying the timber ceiling joists.
+- **Scroll storeroom:** an enclosed side chamber on the **left**, opening into the hall by an inner doorway. Inside: tall scrolls on wooden rollers standing upright and a lidded wooden chest.
+- **Covered portico (stoa):** a roofed, columned walkway along the **right** wing, with a bench on the inner wall where elders sit and talk, and a side doorway into the building.
+- **Courtyard and ritual baths (mikva'ot):** a wide flagstone courtyard all round, with **two rectangular stepped basins of water** sunk into the pavement outside the hall.
+- **Building:** single storey, flat earth roof on exposed wooden beams; ashlar blocks at corners, pillars and doorways; plastered walls with **bold red bands** on the lower dado and the upper cornice.
+- **Main entrance:** a framed stone portal with a panelled wooden door, up stone steps, on the **front-left** of the façade, opening from the courtyard into the hall.
 
-Room 6 holds one verse, so it uses spot 1 only (method rule 5).
+Next step: build this model on its site off the avenue, show it from above and from inside, and only then propose the six rooms (likely candidates: the entrance steps, the scroll storeroom, the benches, the lecterns, the elders' portico, the mikva'ot).
 
-### Reference prompts for chapter 2 (for you to generate)
-Template from `ltm-engine/docs/REFERENCE_PROMPTS.md`. Shared setting line for all six:
-"in the colonnaded forecourt of a first-century Diaspora synagogue (Sardis style): cream limestone porticoes with painted plaster walls, a geometric mosaic floor, the sky open overhead".
-
-- **2.1 The Seat Porch:** viewed from the forecourt paving, looking into the left portico near the entrance. near-left, a tipped bronze balance on a stone stand; far-left, a fine purple robe and a gold ring on a wooden stand; far-right, a red-cushioned carved seat of honour with a small footstool; near-right, an ivory judge's rod on a wall bracket; centre, a wicker basket heaped with small gold crowns.
-- **2.2 The Elders' Bench:** the left portico, far end, a marble bench along the back wall. near-left, iron shackles on a wall hook; far-left, a bronze name plaque with its letters chiselled out; far-right, a gilded royal sceptre on a stand; near-right, a cracked grey stone tablet; centre, a heavy bronze chain on a block with one broken link.
-- **2.3 The West Torah Shrine:** the raised platform left of the hall door, a carved wooden ark behind. near-left, two rounded stone tablets; far-left, a brass birdcage with its door open; far-right, a wooden verdict board with an olive branch laid across it; near-right, a wooden ox yoke; centre, a threadbare brown cloak over an empty bread basket.
-- **2.4 The East Torah Shrine:** the matching platform right of the hall door. near-left, a cold iron brazier with an empty clay pot; far-left, a withered fig tree in a terracotta pot; far-right, a small glass-fronted display niche, empty; near-right, a bronze gong on a frame; centre, a broken iron plough share on the floor.
-- **2.5 The Abraham Portico:** the right portico. near-left, a rough stone altar with bound firewood and a knife; far-left, a small stone arch with its capstone hanging on a rope; far-right, a bowl of sand under a hanging star-shaped lamp; near-right, perfectly balanced brass scales; centre, a window frame with a scarlet cord hanging down.
-- **2.6 The Fountain:** centre of the forecourt. a large bronze krater fountain on a stepped base, water spilling, an empty white tunic draped over its rim.
+## D2. Chapter 5 opening: the rich man's house (owner's idea, 2026-11-12)
+James 5:1–6 is a warning to the rich (rotting wealth, moth-eaten garments, rusted gold, the withheld wages of the reapers crying out from the fields). A rich man's house as room 5.1, at the head of the farm, ties that passage to a place.
+Recommendation: **just outside the west wall, inside its own walled grounds**, not inside a bulge in the city wall. Wealthy landowners' houses (Roman *villae suburbanae*, and the large estate houses of Roman Judea and Galilee) commonly stood just outside a town, among the fields they owned. City walls were not usually bent out to enclose one private house. Putting it among his fields also places the unpaid reapers (5:4) right at his gate.
 
 ## E. After approval
 1. Build the agora fix, check every stop (`fast.mjs all`, screenshots), push.
-2. Build chapter 2 to the approved sketch, push.
+2. Build the synagogue model (D), show it, then propose and agree its six rooms before placing objects.
 3. Then plan chapter 3 (The Harbour) the same way and stop again; then 4, then 5.
