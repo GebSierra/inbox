@@ -14,12 +14,8 @@ function shrub(x, z, s = 1, y) { y ??= heightAt(x, z); const cs = ['#6f8a46', '#
 function cypress(x, z, s = 1) {
   UD.cypress(x, z, s, heightAt(x, z));   // objects/up-d.js: flame-shaped cypress, shared geometry, no random numbers drawn
 }
-function sheep(x, z) {
-  const g = new THREE.Group(); g.position.set(x, heightAt(x, z), z); g.rotation.y = R(0, 6); scene.add(g);
-  const b = add(new THREE.IcosahedronGeometry(.55, 0), 'wool', 0, .7, 0, g); b.scale.set(1.3, .9, 1);
-  box(.3, .35, .3, 'dark', .72, .6, 0, g);
-  for (const [a, c] of [[.4, .25], [.4, -.25], [-.4, .25], [-.4, -.25]]) box(.1, .45, .1, 'dark', a, 0, c, g);
-}
+// a sheep: the region's fat-tailed sheep (objects/up-sheep.js). Draws exactly one R(), like the old box-headed one, so towns keep their layout.
+function sheep(x, z) { const ry = R(0, 6); return typeof upSheep === 'function' ? upSheep(x, z, { ry }) : null; }
 function stoneWall(x0, z0, x1, z1, h = 1) {
   const L = Math.hypot(x1 - x0, z1 - z0), n = Math.ceil(L / 2.2);
   for (let i = 0; i < n; i++) {

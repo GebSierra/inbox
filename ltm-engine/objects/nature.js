@@ -29,6 +29,8 @@ const LIB_NE = townNE({ THREE, scene, heightAt: (x, z) => heightAt(x, z), add, b
   // ---- animals ----
   T(via(() => sheep(0, 0)), 'sheep', 'Sheep', 'colossae kit', 'animal', ['farm', 'wool']);
   T(via(() => { sheep(-1.2, .3); sheep(.2, -.8); sheep(1.3, .5); }), 'flock-of-sheep', 'Three sheep', 'colossae kit', 'animal', ['farm', 'wool']);
+  T(via(() => upSheep(0, 0, { ry: .5, lamb: true, graze: false, s: 1 })), 'lamb', 'Lamb', 'tabernacle camp', 'animal', ['farm', 'wool', 'sacrifice']);
+  T(via(() => { upSheep(0, 0, { ry: .4, graze: true, s: 1 }); upSheep(.9, .55, { ry: 2.6, lamb: true, graze: false, s: 1 }); }), 'ewe-and-lamb', 'Ewe with her lamb', 'tabernacle camp', 'animal', ['farm', 'wool', 'shepherd']);
   // a dove: the bird model when it loaded, else the plain low-poly one of the dove cages
   const dove = (g, x, y, z, size = .42, ry = .6) => {
     if (realBird(g, x, y, z, size, ry)) return y + size * .8;
