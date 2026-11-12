@@ -29,3 +29,14 @@ Links: [Colossae](https://gebsierra.github.io/inbox/colossae-ltm/?fps&notut) · 
 (The download counter can miss a file or two; Colossae's 9.8 MB here against ≈12 MB in the plan is one of those runs.)
 
 ## Items
+
+### S2: draw the shadow map once (2026-11-12)
+
+| Town | Draw calls before → after | Triangles before → after |
+|---|---|---|
+| Colossae | 2476 → 1413 | 2.76 M → 1.49 M |
+| James | 670 → ≈350 at rest (400 in the perf run, which caught the first few redraws as the ships were switched off) | 0.78 M → 0.48–0.58 M |
+| Tabernacle | 273 → 194 | 0.31 M → 0.22 M |
+| Sermon on the Mount | 228 → 74 | 0.45 M → 0.28 M |
+
+Screenshots: Tabernacle, Mount and James match their S0 baselines (largest mean difference 0.5%, which is the room-name card's timing, not the shading). `fast.mjs all` passes. Colossae screenshots are checked at the end of Wave 1 against a fresh baseline taken from the S0 commit.

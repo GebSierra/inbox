@@ -70,6 +70,24 @@ function birdFrame(dt, t) {
 }
 { const el = document.getElementById('lpct'), bar = document.getElementById('lbar'); if (el) el.textContent = 'Lighting the lamps…'; if (bar) bar.style.width = '95%'; }
 frame();
+// ---- the town stands still, so draw the sun's shadow map once and redraw it only when something changes (S2) ----
+// Twice a second a watcher looks at every shadow-casting mesh that was not merged. One that moves (a fire, a ship, an animated
+// figure) stops casting a shadow while it moves, so no frozen shadow is left behind, and casts again after 2 s at rest.
+// One that is shown, hidden, added or removed (the Tabernacle roof in bird's-eye) redraws the map once. refreshShadows() forces it.
+function refreshShadows() { sun.shadow.needsUpdate = true; }
+sun.shadow.autoUpdate = false; refreshShadows();
+{ const seen = new Map(); let tick = 0;
+  const sig = o => { const a = Array.from(o.matrixWorld.elements); if (o.isSkinnedMesh) for (const b of o.skeleton.bones) a.push(...b.matrixWorld.elements); return a; };
+  const shown = o => { for (let q = o; q; q = q.parent) if (!q.visible) return false; return true; };
+  setInterval(() => { tick++; let redraw = false; const now = new Set();
+    scene.traverse(o => { if (!o.isMesh || o.matrixAutoUpdate === false || !(o.castShadow || o.userData.shOff)) return; now.add(o);
+      const s = sig(o), v = shown(o), p = seen.get(o);
+      if (!p) { seen.set(o, { s, v, still: tick }); if (v) redraw = true; return; }   // tick 1 redraws once: parts after finish.js (world/after.js) add casters too
+      if (v !== p.v) { p.v = v; redraw = true; }
+      if (s.some((x, i) => Math.abs(x - p.s[i]) > 1e-5)) { p.s = s; p.still = tick; if (o.castShadow) { o.castShadow = false; o.userData.shOff = 1; if (v) redraw = true; } }
+      else if (o.userData.shOff && tick - p.still >= 4) { o.castShadow = true; o.userData.shOff = 0; if (v) redraw = true; } });
+    for (const o of seen.keys()) if (!now.has(o)) { seen.delete(o); redraw = true; }
+    if (redraw) refreshShadows(); }, 500); }
 window.__ready = true;
 requestAnimationFrame(() => requestAnimationFrame(() => { document.getElementById('lbar').style.width = '100%'; setTimeout(() => document.getElementById('loader').classList.add('done'), 250); }));
 
