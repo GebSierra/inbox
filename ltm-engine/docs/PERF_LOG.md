@@ -44,3 +44,7 @@ Screenshots: Tabernacle, Mount and James match their S0 baselines (largest mean 
 ### S5: stop keeping the drawing buffer (2026-11-12)
 
 `preserveDrawingBuffer` is now on only for the library page and `?shots`. No change `perf.mjs` can see (draw calls and triangles are the same); the saving is a full-screen copy per frame on phone GPUs, to be confirmed with the phone frame rate after Wave 1. Library thumbnails: all 230 render (none blank). Playwright screenshots work (Tabernacle 28/28). `fast.mjs all` passes.
+
+### S8: minified three.js (2026-11-12)
+
+The four towns and the library page load `ltm-engine/three.module.min.js` (r170, the same release as the full file, taken from the npm package). 260 KB → 171 KB gzipped: about 90 KB less per first visit, and less to parse. The full file stays for the tools pages. `fast.mjs all` passes; the Mount's screenshots match.
