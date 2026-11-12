@@ -69,6 +69,14 @@ function birdFrame(dt, t) {
   bird.position.y += Math.sin(t * 11) * (glide ? 0 : .04);
 }
 { const el = document.getElementById('lpct'), bar = document.getElementById('lbar'); if (el) el.textContent = 'Lighting the lamps…'; if (bar) bar.style.width = '95%'; }
+// S7 (look change, waiting for the owner): on phones, halve every texture of 256 px or more before it is uploaded, about a quarter of
+// the texture memory. Labels and banners (sprites) keep full size. On with ?halftex, or "halfTex": true in a town's theme; phones only.
+if (MOBILE && (THEME.halfTex || new URLSearchParams(location.search).has('halftex'))) { const done = new Set();
+  scene.traverse(o => { if (!o.isMesh || o.isSprite) return; for (const m of Array.isArray(o.material) ? o.material : [o.material]) { if (!m || m.isSpriteMaterial) continue;
+    for (const k of ['map', 'normalMap', 'roughnessMap', 'metalnessMap', 'emissiveMap', 'bumpMap', 'aoMap', 'alphaMap']) { const t = m[k]; if (!t || !t.isTexture || !t.source || done.has(t.source)) continue; done.add(t.source);
+      const im = t.source.data; if (!im || !(im.width >= 256) || !(im.height >= 16)) continue;
+      const c = document.createElement('canvas'); c.width = im.width >> 1; c.height = im.height >> 1; c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+      t.source.data = c; t.source.needsUpdate = true; } } }); }
 // compile every shader program before the first frame without freezing the page (S6): the bar keeps moving, and phones that
 // compile in parallel (KHR_parallel_shader_compile) finish sooner
 { const bar = document.getElementById('lbar'); let w = 95; const creep = setInterval(() => { w = Math.min(99, w + .25); if (bar) bar.style.width = w + '%'; }, 100);

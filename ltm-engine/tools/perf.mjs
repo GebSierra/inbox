@@ -1,5 +1,6 @@
 // Phone performance report for a town: what it downloads, how long it takes to build, and what it draws every frame.
 //   node ltm-engine/tools/perf.mjs <town-folder> [<town-folder> ...]
+//   a town may carry page flags to compare a variant: perf.mjs colossae-ltm 'colossae-ltm?solidglass&halftex'
 // Opens <town>/index.html?notut in headless Chromium with a phone viewport (412×839, touch) and prints:
 //   download   requests and bytes (raw and gzipped, as GitHub Pages would send them), grouped by kit / models / code
 //   build      time to window.__ready and the slowest parts (each part is time-stamped as it starts)
@@ -19,7 +20,7 @@ for (const town of towns) {
   const ctx = await b.newContext({ viewport: { width: 412, height: 839 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true }), p = await ctx.newPage(), reqs = [], pending = [];
   p.on('requestfinished', q => pending.push((async () => { try { const r = await q.response(), ct = r.headers()['content-type'] || '', n = (await q.sizes()).responseBodySize; let gz = n;
     if (/javascript|json|html|css|gltf\+json/.test(ct)) { try { gz = zlib.gzipSync(await r.body()).length; } catch (e) {} } reqs.push({ u: q.url().replace(url, ''), n, gz }); } catch (e) {} })()));
-  const t0 = Date.now(); await p.goto(url + town + '/index.html?notut'); await p.waitForFunction(() => window.__ready, null, { timeout: 280000 }); const ready = Date.now() - t0;
+  const t0 = Date.now(); await p.goto(url + town.split('?')[0] + '/index.html?notut' + (town.includes('?') ? '&' + town.split('?')[1] : '')); await p.waitForFunction(() => window.__ready, null, { timeout: 280000 }); const ready = Date.now() - t0;
   await p.waitForTimeout(2500);
   const info = await p.evaluate(async () => { const R = window.__renderer, sc = window.__scene, sun = window.__sun;
     // draw calls and triangles of ONE frame: accumulate over a few frames and divide by the frames the loop really drew (window.__fc)

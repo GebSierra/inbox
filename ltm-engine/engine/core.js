@@ -32,6 +32,10 @@ const ASSETS = CFG.assets || {};
 }
 // Roman stucco instead of northern timber framing: trim becomes pale stone, plaster warmer
 for (const [k, m] of Object.entries(KMAT)) { if (k.startsWith('MI_WoodTrim')) { m.color = new THREE.Color('#e8dcc4'); m.map = null; m.needsUpdate = true; } if (k === 'MI_Plaster') { m.color = new THREE.Color(1.25, 1.2, 1.1); m.needsUpdate = true; } }
+// S1 (look change, waiting for the owner): solid dark window glass, so the kit's ~570 panes merge instead of drawing one by one, twice.
+// On with ?solidglass, or "solidGlass": true in a town's theme.
+if ((THEME.solidGlass || new URLSearchParams(location.search).has('solidglass')) && KMAT.MI_WindowGlass) { const g = KMAT.MI_WindowGlass;
+  Object.assign(g, { transparent: false, opacity: 1, depthWrite: true, roughness: .22, metalness: .1 }); g.color.set('#2c333b'); g.needsUpdate = true; }
 const MODELS = {};
 let BIRD_ANIM = null;
 try { await Promise.all((ASSETS.models || ['stall', 'table', 'gstall', 'bird']).map(m => new GLTFLoader().loadAsync(`${ENGINE}models/${m}/scene.${m === 'gstall' ? 'glb' : 'gltf'}`).then(g => { g.scene.updateMatrixWorld(true); g.scene.traverse(o => { if (o.isMesh) { o.castShadow = o.receiveShadow = true; if (o.material.map) o.material.map.anisotropy = 4; } }); MODELS[m] = g.scene; if (m === 'bird') BIRD_ANIM = g.animations; }))); }

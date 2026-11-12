@@ -68,3 +68,18 @@ What each town reads after loading (recorded by wrapping `KIT`, `KMAT` and `MODE
 ### S4: adaptive resolution (2026-11-12)
 
 Every 90 frames (after the first 60), if the average frame is slower than 1/28 s the town drops ambient occlusion (desktop), then steps the pixel ratio 1.5 → 1.2 → 1.0 (2 → 1.5 first on desktop), and remembers the step per town in `localStorage` (`<store>-pixelRatio`). Switched off under automation (`navigator.webdriver`) so test screenshots stay sharp. Tested by pretending not to be automated in a slow headless phone: the Tabernacle stepped 1.5 → 1.2 → 1.0 and started at 1.0 on reload. To undo on a phone: clear the site's data. The owner's phone numbers after Wave 1 will show whether it kicks in on his phone.
+
+### S1 and S7: ready, waiting for the owner (2026-11-12)
+
+Both are look changes, so they are in the code but **off** until the owner approves. Try them on the phone with page flags:
+
+| Item | Flag | Colossae on `perf.mjs` | Pictures |
+|---|---|---|---|
+| S1 solid dark window glass | `?solidglass` | 1413 → **670** draw calls (the 573 panes merge) | `docs/review/S1-solid-glass.jpg`: today's panes already read as dark openings; solid ones are a little darker and glossier |
+| S7 half-size textures on phones | `?halftex` (phones only) | ≈168 → **≈64 MB** of texture memory | `docs/review/S7-half-textures.jpg`: hard to tell apart at phone size, even close up |
+
+Note for the plan: Colossae's texture memory is mostly the models' own images (≈110 MB, 48 of them 512 px and 6 of 1024 px), not the drawn canvas textures (≈30 MB). So S7 now halves every texture of 256 px or more on phones, not only `canvasTex()`; sprites (labels, banners) keep full size.
+
+To approve: set `"solidGlass": true` and/or `"halfTex": true` in the town's `theme` in `town.json` (or make it the engine default), then re-baseline that town's screenshots.
+
+`perf.mjs` accepts page flags for comparisons: `node ltm-engine/tools/perf.mjs 'colossae-ltm?solidglass'`.
