@@ -110,3 +110,14 @@ Untextured standard materials that differ only in colour now merge into one mesh
 | Sermon on the Mount | 74 → 35 | 115 → 52 | 87 → 3 |
 
 Screenshots match in all four towns (Colossae 99/99, largest mean difference 0.5%). Colossae merges less than the plan guessed (≈40) because most of its looks are textured.
+
+### S10: light pool (2026-11-12)
+
+Towns with more point lights than the pool (3 on phones, 4 on desktop) take their lights out of the scene and keep them as sources, still driven as before (room lights switch with distance, fires flicker). Each frame the pool's real lights copy the sources that look brightest from the camera (intensity ÷ distance²), fading over a quarter second when they change. `?alllights` turns the pool off for comparison. Ranking by brightness at the camera (not by the lamp's size) keeps the small glow of an oven or brazier next to you over a big lamp in the next room.
+
+| Town | Point lights computed per pixel | Ready (headless) |
+|---|---|---|
+| Colossae | 20 → 3 (phone) | 7.4 s → 4.8 s |
+| Tabernacle | 5 → 3 (phone) | unchanged |
+
+Pool against all lights, Colossae's busiest lit rooms (kitchen 3.16–20, altar square): mean difference 0.5–0.6% on phone and desktop, the oven glow kept. Colossae screenshots re-baselined together with the tree mix; the Tabernacle matches its baseline (largest mean difference 0.5%). James has no point lights, the Mount one.

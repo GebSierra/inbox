@@ -82,6 +82,32 @@ function birdFrame(dt, t) {
   bird.position.y += Math.sin(t * 11) * (glide ? 0 : .04);
 }
 { const el = document.getElementById('lpct'), bar = document.getElementById('lbar'); if (el) el.textContent = 'Lighting the lamps…'; if (bar) bar.style.width = '95%'; }
+// ---- S10 light pool: a few real point lights follow the strongest lamps and fires near the camera ----
+// Every point light in the scene costs every pixel, even at zero intensity. So the town's lights become "sources" (taken out of the scene,
+// still driven as before: ROOM_LIGHTS switch with distance, fires flicker), and POOL real lights copy the strongest sources at the camera
+// each frame, fading in and out over a quarter second when they change. Towns with no more lights than the pool are left as they are.
+const LP = { n: MOBILE ? 3 : 4, src: [], slots: [], t: 0, on: false };
+function lpCollect() { scene.updateMatrixWorld(true); const found = []; scene.traverse(o => { if (o.isPointLight && !LP.slots.includes(o)) found.push(o); });
+  for (const l of found) { LP.src.push({ l, w: l.getWorldPosition(new THREE.Vector3()) }); l.parent.remove(l); } }
+{ let n = 0; scene.traverse(o => { if (o.isPointLight) n++; });
+  if (n > LP.n && !new URLSearchParams(location.search).has('alllights')) { lpCollect(); LP.on = true;
+    for (let i = 0; i < LP.n; i++) { const l = new THREE.PointLight('#ffffff', 0, 10, 1.5); l.userData.k = 0; scene.add(l); LP.slots.push(l); } } }
+function lightPool() { if (!LP.on) return; const now = performance.now(), dt = Math.min(.25, (now - (LP.t || now)) / 1000); LP.t = now;
+  if (window.__fc === 3) lpCollect();                          // lights added by parts after finish.js (world/after.js) join the pool too
+  // rank by how bright each light looks from the camera (intensity over distance squared), among lights whose reach comes near it.
+  // A small fire glow beside you beats a big lamp in the next room.
+  const cam = camera.position, want = [];
+  for (const s of LP.src) { const I = s.l.intensity; if (!(I > 0)) continue; const r = s.l.distance || 40, d = cam.distanceTo(s.w); if (d > r + 12) continue;
+    want.push([I / Math.max(1, d * d), s]); }
+  want.sort((a, b) => b[0] - a[0]); const top = want.slice(0, LP.n).map(w => w[1]);
+  for (const sl of LP.slots) { if (sl.userData.src && !top.includes(sl.userData.src)) sl.userData.leaving = true; }
+  for (const s of top) if (!LP.slots.some(sl => sl.userData.src === s)) { const free = LP.slots.find(sl => !sl.userData.src) || LP.slots.filter(sl => sl.userData.leaving).sort((a, b) => a.userData.k - b.userData.k)[0]; if (free) { free.userData.src = s; free.userData.k = 0; free.userData.leaving = false; } }
+  for (const sl of LP.slots) { const s = sl.userData.src; if (!s) { sl.intensity = 0; continue; }
+    if (sl.userData.leaving && top.includes(s)) sl.userData.leaving = false;
+    sl.userData.k = Math.max(0, Math.min(1, sl.userData.k + (sl.userData.leaving ? -dt : dt) * 4));
+    if (sl.userData.leaving && sl.userData.k === 0) { sl.userData.src = null; sl.intensity = 0; continue; }
+    sl.position.copy(s.w); sl.color.copy(s.l.color); sl.distance = s.l.distance; sl.decay = s.l.decay; sl.intensity = s.l.intensity * sl.userData.k; } }
+window.__lightPool = () => ({ on: LP.on, sources: LP.src.length, active: LP.slots.filter(s => s.intensity > 0).length, wanted: LP.src.filter(s => s.l.intensity > 0 && camera.position.distanceTo(s.w) < (s.l.distance || 40) + 12).length });
 // S7 (look change, waiting for the owner): on phones, halve every texture of 256 px or more before it is uploaded, about a quarter of
 // the texture memory. Labels and banners (sprites) keep full size. On with ?halftex, or "halfTex": true in a town's theme; phones only.
 if (MOBILE && (THEME.halfTex || new URLSearchParams(location.search).has('halftex'))) { const done = new Set();

@@ -126,6 +126,7 @@ function frame() { window.__fc = (window.__fc || 0) + 1;
   if (window.__fixed) { const [x, y, z, lx, ly, lz] = window.__fixed; camera.position.set(x, y, z); camera.lookAt(lx, ly, lz); }
   for (const l of ROOM_LIGHTS) l.intensity = camera.position.distanceTo(l.position) < 16 ? l.userData.base : 0;
   for (const f of FIRES) f.update(t, camera);
+  if (typeof lightPool === 'function') lightPool();      // engine/finish.js (S10)
   if (camera.position.distanceTo(new THREE.Vector3(-11.5, 0, TZ + 11)) < 25) for (const m of PERCHED) m.update(dt);
   birdFrame(dt, t);
   if (useAO) composer.render(); else renderer.render(scene, camera);
