@@ -36,10 +36,10 @@ function acacia(x, z, s = 1) { const y = heightAt(x, z);
   // Moses and Aaron at the door (Num 3:38)
   campTent(-11, 12, Math.PI, 1.1); campTent(11, 12, Math.PI, 1.1);
   // flocks and herds outside the camp, a few acacias in the wadi
-  for (let i = 0; i < 18; i++) sheep(R(160, 200), R(-60, 10));
-  for (let i = 0; i < 12; i++) sheep(R(-210, -170), R(-20, 40));
+  for (let i = 0; i < 18; i++) woolSheep(R(160, 200), R(-60, 10));
+  for (let i = 0; i < 12; i++) woolSheep(R(-210, -170), R(-20, 40));
   for (let i = 0; i < 26; i++) { const x = R(-240, 240), z = R(-220, 200); if (Math.hypot(x - CX, z - CZ) > 175) acacia(x, z, R(.8, 1.2)); }
   // a family bringing a lamb to the gate (Lev 1:3)
-  person(-2.2, 7.5, Math.PI + .3, '#8a5a3a', { cloak: '#5a3a2a', hair: 2 }); person(-1.2, 8.3, Math.PI, '#c9a46a', { veil: '#e8dcc4', skin: 1 }); sheep(-.4, 6.6);
+  person(-2.2, 7.5, Math.PI + .3, '#8a5a3a', { cloak: '#5a3a2a', hair: 2 }); person(-1.2, 8.3, Math.PI, '#c9a46a', { veil: '#e8dcc4', skin: 1 }); woolSheep(-.4, 6.6, Math.PI / 2 + .3, 1);
   person(3.4, 9.5, Math.PI - .4, '#3f6f9a', { cloak: '#2a3a5a' });
 }

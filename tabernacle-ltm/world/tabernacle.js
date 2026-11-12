@@ -52,6 +52,25 @@ const screenM = new THREE.MeshStandardMaterial({ map: screenTex(), roughness: .9
 const veilM = new THREE.MeshStandardMaterial({ map: veilTex(BLUE, 3), roughness: .9 });
 const ceilM = new THREE.MeshStandardMaterial({ map: veilTex(LINEN, 4), roughness: .95, side: THREE.FrontSide });
 
+// a sheep of the region (fat-tailed, cream wool, a dark face and drooping ears, like the Awassi of today), head toward +x.
+// Wool is a cluster of overlapping puffs; some graze with their heads down; a few have brown or black fleeces.
+const WOOL = ['#efe8da', '#e8dfcc', '#f3eee4', '#8a6a4a', '#3a302a'].map((c, i) => mat('tWool' + i, c, { flatShading: true, roughness: 1 }));
+const FACE = [mat('tFace0', '#3a2c24', { roughness: .9 }), mat('tFace1', '#6a4a34', { roughness: .9 })], HOOF = mat('tHoof', '#2a221e');
+function woolSheep(x, z, ry = R(0, 6.3), s = R(.85, 1.05)) {
+  const g = new THREE.Group(); g.position.set(x, heightAt(x, z), z); g.rotation.y = ry; g.scale.setScalar(s); scene.add(g);
+  const k = rnd(), wm = WOOL[k < .08 ? 4 : k < .18 ? 3 : (rnd() * 3) | 0], fm = FACE[rnd() < .3 ? 1 : 0];
+  const puffs = [[0, .74, 0, .34], [.24, .78, 0, .3], [-.24, .76, 0, .3], [.1, .7, .14, .27], [.1, .7, -.14, .27], [-.12, .7, .15, .27], [-.12, .7, -.15, .27], [0, .9, 0, .25], [.34, .74, 0, .23], [-.38, .7, 0, .24]];
+  for (const [px, py, pz, r] of puffs) add(new THREE.IcosahedronGeometry(r * R(.92, 1.08), 1), wm, px, py + R(-.02, .02), pz, g);
+  add(new THREE.IcosahedronGeometry(.17, 1), wm, -.52, .6, 0, g).scale.set(.9, 1.15, 1.1);                 // the fat tail
+  for (const [lx, lz] of [[.26, .11], [.26, -.11], [-.26, .11], [-.26, -.11]]) { cyl(.035, .042, .44, 6, fm, lx, .04, lz, g); cyl(.047, .047, .05, 6, HOOF, lx, 0, lz, g); }
+  const head = new THREE.Group(), graze = rnd() < .4; head.position.set(.46, .86, 0); head.rotation.z = graze ? -1.05 : R(-.25, .1); head.rotation.y = R(-.35, .35); g.add(head);
+  add(new THREE.CylinderGeometry(.09, .12, .22, 7), wm, .04, -.02, 0, head).rotation.z = -1.2;                // neck wool
+  const skull = add(new THREE.IcosahedronGeometry(.13, 1), fm, .17, .0, 0, head); skull.scale.set(1.25, 1, .85);
+  const muzzle = add(new THREE.IcosahedronGeometry(.085, 1), fm, .3, -.06, 0, head); muzzle.scale.set(1.2, .85, .8);
+  add(new THREE.IcosahedronGeometry(.085, 1), wm, .12, .1, 0, head).scale.set(1, .6, 1.1);                  // a tuft of wool on the crown
+  for (const sd of [-1, 1]) { const ear = add(new THREE.IcosahedronGeometry(.07, 0), fm, .13, -.02, sd * .13, head); ear.scale.set(.6, .35, 1.6); ear.rotation.x = sd * .7;   // long, drooping
+    add(new THREE.SphereGeometry(.015, 5, 4), mat('tEye', '#120d0a'), .24, .04, sd * .075, head); }
+  return g; }
 // a straight rod (cord, pole) between two points
 function rod(a, b, r, m, parent = scene, sides = 5) {
   const A = new THREE.Vector3(...a), B = new THREE.Vector3(...b), d = B.clone().sub(A), L = d.length();
@@ -107,7 +126,7 @@ function gathered(x, z, h, m, r = .14) { const g = add(new THREE.CylinderGeometr
   const f = makeFire(THREE, { scale: .55, light: true }); f.position.set(0, h + .05, 0); f.traverse(o => o.userData.dyn = 1); g.add(f); FIRES.push(f);
   // slaughter tables and the morning's lambs on the north side of the altar (Lev 1:11)
   for (const tz of [z - 2.2, z, z + 2.2]) { box(1.2, .08, .7, 'stone', 4.6, .85, tz); for (const [a, b] of [[-.5, -.28], [.5, -.28], [-.5, .28], [.5, .28]]) box(.1, .85, .1, 'stoneDk', 4.6 + a, 0, tz + b); }
-  for (const [x, zz] of [[6.8, z + 3.5], [7.6, z + 1.2], [6.2, z - 3.4]]) sheep(x, zz);
+  for (const [x, zz] of [[6.8, z + 3.5], [7.6, z + 1.2], [6.2, z - 3.4]]) woolSheep(x, zz);
   for (let i = 0; i < 5; i++) { const lg = cyl(.09, .09, 1.3, 5, mat('tLog', '#4a3020'), -3.6, .09 + i * .17 - .65, z + 1.4 + (i % 2) * .05); lg.rotation.x = Math.PI / 2; lg.position.x += (i % 3) * .2; }
 }
 // ---------- THE BRONZE LAVER, made from the women's mirrors (Ex 30:17–21, 38:8) ----------
