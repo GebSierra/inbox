@@ -97,3 +97,16 @@ Owner, on his phone: both links ran at about 60 fps (the phone's cap); half-size
 | Sermon on the Mount | 74 | ≈22 → ≈12 MB |
 
 After Wave 1 overall: Colossae 2476 → 670 draw calls, as the plan predicted.
+
+### S9: colour-bake merge (2026-11-12)
+
+Untextured standard materials that differ only in colour now merge into one mesh per (roughness, metalness, shading, side, shadow) with the colour written into each vertex; untextured vertex-coloured meshes (the mountains) join them. Emissive, transparent and textured materials stay separate.
+
+| Town | Draw calls before → after | Merged meshes | Separate vertex-coloured meshes |
+|---|---|---|---|
+| Colossae | 670 → 442 | 358 → 222 | 147 → 10 |
+| James | ≈350 → 206 | 216 → 59 | 108 → 1 |
+| Tabernacle | 194 → 157 | 63 → 34 | 69 → 1 |
+| Sermon on the Mount | 74 → 35 | 115 → 52 | 87 → 3 |
+
+Screenshots match in all four towns (Colossae 99/99, largest mean difference 0.5%). Colossae merges less than the plan guessed (≈40) because most of its looks are textured.

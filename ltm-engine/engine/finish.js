@@ -21,21 +21,34 @@ function blocked(x, z) { const R2 = .28; for (const [ox, oz] of [[0, 0], [R2, 0]
   }
   const groups = new Map(), kill = [];
   const hidden = []; scene.traverse(o => { if (o.isMesh && !o.userData.dyn) { let v = true; for (let q = o; q; q = q.parent) if (!q.visible) { v = false; break; } if (!v) hidden.push(o); } }); hidden.forEach(o => o.parent.remove(o));
+  // S9 colour bake: untextured standard materials that differ only in colour share one merged mesh, the colour written into each vertex.
+  // Vertex-coloured meshes without a texture (the mountains) join too, their colours multiplied by their material's colour.
+  const MAPS = ['map', 'normalMap', 'roughnessMap', 'metalnessMap', 'emissiveMap', 'aoMap', 'lightMap', 'bumpMap', 'displacementMap', 'alphaMap'];
+  const bakeKey = m => { if (Array.isArray(m) || m.type !== 'MeshStandardMaterial' || m.transparent || m.opacity !== 1 || m.alphaTest || MAPS.some(k => m[k]) || m.emissive.getHex() !== 0
+      || m.onBeforeCompile !== THREE.Material.prototype.onBeforeCompile || (m.clippingPlanes && m.clippingPlanes.length) || m.wireframe) return null;
+    return ['bake', m.roughness, m.metalness, m.flatShading, m.side, m.envMap ? m.envMap.uuid : '', m.envMapIntensity, m.depthWrite, m.depthTest, m.polygonOffset, m.polygonOffsetFactor, m.polygonOffsetUnits, m.toneMapped, m.fog, m.dithering, m.vertexColors ? 1 : 0].join('|'); };
   scene.traverse(o => {
-    if (!o.isMesh || o.userData.dyn || o.material.isShaderMaterial || o.geometry.attributes.color || o.material.transparent) return;
+    if (!o.isMesh || o.userData.dyn || o.material.isShaderMaterial || o.material.transparent) return;
+    const bk = bakeKey(o.material), hasCol = !!o.geometry.attributes.color;
+    if (hasCol && !(bk && o.material.vertexColors)) return;           // vertex colours with a texture (the ground) keep their own mesh
     let g = o.geometry.index ? o.geometry.toNonIndexed() : o.geometry.clone();
     g.applyMatrix4(o.matrixWorld);
-    for (const k of Object.keys(g.attributes)) if (!['position', 'normal', 'uv'].includes(k)) g.deleteAttribute(k);
+    for (const k of Object.keys(g.attributes)) if (!['position', 'normal', 'uv', 'color'].includes(k)) g.deleteAttribute(k);
     if (!g.attributes.normal) g.computeVertexNormals();
     if (!g.attributes.uv) g.setAttribute('uv', new THREE.Float32BufferAttribute(new Float32Array(g.attributes.position.count * 2), 2));
+    if (bk) { const c = o.material.color, n = g.attributes.position.count, src = g.attributes.color && o.material.vertexColors ? g.attributes.color : null, a = new Float32Array(n * 3);
+      for (let i = 0; i < n; i++) { a[i * 3] = c.r * (src ? src.getX(i) : 1); a[i * 3 + 1] = c.g * (src ? src.getY(i) : 1); a[i * 3 + 2] = c.b * (src ? src.getZ(i) : 1); }
+      g.setAttribute('color', new THREE.Float32BufferAttribute(a, 3)); }
+    else if (g.attributes.color) g.deleteAttribute('color');
     g.morphAttributes = {}; g.clearGroups();
-    const key = o.material.uuid + (o.castShadow ? 's' : 'n');
-    if (!groups.has(key)) groups.set(key, { m: o.material, cast: o.castShadow, list: [] });
+    const key = (bk ? bk.replace(/\|[01]$/, '') : o.material.uuid) + (o.castShadow ? 's' : 'n');
+    if (!groups.has(key)) groups.set(key, { m: o.material, bake: !!bk, cast: o.castShadow, list: [] });
     groups.get(key).list.push(g); kill.push(o);
   });
   for (const o of kill) o.parent.remove(o);
-  for (const { m, cast, list } of groups.values()) { const merged = mergeGeometries(list, false); if (!merged) continue;
-    const mesh = new THREE.Mesh(merged, m); mesh.castShadow = cast; mesh.receiveShadow = true; mesh.matrixAutoUpdate = false; scene.add(mesh); }
+  for (const { m, bake, cast, list } of groups.values()) { const merged = mergeGeometries(list, false); if (!merged) continue;
+    let mm = m; if (bake) { mm = m.clone(); mm.color.setRGB(1, 1, 1); mm.vertexColors = true; mm.name = 'baked'; mm.needsUpdate = true; }
+    const mesh = new THREE.Mesh(merged, mm); mesh.castShadow = cast; mesh.receiveShadow = true; mesh.matrixAutoUpdate = false; scene.add(mesh); }
   const empties = []; scene.traverse(o => { if (o.isGroup && !o.children.length) empties.push(o); }); empties.forEach(o => o.parent && o.parent.remove(o));
 }
 // ---- the bird you fly as in bird's-eye view ----
