@@ -46,7 +46,9 @@ let seed = 7; const rnd = () => ((seed = (seed * 16807) % 2147483647) - 1) / 214
 const R = (a, b) => a + rnd() * (b - a);
 
 // ---------- renderer / scene ----------
-const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+// Keeping the drawing buffer costs a full-screen copy every frame on phone GPUs, so only pages that read the canvas back keep it:
+// the library page (thumbnails via toDataURL) and ?shots. Playwright screenshots don't need it.
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: /\/library\//.test(location.pathname) || new URLSearchParams(location.search).has('shots') });
 const MOBILE = matchMedia('(pointer: coarse)').matches || Math.min(innerWidth, innerHeight) < 600;
 renderer.setPixelRatio(Math.min(devicePixelRatio, MOBILE ? 1.5 : 2));
 renderer.setSize(innerWidth, innerHeight);
