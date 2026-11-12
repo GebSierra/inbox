@@ -13,7 +13,7 @@ const TZ = 2;
   for (const s of [-1, 1]) { const x = s * 10, z = TZ + 5, y = heightAt(x, z);
     box(1.5, .3, 1.5, 'marble', x, y, z); box(1.2, 1.4, 1.2, 'stone', x, y + .3, z); box(1.5, .25, 1.5, 'marble', x, y + 1.7, z);
     if (s < 0) { const pt = P.plaque(); const pq = new THREE.Mesh(new THREE.PlaneGeometry(1.0, .38), new THREE.MeshStandardMaterial({ map: pt, roughness: .8 })); { const a = Math.atan2(0 - x, TZ + 9.5 - z); pq.position.set(x + Math.sin(a) * .72, y + .95, z + Math.cos(a) * .72); pq.rotation.y = a; } pq.userData.dyn = 1; scene.add(pq); }
-    { const st = makeStatue(THREE, { pose: s < 0 ? 'philosopher' : 'festival', height: 2.3 }); st.position.set(x, y + 1.95, z); st.rotation.y = s > 0 ? -.5 : .5; st.traverse(o => { if (o.isMesh) o.userData.dyn = 1; }); scene.add(st); } }
+    { const st = makeStatue(THREE, { pose: s < 0 ? 'philosopher' : 'festival', height: 2.3 }); st.position.set(x, y + 1.95, z); st.rotation.y = s > 0 ? -.5 : .5; st.traverse(o => { if (o.isMesh) o.userData.dyn = 1; }); st.userData.mergeInside = 1; scene.add(st); } }
   for (const s of [-1, 1]) cypress(s * 14, TZ - 11, 1);
   for (const s of [-1, 1]) for (const zz of [TZ - 2]) { const x = s * 14.5; cyl(.7, .6, .7, 8, 'clay', x, heightAt(x, zz), zz); add(new THREE.IcosahedronGeometry(.8, 0), 'leaf', x, heightAt(x, zz) + 1.3, zz); }
   window.__fire = [];

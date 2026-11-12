@@ -121,3 +121,16 @@ Towns with more point lights than the pool (3 on phones, 4 on desktop) take thei
 | Tabernacle | 5 → 3 (phone) | unchanged |
 
 Pool against all lights, Colossae's busiest lit rooms (kitchen 3.16–20, altar square): mean difference 0.5–0.6% on phone and desktop, the oven glow kept. Colossae screenshots re-baselined together with the tree mix; the Tabernacle matches its baseline (largest mean difference 0.5%). James has no point lights, the Mount one.
+
+### S11: merge moving and kept-apart groups inside themselves (2026-11-12)
+
+Every boat in `SHIPS` and every group marked `userData.mergeInside` (the game-ready stall model in `crates.js`, Colossae's two temple statues) is merged into one mesh per material in its own frame, so boats still bob as one and each stall stays its own object. Steady-state draw calls (the shadow map at rest):
+
+| Town | Before → after |
+|---|---|
+| Colossae | 443 → 386 |
+| James | 206 → 106 |
+| Sermon on the Mount | 35 → 32 |
+
+Screenshots match (Colossae 99/99, largest mean difference 0.6%, the bobbing boat; the Mount and James 0.0–0.1%). The plan's "279 stall clones" in Colossae turned out to be several imported models (statues, the table set, the stall frames); the statues and stall frames are now merged, the rest is small.
+A slip on the way: a trailing `//` comment swallowed the stall's `scale.setScalar(1.35)` and shrank every stall; the screenshot comparison caught it (LESSONS §10 already warns about this).

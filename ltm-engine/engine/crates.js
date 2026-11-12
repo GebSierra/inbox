@@ -30,7 +30,8 @@ function fillCrate(g, c, kind, k = 1.35) { const x = c.x * k, y = c.y * k + (c.y
   return top; }
 function gstallFrame(sx, sz, face, tint) {
   const g = new THREE.Group(); g.position.set(sx, heightAt(sx, sz), sz); g.rotation.y = face; scene.add(g);
-  const c = MODELS.gstall.clone(true); c.scale.setScalar(1.35);
+  // S11: finish.js merges the stall model's pieces into one mesh per material (mergeInside)
+  const c = MODELS.gstall.clone(true); c.userData.mergeInside = 1; c.scale.setScalar(1.35);
   c.traverse(o => { if (!o.isMesh) return; o.userData.dyn = 1; const n = o.material.name || '';
     if (n.includes('FruitVeg')) o.visible = false;
     else if (n.includes('Wood')) { const k = 'gw' + n; if (!KMAT[k]) { KMAT[k] = o.material.clone(); const t = TEX.wood.clone(); t.repeat.set(3, 3); t.needsUpdate = true; KMAT[k].map = t; KMAT[k].aoMap = null; KMAT[k].color = new THREE.Color(n.includes('Dark') ? '#8a5c3a' : '#b88a5c'); KMAT[k].needsUpdate = true; } o.material = KMAT[k]; }

@@ -19,6 +19,25 @@ function blocked(x, z) { const R2 = .28; for (const [ox, oz] of [[0, 0], [R2, 0]
     const clear = (x0, z0, x1, z1) => { for (let z = z0; z <= z1; z += .25) for (let x = x0; x <= x1; x += .25) { const i = Math.floor((x - CG.x0) / CG.r), j = Math.floor((z - CG.z0) / CG.r); if (i >= 0 && j >= 0 && i < CG.n && j < CG.n) CG.cells[j * CG.n + i] = 0; } };
     for (const w of WALKWAYS) clear(...w);   // [x0, z0, x1, z1] boxes from the town part
   }
+  // S11: things that move or were kept apart as a whole (James's ships, Colossae's game-ready stalls) are merged inside themselves:
+  // one mesh per material in the group's own frame, so a ship still bobs as one and each stall stays its own object.
+  // A group opts in with userData.mergeInside; every SHIPS entry does. Skinned, shader, sprite and morphing meshes stay as they are.
+  { const roots = new Set(SHIPS); scene.traverse(o => { if (o.userData.mergeInside) roots.add(o); });
+    for (const root of roots) { if (!root.parent) continue; root.updateMatrixWorld(true); const inv = root.matrixWorld.clone().invert(), bag = new Map(), done = [];
+      root.traverse(o => { if (!o.isMesh || o.isSkinnedMesh || o.isInstancedMesh || o.isSprite || Array.isArray(o.material) || o.material.isShaderMaterial || o.morphTargetInfluences || o.userData.keep) return;
+        for (let q = o; q && q !== root; q = q.parent) if (!q.visible) return;
+        for (let q = o.parent; q && q !== root; q = q.parent) if (roots.has(q)) return;   // a nested root merges itself
+        const g = (o.geometry.index ? o.geometry.toNonIndexed() : o.geometry.clone()).applyMatrix4(new THREE.Matrix4().multiplyMatrices(inv, o.matrixWorld));
+        if (!g.attributes.normal) g.computeVertexNormals();
+        const key = o.material.uuid + (o.castShadow ? 's' : 'n') + (o.receiveShadow ? 'r' : 'x');
+        if (!bag.has(key)) bag.set(key, { m: o.material, cast: o.castShadow, recv: o.receiveShadow, list: [] }); bag.get(key).list.push(g); done.push(o); });
+      if (done.length < 2) continue;
+      for (const { m, cast, recv, list } of bag.values()) {
+        const keep = ['position', 'normal', 'uv', 'uv1', 'color'].filter(k => list.every(g => g.attributes[k]));
+        for (const g of list) { for (const k of Object.keys(g.attributes)) if (!keep.includes(k)) g.deleteAttribute(k); g.morphAttributes = {}; g.clearGroups(); }
+        const merged = mergeGeometries(list, false); if (!merged) continue;
+        const mesh = new THREE.Mesh(merged, m); mesh.castShadow = cast; mesh.receiveShadow = recv; mesh.userData.dyn = 1; root.add(mesh); }
+      for (const o of done) o.parent.remove(o); } }
   const groups = new Map(), kill = [];
   const hidden = []; scene.traverse(o => { if (o.isMesh && !o.userData.dyn) { let v = true; for (let q = o; q; q = q.parent) if (!q.visible) { v = false; break; } if (!v) hidden.push(o); } }); hidden.forEach(o => o.parent.remove(o));
   // S9 colour bake: untextured standard materials that differ only in colour share one merged mesh, the colour written into each vertex.
