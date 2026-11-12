@@ -8,7 +8,7 @@ import { chromium, launchOpts } from '../tools/pw.mjs';
 import { serve, REPO } from '../tools/serve.mjs'; import { roomChecks } from './geom.mjs'; import fs from 'fs'; import path from 'path';
 const TOWN = process.argv.slice(2).find(a => !a.startsWith('--'));
 if (!TOWN || !fs.existsSync(path.join(REPO, TOWN, 'index.html'))) { console.error('usage: node ltm-engine/tests/acceptance.mjs <town-folder> [--update-baseline] [--rooms] [--no-shots]'); process.exit(2); }
-const TD = path.join(REPO, TOWN, 'tests'); fs.mkdirSync(path.join(TD, 'out'), { recursive: true });
+const TD = path.join(REPO, TOWN, 'tests'); fs.mkdirSync(path.join(TD, 'out'), { recursive: true }); fs.mkdirSync(path.join(TD, 'baseline'), { recursive: true });
 const UPDATE = process.argv.includes('--update-baseline');
 const ROOMS_ONLY = process.argv.includes('--rooms'), NO_SHOTS = process.argv.includes('--no-shots');
 const T = { loadMs: 30000, minFps: 0.2, pixelDiff: .12 };  // fps floor is for headless software GL; real phones should exceed 25
