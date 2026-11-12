@@ -81,6 +81,8 @@ function jcSynagogue(x, z) {
   for (const [kx, kz, kw, kd] of [[(FX + 13) / 2, -13, 13.3 - FX, .3], [(FX + 13) / 2, 13, 13.3 - FX, .3], [FX, 0, .3, 26.3], [13, 0, .3, 26.3]]) box(kw, .16, kd, jcM.ashDk(), kx, P - .1, kz, g).userData.nocol = 1;   // a dressed kerb round the edge
   // steps up from the avenue (front, -x), centred
   for (let k = 0; k < 4; k++) jcWorldUV(box(.45, P * (k + 1) / 5, 7, flag, FX - .2 - (3 - k) * .45 - .2, 0, 0, g));
+  // the back steps (owner 2026-11-12): a smaller flight of the same kind off the courtyard's right-hand (+z) edge, beyond the porch, where you leave
+  for (let k = 0; k < 3; k++) jcWorldUV(box(4, P * (k + 1) / 4, .45, flag, 7, 0, 13 + .2 + (2 - k) * .45 + .225, g));
   // the two mikva'ot: plastered pits with steps down along one side and water at the bottom
   for (const [hx0, hz0, hx1, hz1] of holes) { const wz = (hz0 + hz1) / 2, ww = hz1 - hz0;
     box(hx1 - hx0, .05, ww, mat('jcPit', '#b9a582'), (hx0 + hx1) / 2, 0, wz, g);
@@ -139,7 +141,7 @@ function jcSynagogue(x, z) {
   box(X1 - X0 - 1, .45, .55, jcM.ash(), (X0 + X1) / 2, F, Z1 + .62, g); box(X1 - X0 - 1, .1, .62, jcM.ashDk(), (X0 + X1) / 2, F + .45, Z1 + .62, g);
   for (const [px, pz] of [[X0 - .1, Z1 + 1.8]]) box(.6, .5, 3.6, flag, px, P, pz, g);   // a step at the portico's open front end
   // walking: platform, steps (half height), floors
-  const raised = [[z, 13, x + (FX + 13) / 2, (13 - FX) / 2, y0 + P], [z, 3.5, x + FX - .9, .9, y0 + P * .5], [z + (SZ0 + Z1) / 2, (Z1 - SZ0) / 2 + .3, x + (X0 + X1) / 2, (X1 - X0) / 2 + .3, y0 + F], [z + Z1 + 2.1, 1.8, x + (X0 + X1) / 2, (X1 - X0) / 2 + .3, y0 + F]];
+  const raised = [[z, 13, x + (FX + 13) / 2, (13 - FX) / 2, y0 + P], [z + 13.9, .75, x + 7, 2, y0 + P * .5], [z, 3.5, x + FX - .9, .9, y0 + P * .5], [z + (SZ0 + Z1) / 2, (Z1 - SZ0) / 2 + .3, x + (X0 + X1) / 2, (X1 - X0) / 2 + .3, y0 + F], [z + Z1 + 2.1, 1.8, x + (X0 + X1) / 2, (X1 - X0) / 2 + .3, y0 + F]];
   return { group: g, raised };
 }
 

@@ -37,7 +37,7 @@ const AG = { x0: -20.5, x1: 20.5, z0: 33, z1: 64, mouth: 13.5, back: 20.5, west:
 { // the sacred centre of the square: a small altar
   agoraAltar(48.5); }
 { // shops and houses packed round the outside of the ring, so the agora sits inside the town (flat-roofed blocks, own variation, no R())
-  const blocks = [[-29, 30, -20.6, 37], [-31, 60.2, -20.6, 75], [-29, 38.5, -32, 38.5], [20.6, 30, 29, 44.6], [20.6, 44.8, 29, 51.2], [7.6, 64.2, 20.6, 75], [-20.6, 64.2, -7.6, 75], [20.6, 61.3, 29, 75]];
+  const blocks = [[-29, 30, -20.6, 37], [-31, 60.2, -20.6, 75], [-29, 38.5, -32, 38.5], [20.6, 32, 29, 44.6], [20.6, 44.8, 29, 51.2], [7.6, 64.2, 20.6, 75], [-20.6, 64.2, -7.6, 75], [20.6, 61.3, 29, 75]];
   let s = 4242; const rn = () => ((s = (s * 48271) % 2147483647) - 1) / 2147483646;
   for (const [x0, z0, x1, z1] of blocks) { if (Math.abs(x1 - x0) < 2 || Math.abs(z1 - z0) < 2) continue;
     const w = Math.abs(x1 - x0), d = Math.abs(z1 - z0), nx = Math.max(1, Math.round(w / 7)), nz = Math.max(1, Math.round(d / 7));

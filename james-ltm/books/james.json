@@ -17,7 +17,7 @@
    "rooms": [
     {
      "room": 1,
-     "name": "The Gate Stoa",
+     "name": "The Gate",
      "verses": "1:1–5",
      "kind": "vignette",
      "at": [
@@ -58,7 +58,7 @@
     },
     {
      "room": 2,
-     "name": "The Tower of the Winds",
+     "name": "The Tower",
      "verses": "1:6–10",
      "kind": "vignette",
      "at": [
@@ -99,7 +99,7 @@
     },
     {
      "room": 3,
-     "name": "The Tholos",
+     "name": "The Dome",
      "verses": "1:11–15",
      "kind": "vignette",
      "at": [
@@ -140,7 +140,7 @@
     },
     {
      "room": 4,
-     "name": "The Lamp Stoa",
+     "name": "The Lamp Porch",
      "verses": "1:16–20",
      "kind": "vignette",
      "at": [
@@ -190,7 +190,7 @@
     },
     {
      "room": 5,
-     "name": "The Mirror Court",
+     "name": "The Mirror Bench",
      "verses": "1:21–25",
      "kind": "vignette",
      "at": [
@@ -231,7 +231,7 @@
     },
     {
      "room": 6,
-     "name": "The Almshouse Portico",
+     "name": "The Almshouse",
      "verses": "1:26–27",
      "kind": "vignette",
      "at": [
@@ -260,11 +260,11 @@
   {
    "chapter": 2,
    "verses": 26,
-   "district": "The Synagogue Courtyard",
+   "district": "The Synagogue",
    "rooms": [
     {
      "room": 1,
-     "name": "TODO room 1",
+     "name": "The Steps",
      "verses": "2:1–5",
      "kind": "vignette",
      "objects": [
@@ -292,7 +292,7 @@
     },
     {
      "room": 2,
-     "name": "TODO room 2",
+     "name": "The Pools",
      "verses": "2:6–10",
      "kind": "vignette",
      "objects": [
@@ -320,7 +320,7 @@
     },
     {
      "room": 3,
-     "name": "TODO room 3",
+     "name": "The Hall",
      "verses": "2:11–15",
      "kind": "vignette",
      "objects": [
@@ -348,7 +348,7 @@
     },
     {
      "room": 4,
-     "name": "TODO room 4",
+     "name": "The Scroll Room",
      "verses": "2:16–20",
      "kind": "vignette",
      "objects": [
@@ -376,7 +376,7 @@
     },
     {
      "room": 5,
-     "name": "TODO room 5",
+     "name": "The Porch",
      "verses": "2:21–25",
      "kind": "vignette",
      "objects": [
@@ -404,7 +404,7 @@
     },
     {
      "room": 6,
-     "name": "TODO room 6",
+     "name": "The Back Steps",
      "verses": "2:26",
      "kind": "vignette",
      "objects": [

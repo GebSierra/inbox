@@ -48,3 +48,24 @@ Recommendation: **just outside the west wall, inside its own walled grounds**, n
 ## F. Names (proposed 2026-11-12, waiting for the owner)
 Agora (simpler): 1 The Gate · 2 The Tower · 3 The Dome · 4 The Lamp Porch · 5 The Mirror Bench · 6 The Almshouse.
 Synagogue, in the owner's order (sketch `refs/plan/2-synagogue-rooms-sketch.png`): 1 The Steps (2:1–5) · 2 The Pools (2:6–10) · 3 The Hall (2:11–15) · 4 The Scroll Room (2:16–20) · 5 The Porch, the colonnade on the right (2:21–25) · 6 for 2:26 (one verse), options: The Side Door at the far end of the porch, where you leave, or The Main Door at the top of the entrance steps.
+
+## G. Chapter 2 objects (proposed 2026-11-12, waiting for the owner)
+Names approved: The Steps, The Pools, The Hall, The Scroll Room, The Porch, The Back Steps (built: `refs/plan/2-back-steps-sketch.png`).
+Order in each room: 1 near-left, 2 far-left, 3 far-right, 4 near-right, 5 centre. The objects are addresses; learners make their own pictures. (lib) = already in the object library.
+
+| Room | Verses | 1 near-left | 2 far-left | 3 far-right | 4 near-right | 5 centre |
+|---|---|---|---|---|---|---|
+| 1 The Steps | 2:1–5 | tipped bronze balance | purple robe with a gold ring on a stand | cushioned seat of honour with a footstool | ivory judge's rod on a bracket | basket of small gold crowns |
+| 2 The Pools | 2:6–10 | iron shackles on a post | name plaque with its letters chiselled out | gilded royal sceptre | cracked stone law tablet | bronze chain with one broken link |
+| 3 The Hall | 2:11–15 | two stone tablets of the law (lib: tablets) | open birdcage (lib: cage) | verdict board with an olive branch across it | ox yoke with no plough | threadbare cloak over an empty bread basket |
+| 4 The Scroll Room | 2:16–20 | cold brazier with an empty pot (lib: brazier) | withered fig tree in a pot | empty glass display niche | trembling bronze gong | broken plough share |
+| 5 The Porch | 2:21–25 | rough altar with bound firewood and a knife | small arch with its capstone hanging on a rope | bowl of sand under a star-shaped lamp | perfectly balanced brass scales (lib: scale) | window frame with a scarlet cord hanging down |
+| 6 The Back Steps | 2:26 | an empty white tunic lying on the top step | | | | |
+
+Reference prompts (setting line: "in a first-century Galilean synagogue: cream plaster walls with bold red bands, ashlar corners, flagstone floor"):
+- 2.1 The Steps: viewed from the avenue, at the foot of the broad stone steps up to the raised flagstone courtyard. near-left a tipped bronze balance on a stone block; far-left a purple robe and a gold ring on a wooden stand; far-right a red-cushioned carved seat with a footstool; near-right an ivory rod on a bronze wall bracket; centre a wicker basket heaped with small gold crowns.
+- 2.2 The Pools: on the courtyard beside the two sunken stepped ritual baths of clear water. near-left iron shackles hanging on a post; far-left a bronze name plaque with its letters chiselled out; far-right a gilded sceptre on a stand; near-right a cracked grey stone tablet; centre a heavy bronze chain on a block with one broken link.
+- 2.3 The Hall: inside the assembly hall, tiered stone benches on all four walls, Doric columns, timber ceiling, two wooden lecterns. near-left two rounded stone tablets; far-left a brass birdcage with its door open; far-right a wooden verdict board with an olive branch across it; near-right a wooden ox yoke; centre a threadbare brown cloak over an empty bread basket.
+- 2.4 The Scroll Room: viewed from its inner doorway, tall scrolls on wooden rollers standing upright, a lidded chest. near-left a cold iron brazier with an empty clay pot; far-left a withered fig tree in a terracotta pot; far-right a small glass-fronted niche, empty; near-right a bronze gong on a frame; centre a broken iron plough share.
+- 2.5 The Porch: under the roofed colonnade on the right side, a stone bench along the wall. near-left a rough stone altar with bound firewood and a knife; far-left a small stone arch with its capstone hanging on a rope; far-right a bowl of sand under a hanging star-shaped lamp; near-right balanced brass scales; centre a window frame with a scarlet cord hanging down.
+- 2.6 The Back Steps: the small flight of steps leading down off the courtyard behind the porch. an empty white tunic lying on the top step.
