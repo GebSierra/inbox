@@ -44,3 +44,7 @@ Recommendation: **just outside the west wall, inside its own walled grounds**, n
 1. Build the agora fix, check every stop (`fast.mjs all`, screenshots), push.
 2. Build the synagogue model (D), show it, then propose and agree its six rooms before placing objects.
 3. Then plan chapter 3 (The Harbour) the same way and stop again; then 4, then 5.
+
+## F. Names (proposed 2026-11-12, waiting for the owner)
+Agora (simpler): 1 The Gate · 2 The Tower · 3 The Dome · 4 The Lamp Porch · 5 The Mirror Bench · 6 The Almshouse.
+Synagogue, in the owner's order (sketch `refs/plan/2-synagogue-rooms-sketch.png`): 1 The Steps (2:1–5) · 2 The Pools (2:6–10) · 3 The Hall (2:11–15) · 4 The Scroll Room (2:16–20) · 5 The Porch, the colonnade on the right (2:21–25) · 6 for 2:26 (one verse), options: The Side Door at the far end of the porch, where you leave, or The Main Door at the top of the entrance steps.

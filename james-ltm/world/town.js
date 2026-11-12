@@ -14,7 +14,7 @@ for (const [gx, gz] of [[-58, 8], [-30, -26], [-58, 60], [8, -30]]) { for (let r
 { // three-storey insula block
   const ix = -36, iz = 28; const g = house(ix, iz, 12, 9, 3, Math.PI / 2); }
 // ---------- town filler: more houses, trees, walls, sheep ----------
-const occupied = (x, z) => (Math.abs(x) < 33 && z > 28 && z < 82) || (x > 2 && x < 32 && z > -2 && z < 29) || (x > -93 && x < -71 && z > -24 && z < -2) || (x > -72 && x < 3 && z > -33 && z < -25) || (Math.abs(x) < 5 && z > 76) || z < SHORE + 8 || (x > 24 && x < 38 && z < SHORE + 14) || (Math.abs(x) < 5 && z < 30 && z > SHORE);
+const occupied = (x, z) => (Math.abs(x) < 33 && z > 28 && z < 82) || (x > 2 && x < 35 && z > -2 && z < 29) || (x > -93 && x < -71 && z > -24 && z < -2) || (x > -72 && x < 3 && z > -33 && z < -25) || (Math.abs(x) < 5 && z > 76) || z < SHORE + 8 || (x > 24 && x < 38 && z < SHORE + 14) || (Math.abs(x) < 5 && z < 30 && z > SHORE);
 const placed = []; for (let i = 0; i < 160; i++) { const x = R(-64, 40), z = R(-34, 70); if (placed.some(([a, b]) => Math.hypot(a - x, b - z) < 9.5)) continue; if (occupied(x, z) || Math.hypot(x, z - 60) < 18) continue; placed.push([x, z]); house(x, z, R(6, 9), R(6, 8), rnd() > .6 ? 2 : 1, Math.round(R(0, 3)) * Math.PI / 2 + R(-.08, .08)); if (rnd() > .55) TN.palm(x + R(5, 6) * (rnd() > .5 ? 1 : -1), z + R(-3, 3), R(.8, 1.1)); else if (rnd() > .5) tree(x + 5.5, z + R(-3, 3), .8); }
 for (let i = 0; i < 400; i++) { const x = R(-66, 44), z = R(-36, 74); if (occupied(x, z) || Math.abs(x) < 6 && z > 20) continue;
   if (placed.some(([a, b]) => Math.hypot(a - x, b - z) < 5.5)) continue; const r = rnd(); if (r < .25) tree(x, z, R(.7, 1)); else if (r < .35) cypress(x, z, R(.7, 1)); else if (r < .8) shrub(x, z, R(.9, 1.6)); }

@@ -12,7 +12,7 @@ function hRaw(x, z) {
   if (z < SHORE) h = Math.min(h, (z - SHORE) * 0.2 - .3);                            // the beach falls into the sea
   return h;
 }
-const FLAT = [[0, 53, 31, 24], [17, 14, 13.5, 13.5], [-82, -13, 9.5, 9.5]];   // the agora and its ring, the synagogue courtyard, the rich man's estate   // [cx, cz, halfW, halfD] the agora terrace
+const FLAT = [[0, 53, 31, 24], [18.5, 14, 14.5, 13.5], [-82, -13, 9.5, 9.5]];   // the agora and its ring, the synagogue courtyard, the rich man's estate   // [cx, cz, halfW, halfD] the agora terrace
 const heightAt = (x, z) => { let h = heightAt0(x, z);
   for (const [cx, cz, hw, hd] of FLAT) { const dx = Math.max(0, Math.abs(x - cx) - hw), dz = Math.max(0, Math.abs(z - cz) - hd), d = Math.hypot(dx, dz);
     if (d < 4) { const w = 1 - d / 4, fl = heightAt0(cx, cz); h = h * (1 - w * w * (3 - 2 * w)) + fl * (w * w * (3 - 2 * w)); } }

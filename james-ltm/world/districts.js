@@ -11,8 +11,8 @@
   drape(-70, -30.5, -2.5, -27.5, 'path', .03); drape(-92, -30.5, -70, -27.5, 'path', .03); drape(-83.5, -27.5, -80.5, -21.5, 'path', .03);
 }
 { // chapter 2: the synagogue, its courtyard steps on the avenue
-  const syn = jcSynagogue(17, 14); RAISED.push(...syn.raised);
-  WALKWAYS.push([8.6, 9, 9.6, 11.6], [21.3, 19, 23.7, 20.2], [21.3, 7.7, 23.7, 9.3]);   // the main door, the side door to the portico, the storeroom door
+  const syn = jcSynagogue(20, 14); RAISED.push(...syn.raised);
+  WALKWAYS.push([11.6, 9, 12.6, 11.6], [24.3, 19, 26.7, 20.2], [24.3, 7.7, 26.7, 9.3]);   // the main door, the side door to the portico, the storeroom door
 }
 { // chapter 5: the rich man's walled house, just outside the west gate among his fields
   jcRichHouse(-82, -13);

@@ -67,20 +67,20 @@ function jcWallGate(a, b, o = {}) {
 }
 
 // ---- the synagogue (James 2): owner's brief, see the header. Centred on (x, z), front (entrance side) facing -x towards the avenue. ----
-// Local frame: +x away from the avenue, standing on the avenue facing +x the LEFT is -z. Courtyard platform 26 x 26 m, 1 m high, with two sunken stepped basins (mikva'ot)
+// Local frame: +x away from the avenue, standing on the avenue facing +x the LEFT is -z. Courtyard platform 29 x 26 m (front edge FX), 1 m high, with two sunken stepped basins (mikva'ot)
 // front-right; the building 16 x 14.5 m: the assembly hall, the scroll storeroom on the left, a columned portico on the right. Returns { group, raised } where raised are
 // RAISED entries (world [cz, hz, cx, hx, top]) for walking on the platform, the floors and the steps.
 function jcSynagogue(x, z) {
   const y0 = heightAt(x, z), g = new THREE.Group(); g.position.set(x, y0, z); scene.add(g); g.updateMatrixWorld(true);
   const P = 1.0, F = P + .5, WH = 4.8, flag = jcFlagMat();
   // courtyard platform: rows of 1 m with the two basin holes left open
-  const holes = [[-11, 2, -7, 5], [-11, 8, -7, 11]];
-  for (let rz = -13; rz < 13; rz++) { let xs = -13; const cuts = holes.filter(h => rz >= h[1] && rz < h[3]).sort((p, q) => p[0] - q[0]);
+  const FX = -16, holes = [[-12, 2, -8, 5], [-12, 8, -8, 11]];   // FX: the courtyard's front edge (owner 2026-11-12: a little wider in front)
+  for (let rz = -13; rz < 13; rz++) { let xs = FX; const cuts = holes.filter(h => rz >= h[1] && rz < h[3]).sort((p, q) => p[0] - q[0]);
     for (const h of cuts) { if (h[0] > xs) jcWorldUV(box(h[0] - xs, P, 1, flag, (xs + h[0]) / 2, 0, rz + .5, g)); xs = h[2]; }
     if (xs < 13) jcWorldUV(box(13 - xs, P, 1, flag, (xs + 13) / 2, 0, rz + .5, g)); }
-  for (const [kx, kz, kw, kd] of [[0, -13, 26.3, .3], [0, 13, 26.3, .3], [-13, 0, .3, 26.3], [13, 0, .3, 26.3]]) box(kw, .16, kd, jcM.ashDk(), kx, P - .1, kz, g).userData.nocol = 1;   // a dressed kerb round the edge
+  for (const [kx, kz, kw, kd] of [[(FX + 13) / 2, -13, 13.3 - FX, .3], [(FX + 13) / 2, 13, 13.3 - FX, .3], [FX, 0, .3, 26.3], [13, 0, .3, 26.3]]) box(kw, .16, kd, jcM.ashDk(), kx, P - .1, kz, g).userData.nocol = 1;   // a dressed kerb round the edge
   // steps up from the avenue (front, -x), centred
-  for (let k = 0; k < 4; k++) jcWorldUV(box(.45, P * (k + 1) / 5, 7, flag, -13.2 - (3 - k) * .45 - .2, 0, 0, g));
+  for (let k = 0; k < 4; k++) jcWorldUV(box(.45, P * (k + 1) / 5, 7, flag, FX - .2 - (3 - k) * .45 - .2, 0, 0, g));
   // the two mikva'ot: plastered pits with steps down along one side and water at the bottom
   for (const [hx0, hz0, hx1, hz1] of holes) { const wz = (hz0 + hz1) / 2, ww = hz1 - hz0;
     box(hx1 - hx0, .05, ww, mat('jcPit', '#b9a582'), (hx0 + hx1) / 2, 0, wz, g);
@@ -139,7 +139,7 @@ function jcSynagogue(x, z) {
   box(X1 - X0 - 1, .45, .55, jcM.ash(), (X0 + X1) / 2, F, Z1 + .62, g); box(X1 - X0 - 1, .1, .62, jcM.ashDk(), (X0 + X1) / 2, F + .45, Z1 + .62, g);
   for (const [px, pz] of [[X0 - .1, Z1 + 1.8]]) box(.6, .5, 3.6, flag, px, P, pz, g);   // a step at the portico's open front end
   // walking: platform, steps (half height), floors
-  const raised = [[z, 13, x, 13, y0 + P], [z, 3.5, x - 13.9, .9, y0 + P * .5], [z + (SZ0 + Z1) / 2, (Z1 - SZ0) / 2 + .3, x + (X0 + X1) / 2, (X1 - X0) / 2 + .3, y0 + F], [z + Z1 + 2.1, 1.8, x + (X0 + X1) / 2, (X1 - X0) / 2 + .3, y0 + F]];
+  const raised = [[z, 13, x + (FX + 13) / 2, (13 - FX) / 2, y0 + P], [z, 3.5, x + FX - .9, .9, y0 + P * .5], [z + (SZ0 + Z1) / 2, (Z1 - SZ0) / 2 + .3, x + (X0 + X1) / 2, (X1 - X0) / 2 + .3, y0 + F], [z + Z1 + 2.1, 1.8, x + (X0 + X1) / 2, (X1 - X0) / 2 + .3, y0 + F]];
   return { group: g, raised };
 }
 
