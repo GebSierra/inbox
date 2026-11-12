@@ -7,6 +7,7 @@
   "zones": ["The Agora", "The Synagogue", "The Harbour", "The Craftsmen’s Street", "The Farm & Vineyard"],
   "built": 1,
   "theme": {
+    "trees": "mix",
     "halfTex": true,
     "loadName": "James",
     "exposure": 1.0,

@@ -1,7 +1,9 @@
 // ---------- props ----------
 function tree(x, z, s = 1) {
-  // L2 options (objects/up-trees.js), chosen by the town theme "trees" or ?trees=a|b: draw and discard the old tree's 112 random numbers first
-  const style = THEME.trees || new URLSearchParams(location.search).get('trees');
+  // L2 (objects/up-trees.js): the town theme "trees" (or ?trees=) is a, b or mix; a new tree first draws and discards the old tree's 112 random numbers
+  // "mix" (owner, 2026-11-12: keep all three) picks one of the three per tree from its position, so the same tree is the same kind on every load
+  let style = THEME.trees || new URLSearchParams(location.search).get('trees');
+  if (style === 'mix') { const h = Math.abs(Math.sin(x * 12.9898 + z * 78.233) * 43758.5453) % 1; style = h < 1 / 3 ? 'old' : h < 2 / 3 ? 'a' : 'b'; }
   if ((style === 'a' || style === 'b') && typeof upOlive === 'function') { for (let k = 0; k < 112; k++) rnd(); return upOlive(x, z, s, { style }); }
   const y = heightAt(x, z), g = new THREE.Group(); g.position.set(x, y, z); scene.add(g);
   // olive-style tree: a leaning, forked trunk and many small canopy clumps in three greens

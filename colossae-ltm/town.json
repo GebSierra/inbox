@@ -7,6 +7,7 @@
   "zones": ["The Market", "The Temple Courtyard", "The Family House", "The Bridge & Road"],
   "built": 99,
   "theme": {
+    "trees": "mix",
     "solidGlass": true,
     "halfTex": true,
     "loadName": "Colossae",

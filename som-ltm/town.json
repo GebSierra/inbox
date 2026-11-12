@@ -16,6 +16,7 @@
   "built": 1,
   "chOffset": 4,
   "theme": {
+    "trees": "mix",
     "halfTex": true,
     "loadName": "the Sermon on the Mount",
     "exposure": 1.0,
