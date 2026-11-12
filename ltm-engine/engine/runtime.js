@@ -67,7 +67,16 @@ const mapbtn = document.getElementById('mapbtn');
 mapbtn.onclick = () => { overview = !overview; tween = null; if (overview) { doll.target.set(player.x, 0, player.z - 20); doll.theta = player.yaw; doll.dist = 110; doll.userTilt = false; } mapbtn.textContent = overview ? 'Walk' : 'Bird’s-eye'; };
 
 const hud = document.getElementById('hud'), hudZ = document.querySelector('#hud .z'), hudS = document.querySelector('#hud .s');
-const clock = new THREE.Clock(); const perf = { n: 0, sum: 0 };
+const clock = new THREE.Clock(); const perf = { n: 0, sum: 0, skip: 60 };
+// Adaptive quality (S4). Every 90 frames, if the average frame took longer than 1/28 s: first drop ambient occlusion (desktop only),
+// then step the pixel ratio down (2 →) 1.5 → 1.2 → 1.0. The step is remembered per town, so a slow phone starts smooth next time.
+// The first 60 frames (loading, first texture uploads) don't count. Not under automation: test browsers are slow by nature.
+const PR_KEY = STORE + '-pixelRatio', PR_STEPS = [2, 1.5, 1.2, 1];
+try { const pr = parseFloat(localStorage.getItem(PR_KEY)); if (pr > 0 && pr < renderer.getPixelRatio()) { renderer.setPixelRatio(pr); composer.setPixelRatio(pr); } } catch (e) {}
+function slowFrames() { if (navigator.webdriver || window.__fixed) return false;
+  if (useAO) { useAO = false; return true; }
+  const pr = renderer.getPixelRatio(), next = PR_STEPS.find(s => s < pr - .01); if (!next) return false;
+  renderer.setPixelRatio(next); composer.setPixelRatio(next); try { localStorage.setItem(PR_KEY, String(next)); } catch (e) {} return true; }
 function groundY(x, z) {
   let y = heightAt(x, z);
   for (const [cz, hz, cx, hx, top] of RAISED) if (Math.abs(z - cz) < hz && Math.abs(x - cx) < hx) y = Math.max(y, top);   // bridge decks etc. (town part)
@@ -75,7 +84,7 @@ function groundY(x, z) {
 }
 function placeCamera() { camera.position.set(player.x, groundY(player.x, player.z) + 1.7, player.z); camera.rotation.set(0, 0, 0); camera.rotation.order = 'YXZ'; camera.rotation.y = player.yaw; camera.rotation.x = player.pitch; }
 function frame() { window.__fc = (window.__fc || 0) + 1;
-  const dt = Math.min(clock.getDelta(), .05), t = clock.elapsedTime; WATER_T.value = t; for (const sh of SHIPS) { sh.position.y = sh.userData.y0 + Math.sin(t * .9 + sh.userData.ph) * (sh.userData.amp ?? .12); sh.rotation.z = Math.sin(t * .7 + sh.userData.ph) * (sh.userData.amp ? sh.userData.amp / .12 * .03 : .03); } perf.n++; perf.sum += dt; if (perf.n === 90) { if (perf.sum / 90 > 1 / 28 && !window.__fixed) useAO = false; }
+  const dt = Math.min(clock.getDelta(), .05), t = clock.elapsedTime; WATER_T.value = t; for (const sh of SHIPS) { sh.position.y = sh.userData.y0 + Math.sin(t * .9 + sh.userData.ph) * (sh.userData.amp ?? .12); sh.rotation.z = Math.sin(t * .7 + sh.userData.ph) * (sh.userData.amp ? sh.userData.amp / .12 * .03 : .03); } if (perf.skip > 0) perf.skip--; else if (!perf.done) { perf.n++; perf.sum += dt; if (perf.n === 90) { if (perf.sum / 90 > 1 / 28) perf.done = !slowFrames(); perf.n = perf.sum = 0; } }
   if (window.__smoke) for (const sm of window.__smoke) { const ph = (t * .25 + sm.userData.ph) % 1; sm.position.y = heightAt(0, TZ + 7) + 2.6 + ph * 4; sm.position.x = Math.sin(ph * 6 + sm.userData.ph * 9) * .4 + ph * .8; sm.scale.setScalar(.6 + ph * 2.2); sm.material.opacity = .22 * (1 - ph) * Math.min(1, ph * 6); }
   if (window.__fire) for (const f of window.__fire) { f.userData.h ??= f.scale.y; f.scale.y = f.userData.h * (1 + Math.sin(t * 9 + f.position.x * 17) * .3); f.rotation.y = t * 2 + f.position.z * 9; }
   let f = (keys.KeyW || keys.ArrowUp ? 1 : 0) - (keys.KeyS || keys.ArrowDown ? 1 : 0) - jv.y;

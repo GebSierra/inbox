@@ -64,3 +64,7 @@ What each town reads after loading (recorded by wrapping `KIT`, `KMAT` and `MODE
 | Sermon on the Mount | 11.9 MB → 5.1 MB | 224 → 79 | 2.7 s → 2.1 s |
 
 `fingerprint.mjs` before and after: IDENTICAL for all three (every mesh, position, material and the random-number state). `fast.mjs all` passes. James and the Mount now spend 3.9 MB of their 5 MB on `models/gstall`; S12 shrinks it.
+
+### S4: adaptive resolution (2026-11-12)
+
+Every 90 frames (after the first 60), if the average frame is slower than 1/28 s the town drops ambient occlusion (desktop), then steps the pixel ratio 1.5 → 1.2 → 1.0 (2 → 1.5 first on desktop), and remembers the step per town in `localStorage` (`<store>-pixelRatio`). Switched off under automation (`navigator.webdriver`) so test screenshots stay sharp. Tested by pretending not to be automated in a slow headless phone: the Tabernacle stepped 1.5 → 1.2 → 1.0 and started at 1.0 on reload. To undo on a phone: clear the site's data. The owner's phone numbers after Wave 1 will show whether it kicks in on his phone.
