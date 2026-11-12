@@ -18,11 +18,14 @@ const FIRES = [];
 // ---- Medieval Village MegaKit (Quaternius, CC0): building pieces loaded before the town is built ----
 THREE.Cache.enabled = true;
 const KIT = {}, KMAT = {};
-{ const names = ['Wall_Plaster_Straight', 'Wall_Plaster_Window_Wide_Round', 'Wall_Plaster_Window_Thin_Round', 'Wall_Plaster_Door_Round', 'Wall_UnevenBrick_Straight', 'Wall_UnevenBrick_Window_Wide_Round', 'Wall_UnevenBrick_Door_Round',
+// town.json may list what the town really uses (S3): "assets": { "kit": false, "models": ["bird"] }. Missing = load everything, as before.
+const ASSETS = CFG.assets || {};
+{ const names = ASSETS.kit === false ? [] : ['Wall_Plaster_Straight', 'Wall_Plaster_Window_Wide_Round', 'Wall_Plaster_Window_Thin_Round', 'Wall_Plaster_Door_Round', 'Wall_UnevenBrick_Straight', 'Wall_UnevenBrick_Window_Wide_Round', 'Wall_UnevenBrick_Door_Round',
     'Roof_RoundTiles_4x4', 'Roof_RoundTiles_4x6', 'Roof_RoundTiles_4x8', 'Roof_RoundTiles_6x4', 'Roof_RoundTiles_6x6', 'Roof_RoundTiles_6x8', 'Roof_RoundTiles_8x8', 'Roof_RoundTiles_8x10',
     'WindowShutters_Wide_Round_Open', 'WindowShutters_Thin_Round_Open', 'WindowShutters_Wide_Round_Closed', 'Window_Wide_Round1', 'Window_Thin_Round1', 'Door_1_Round', 'Balcony_Simple_Straight',
     'Prop_Crate', 'Prop_Wagon', 'Prop_Chimney', 'Prop_Vine2', 'Prop_Vine4', 'Prop_Vine6', 'Corner_Exterior_Brick'];
   const loader = new GLTFLoader(); const el = document.getElementById('lpct'), bar = document.getElementById('lbar'); let done = 0;
+  if (!names.length && bar) bar.style.width = '80%';
   try { await Promise.all(names.map(n => loader.loadAsync(ENGINE + 'kit/' + n + '.gltf').then(g => { done++; const pc = Math.round(done / names.length * 80); if (el) el.textContent = `Building ${THEME.loadName}… ${pc}%`; if (bar) bar.style.width = pc + '%';
       g.scene.traverse(o => { if (o.isMesh) { const m = o.material; KMAT[m.name] ??= m; o.material = KMAT[m.name]; o.castShadow = o.receiveShadow = true; } }); KIT[n] = g.scene; }))); }
   catch (e) { console.warn('kit failed to load, using simple houses', e); }
@@ -31,7 +34,7 @@ const KIT = {}, KMAT = {};
 for (const [k, m] of Object.entries(KMAT)) { if (k.startsWith('MI_WoodTrim')) { m.color = new THREE.Color('#e8dcc4'); m.map = null; m.needsUpdate = true; } if (k === 'MI_Plaster') { m.color = new THREE.Color(1.25, 1.2, 1.1); m.needsUpdate = true; } }
 const MODELS = {};
 let BIRD_ANIM = null;
-try { await Promise.all(['stall', 'table', 'gstall', 'bird'].map(m => new GLTFLoader().loadAsync(`${ENGINE}models/${m}/scene.${m === 'gstall' ? 'glb' : 'gltf'}`).then(g => { g.scene.updateMatrixWorld(true); g.scene.traverse(o => { if (o.isMesh) { o.castShadow = o.receiveShadow = true; if (o.material.map) o.material.map.anisotropy = 4; } }); MODELS[m] = g.scene; if (m === 'bird') BIRD_ANIM = g.animations; }))); }
+try { await Promise.all((ASSETS.models || ['stall', 'table', 'gstall', 'bird']).map(m => new GLTFLoader().loadAsync(`${ENGINE}models/${m}/scene.${m === 'gstall' ? 'glb' : 'gltf'}`).then(g => { g.scene.updateMatrixWorld(true); g.scene.traverse(o => { if (o.isMesh) { o.castShadow = o.receiveShadow = true; if (o.material.map) o.material.map.anisotropy = 4; } }); MODELS[m] = g.scene; if (m === 'bird') BIRD_ANIM = g.animations; }))); }
 catch (e) { console.warn('models failed to load', e); }
 // clone named parts of a model, keeping their layout, re-centred so the bottom-centre sits at the origin
 function part(model, names, scale = 1) {

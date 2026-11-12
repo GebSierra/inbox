@@ -26,6 +26,7 @@
     "tutDisc": 0.6,
     "fly": { "p": [0, -22], "l": [0, -22] }
   },
+  "assets": {"kit": false, "models": ["bird"]},
   "parts": [
     "ltm:core",
     "world/terrain.js",

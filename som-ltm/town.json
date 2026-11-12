@@ -59,6 +59,7 @@
       ]
     }
   },
+  "assets": {"kit": false, "models": ["bird", "gstall"]},
   "parts": [
     "ltm:core",
     "world/terrain.js",

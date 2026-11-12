@@ -52,3 +52,15 @@ The four towns and the library page load `ltm-engine/three.module.min.js` (r170,
 ### S6: compile shaders without freezing (2026-11-12)
 
 `renderer.compileAsync(scene, camera)` runs before the first frame while the loading bar creeps from 95% to 99%. Headless: Colossae ready 9.3 s → 7.4 s (finish.js 6.6 s → 4.7 s), Tabernacle 2.1 s → 1.9 s. Phones with parallel shader compile should gain more. `fast.mjs all` passes; Tabernacle screenshots match.
+
+### S3: load only the models a town uses (2026-11-12)
+
+What each town reads after loading (recorded by wrapping `KIT`, `KMAT` and `MODELS` in a counting proxy): Tabernacle only the bird; James and the Mount the bird and the game-ready stall (`gstall`); Colossae everything. So `town.json` now says `"assets": { "kit": false, "models": [...] }` for the first three; Colossae and the library page are unchanged (no `assets` = load everything).
+
+| Town | Download (gzipped) before → after | Requests | Ready (headless) |
+|---|---|---|---|
+| Tabernacle | 11.8 MB → 1.2 MB | 224 → 45 | 1.9 s → 1.3 s |
+| James | 12.1 MB → 5.3 MB | 237 → 84 | 3.2 s → 2.6 s |
+| Sermon on the Mount | 11.9 MB → 5.1 MB | 224 → 79 | 2.7 s → 2.1 s |
+
+`fingerprint.mjs` before and after: IDENTICAL for all three (every mesh, position, material and the random-number state). `fast.mjs all` passes. James and the Mount now spend 3.9 MB of their 5 MB on `models/gstall`; S12 shrinks it.

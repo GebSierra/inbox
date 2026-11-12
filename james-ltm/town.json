@@ -26,6 +26,7 @@
     "tutDisc": 0.6,
     "fly": { "p": [5, 25], "l": [5, 25] }
   },
+  "assets": {"kit": false, "models": ["bird", "gstall"]},
   "parts": [
     "ltm:core",
     "world/terrain.js",
