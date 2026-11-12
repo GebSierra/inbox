@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Sermon on the Mount</title>
+<link rel="stylesheet" href="../ltm-engine/engine/app.css">
+<style>#credits{max-height:calc(100vh - 150px);overflow-y:auto}</style>
+</head>
+<body>
+<div id="loader"><div class="lc"><div class="lt">The Sermon on the Mount</div><div class="ls">A memory palace for Matthew 5–7</div><div class="lb"><i id="lbar"></i></div><div class="lp" id="lpct">Preparing the hillside…</div></div></div>
+<div id="hud" class="gone"><div class="z">Matthew 5</div><div class="s">Climb the path from the lake</div></div>
+<div id="help">WASD / arrows to walk · drag to look · double-click to go there · N / P jump stations</div>
+<button id="mapbtn">Bird’s-eye</button>
+<button id="howbtn" aria-label="How it works">How it works</button>
+<button id="fsbtn" aria-label="Full screen">⛶</button>
+<button id="infobtn" aria-label="Settings and credits">i</button>
+<div id="credits" hidden><div class="tg"><button id="gembtn" aria-pressed="false">Markers: off</button><button id="numbtn" aria-pressed="false">Verse numbers: off</button></div><b>Based on history</b><br>The setting: the hills above the north shore of the Sea of Galilee, near Capernaum, where tradition places the sermon (Matthew 4:13, 5:1).<br><b>Two layouts</b><br>“5-verse rooms” follows the five-spots-per-room method. “Outline” hides the room signs and markers and shows the sermon’s outline sections instead; the objects and the walk stay the same.<br>Some details are simplified or imagined so each room is easy to remember.<br><br><b>Credits</b><br>Medieval Village MegaKit by Quaternius (CC0).<br><a href="https://sketchfab.com/3d-models/low-poly-bird-animated-82ada91f0ac64ab595fbc3dc994a3590" target="_blank" rel="noopener">Low Poly Bird (Animated)</a> by Charlie Tinley, CC BY 4.0.<br><a href="https://sketchfab.com/3d-models/low-poly-market-stall-game-ready-asset-20660479b5c24f55b7873adf4bca4073" target="_blank" rel="noopener">Low Poly Market Stall — Game-Ready Asset</a> by BlackMike, CC BY 4.0.<br><a href="https://sketchfab.com/3d-models/low-poly-traditional-market-stall-83f6b14a28094a5ab5f8396ea6f4c1e9" target="_blank" rel="noopener">Low Poly Traditional Market Stall</a> by Nisa Nurul Azizah, CC BY 4.0.<br><a href="https://sketchfab.com/3d-models/modular-medieval-table-08dd395a346a440ba85e8b3b46ab3672" target="_blank" rel="noopener">Modular Medieval Table</a> by GameWorldStudio, CC BY 4.0.<br>Scripture quotations from the ESV® Bible, © Crossway.</div>
+<div id="tut" hidden>
+  <div class="card">
+    <div class="step" id="tutStep"></div>
+    <h2 id="tutTitle"></h2>
+    <div id="tutBody"></div>
+    <div class="row"><button id="tutSkip" class="ghost">Skip tutorial</button><span class="sp"></span><button id="tutBack" class="ghost">Back</button><button id="tutNext">Next</button><span id="tutChoice" hidden><button id="tutGo" class="ghost">Start exploring</button> <button id="tutMore">More tips</button></span></div>
+  </div>
+</div>
+<div id="nav"><button id="prev">◀ Prev</button><button id="next">Next ▶</button></div>
+<div id="joy"><div id="knob"></div></div>
+<script type="importmap">{"imports":{"three":"../ltm-engine/three.module.js","three/addons/":"../ltm-engine/addons/","ltm-engine/":"../ltm-engine/","ltm-town/":"./"}}</script>
+<script type="module" src="../ltm-engine/boot.js"></script>
+</body>
+</html>

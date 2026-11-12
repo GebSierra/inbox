@@ -1,0 +1,192 @@
+{
+ "book": "Matthew",
+ "translation": "ESV",
+ "chapters": [
+  {
+   "chapter": 1,
+   "verses": 48,
+   "district": "The Hillside above the lake",
+   "layout": {
+    "dais": "none",
+    "spread": [
+     1.9,
+     1.45
+    ],
+    "big": 1.25
+   },
+   "rooms": [
+    {
+     "room": 1,
+     "name": "The Seat on the Hill",
+     "verses": "5:1–5",
+     "kind": "vignette",
+     "at": [
+      12,
+      -6
+     ],
+     "viewer": [
+      4,
+      -6
+     ],
+     "objects": [
+      {
+       "id": "signpost",
+       "what": "signpost pointing up the mountain, where he went up and sat down"
+      },
+      {
+       "id": "marble-ear",
+       "what": "giant marble ear: he opened his mouth and taught"
+      },
+      {
+       "id": "clay-bowl",
+       "what": "empty beggar's bowl: poor in spirit"
+      },
+      {
+       "id": "poppy-urn",
+       "what": "urn of wilting poppies: those who mourn"
+      },
+      {
+       "id": "lump-of-clay",
+       "what": "lump of earth: the meek inherit the earth"
+      }
+     ]
+    },
+    {
+     "room": 2,
+     "name": "The Blessing Meadow",
+     "verses": "5:6–10",
+     "kind": "vignette",
+     "at": [
+      12,
+      12
+     ],
+     "viewer": [
+      4,
+      12
+     ],
+     "objects": [
+      {
+       "id": "bread-oven",
+       "what": "bread oven: hunger and thirst for righteousness"
+      },
+      {
+       "id": "shackle-stele",
+       "what": "stele with open shackles: the merciful"
+      },
+      {
+       "id": "bronze-hand-mirror",
+       "what": "bronze mirror: the pure in heart see God"
+      },
+      {
+       "id": "dove-perch",
+       "what": "doves on a perch: the peacemakers"
+      },
+      {
+       "id": "shield-and-arrow",
+       "what": "shield and snapped arrow: the persecuted"
+      }
+     ]
+    },
+    {
+     "room": 3,
+     "name": "The Salt and Light Terrace",
+     "verses": "5:11–15",
+     "kind": "vignette",
+     "at": [
+      -12,
+      12
+     ],
+     "viewer": [
+      -4,
+      12
+     ],
+     "objects": [
+      {
+       "id": "theatre-mask",
+       "what": "mocking mask: when others revile you"
+      },
+      {
+       "id": "victors-crown",
+       "what": "victor's crown: great is your reward"
+      },
+      {
+       "id": "salt-jar",
+       "what": "jar of salt: the salt of the earth"
+      },
+      {
+       "id": "seven-flame-lampstand",
+       "what": "blazing lampstand: the light of the world"
+      },
+      {
+       "id": "candelabrum",
+       "what": "lamp on a stand, not under a basket"
+      }
+     ]
+    },
+    {
+     "room": 4,
+     "name": "The Law Terrace",
+     "verses": "5:16–20",
+     "kind": "vignette",
+     "at": [
+      -12,
+      -6
+     ],
+     "viewer": [
+      -4,
+      -6
+     ],
+     "objects": [
+      {
+       "id": "brazier",
+       "what": "burning brazier: let your light shine"
+      },
+      {
+       "id": "scroll-rack",
+       "what": "rack of scrolls: the Law and the Prophets"
+      },
+      {
+       "id": "writing-desk",
+       "what": "quill and papyrus: not an iota, not a dot"
+      },
+      {
+       "id": "wax-tablets",
+       "what": "wax tablets: relax or teach the commandments"
+      },
+      {
+       "id": "hanging-scales",
+       "what": "scales: righteousness that exceeds the scribes'"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "outline": [
+  {
+   "title": "Setting",
+   "ref": "5:1–2",
+   "from": 1
+  },
+  {
+   "title": "Beatitudes",
+   "ref": "5:3–12",
+   "from": 3
+  },
+  {
+   "title": "Set Apart · Salt",
+   "ref": "5:13",
+   "from": 13
+  },
+  {
+   "title": "Set Apart · Light",
+   "ref": "5:14–16",
+   "from": 14
+  },
+  {
+   "title": "Set Apart · Righteousness",
+   "ref": "5:17–20",
+   "from": 17
+  }
+ ]
+}

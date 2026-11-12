@@ -1,0 +1,91 @@
+{
+  "name": "Sermon on the Mount",
+  "book": "Matthew",
+  "bookFile": "matthew",
+  "store": "som",
+  "verses": [
+    48,
+    34,
+    29
+  ],
+  "zones": [
+    "The Hillside",
+    "The Village",
+    "The Summit Road"
+  ],
+  "built": 1,
+  "chOffset": 4,
+  "theme": {
+    "loadName": "the Sermon on the Mount",
+    "exposure": 1.0,
+    "sky": "#f0c39a",
+    "fog": [
+      180,
+      600
+    ],
+    "skyTop": "#6d7fb2",
+    "skyBot": "#f7b47a",
+    "hemi": [
+      "#ffdcb8",
+      "#7a5e46",
+      1.05
+    ],
+    "sun": {
+      "color": "#ffae6a",
+      "intensity": 3.6,
+      "pos": [
+        -130,
+        46,
+        -30
+      ]
+    },
+    "leaf": "#8c9658",
+    "leafDk": "#6f7a46",
+    "cypress": "#5a6a3c",
+    "stone": "#dcc39a",
+    "stoneDk": "#b89c74",
+    "avgCentre": false,
+    "bannerClear": true,
+    "tutRoomRelative": true,
+    "tutDisc": 0.6,
+    "fly": {
+      "p": [
+        0,
+        4
+      ],
+      "l": [
+        0,
+        4
+      ]
+    }
+  },
+  "parts": [
+    "ltm:core",
+    "world/terrain.js",
+    "ltm:props",
+    "ltm:stations",
+    "ltm:rooms",
+    "obj:colossae",
+    "obj:james",
+    "obj:james-shared",
+    "obj:colossae-shared",
+    "obj:up-b",
+    "obj:up-a",
+    "obj:up-d",
+    "obj:up-c",
+    "obj:up-e",
+    "obj:up-f",
+    "obj:up-james-civic",
+    "ltm:kit",
+    "ltm:crates",
+    "ltm:house",
+    "ltm:people",
+    "ltm:zones",
+    "world/mount.js",
+    "ltm:runtime",
+    "world/tutorial.js",
+    "ltm:tutorial",
+    "ltm:finish",
+    "world/after.js"
+  ]
+}
