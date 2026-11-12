@@ -94,9 +94,10 @@ Used in a room, 260 triangles or fewer. Rebuild in batches of about seven follow
 Also weak though heavier: `woman-with-water-jar` (a pillar, not a person: rebuild on `upPerson`), `exedra`, `two-faced-herm`, `fishing-net`, `small-boat`, `trading-ship`, `lighthouse`, `agora-altar`.
 Haiku runs the critic rubric on each batch (3 runs, pass at 8).
 
-### C. Old leftovers nobody uses (about 30)
+### C. Objects no room uses yet (about 30): keep them, visible
 `plank`, `stacked-crates`, `marble-bench`, `pigeon`, `candle-flame`, `lump-of-clay`, `bed-simple`, `cradle-simple`, `potted-laurel`, `spindle-block`, `clay-bowl`, `pottery-kiln`, `bronze-tripod`, `sheepskin`, `hand-cart`, `dye-vat`, `washtub-wide`, `olive-press`, `hanging-herbs`, `wayside-shrine`, `herb-stand`, `potters-wheel`, `cooking-pot`, `wool-bucket`, `wooden-bucket`, `songbird-cage`, `hanging-oil-lamps`, `loom-simple`, `donkey-simple`, `sleeping-dog`.
-Don't spend effort improving them. Haiku: confirm no town code calls each one, tag it `legacy`, and hide `legacy` by default on the library page so nobody picks a crude object for a new room. Upgrade one only when a book asks for it.
+**Owner, 2026-11-12:** "I don't think I want those hidden because this is just the beginning of the memory palaces that I will create, and I want to have more things than I currently need if it's a high chance that they will be used in a future LTM."
+So nothing is hidden or tagged `legacy`. They stay in the library as they are. When a future book's plan picks one, upgrade it then, following `UPGRADING_OBJECTS.md`. The likeliest to be wanted (a donkey, a dog, a potter's wheel, an olive press, a loom, a cooking pot, buckets) can join the B batches once those are done.
 
 ### The single highest-impact improvement
 **L2, the trees.** They are in every outdoor view of every town, hundreds at a time, and they are the least convincing thing on screen. L1 (sheep) is the quickest, since the better model already exists.
@@ -118,7 +119,7 @@ Everyday objects for one verse (a millstone, an anchor, a yoke) should not be bu
 ## 5. Order of work
 
 1. **S0** baseline on the phone, then **Wave 1** (S1–S8). Owner looks at S1 and S7 on his phone.
-2. In parallel once Wave 1 is in: **Opus** S9, S10, S11 · **Sonnet A** S12, S13 · **Sonnet B** L1, then the B batches · **Haiku** the legacy tagging (C), logging, critic runs.
+2. In parallel once Wave 1 is in: **Opus** S9, S10, S11 · **Sonnet A** S12, S13 · **Sonnet B** L1, then the B batches · **Haiku** logging, critic runs.
 3. Owner picks from pictures: L2 trees, L3 houses, L4 textures, L5 sky. Build the ones he approves.
 4. **N1 and N2** (Opus builders first, Sonnet variants after), then N3–N7 as the James and Mount plans call for them.
 5. **S14** service worker after the domain move; **S15** budgets last, from the final numbers.
