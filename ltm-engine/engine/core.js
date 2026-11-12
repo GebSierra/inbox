@@ -6,6 +6,7 @@ import { GTAOPass } from 'three/addons/postprocessing/GTAOPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { mergeGeometries, mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';   // S12: the models are meshopt-compressed
 import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
 import { makeFire } from 'ltm-engine/fire.js';
 import { makeStatue } from 'ltm-engine/statue.js';
@@ -26,8 +27,10 @@ const ASSETS = CFG.assets || {};
     'Prop_Crate', 'Prop_Wagon', 'Prop_Chimney', 'Prop_Vine2', 'Prop_Vine4', 'Prop_Vine6', 'Corner_Exterior_Brick'];
   const loader = new GLTFLoader(); const el = document.getElementById('lpct'), bar = document.getElementById('lbar'); let done = 0;
   if (!names.length && bar) bar.style.width = '80%';
-  try { await Promise.all(names.map(n => loader.loadAsync(ENGINE + 'kit/' + n + '.gltf').then(g => { done++; const pc = Math.round(done / names.length * 80); if (el) el.textContent = `Building ${THEME.loadName}… ${pc}%`; if (bar) bar.style.width = pc + '%';
-      g.scene.traverse(o => { if (o.isMesh) { const m = o.material; KMAT[m.name] ??= m; o.material = KMAT[m.name]; o.castShadow = o.receiveShadow = true; } }); KIT[n] = g.scene; }))); }
+  // S12: the 29 pieces are one meshopt-compressed kit/kit.glb, one scene per piece, named as before
+  if (names.length) try { loader.setMeshoptDecoder(MeshoptDecoder); const g = await loader.loadAsync(ENGINE + 'kit/kit.glb'); if (el) el.textContent = `Building ${THEME.loadName}… 80%`; if (bar) bar.style.width = '80%';
+    for (const n of names) { const sc = g.scenes.find(s => s.name === n); if (!sc) continue;
+      sc.traverse(o => { if (o.isMesh) { const m = o.material; KMAT[m.name] ??= m; o.material = KMAT[m.name]; o.castShadow = o.receiveShadow = true; } }); KIT[n] = sc; } }
   catch (e) { console.warn('kit failed to load, using simple houses', e); }
 }
 // Roman stucco instead of northern timber framing: trim becomes pale stone, plaster warmer
@@ -38,7 +41,7 @@ if ((THEME.solidGlass || new URLSearchParams(location.search).has('solidglass'))
   Object.assign(g, { transparent: false, opacity: 1, depthWrite: true, roughness: .22, metalness: .1 }); g.color.set('#2c333b'); g.needsUpdate = true; }
 const MODELS = {};
 let BIRD_ANIM = null;
-try { await Promise.all((ASSETS.models || ['stall', 'table', 'gstall', 'bird']).map(m => new GLTFLoader().loadAsync(`${ENGINE}models/${m}/scene.${m === 'gstall' ? 'glb' : 'gltf'}`).then(g => { g.scene.updateMatrixWorld(true); g.scene.traverse(o => { if (o.isMesh) { o.castShadow = o.receiveShadow = true; if (o.material.map) o.material.map.anisotropy = 4; } }); MODELS[m] = g.scene; if (m === 'bird') BIRD_ANIM = g.animations; }))); }
+try { await Promise.all((ASSETS.models || ['stall', 'table', 'gstall', 'bird']).map(m => new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).loadAsync(`${ENGINE}models/${m}/scene.${m === 'stall' ? 'gltf' : 'glb'}`).then(g => { g.scene.updateMatrixWorld(true); g.scene.traverse(o => { if (o.isMesh) { o.castShadow = o.receiveShadow = true; if (o.material.map) o.material.map.anisotropy = 4; } }); MODELS[m] = g.scene; if (m === 'bird') BIRD_ANIM = g.animations; }))); }
 catch (e) { console.warn('models failed to load', e); }
 // clone named parts of a model, keeping their layout, re-centred so the bottom-centre sits at the origin
 function part(model, names, scale = 1) {

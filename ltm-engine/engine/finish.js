@@ -2,6 +2,13 @@
 const CG = { x0: -260, z0: -260, n: 1100, r: .5 }; CG.cells = new Uint8Array(CG.n * CG.n);
 function blocked(x, z) { const R2 = .28; for (const [ox, oz] of [[0, 0], [R2, 0], [-R2, 0], [0, R2], [0, -R2]]) { const i = Math.floor((x + ox - CG.x0) / CG.r), j = Math.floor((z + oz - CG.z0) / CG.r); if (i < 0 || j < 0 || i >= CG.n || j >= CG.n) return true; if (CG.cells[j * CG.n + i]) return true; } return false; }
 // ---- merge static scenery into one draw call per material (big win on phones) ----
+// Compressed models (S12) store attributes as small integers; merging needs plain floats, so copies are widened first.
+function floatGeo(src) { const g = src.index ? src.toNonIndexed() : src.clone();
+  for (const k of Object.keys(g.attributes)) { const a = g.attributes[k]; if (a.array instanceof Float32Array && !a.normalized && !a.isInterleavedBufferAttribute) continue;
+    const n = a.count, s = a.itemSize, f = new Float32Array(n * s), get = [a.getX, a.getY, a.getZ, a.getW];
+    for (let i = 0; i < n; i++) for (let c = 0; c < s; c++) f[i * s + c] = get[c].call(a, i);
+    g.setAttribute(k, new THREE.BufferAttribute(f, s)); }
+  return g; }
 {
   scene.updateMatrixWorld(true);
   { const bb = new THREE.Box3();
@@ -27,7 +34,7 @@ function blocked(x, z) { const R2 = .28; for (const [ox, oz] of [[0, 0], [R2, 0]
       root.traverse(o => { if (!o.isMesh || o.isSkinnedMesh || o.isInstancedMesh || o.isSprite || Array.isArray(o.material) || o.material.isShaderMaterial || o.morphTargetInfluences || o.userData.keep) return;
         for (let q = o; q && q !== root; q = q.parent) if (!q.visible) return;
         for (let q = o.parent; q && q !== root; q = q.parent) if (roots.has(q)) return;   // a nested root merges itself
-        const g = (o.geometry.index ? o.geometry.toNonIndexed() : o.geometry.clone()).applyMatrix4(new THREE.Matrix4().multiplyMatrices(inv, o.matrixWorld));
+        const g = floatGeo(o.geometry).applyMatrix4(new THREE.Matrix4().multiplyMatrices(inv, o.matrixWorld));
         if (!g.attributes.normal) g.computeVertexNormals();
         const key = o.material.uuid + (o.castShadow ? 's' : 'n') + (o.receiveShadow ? 'r' : 'x');
         if (!bag.has(key)) bag.set(key, { m: o.material, cast: o.castShadow, recv: o.receiveShadow, list: [] }); bag.get(key).list.push(g); done.push(o); });
@@ -50,7 +57,7 @@ function blocked(x, z) { const R2 = .28; for (const [ox, oz] of [[0, 0], [R2, 0]
     if (!o.isMesh || o.userData.dyn || o.material.isShaderMaterial || o.material.transparent) return;
     const bk = bakeKey(o.material), hasCol = !!o.geometry.attributes.color;
     if (hasCol && !(bk && o.material.vertexColors)) return;           // vertex colours with a texture (the ground) keep their own mesh
-    let g = o.geometry.index ? o.geometry.toNonIndexed() : o.geometry.clone();
+    let g = floatGeo(o.geometry);
     g.applyMatrix4(o.matrixWorld);
     for (const k of Object.keys(g.attributes)) if (!['position', 'normal', 'uv', 'color'].includes(k)) g.deleteAttribute(k);
     if (!g.attributes.normal) g.computeVertexNormals();

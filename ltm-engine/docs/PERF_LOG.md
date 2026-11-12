@@ -134,3 +134,18 @@ Every boat in `SHIPS` and every group marked `userData.mergeInside` (the game-re
 
 Screenshots match (Colossae 99/99, largest mean difference 0.6%, the bobbing boat; the Mount and James 0.0–0.1%). The plan's "279 stall clones" in Colossae turned out to be several imported models (statues, the table set, the stall frames); the statues and stall frames are now merged, the rest is small.
 A slip on the way: a trailing `//` comment swallowed the stall's `scale.setScalar(1.35)` and shrank every stall; the screenshot comparison caught it (LESSONS §10 already warns about this).
+
+### S12: repack the models (2026-11-12)
+
+gltf-transform with meshopt compression (the engine now loads `MeshoptDecoder`, and widens the compressed attributes to floats before merging):
+
+| File | Before | After |
+|---|---|---|
+| `models/gstall/scene.glb` | 4.05 MB | 1.92 MB (geometry compressed; textures already 512 px WebP) |
+| `models/bird` | 0.95 MB in 4 files | 71 KB, one `scene.glb` (textures 512 px WebP) |
+| `models/table` | 3.8 MB in 60 files | 0.99 MB, one `scene.glb` |
+| `kit/` | 3.3 MB in 101 files | 0.83 MB, one `kit.glb` with a scene per piece (textures 512 px WebP) |
+
+First-visit download (gzipped): Colossae ≈9.8–11.8 → ≈4.4 MB (185 requests from 241), James and the Mount ≈5.2 → ≈2.4 MB, Tabernacle 1.2 → 0.4 MB. Colossae still loads `models/stall` (0.5 MB in 20 files, old spec-gloss materials), left for later.
+Node and material names survive (the kit's two identical trim materials became one, `MI_WoodTrim`; code only looks for the `MI_WoodTrim` prefix). The kit's missing vine-leaf texture (a 404 on every visit) is gone. Screenshots match in all four towns (Colossae largest mean difference 0.9%: the stall cloths are a shade smoother).
+On the way the static merge failed silently on the compressed attributes and dropped the dining table; the screenshot check caught it.
