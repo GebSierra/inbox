@@ -12,16 +12,16 @@
 const UQ_T = {
   horse: { col: ['#7a4426', '#5e3218', '#2a1c14'], hoof: '#2a221e', mane: '#1e1612', muzzle: '#4a2a1a', H: 1.5,
     body: { p: [[-.82, 1.12], [-.66, 1.2], [-.38, 1.2], [0, 1.12], [.32, 1.14], [.58, 1.2], [.76, 1.1], [.84, 1.0]], h: [.1, .25, .3, .34, .35, .32, .24, .1], w: [.08, .23, .25, .27, .27, .23, .17, .07] },
-    neck: { p: [[.56, 1.16], [.74, 1.36], [.88, 1.58], [.98, 1.76], [1.06, 1.76], [1.18, 1.56], [1.3, 1.36], [1.36, 1.27], [1.39, 1.24]],
-            h: [.3, .24, .17, .12, .12, .1, .085, .075, .04], w: [.2, .14, .1, .085, .1, .085, .07, .065, .03], poll: 3, eye: 4, nose: 7 },
+    neck: { p: [[.56, 1.16], [.74, 1.36], [.88, 1.58], [.98, 1.76], [1.07, 1.74], [1.17, 1.57], [1.26, 1.41], [1.31, 1.33], [1.335, 1.29]],
+            h: [.3, .24, .17, .13, .15, .12, .095, .085, .06], w: [.2, .14, .1, .09, .115, .1, .08, .075, .05], poll: 3, eye: 4, nose: 7 },
     legF: { x: .58, z: .15, p: [[.58, 1.02], [.55, .8], [.56, .46], [.57, .16], [.6, .08], [.62, 0]], r: [.1, .075, .05, .048, .042, .055] },
     legH: { x: -.56, z: .15, p: [[-.6, 1.08], [-.45, .8], [-.7, .52], [-.64, .16], [-.61, .08], [-.6, 0]], r: [.16, .1, .055, .048, .042, .055] },
     tail: { p: [[-.82, 1.22], [-.94, 1.06], [-.98, .8], [-.95, .58]], r: [.05, .08, .07, .02], hair: true },
     ears: { len: .14, w: .045, tilt: .15, droop: 0 }, crest: .07 },
   donkey: { col: ['#8c8278', '#c9c0b4', '#3a3430'], hoof: '#2a221e', mane: '#3a3430', muzzle: '#d8d0c4', H: 1.1, cross: true, mealy: true,
     body: { p: [[-.6, .82], [-.48, .9], [-.26, .9], [0, .84], [.22, .85], [.4, .9], [.52, .82], [.58, .74]], h: [.08, .2, .24, .27, .27, .25, .19, .08], w: [.07, .19, .21, .23, .23, .19, .14, .06] },
-    neck: { p: [[.4, .87], [.54, 1.0], [.64, 1.14], [.7, 1.26], [.77, 1.26], [.88, 1.08], [.98, .92], [1.03, .85], [1.06, .82]],
-            h: [.24, .2, .15, .12, .12, .11, .09, .085, .05], w: [.17, .12, .095, .09, .1, .09, .075, .07, .035], poll: 3, eye: 4, nose: 7 },
+    neck: { p: [[.4, .87], [.54, 1.0], [.64, 1.14], [.7, 1.26], [.78, 1.25], [.87, 1.1], [.94, .98], [.98, .92], [1.0, .9]],
+            h: [.24, .2, .15, .13, .15, .125, .1, .095, .065], w: [.17, .12, .095, .095, .115, .1, .085, .08, .05], poll: 3, eye: 4, nose: 7 },
     legF: { x: .42, z: .12, p: [[.42, .74], [.4, .58], [.41, .33], [.42, .12], [.44, .06], [.45, 0]], r: [.08, .06, .04, .038, .034, .042] },
     legH: { x: -.42, z: .12, p: [[-.45, .8], [-.33, .58], [-.52, .37], [-.47, .12], [-.45, .06], [-.44, 0]], r: [.12, .08, .042, .038, .034, .042] },
     tail: { p: [[-.6, .9], [-.66, .76], [-.68, .56], [-.67, .44]], r: [.03, .025, .02, .015], tuft: .12 },
@@ -36,8 +36,8 @@ const UQ_T = {
     ears: { len: .16, w: .06, tilt: 1.35, droop: .15 } },
   goat: { col: ['#3a2e26', '#4e3e32', '#1e1612'], hoof: '#2a221e', muzzle: '#2a201a', H: .72, horns: 'goat', beard: true,
     body: { p: [[-.4, .54], [-.32, .6], [-.16, .6], [0, .56], [.16, .57], [.3, .62], [.38, .56], [.42, .5]], h: [.05, .12, .14, .16, .17, .15, .11, .05], w: [.05, .12, .13, .15, .15, .12, .09, .04] },
-    neck: { p: [[.28, .6], [.36, .7], [.42, .8], [.45, .88], [.5, .88], [.56, .8], [.62, .72], [.65, .68], [.67, .66]],
-            h: [.13, .1, .075, .06, .06, .055, .045, .04, .022], w: [.09, .065, .05, .045, .05, .045, .036, .033, .016], poll: 3, eye: 4, nose: 7 },
+    neck: { p: [[.28, .6], [.36, .7], [.42, .8], [.45, .88], [.51, .87], [.56, .8], [.6, .74], [.625, .705], [.64, .69]],
+            h: [.13, .1, .075, .065, .075, .06, .045, .038, .025], w: [.09, .065, .05, .05, .06, .05, .038, .032, .02], poll: 3, eye: 4, nose: 7 },
     legF: { x: .3, z: .07, p: [[.3, .48], [.28, .36], [.29, .2], [.3, .07], [.31, .035], [.32, 0]], r: [.045, .032, .02, .019, .017, .022] },
     legH: { x: -.3, z: .07, p: [[-.32, .52], [-.24, .36], [-.36, .24], [-.33, .07], [-.32, .035], [-.31, 0]], r: [.07, .045, .022, .019, .017, .022] },
     tail: { p: [[-.4, .64], [-.45, .7], [-.47, .74]], r: [.03, .03, .01] },
@@ -96,8 +96,11 @@ function upQuad(g, x, y, z, kind, o = {}) {
       const rot = a => { const q = T.neck.p.map((pt, i) => i ? R2(pt, [bx, by], a) : pt.slice()); for (let i = pi + 1; i < q.length; i++) q[i] = R2(q[i], q[pi], -a * .45); return q; };
     for (ang = 0; ang > -2.2; ang -= .05) { NP = rot(ang); if (NP[NP.length - 1][1] < .08 + T.neck.h[T.neck.h.length - 1]) break; } }
   const NK = uqTube(NP, T.neck.h, T.neck.w, { seg: 12, per: 4, sq: .9 }); put(coat, NK.geo);
+  // jowl: the broad flat cheek behind and below the eye that makes a head wedge-shaped (strongest on horses and donkeys)
+  { const e = NK.at(T.neck.eye), k = T.crest ? 1.15 : .95, j = new THREE.SphereGeometry(1, 12, 9); j.scale(e.h * 1.05 * k, e.h * 1.0 * k, e.w * 1.06);
+    j.rotateZ(Math.atan2(e.t[1], e.t[0])); j.translate(e.p[0] - e.n[0] * e.h * .38 - e.t[0] * e.h * .3, e.p[1] - e.n[1] * e.h * .38 - e.t[1] * e.h * .3, 0); put(coat, j); }
   // muzzle: the last stretch of the face in its own colour, a soft rounded nose with nostrils
-  { const nz = NK.at(T.neck.nose), tip = NK.at(T.neck.p.length - 1), m = new THREE.SphereGeometry(1, 12, 9); m.scale(Math.hypot(tip.p[0] - nz.p[0], tip.p[1] - nz.p[1]) * .9, nz.h * 1.02, nz.w * 1.05);
+  { const nz = NK.at(T.neck.nose), tip = NK.at(T.neck.p.length - 1), m = new THREE.SphereGeometry(1, 12, 9); m.scale(Math.hypot(tip.p[0] - nz.p[0], tip.p[1] - nz.p[1]) * 1.1 + nz.h * .25, nz.h * 1.1, nz.w * 1.08);
     m.rotateZ(Math.atan2(tip.p[1] - nz.p[1], tip.p[0] - nz.p[0])); m.translate((nz.p[0] + tip.p[0]) / 2, (nz.p[1] + tip.p[1]) / 2, 0); put(muz, m);
     for (const s of [-1, 1]) { const ns = new THREE.SphereGeometry(nz.w * .22, 6, 5); ns.scale(1, 1.4, .6); ns.translate(tip.p[0] - tip.t[0] * nz.w * .3 + tip.n[0] * nz.h * .2, tip.p[1] - tip.t[1] * nz.w * .3 + tip.n[1] * nz.h * .2, s * nz.w * .55); put(eyeM, ns); } }
   // eyes: on the sides of the head, set a little high, with a lid of coat
@@ -124,9 +127,11 @@ function upQuad(g, x, y, z, kind, o = {}) {
   for (const [L, front] of [[T.legF, true], [T.legH, false]]) for (const s of [-1, 1]) {
     const p = L.p, r = L.r, z0 = s * L.z;
     { const [ax, ay] = p[0], [bx, by] = p[1], m = new THREE.SphereGeometry(1, 10, 8), len = Math.hypot(bx - ax, by - ay);   // shoulder / thigh muscle, blending into the body
-      const t = .42; m.scale(r[0] * (front ? .95 : 1.1), len * .5 + r[1] * .6, r[0] * .62); m.rotateZ(Math.atan2(by - ay, bx - ax) + Math.PI / 2);   // sits high, mostly inside the body, shaping the flank above the leg
-      m.translate(ax + (bx - ax) * t, ay + (by - ay) * t, z0 * .7); put(coat, m); }
-    { const rr = [r[1] * 1.1, r[1], r[2], r[3]]; put(coat, uqTube(p.slice(0, 4), rr, rr.map(v => v * .85), { z: z0, seg: 8, per: 4, sq: .95 }).geo); }   // from inside the body, slim enough at the top not to fold
+      const t = .3; m.scale(r[0] * (front ? .7 : .72), len * .32 + r[1] * .4, r[0] * .42); m.rotateZ(Math.atan2(by - ay, bx - ax) + Math.PI / 2);   // sits high, mostly inside the body, shaping the flank above the leg
+      m.translate(ax + (bx - ax) * t, ay + (by - ay) * t, z0 * .55); put(coat, m); }
+    { // the upper leg is broad front-to-back but flat side-to-side where it leaves the body (a thigh, not a balloon)
+      const rr = front ? [r[1] * 1.15, r[1], r[2], r[3]] : [r[0] * .8, r[1] * 1.1, r[2], r[3]], ww = front ? rr.map(v => v * .85) : [rr[0] * .55, rr[1] * .65, rr[2] * .85, rr[3] * .85];
+      put(coat, uqTube(p.slice(0, 4), rr, ww, { z: z0, seg: 8, per: 4, sq: .95 }).geo); }   // from inside the body, slim enough at the top not to fold
     put(T.mealy ? pale : coat, uqTube(p.slice(2, 5), r.slice(2, 5), r.slice(2, 5).map(v => v * .88), { z: z0, seg: 8, per: 2, sq: .95 }).geo);
     if (T.pads) { const pd = new THREE.SphereGeometry(1, 12, 8, 0, Math.PI * 2, 0, Math.PI / 2); pd.scale(r[5] * 1.2, .06, r[5]); pd.translate(p[5][0], 0, z0); put(hoof, pd);
       if (front) { const cl = new THREE.SphereGeometry(r[2] * 1.15, 8, 6); cl.translate(p[2][0] + .02, p[2][1], z0); put(dark, cl); } }
