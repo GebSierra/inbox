@@ -2,13 +2,13 @@
 const ESV = 'https://www.esv.org/Matthew+5/';
 const ORDER_SVG = '';
 const TUT = [
-  { t: 'The Sermon on the Mount', cam: 'fly', b: `<p>A memory palace for Matthew 5–7, on a hillside above the Sea of Galilee. This prototype holds <b>Matthew 5:1–20</b>.</p>`, next: 'Show me' },
-  { t: 'One district per chapter', cam: 'fly', b: `<p><b>Chapter 5</b> is the summit, where he sat down to teach. The walk starts at his seat and goes round the top: the sheepfold, the lookout, the threshing floor. Chapters 6 and 7 will lead down the mountain to the lake.</p>` },
+  { t: 'The Sermon on the Mount', cam: 'fly', b: `<p>A memory palace for Matthew 5–7, on a hillside above the Sea of Galilee. Chapter 5 is built so far.</p>`, next: 'Show me' },
+  { t: 'One district per chapter', cam: 'fly', b: `<p><b>Chapter 5</b> is the summit, where he sat down to teach. The walk goes round the Crown, where he sat (Seat, Sheepfold, Lookout, Threshing Floor), then over the stile into the Upper Meadow for 5:21–48. Chapters 6 and 7 will lead down the mountain to the lake.</p>` },
   { t: 'Every room holds five verses', cam: 'gate', b: `<p>Each room holds five verses on five objects, always in the same order as you face it: <b>1</b> near-left, <b>2</b> far-left, <b>3</b> far-right, <b>4</b> near-right, <b>5</b> centre.</p><p>Prefer the outline’s own sections? Open <b>i</b> and switch <b>Layout</b> to <b>Outline</b>.</p>` },
   { t: 'Ready?', choice: true, cam: 'gate', b: `<p>That’s the whole method. Start exploring now, or take a few more tips and practice the first five verses together.</p>` },
   { t: 'First, the foundation', part: 2, b: `<p>Before you place a verse, read it aloud <b>10 to 20 times</b> until you can say it roughly from memory. Then tie it to a spot here.</p><p><a href="${ESV}" target="_blank" rel="noopener">Open Matthew 5 (ESV) on esv.org</a></p>` },
-  { t: 'Verse 5:1 · near-left corner', part: 2, b: `<p>Tie Matthew 5:1 to the near-left rock of the ring round the Seat. Make it bigger than life.</p><p class="ex">For example, you could picture a crowd so huge it tilts the hill, and Jesus calmly sitting down on the rock while everyone scrambles up after him.</p>`, locus: 0 },
-  { t: 'Verse 5:2 · far-left corner', part: 2, b: `<p>Now 5:2 on your own: make a picture on the far-left rock. The stranger and more vivid, the better.</p>`, locus: 1 },
-  { t: 'Verses 5:3–5', part: 2, b: `<p>Same again: 5:3 on the far-right rock, 5:4 on the near-right rock, 5:5 on the flat seat-rock in the centre, where he sat.</p>`, locus: 'all' },
-  { t: 'Walk it back', part: 2, b: `<p>Look away. Walk the room in your mind: the four rocks of the ring, then the seat. Say each verse at its object.</p><p>Press <b>Next</b> to walk on, or tap <b>Bird’s-eye</b> to see the whole hill.</p>`, next: 'Start the tour' },
+  { t: 'Verse 5:1 · near-left corner', part: 2, b: `<p>Tie Matthew 5:1 to the old olive tree on the near-left. Make it bigger than life.</p><p class="ex">For example, you could picture a crowd so huge it tilts the hill, and Jesus calmly sitting down under the olive tree while everyone scrambles up after him.</p>`, locus: 0 },
+  { t: 'Verse 5:2 · far-left corner', part: 2, b: `<p>Now 5:2 on your own: make a picture on the patch of bare limestone pavement, far-left. The stranger and more vivid, the better.</p>`, locus: 1 },
+  { t: 'Verses 5:3–5', part: 2, b: `<p>Same again: 5:3 on the split boulder with the thornbush (far-right), 5:4 on the water bag on its stake (near-right), 5:5 on the flat seat-rock in the centre, where he sat.</p>`, locus: 'all' },
+  { t: 'Walk it back', part: 2, b: `<p>Look away. Walk the room in your mind: olive tree, pavement, boulder, water bag, seat-rock. Say each verse at its object.</p><p>Press <b>Next</b> to walk on, or tap <b>Bird’s-eye</b> to see the whole hill.</p>`, next: 'Start the tour' },
 ];

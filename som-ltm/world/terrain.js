@@ -1,23 +1,25 @@
 // ---------- a Galilean hillside above the lake ----------
-// The crown of the Mount is at (0, 0). The walk starts there, where he sat down (Matthew 5:1), and comes down the mountain
-// (Matthew 8:1): chapter 5 on the summit, chapter 6 on the farmed slopes, chapter 7 at the foot of the hill and the shore.
-// The lake lies south (z < SHORE). A town stands on a hill on the shore to the south-east: "a city set on a hill" (5:14).
+// Compass in this world: north = +z, south = -z (the lake), EAST = -x, WEST = +x (so that facing east, north is on your left).
+// The summit is a ridge running east-west along z = 0. Its highest point, the Crown, is at x = -14. A field wall with a stile
+// crosses the ridge at x = STILE_X: the Crown (chapter 5 rooms 1-4) lies east of it, the Upper Meadow (rooms 5-10) west of it.
+// Hippos, the town on its hill across the lake, lies to the south-east: "a city set on a hill" (5:14).
 const SHORE = -95;
-const HILL = 24;                                                     // height of the crown above the shore
-const CITY = [118, -112];                                            // the town on its hill
+const HILL = 24;                                                     // height of the Crown above the shore
+const STILE_X = 15;
+const CITY = [-150, -235];                                           // Hippos, across the lake
 function hRaw(x, z) {
   let h = Math.sin(x * 0.03) * 1.0 + Math.cos(z * 0.025) * .8 + Math.sin((x + z) * 0.05) * 0.4;
-  const d = Math.hypot(x * .85, z);
-  h += HILL * Math.exp(-(d * d) / (2 * 48 * 48));                     // the mount: a rounded crest, falling away on every side
-  h += Math.max(0, z - 60) * 0.1;                                     // the hills of Galilee inland, to the north
-  const dc = Math.hypot(x - CITY[0], z - CITY[1]); h += 14 * Math.exp(-(dc * dc) / (2 * 30 * 30));   // the city's hill
-  const cut = SHORE + 20 + Math.max(0, 14 - dc * .25);
-  if (z < cut) h = Math.min(h, h - (cut - z) * 0.1);
-  if (z < SHORE && dc > 46) h = Math.min(h, (z - SHORE) * 0.2 - .3);  // the beach falls into the lake
+  const along = Math.exp(-((x + 14) * (x + 14)) / (2 * 95 * 95));     // the ridge falls away slowly to west and east
+  h += HILL * along * Math.exp(-(z * z) / (2 * 38 * 38));             // and steeply to north and south
+  h += Math.max(0, z - 70) * 0.1;                                     // the hills of Galilee inland, to the north
+  if (z < SHORE + 20) h = Math.min(h, h - (SHORE + 20 - z) * 0.1);
+  if (z < SHORE) h = Math.min(h, (z - SHORE) * 0.2 - .3);              // the beach falls into the lake
+  const dc = Math.hypot(x - CITY[0], z - CITY[1]); if (dc < 70) h = Math.max(h, 18 * Math.min(1, (70 - dc) / 30) - 2);   // Hippos' flat-topped hill
   return h;
 }
-// small level pads under each room (the rest of the summit keeps its natural roll). Kept in step with books/matthew.json.
-const FLAT = [[0, 9, 6, 6], [16, -2, 6, 6], [8, -17, 6, 6], [-15, -8, 6, 6]];   // [cx, cz, halfW, halfD]
+// level pads under each room, kept in step with books/matthew.json. [cx, cz, halfW, halfD]
+const FLAT = [[-2, 11, 5.5, 5.5], [-22, 11, 5.5, 5.5], [-24, -11, 5.5, 5.5], [-4, -11, 5.5, 5.5],
+  [32, -11, 5.5, 5.5], [52, -11, 5.5, 5.5], [72, -11, 5.5, 5.5], [72, 11, 5.5, 5.5], [52, 11, 5.5, 5.5], [32, 11, 5.5, 5.5]];
 const heightAt0 = (x, z) => hRaw(x, z);
 const heightAt = (x, z) => { let h = heightAt0(x, z);
   for (const [cx, cz, hw, hd] of FLAT) { const dx = Math.max(0, Math.abs(x - cx) - hw), dz = Math.max(0, Math.abs(z - cz) - hd), d = Math.hypot(dx, dz);
@@ -34,8 +36,8 @@ const heightAt = (x, z) => { let h = heightAt0(x, z);
     p.setY(i, heightAt(x, z));
     const c = cGrass.clone().lerp(cGrass2, (Math.sin(x * .13) * Math.cos(z * .11) + 1) / 2);
     const n2 = Math.sin(x * .041 + 2) * Math.sin(z * .047) + Math.sin(x * .09 - z * .07) * .5; if (n2 > .7) c.lerp(cFlower, .35); else if (n2 < -.6) c.lerp(new THREE.Color('#6f8c45'), .4);
-    if (Math.abs(x + 18 - Math.sin(z * .05) * 4) < 2 && z < -14 && z > SHORE) c.lerp(cPath, .7);   // the path down towards the lake
-    if (Math.abs(Math.hypot(x, z) - 10) < 1.6 && z < 4) c.lerp(cPath, .4);                                                               // the trodden way round the crown
+    if (Math.abs(x - 19 - Math.sin(z * .05) * 4) < 2 && z < -2 && z > SHORE) c.lerp(cPath, .7);   // the path down, west of the stile
+    if (Math.abs(z) < 2.6 && x > -38 && x < 88) c.lerp(cPath, .45);                                                                  // the trodden way along the ridge
     if (z < SHORE + 8) c.lerp(cBank, Math.min(1, (SHORE + 8 - z) / 6));
     col.push(c.r, c.g, c.b);
   }
