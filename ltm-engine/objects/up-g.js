@@ -83,9 +83,10 @@ P.signpost = (g, x, y, z) => { const r = ugRng(53);
   for (let i = 0; i < 7; i++) { const a = i / 7 * 6.283, s = add(new THREE.IcosahedronGeometry(.09 + r() * .05, 0), 'stoneDk', x + Math.cos(a) * .17, y + .05, z + Math.sin(a) * .17, g); s.scale.y = .7; s.rotation.y = r() * 3; }
   box(.11, 2.0, .11, 'wood', x, y, z, g); const cap = add(new THREE.ConeGeometry(.1, .12, 4), 'woodLt', x, y + 2.06, z, g); cap.rotation.y = Math.PI / 4;
   const sign = name => mat('ugBoard' + name, '#ffffff', { roughness: .9, map: upTex('ugSign' + name, 128, 32, (c, w, h) => { c.fillStyle = '#b08458'; c.fillRect(0, 0, w, h);
-    c.fillStyle = 'rgba(60,40,20,.25)'; for (let i = 0; i < 40; i++) c.fillRect(i * 3.2, 0, 1, h); c.fillStyle = '#3a2614'; c.font = 'bold 19px serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(name, w / 2, h / 2 + 1); }) });
+    c.fillStyle = 'rgba(60,40,20,.25)'; for (let i = 0; i < 40; i++) c.fillRect(i * 3.2, 0, 1, h); c.fillStyle = '#3a2614'; c.font = 'bold 19px serif'; const fs = Math.min(19, 19 * (w - 22) / c.measureText(name).width); c.font = `bold ${fs.toFixed(1)}px serif`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(name, w / 2 - 4, h / 2 + 1); }) });   // shrink long names to fit; a little left of centre, clear of the arrow point
   // two arrow boards pointing to the neighbouring towns, each lettered on its front face only
-  for (const [h, ry, dir, name] of [[1.78, .5, 1, 'ΛΑΟΔΙΚΕΙΑ'], [1.45, -.6, -1, 'ΙΕΡΑΠΟΛΙΣ']]) { const arm = new THREE.Group(); arm.position.set(x, y + h, z); arm.rotation.y = ry; g.add(arm);
+  const names = THEME.signs || ['ΛΑΟΔΙΚΕΙΑ', 'ΙΕΡΑΠΟΛΙΣ'];   // a town's neighbours: theme "signs" in town.json (default: Colossae's)
+  for (const [h, ry, dir, name] of [[1.78, .5, 1, names[0]], [1.45, -.6, -1, names[1]]]) { const arm = new THREE.Group(); arm.position.set(x, y + h, z); arm.rotation.y = ry; g.add(arm);
     const X = v => v * dir, sh = new THREE.Shape(); sh.moveTo(X(-.38), -.1); sh.lineTo(X(.3), -.1); sh.lineTo(X(.42), 0); sh.lineTo(X(.3), .1); sh.lineTo(X(-.38), .1); sh.lineTo(X(-.38), -.1);
     const geo = new THREE.ExtrudeGeometry(sh, { depth: .045, bevelEnabled: false }); geo.translate(0, 0, -.0225);
     const p = geo.attributes.position, uv = geo.attributes.uv; for (let i = 0; i < p.count; i++) uv.setXY(i, (p.getX(i) + .38 * (dir > 0 ? 1 : 0) + (dir < 0 ? .42 : 0)) / .8, (p.getY(i) + .1) / .2);

@@ -7,6 +7,9 @@
   "built": 0,
   "freeRoam": true,
   "theme": {
+    "clouds": 0.6,
+    "sunGlow": 0.7,
+    "textures": "varied",
     "halfTex": true,
     "loadName": "the Tabernacle",
     "exposure": 1.0,

@@ -16,6 +16,10 @@
   "built": 1,
   "chOffset": 4,
   "theme": {
+    "signs": ["ΚΑΦΑΡΝΑΟΥΜ", "ΒΗΘΣΑΙΔΑ"],
+    "clouds": 0.6,
+    "sunGlow": 0.7,
+    "textures": "varied",
     "trees": "mix",
     "halfTex": true,
     "loadName": "the Sermon on the Mount",

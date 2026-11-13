@@ -149,3 +149,8 @@ gltf-transform with meshopt compression (the engine now loads `MeshoptDecoder`, 
 First-visit download (gzipped): Colossae ≈9.8–11.8 → ≈4.4 MB (185 requests from 241), James and the Mount ≈5.2 → ≈2.4 MB, Tabernacle 1.2 → 0.4 MB. Colossae still loads `models/stall` (0.5 MB in 20 files, old spec-gloss materials), left for later.
 Node and material names survive (the kit's two identical trim materials became one, `MI_WoodTrim`; code only looks for the `MI_WoodTrim` prefix). The kit's missing vine-leaf texture (a 404 on every visit) is gone. Screenshots match in all four towns (Colossae largest mean difference 0.9%: the stall cloths are a shade smoother).
 On the way the static merge failed silently on the compressed attributes and dropped the dining table; the screenshot check caught it.
+
+### L3, L4, L5 approved (2026-11-12)
+
+Owner: "That all looks great." Turned on in the town themes: James `"houses": "dressed"` (the only town with the flat-roofed houses); all four towns `"clouds": 0.6, "sunGlow": 0.7, "textures": "varied"`. Screenshot baselines re-taken in every town.
+Also fixed: the rebuilt signpost (batch 1) pointed to Laodicea and Hierapolis in every town. It now reads the theme's `"signs"`; the Mount points to Capernaum and Bethsaida, and long names shrink to fit the board.
