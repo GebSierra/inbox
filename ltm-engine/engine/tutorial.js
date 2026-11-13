@@ -1,6 +1,6 @@
 let tutI = -1, tutLocus = null, VTEXT = {};
 fetch('./verses.json').then(r => r.ok ? r.json() : {}).then(j => { VTEXT = j || {}; if (tutI >= 0) tutShow(tutI); }).catch(() => {});
-const vq = ref => VTEXT[ref] ? `<p class="vt">“${VTEXT[ref]}” <small>(${BOOK} ${ref}, ESV)</small></p>` : '';
+const vq = ref => { const t = window.__mdText ? window.__mdText(ref) : VTEXT[ref]; return t ? `<p class="vt">“${t}” <small>(${BOOK} ${ref}, ${window.__mdLabel ? window.__mdLabel() : 'ESV'})</small></p>` : ''; };   // engine/modes.js can switch the version
 const tutEl = document.getElementById('tut');
 const store = { get: k => { try { return localStorage.getItem(k); } catch (e) { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} } };
 const tutSquare = new THREE.Group(); tutSquare.visible = false; labelScene.add(tutSquare);

@@ -1,0 +1,4 @@
+Berean Standard Bible (BSB), public domain. Source: https://berean.bible/ (text via https://bible.helloao.org/api/BSB/COL/{1-4}.json)
+
+License wording (https://berean.bible/terms.htm, "Terms and Conditions", dated April 30, 2023; retrieved via curl 2026-11-13): "The Berean Bible and Majority Bible texts are officially dedicated to the public domain as of April 30, 2023. All uses are freely permitted. Attribution Notice (appreciated but not required): The Holy Bible, Berean Standard Bible, BSB is produced in cooperation with Bible Hub, Discovery Bible, OpenBible.com, and the Berean Bible Translation Committee. This text of God's Word has been dedicated to the public domain."
+Condition: apps that keep the verbatim text are invited to bear the Berean name; for derivative works that vary from the official text, the Berean name should not be used (request, not requirement).

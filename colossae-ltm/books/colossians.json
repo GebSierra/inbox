@@ -6,6 +6,36 @@
       "chapter": 1,
       "verses": 29,
       "district": "The Market",
+      "ideasOverview": {"at": [0, 50], "dist": 80, "theta": 0},
+      "ideas": [
+        {
+          "id": "supreme",
+          "title": "Christ is supreme over everything",
+          "verses": "1:15–20",
+          "summary": "He is God's image, firstborn over creation; all things were made through him and hold together in him.",
+          "anchor": { "label": "city gate", "where": {"at": [0, 78], "top": 11},
+            "view": {"stand": [0, 66], "via": [[0, 88], [0, 72]]} },
+          "example": "For example, picture a colossal crowned Christ standing astride the gate, one hand pressed on the arch so that every stone holds together."
+        },
+        {
+          "id": "rescued",
+          "title": "He rescued and reconciled us",
+          "verses": "1:13–14, 21–22",
+          "summary": "God pulled us out of darkness, forgave us, and made former enemies holy and blameless friends.",
+          "anchor": { "label": "tall house on the left", "where": {"at": [-14, 52], "top": 11},
+            "view": {"stand": [0, 46], "via": [[-3, 62], [-4, 56], [-1, 50]]} },
+          "example": "For example, picture a rope ladder dropping from that roof as Christ hauls a crowd of grumpy strangers out of a dark pit and hugs each one."
+        },
+        {
+          "id": "prays",
+          "title": "Paul prays that they keep growing",
+          "verses": "1:9–12",
+          "summary": "Paul asks God to fill them with knowledge so they bear fruit, grow, and endure with joy.",
+          "anchor": { "label": "tall house on the right", "where": {"at": [14, 52.5], "top": 11},
+            "view": {"stand": [-5, 52], "via": []} },
+          "example": "For example, picture Paul on that roof praying so hard that fruit trees sprout through the tiles and the house grows taller by the minute."
+        }
+      ],
       "rooms": [
         {
           "room": 1,
@@ -96,6 +126,36 @@
       "verses": 23,
       "district": "The Temple Courtyard",
       "layout": { "dais": "none" },
+      "ideasOverview": {"at": [0, 6], "dist": 60, "theta": 0},
+      "ideas": [
+        {
+          "id": "complete",
+          "title": "We are complete in Christ",
+          "verses": "2:9–10",
+          "summary": "All of God's fullness lives in Christ in bodily form, and in him you have been filled.",
+          "anchor": { "label": "courtyard gateway", "where": {"at": [-4, 17], "top": 3.8},
+            "view": {"stand": [0, 29], "via": [[0, 44], [0, 34]]} },
+          "example": "For example, picture the two gate pillars as giant empty jars, and Christ pouring in light until they overflow and shine on everyone passing between them."
+        },
+        {
+          "id": "captive",
+          "title": "Don't be taken captive by human philosophy",
+          "verses": "2:4, 8",
+          "summary": "Don't let clever arguments and empty human tradition carry you off. Stay rooted in Christ.",
+          "anchor": { "label": "the temple", "where": {"at": [0, -2], "top": 11.5},
+            "view": {"stand": [0, 17.2], "via": [[0, 26], [0, 20]]} },
+          "example": "For example, picture a smooth-talking sophist in a flowing robe sneaking down the temple steps with you tucked under his arm like a rolled-up rug."
+        },
+        {
+          "id": "shadows",
+          "title": "Rules and rituals are only shadows",
+          "verses": "2:16–17, 20–23",
+          "summary": "Food laws and festivals are shadows of what was coming; the substance belongs to Christ.",
+          "anchor": { "label": "the stoa colonnade", "where": {"at": [-30, 6], "top": 6},
+            "view": {"stand": [-21, 19], "via": [[0, 19]]} },
+          "example": "For example, picture every column casting a long shadow shaped like a feast, while Christ, the solid real person, steps out and the shadows fade."
+        }
+      ],
       "rooms": [
         {
           "room": 1,
@@ -194,6 +254,36 @@
       "verses": 25,
       "district": "The Family House",
       "layout": { "dais": "none", "minY": { "ground": { "from": "house" }, "plus": 0.32 } },
+      "ideasOverview": {"at": [32, 2], "dist": 55, "theta": 0},
+      "ideas": [
+        {
+          "id": "newself",
+          "title": "Put off the old, put on the new",
+          "verses": "3:5–10",
+          "summary": "Take off anger and lies like dirty clothes; put on the new self, renewed in God's image.",
+          "anchor": { "label": "front door and balcony", "where": {"at": [32, 12], "top": 6},
+            "view": {"stand": [32, 31], "via": [[0, 19], [22, 19], [30, 24]]} },
+          "example": "For example, picture a pile of stinking old clothes at the door, each labelled with a sin, and a glowing new robe hanging from the balcony."
+        },
+        {
+          "id": "love",
+          "title": "Love binds everything together",
+          "verses": "3:12–14",
+          "summary": "Wear compassion, kindness, humility and patience, and above all love, which binds everything in perfect harmony.",
+          "anchor": { "label": "atrium pool", "where": {"at": [32, 3], "top": 3},
+            "view": {"stand": [32, 14.5], "via": [[32, 20]]} },
+          "example": "For example, picture a giant golden belt of love wrapped around the pool and all its columns, cinching the whole house together."
+        },
+        {
+          "id": "rules",
+          "title": "Christ rules all of daily life",
+          "verses": "3:17–25",
+          "summary": "Whatever you do, at home or at work, do it heartily in Jesus' name.",
+          "anchor": { "label": "east doorway", "where": {"at": [43, 3], "top": 4},
+            "view": {"stand": [28, 1.5], "via": [[32, 9], [32, 2]]} },
+          "example": "For example, picture Christ himself waving you out the doorway, his name stamped on your tools, your lunch and your sandals."
+        }
+      ],
       "rooms": [
         {
           "room": 1,
@@ -293,6 +383,36 @@
       "chapter": 4,
       "verses": 18,
       "district": "The Bridge & Road",
+      "ideasOverview": {"at": [81.8, 0], "dist": 80, "theta": -1.57},
+      "ideas": [
+        {
+          "id": "pray",
+          "title": "Pray, and watch for open doors",
+          "verses": "4:2–4",
+          "summary": "Keep praying with thankful alertness, and ask God to open a door for the message.",
+          "anchor": { "label": "stone arch bridge", "where": {"at": [63.8, 2], "top": 6},
+            "view": {"stand": [49, -7], "via": [[41, 4], [46, 4], [48, -2]]} },
+          "example": "For example, picture each bridge arch as a doorway swinging open as you pray, with the gospel pouring through like a river of light."
+        },
+        {
+          "id": "grace",
+          "title": "Speak with grace",
+          "verses": "4:5–6",
+          "summary": "Be wise with outsiders, and let your words be gracious and seasoned with salt.",
+          "anchor": { "label": "the river", "where": {"at": [60, -20], "top": 3},
+            "view": {"stand": [63.8, 2], "via": [[50, 0], [56, 2]]} },
+          "example": "For example, picture the river flowing with gentle words, every ripple a kind reply, sparkling with a pinch of salt."
+        },
+        {
+          "id": "team",
+          "title": "Greetings from the team",
+          "verses": "4:7–18",
+          "summary": "Paul sends news and greetings from friends who serve with him. Every person on the team matters.",
+          "anchor": { "label": "the waystation", "where": {"at": [105.8, -9], "top": 7},
+            "view": {"stand": [93.8, 3], "via": [[77.8, 2], [87.8, 2]]} },
+          "example": "For example, picture the waystation porch crammed with Paul's whole team waving, hugging and shouting greetings at you."
+        }
+      ],
       "rooms": [
         {
           "room": 1,

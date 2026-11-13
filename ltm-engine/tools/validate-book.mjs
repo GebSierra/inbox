@@ -92,6 +92,24 @@ for (const c of b.chapters) {
         const cs = r.objects.filter(o => o.centre !== undefined); if (cs.length && (r.objects.length < 5 || r.objects[4].centre === undefined)) errs.push(`${tag}: a centrepiece must be the 5th object`); } }
   });
 }
+// Big ideas (opt-in; see engine/modes.js): the ideas of a chapter, each on its own landmark
+const words = t => String(t).trim().split(/\s+/).length, ideaIds = new Set();
+for (const c of b.chapters) { if (c.ideas === undefined) continue; const tag = `ch${c.chapter} ideas`;
+  if (!Array.isArray(c.ideas) || !c.ideas.length) { errs.push(`${tag}: must be a non-empty list`); continue; }
+  if (c.ideasOverview === undefined) errs.push(`${tag}: needs "ideasOverview": { "at": [x, z] }`); else checkPos(tag, 'ideasOverview.at', c.ideasOverview.at);
+  const spots = [];
+  c.ideas.forEach((it, i) => { const t = `${tag} #${i + 1} (${it.id})`;
+    if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(it.id || '')) errs.push(`${t}: id must be kebab-case`); else if (ideaIds.has(it.id)) errs.push(`${t}: id used twice`); else ideaIds.add(it.id);
+    if (!it.title || words(it.title) > 8) errs.push(`${t}: title needs 1 to 8 words`);
+    if (!it.summary || words(it.summary) > 18) errs.push(`${t}: summary needs 1 to 18 words (has ${it.summary ? words(it.summary) : 0})`);
+    if (typeof it.example !== 'string' || !/^For example, picture/.test(it.example)) errs.push(`${t}: example must start "For example, picture"`);
+    if (!/^\d+:\d+(–\d+)?(, \d+(–\d+)?)*$/.test(it.verses || '')) errs.push(`${t}: verses "${it.verses}" must look like "1:15–20" or "1:13–14, 21–22"`);
+    else { for (const part of it.verses.split(', ')) { const m = /^(?:(\d+):)?(\d+)(?:–(\d+))?$/.exec(part), v1 = +(m[3] || m[2]); if (m[1] !== undefined && +m[1] !== c.chapter + (b.chOffset || 0)) errs.push(`${t}: verses "${it.verses}" are not in this chapter`); if (+m[2] > v1 || v1 > c.verses) errs.push(`${t}: verses "${it.verses}" out of range (chapter has ${c.verses})`); } }
+    const a = it.anchor; if (!a || !a.label || !a.where || !a.view) { errs.push(`${t}: anchor needs label, where, view`); return; }
+    checkPos(t, 'anchor.where.at', a.where.at); if (a.where.top !== undefined && !isNum(a.where.top)) errs.push(`${t}: where.top must be a number`);
+    checkPos(t, 'anchor.view.stand', a.view.stand); (a.view.via || []).forEach((p, j) => checkPos(t, `anchor.view.via[${j}]`, p));
+    if (Array.isArray(a.where.at)) spots.push([it.id, a.where.at]); });
+  for (let i = 0; i < spots.length; i++) for (let j = i + 1; j < spots.length; j++) if (Math.hypot(spots[i][1][0] - spots[j][1][0], spots[i][1][1] - spots[j][1][1]) < 4) errs.push(`${tag}: ideas ${spots[i][0]} and ${spots[j][0]} sit on (almost) the same landmark: use three different places`); }
 if (todo.length) (STRICT ? errs : warns).push(`unfinished rooms (TODO): ${todo.join(', ')}`);
 const all = b.chapters.flatMap(c => c.rooms.flatMap(r => r.objects.filter(o => !o.extra && !o.place).map(o => o.desc ?? o.what))); const repeats = all.filter((o, k) => all.indexOf(o) !== k);
 if (repeats.length) warns.push(`objects repeated across rooms (allowed, but less memorable): ${[...new Set(repeats)].join(', ')}`);

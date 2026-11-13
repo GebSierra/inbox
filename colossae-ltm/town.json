@@ -62,6 +62,15 @@
     "ltm:runtime",
     "world/tutorial.js",
     "ltm:tutorial",
-    "ltm:finish"
-  ]
+    "ltm:finish",
+    "ltm:modes"
+  ],
+  "modes": {
+    "default": "esv",
+    "enabled": ["verse", "ideas", "test", "free"],
+    "translations": [
+      { "id": "esv", "label": "ESV", "file": "verses.json", "credit": "Scripture quotations from the ESV® Bible, © Crossway." },
+      { "id": "bsb", "label": "BSB (free)", "file": "verses.bsb.json", "credit": "Berean Standard Bible (BSB), public domain (berean.bible). Produced in cooperation with Bible Hub, Discovery Bible, OpenBible.com and the Berean Bible Translation Committee." }
+    ]
+  }
 }

@@ -19,6 +19,8 @@
           "district": { "type": "string", "description": "One district per chapter" },
           "partial": { "const": true, "description": "A prototype chapter: fewer rooms than the verses need is a warning, not an error" },
           "layout": { "$ref": "#/$defs/layout", "description": "Defaults for every vignette in the chapter; a room's own layout overrides them key by key" },
+          "ideasOverview": { "type": "object", "description": "Big ideas mode: the bird's-eye view that opens the chapter's tour", "required": ["at"], "properties": { "at": { "$ref": "#/$defs/position" }, "dist": { "type": "number" }, "theta": { "type": "number" } }, "additionalProperties": false },
+          "ideas": { "type": "array", "description": "Big ideas mode (opt-in with town.json \"modes\"): the chapter's key ideas, in tour order, each placed on a landmark of the district that is NOT one of the verse objects", "items": { "$ref": "#/$defs/idea" } },
           "rooms": {
             "type": "array",
             "description": "ceil(verses/5) rooms, in clockwise order starting nearest the district entrance on the left. The book lists every room of the town, in order; nothing is placed that the book does not list.",
@@ -42,6 +44,27 @@
         { "type": "number" },
         { "type": "object", "required": ["ground"], "properties": { "ground": { "$ref": "#/$defs/position" }, "plus": { "type": "number" } }, "additionalProperties": false }
       ]
+    },
+    "idea": {
+      "type": "object",
+      "required": ["id", "title", "verses", "summary", "anchor", "example"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+        "title": { "type": "string", "description": "at most 8 words" },
+        "verses": { "type": "string", "pattern": "^\\d+:\\d+(–\\d+)?(, \\d+(–\\d+)?)*$", "description": "the verses behind the idea, e.g. \"1:15–20\" or \"1:13–14, 21–22\"" },
+        "summary": { "type": "string", "description": "at most 18 words" },
+        "anchor": {
+          "type": "object", "required": ["label", "where", "view"],
+          "properties": {
+            "label": { "type": "string", "description": "the landmark, as the learner sees it named" },
+            "where": { "type": "object", "required": ["at"], "properties": { "at": { "$ref": "#/$defs/position" }, "top": { "type": "number", "description": "height of the marker above the ground there" } }, "additionalProperties": false },
+            "view": { "type": "object", "required": ["stand"], "properties": { "stand": { "$ref": "#/$defs/position", "description": "where the camera stands (it looks at the landmark)" }, "via": { "type": "array", "items": { "$ref": "#/$defs/position" }, "description": "waypoints walked from the previous stop (the first idea: from the district entrance); they must pass through doorways, not walls" }, "pitch": { "type": "number" }, "aim": { "type": "number", "description": "which fraction of the marker height the camera aims at (default 0.5)" } }, "additionalProperties": false }
+          },
+          "additionalProperties": false
+        },
+        "example": { "type": "string", "description": "one vivid suggested image, starting \"For example, picture\"" }
+      },
+      "additionalProperties": false
     },
     "layout": {
       "type": "object",
