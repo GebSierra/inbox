@@ -1,16 +1,20 @@
 // ---------- a Galilean hillside above the lake ----------
 // Compass in this world: north = +z, south = -z (the lake), EAST = -x, WEST = +x (so that facing east, north is on your left).
-// The summit is a ridge running east-west along z = 0. Its highest point, the Crown, is at x = -14. A field wall with a stile
+// The summit is a ridge running east-west along z = 0, highest at its east end (x = -42) and falling westward. A field wall with a stile
 // crosses the ridge at x = STILE_X: the Crown (chapter 5 rooms 1-4) lies east of it, the Upper Meadow (rooms 5-10) west of it.
 // Hippos, the town on its hill across the lake, lies to the south-east: "a city set on a hill" (5:14).
 const SHORE = -95;
+// the switchback trail down the Crown: from the Seat at the top, turning at each room, down to the stile (kept in step with world/mount.js)
+const TRAIL = [[-34, 0], [-24, 4], [-10, -4], [4, 4], [15, 0]];
+const TRAIL_D = (x, z) => { let d = 1e9; for (let i = 0; i < TRAIL.length - 1; i++) { const [ax, az] = TRAIL[i], [bx, bz] = TRAIL[i + 1], dx = bx - ax, dz = bz - az, t = Math.max(0, Math.min(1, ((x - ax) * dx + (z - az) * dz) / (dx * dx + dz * dz))); d = Math.min(d, Math.hypot(x - ax - dx * t, z - az - dz * t)); } return d; };
 const HILL = 24;                                                     // height of the Crown above the shore
 const STILE_X = 15;
 const CITY = [-150, -235];                                           // Hippos, across the lake
 function hRaw(x, z) {
   let h = Math.sin(x * 0.03) * 1.0 + Math.cos(z * 0.025) * .8 + Math.sin((x + z) * 0.05) * 0.4;
-  const along = Math.exp(-((x + 14) * (x + 14)) / (2 * 95 * 95));     // the ridge falls away slowly to west and east
-  h += HILL * along * Math.exp(-(z * z) / (2 * 38 * 38));             // and steeply to north and south
+  // the ridge is highest at its east end (the Seat, x = -42) and falls steadily west, so the walk goes down the hill
+  const rise = x < -42 ? HILL - (-42 - x) * .35 : HILL - (x + 42) * .12;
+  h += Math.max(0, rise) * Math.exp(-(z * z) / (2 * 36 * 36));
   h += Math.max(0, z - 70) * 0.1;                                     // the hills of Galilee inland, to the north
   if (z < SHORE + 20) h = Math.min(h, h - (SHORE + 20 - z) * 0.1);
   if (z < SHORE) h = Math.min(h, (z - SHORE) * 0.2 - .3);              // the beach falls into the lake
@@ -18,7 +22,7 @@ function hRaw(x, z) {
   return h;
 }
 // level pads under each room, kept in step with books/matthew.json. [cx, cz, halfW, halfD]
-const FLAT = [[-2, 11, 5.5, 5.5], [-22, 11, 5.5, 5.5], [-24, -11, 5.5, 5.5], [-4, -11, 5.5, 5.5],
+const FLAT = [[-42, 0, 5.5, 5.5], [-24, 12, 5.5, 5.5], [-10, -12, 5.5, 5.5], [4, 12, 5.5, 5.5],
   [32, -11, 5.5, 5.5], [52, -11, 5.5, 5.5], [72, -11, 5.5, 5.5], [72, 11, 5.5, 5.5], [52, 11, 5.5, 5.5], [32, 11, 5.5, 5.5]];
 const heightAt0 = (x, z) => hRaw(x, z);
 const heightAt = (x, z) => { let h = heightAt0(x, z);
@@ -37,7 +41,7 @@ const heightAt = (x, z) => { let h = heightAt0(x, z);
     const c = cGrass.clone().lerp(cGrass2, (Math.sin(x * .13) * Math.cos(z * .11) + 1) / 2);
     const n2 = Math.sin(x * .041 + 2) * Math.sin(z * .047) + Math.sin(x * .09 - z * .07) * .5; if (n2 > .7) c.lerp(cFlower, .35); else if (n2 < -.6) c.lerp(new THREE.Color('#6f8c45'), .4);
     if (Math.abs(x - 19 - Math.sin(z * .05) * 4) < 2 && z < -2 && z > SHORE) c.lerp(cPath, .7);   // the path down, west of the stile
-    if (Math.abs(z) < 2.6 && x > -38 && x < 88) c.lerp(cPath, .45);                                                                  // the trodden way along the ridge
+    if ((Math.abs(z) < 2.6 && x > STILE_X - 4 && x < 88) || TRAIL_D(x, z) < 1.6) c.lerp(cPath, .45);                                                                  // the trodden way along the ridge
     if (z < SHORE + 8) c.lerp(cBank, Math.min(1, (SHORE + 8 - z) / 6));
     col.push(c.r, c.g, c.b);
   }

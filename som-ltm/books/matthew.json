@@ -14,12 +14,12 @@
      "kind": "custom",
      "builder": "som.seat",
      "at": [
-      -2,
-      11
+      -42,
+      0
      ],
      "viewer": [
-      -2,
-      3
+      -34,
+      0
      ],
      "objects": [
       {
@@ -49,12 +49,12 @@
      "kind": "custom",
      "builder": "som.fold",
      "at": [
-      -22,
-      11
+      -24,
+      12
      ],
      "viewer": [
-      -22,
-      3
+      -24,
+      4
      ],
      "objects": [
       {
@@ -84,12 +84,12 @@
      "kind": "custom",
      "builder": "som.lookout",
      "at": [
-      -24,
-      -11
+      -10,
+      -12
      ],
      "viewer": [
-      -24,
-      -3
+      -10,
+      -4
      ],
      "objects": [
       {
@@ -119,12 +119,12 @@
      "kind": "custom",
      "builder": "som.floor",
      "at": [
-      -4,
-      -11
+      4,
+      12
      ],
      "viewer": [
-      -4,
-      -3
+      4,
+      4
      ],
      "objects": [
       {

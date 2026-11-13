@@ -2,8 +2,8 @@
 // Method rule 4: each verse on a SPOT, a feature of the place (P) or an object (O); at least two natural objects per room.
 // Spots in the fixed order, as seen standing on the path facing the room: 1 near-left, 2 far-left, 3 far-right, 4 near-right, 5 centre.
 // Layout: the ridge runs along z = 0, with the trodden path on its crest. Compass: east = -x, north = +z (see world/terrain.js).
-//   The Crown (east of the stile at x = STILE_X): start just east of the stile facing east; rooms 1-2 on the left (north),
-//   turn at the east end, rooms 3-4 on the right (south, the lake edge) coming back to the stile.
+//   The Crown (east of the stile at x = STILE_X), TRIAL 2026-11-13: highest at its east end. Start at the Seat on the top,
+//   then a switchback trail (TRAIL, world/terrain.js) zigzags down the hill: room 2 north, room 3 south (the lake edge), room 4 north, then the stile.
 //   The Upper Meadow (west of the stile): facing west, rooms 5-7 on the left (south), turn, rooms 8-10 on the right (north) back to the stile.
 //   The path down to chapter 6 leaves from the Watchtower (room 10), down the west side of the field wall.
 const GZ = -16, TZ = 0, HX = 0, HZ = 400;            // the player starts at (0, GZ + 16) = (0, 0), on the ridge path; HX/HZ unused
@@ -150,13 +150,13 @@ defBuilder('som.tower', (r, { ch }) => { const F = roomFrame(r), h = 2.3, sp = S
   for (let i = 0; i < 30; i++) { const a = i / 30 * 6.28, x = X + Math.cos(a) * 34, z = Z + Math.sin(a) * 34; box(8, 5, 1.5, dryStone, x, heightAt(x, z) - .5, z).rotation.y = -a + Math.PI / 2; }
 }
 // ---------- the crowd, sitting on the north slope beyond the Seat, facing it (5:1) ----------
-{ const ROBES = ['#8a5a3a', '#3f6f9a', '#c9a46a', '#7a8a5a', '#a8714c', '#5a4a6a', '#d9c39a', '#9a5a3a', '#e8dcc4'], placed = [], [sx, sz] = [-2, 11];
-  for (let i = 0; i < 900 && placed.length < 110; i++) { const x = R(-14, 10), z = R(19, 48);
+{ const ROBES = ['#8a5a3a', '#3f6f9a', '#c9a46a', '#7a8a5a', '#a8714c', '#5a4a6a', '#d9c39a', '#9a5a3a', '#e8dcc4'], placed = [], [sx, sz] = [-42, 0];
+  for (let i = 0; i < 900 && placed.length < 110; i++) { const x = R(-58, -30), z = R(9, 40); if (Math.hypot(x + 42, z) < 9) continue;
     if (placed.some(([p, q]) => Math.hypot(p - x, q - z) < 1.6)) continue;
     placed.push([x, z]); person(x, z, Math.atan2(sx - x, sz - z), ROBES[(rnd() * ROBES.length) | 0], { y: heightAt(x, z) - .55, veil: rnd() > .65 ? '#e8dcc4' : undefined, hair: (rnd() * 4) | 0 }); }
 }
 // ---------- olive trees and scrub on the slopes, clear of the ridge path, the rooms, the crowd and the path down ----------
-{ const clear = (x, z) => (Math.abs(z) < 21 && x > -45 && x < 95) || (x > -16 && x < 12 && z > 17 && z < 50) || (Math.abs(x - 19) < 5 && z < 0) || Math.hypot(x - CITY[0], z - CITY[1]) < 40;
+{ const clear = (x, z) => (Math.abs(z) < 21 && x > -52 && x < 95) || (x > -62 && x < -26 && z > 5 && z < 44) || (Math.abs(x - 19) < 5 && z < 0) || Math.hypot(x - CITY[0], z - CITY[1]) < 40;
   for (let i = 0; i < 340; i++) { const x = R(-180, 200), z = R(-90, 150); if (clear(x, z)) continue; const r = rnd(); if (r < .5) tree(x, z, R(.7, 1.1)); else if (r < .58) cypress(x, z, R(.8, 1.1)); else shrub(x, z, R(.9, 1.5)); }
   for (let i = 0; i < 14; i++) sheep(R(110, 150), R(30, 70));
 }
@@ -167,7 +167,6 @@ for (const [x, r] of [[-30, .3], [-24, -.2], [-6, .1]]) { const z = SHORE + 2, b
 // ---------- the rooms come from books/matthew.json (engine chapter 1 = Matthew 5) ----------
 buildRooms(1);
 // walking routes: along the ridge path, through the stile, never across a room
-VIA['1.3'] = [[-28, 0], [-38, 0], [-28, 0]];                       // the Crown loop turns at its east end
-VIA['1.5'] = [[10, 0], [STILE_X, 0], [22, 0]];                     // over the stile into the Upper Meadow
+VIA['1.5'] = [[10, 1], [STILE_X, 0], [22, 0]];                     // down the last leg of the trail and over the stile into the Upper Meadow
 VIA['1.8'] = [[78, 0], [88, 0], [78, 0]];                          // the Meadow loop turns at its west end
 zoneLabel(5, 'The Summit', 20, 0);
