@@ -133,9 +133,9 @@
           "title": "We are complete in Christ",
           "verses": "2:9–10",
           "summary": "All of God's fullness lives in Christ in bodily form, and in him you have been filled.",
-          "anchor": { "label": "temple entrance", "where": {"at": [0, 0.6], "top": 4.2},
-            "view": {"stand": [0, 14.5], "via": [[0, 44], [0, 30], [0, 20]]} },
-          "example": "For example, picture the temple doorway as a giant jar with Christ standing in it, so full of God that golden light spills over the steps and floods the whole courtyard."
+          "anchor": { "label": "courtyard entrance", "where": {"at": [0, 17], "top": 4.6},
+            "view": {"stand": [0, 29], "via": [[0, 44], [0, 34]]} },
+          "example": "For example, picture the two gate pillars as giant empty jars, and Christ pouring in light until they overflow and shine on everyone passing between them."
         },
         {
           "id": "captive",
@@ -151,8 +151,8 @@
           "title": "Rules and rituals are only shadows",
           "verses": "2:16–17, 20–23",
           "summary": "Food laws and festivals are shadows of what was coming; the substance belongs to Christ.",
-          "anchor": { "label": "the temple itself", "where": {"at": [0, -4], "top": 12.5},
-            "view": {"stand": [0, 16], "via": []} },
+          "anchor": { "label": "the temple itself", "where": {"at": [0, -4], "top": 16.5},
+            "view": {"stand": [0, 21], "via": [], "pitch": 0.42} },
           "example": "For example, picture the whole temple casting a giant shadow shaped like a feast across the courtyard, while Christ, the solid real person, steps out into the sunshine and the shadow fades."
         }
       ],
