@@ -37,7 +37,7 @@
     "ltm:props",
     "ltm:stations",
     "ltm:rooms",
-    "obj:up-c", "obj:up-tex",
+    "obj:up-c", "obj:up-tex", "obj:up-ground",
     "ltm:kit",
     "ltm:house",
     "ltm:people",

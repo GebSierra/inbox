@@ -45,6 +45,7 @@ function floatGeo(src) { const g = src.index ? src.toNonIndexed() : src.clone();
         const merged = mergeGeometries(list, false); if (!merged) continue;
         const mesh = new THREE.Mesh(merged, m); mesh.castShadow = cast; mesh.receiveShadow = recv; mesh.userData.dyn = 1; root.add(mesh); }
       for (const o of done) o.parent.remove(o); } }
+  if (typeof upGroundCover === 'function') upGroundCover();   // N3 ground cover: only with theme "ground" or ?ground=1 (objects/up-ground.js)
   const groups = new Map(), kill = [];
   const hidden = []; scene.traverse(o => { if (o.isMesh && !o.userData.dyn) { let v = true; for (let q = o; q; q = q.parent) if (!q.visible) { v = false; break; } if (!v) hidden.push(o); } }); hidden.forEach(o => o.parent.remove(o));
   // S9 colour bake: untextured standard materials that differ only in colour share one merged mesh, the colour written into each vertex.
