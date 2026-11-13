@@ -52,8 +52,12 @@ function upPerson(g, tunic, opts) {
   // ---- tunic: rings [y, rx, rz, cz, w, f] (top to bottom), folds grow towards the hem
   const T = fem ? [[1.31, .06, .055, 0, Math.PI, 0], [1.285, .135, .08, 0, Math.PI, 0], [1.22, .15 * bw / .84 * .84, .09, 0, Math.PI, 0], [1.14, .145, .1, 0, Math.PI, .005], [1.04, .115, .088, 0, Math.PI, .01], [.96, .13, .1, 0, Math.PI, .015], [.78, .185, .125, 0, Math.PI, .025], [.5, .24, .165, 0, Math.PI, .035], [hem, .29, .2, 0, Math.PI, .045]]
     : [[1.31, .06, .055, 0, Math.PI, 0], [1.285, .16 * bw, .085, 0, Math.PI, 0], [1.24, .185 * bw, .1, 0, Math.PI, 0], [1.15, .175 * bw, .105 * S(belly, 1), 0, Math.PI, 0], [1.04, .16 * bw, .1 * belly, 0, Math.PI, .004], [.96, .155 * bw, .1 * belly, 0, Math.PI, .004], [.9, .17 * bw, .115 * belly, 0, Math.PI, .01], [.74, .19 * bw, .125 * S(belly, 1), 0, Math.PI, .022], [hem, .215 * Math.max(bw, .96), .145, 0, Math.PI, .035]];
-  B.put(tm, upLoft(T, 10, { freq: fem ? 6 : 5 }));
-  { const a = upSample(T, hem + .05), b = T.find(r => r[0] === hem); B.put(trimM, upLoft([[hem + .05, a[1] * 1.012, a[2] * 1.012, 0, Math.PI, a[5]], [hem, b[1] * 1.012, b[2] * 1.012, 0, Math.PI, b[5]]], 10, { freq: fem ? 6 : 5 })); }
+  // ---- pose (plan N2): 'stand' (default, unchanged), 'sit', 'kneel', 'walk'. Seated poses build the body above the hips as usual, then
+  // lower it onto the seat or the heels (drop); everything below is drawn in the standing frame first, so arms and props line up.
+  const P2 = opts.pose || 'stand', seated = P2 === 'sit' || P2 === 'kneel', hipY = .88, drop = P2 === 'sit' ? .38 : P2 === 'kneel' ? .32 : 0;
+  if (seated) { const cut = T.filter(r => r[0] >= hipY), lo = upSample(T, hipY); B.put(tm, upLoft([...cut, [hipY, lo[1], lo[2], 0, Math.PI, lo[5]]], 10, { freq: fem ? 6 : 5 })); }
+  else B.put(tm, upLoft(T, 10, { freq: fem ? 6 : 5 }));
+  if (!seated) { const a = upSample(T, hem + .05), b = T.find(r => r[0] === hem); B.put(trimM, upLoft([[hem + .05, a[1] * 1.012, a[2] * 1.012, 0, Math.PI, a[5]], [hem, b[1] * 1.012, b[2] * 1.012, 0, Math.PI, b[5]]], 10, { freq: fem ? 6 : 5 })); }
   // ---- belt (cingulum), buckle and coin pouch
   const by = fem ? 1.0 : .93, bs = upSample(T, by + .025);
   B.put(leather, upLoft([[by + .05, bs[1] * 1.04 + .003, bs[2] * 1.04 + .003, 0, Math.PI, 0], [by, bs[1] * 1.05 + .003, bs[2] * 1.05 + .003, 0, Math.PI, 0]], 10));
@@ -61,7 +65,23 @@ function upPerson(g, tunic, opts) {
   if (who || h % 3 === 0) { const ps = who === 'plum' ? 1 : -1, px = ps * bs[1] * .72, pz = bs[2] * .8 + .03;
     B.put(leather, new THREE.SphereGeometry(.048, 6, 4), px, by - .08, pz + .02); B.put(leather, upLimb([px, by + .02, pz - .01], [px, by - .04, pz + .02], .006, .006, 4)); }
   // ---- legs and sandals
-  for (const s of [-1, 1]) { const x = s * .088, fz = s * (who === 'plum' ? -.03 : .02) + (who === 'purple' ? s * .015 : 0), ry = s * .1;
+  const sandal = (ax, ay, az, rx, ry) => { const q = new THREE.Group(); // a foot with its sandal, heel at (ax, ay, az), turned by rx (pitch) and ry (yaw)
+    const m4 = new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(rx, ry, 0, 'YXZ')).setPosition(ax, ay, az);
+    const sole = new THREE.BoxGeometry(.09, .016, .245).translate(0, -.027, .1).applyMatrix4(m4), foot = new THREE.BoxGeometry(.074, .038, .21).translate(0, 0, .1).applyMatrix4(m4), strap = new THREE.BoxGeometry(.088, .014, .03).translate(0, .015, .1).applyMatrix4(m4);
+    B.put(mat('upSole', '#3a2616'), sole); B.put(skinM, foot); B.put(leather, strap); };
+  if (P2 !== 'stand') { const legW = fem ? .05 : .056;
+    for (const s of [-1, 1]) { const x = s * .09; let hip = [x, hipY, 0], knee, ankle, frx = 0;
+      if (P2 === 'sit') { knee = [s * .11, hipY - .02, .4]; ankle = [s * .11, hipY - .44, .44]; }
+      else if (P2 === 'kneel') { knee = [s * .1, .38, .1]; ankle = [s * .09, .41, -.36]; frx = 0; }   // upright kneel: thighs almost vertical, shins flat behind
+      else { knee = s < 0 ? [x, .5, .12] : [x, .5, -.07]; ankle = s < 0 ? [x, .1, .18] : [x, .13, -.22]; frx = s < 0 ? -.12 : .35; }
+      const covered = fem || P2 !== 'walk';   // under the tunic the thigh is cloth
+      B.put(covered ? tm : skinM, upLimb(hip, knee, covered ? legW + .035 : legW, covered ? legW + .025 : legW - .004, 7));
+      B.put(fem && P2 !== 'kneel' ? tm : skinM, upLimb(knee, ankle, fem && P2 !== 'kneel' ? legW + .02 : legW - .006, fem && P2 !== 'kneel' ? legW + .03 : .032, 7));
+      sandal(ankle[0], ankle[1] - .02, ankle[2], frx, P2 === 'kneel' ? Math.PI : 0); }
+    if (P2 === 'sit') { B.put(tm, upLimb([0, hipY + .02, -.06], [0, hipY - .01, .42], .2 * Math.max(bw, .9), .18, 9, true, .42, [0, 1, 0]));   // the lap: tunic across both thighs
+      B.put(tm, upLimb([0, hipY - .03, .43], [0, hipY - (fem ? .4 : .2), .46], .18, fem ? .22 : .19, 9, true, .22, [0, 0, 1])); }   // the hem falling over the knees
+    if (P2 === 'kneel') B.put(tm, upLimb([0, hipY, 0], [0, .44, .1], .2 * Math.max(bw, .9), .21, 9, true, .5, [0, 0, 1])); }
+  else for (const s of [-1, 1]) { const x = s * .088, fz = s * (who === 'plum' ? -.03 : .02) + (who === 'purple' ? s * .015 : 0), ry = s * .1;
     if (!fem) { B.put(skinM, upLimb([x, hem + .1, 0], [x, .31, -.01], .058, .05, 6)); B.put(skinM, upLimb([x, .31, -.01], [x, .08, fz * .2], .05, .03, 6)); }
     const bx = x, bz = fz + .035;
     B.put(sole, new THREE.BoxGeometry(.09, .016, .245), bx, .008, bz + .03, 0, ry, 0);
@@ -79,6 +99,7 @@ function upPerson(g, tunic, opts) {
     else if (pose === 'offer') { if (s < 0) { W = UPV(-.16, 1.1, .4); hint = UPV(-1, -.6, -.1); nrm = [0, 1, 0]; } else { W = UPV(.09, 1.13, .26); hint = UPV(.8, -.5, -.1); nrm = [0, 0, 1]; } }
     else if (pose === 'carry') { if (s < 0) { W = UPV(-.17, 1.56, .03); hint = UPV(-1, 0, -.4); nrm = [1, 0, 0]; } else { W = UPV(.2 + .03 * bw, .82, .07); hint = UPV(.6, 0, -.8); nrm = [-1, 0, 0]; } }
     else { W = UPV(s * (.21 + .04 * bw), .76, .05); hint = UPV(s * .6, 0, -.8); nrm = [-s, 0, 0]; }
+    const pa = upPoseArm(opts, P2, s, bw); if (pa) { W = pa[0]; hint = pa[1]; nrm = pa[2]; }
     const E = ik(S0, W, hint), e = [E.x, E.y, E.z], w = [W.x, W.y, W.z];
     if (sleeveLong) { B.put(tm, upLimb([S0.x, S0.y, S0.z], e, armW + .012, armW + .004, 6)); const c = W.clone().sub(E).multiplyScalar(.82).add(E); B.put(tm, upLimb(e, [c.x, c.y, c.z], armW + .004, armW - .006, 6)); B.put(trimM, upLimb([c.x, c.y, c.z], [c.x + (W.x - E.x) * .09, c.y + (W.y - E.y) * .09, c.z + (W.z - E.z) * .09], armW - .004, armW - .006, 6));
       B.put(skinM, upLimb([c.x, c.y, c.z], w, armW - .014, .028, 6)); }
@@ -118,10 +139,40 @@ function upPerson(g, tunic, opts) {
   else { Hd.put(hairM, upLoft(hr, 8, { oy: hy, oz: hz }));
     if (hairIdx === 1 || who === 'purple') for (let i = 0; i < (who === 'purple' ? 10 : 7); i++) { const a = who === 'purple' ? 1.1 + i * .62 : 1.2 + i * .62; Hd.put(hairM, new THREE.OctahedronGeometry(.032, 0).scale(1, .7, 1), Math.sin(a) * .08, hy + (i % 3 ? .185 : .205), hz - .01 + Math.cos(a) * .09); } }
   Hd.into(B, q => q.translate(0, -hy, -hz).scale(1.07, 1.07, 1.07).translate(0, hy, hz));
-  const tris = B.flush(g);
+  upProps(B, opts, held, skinM, P2);
+  let into = g; if (drop) { into = new THREE.Group(); into.position.y = -drop; g.add(into); }
+  const tris = B.flush(into);
   if (opts.carry === 'jar') { const j = new THREE.Group(); j.position.set(0, 1.55, 0); g.add(j); amph(j, 0, 0, .55); }
   if (opts.carry === 'basket') cyl(.25, .2, .2, 8, 'basket', 0, 1.53, 0, g);
   g.userData.tris = tris;
+}
+
+// arm targets for the poses and props of plan N2: [wrist, elbow hint, palm normal] in the standing frame, or null for the old behaviour
+function upPoseArm(o, P2, s, bw) { const pr = o.prop;
+  if (s > 0 && (pr === 'staff' || pr === 'crook')) return [UPV(.25, 1.06, .16), UPV(1, -.4, -.4), [-1, 0, 0]];
+  if (s > 0 && pr === 'sickle') return P2 === 'kneel' ? [UPV(.2, .78, .42), UPV(1, 0, -.3), [0, 1, 0]] : [UPV(.24, .95, .3), UPV(1, -.3, -.3), [0, 1, 0]];
+  if (pr === 'scroll') return [UPV(s * .12, 1.06, .3), UPV(s, -.5, -.3), [0, 1, 0]];
+  if (s < 0 && pr === 'net') return [UPV(-.14, 1.4, .06), UPV(-1, 0, -.3), [1, 0, 0]];
+  if (s < 0 && pr === 'bowl') return [UPV(-.06, 1.0, .32), UPV(-1, -.5, -.2), [0, 1, 0]];
+  if (o.arms === 'reach') return s > 0 ? [UPV(.14, 1.38, .48), UPV(1, -.3, -.2), [0, 1, 0]] : null;
+  if (o.arms === 'pray' || (P2 === 'kneel' && !pr)) return [UPV(s * .025, 1.16, .24), UPV(s, -.6, -.3), [-s, 0, 0]];
+  if (P2 === 'sit') return [UPV(s * .16, .92, .36), UPV(s, 0, -.5), [0, 1, 0]];
+  if (P2 === 'walk') return s < 0 ? [UPV(-.2, .8, .14), UPV(-.6, 0, -.8), [1, 0, 0]] : [UPV(.21, .8, -.1), UPV(.6, 0, -.8), [-1, 0, 0]];
+  return null; }
+// the things a person holds (plan N2), placed at the wrists computed by upPerson
+function upProps(B, o, held, skinM, P2) { const pr = o.prop, R = held.find(h => h[0] > 0), L = held.find(h => h[0] < 0), wd = mat('upStaffW', '#7a5434', { roughness: .9 });
+  if (pr === 'staff' || pr === 'crook') { const W = R[1], top = P2 === 'stand' || P2 === 'walk' ? 1.82 : 1.5;
+    B.put(wd, upLimb([W.x + .02, (P2 === 'stand' || P2 === 'walk') ? 0 : .3, W.z + .03], [W.x, top, W.z], .018, .015, 6));
+    if (pr === 'crook') { const c = new THREE.TorusGeometry(.07, .014, 5, 12, Math.PI * 1.25); c.rotateY(Math.PI / 2); c.translate(W.x, top + .065, W.z - .07); B.put(wd, c); } }
+  if (pr === 'sickle') { const W = R[1], d = R[2]; B.put(wd, upLimb([W.x - d.x * .05, W.y - d.y * .05, W.z - d.z * .05], [W.x + d.x * .1, W.y + d.y * .1, W.z + d.z * .1], .014, .014, 5));
+    const b = new THREE.TorusGeometry(.13, .009, 3, 14, Math.PI * 1.1); b.scale(1, 1, .35); b.rotateX(-Math.PI / 2); b.translate(W.x + d.x * .1 + .12, W.y + d.y * .1, W.z + d.z * .1); B.put(mat('upIronB', '#8a8a86', { metalness: .6, roughness: .35 }), b); }
+  if (pr === 'scroll') { const a = held[0][1], b = held[1][1], c = new THREE.CylinderGeometry(.03, .03, Math.max(.2, a.distanceTo(b) + .1), 10); c.rotateZ(Math.PI / 2); c.translate((a.x + b.x) / 2, (a.y + b.y) / 2 + .02, (a.z + b.z) / 2 + .02);
+    B.put(mat('upScrollP', '#e8d6a8', { roughness: .9 }), c); const sh = new THREE.PlaneGeometry(.18, .16); sh.rotateX(-1.1); sh.translate((a.x + b.x) / 2, (a.y + b.y) / 2 + .06, (a.z + b.z) / 2 - .02); B.put(mat('upScrollS', '#efe2bc', { side: THREE.DoubleSide }), sh); }
+  if (pr === 'net') { const net = mat('upNetM', '#ffffff', { transparent: true, alphaTest: .4, side: THREE.DoubleSide, map: upTex('upNetT', 64, 64, (c, w, h) => { c.clearRect(0, 0, w, h); c.strokeStyle = '#6a5a40'; c.lineWidth = 2; for (let i = -4; i <= 8; i++) { c.beginPath(); c.moveTo(i * 8, 0); c.lineTo(i * 8 + 32, h); c.stroke(); c.beginPath(); c.moveTo(i * 8, 0); c.lineTo(i * 8 - 32, h); c.stroke(); } }) });
+    const g2 = new THREE.PlaneGeometry(.34, 1.0, 4, 10), q = g2.attributes.position; for (let i = 0; i < q.count; i++) { const v = q.getY(i); q.setZ(i, -.12 + Math.cos(v * 3) * .05 + Math.sin(q.getX(i) * 9) * .015); }
+    g2.translate(-.19, .95, 0); B.put(net, g2); for (let i = 0; i < 5; i++) B.put(mat('ukCork', '#c9a46a'), new THREE.CylinderGeometry(.02, .02, .03, 6), -.33 + i * .07, .46, -.12 + Math.cos(-1.5) * .05); }
+  if (pr === 'bowl') { const W = L[1]; B.put(mat('clay'), new THREE.LatheGeometry([[0, 0], [.05, 0], [.08, .04], [.085, .05]].map(([a, b]) => new THREE.Vector2(a, b)), 10).translate(W.x + .02, W.y + .03, W.z + .03)); }
+  if (o.ring) { const W = R[1], d = R[2], r = new THREE.TorusGeometry(.012, .004, 4, 8); r.rotateX(Math.PI / 2); r.translate(W.x + d.x * .06, W.y + d.y * .06, W.z + d.z * .06); B.put(mat('upGold', '#e0b84a', { metalness: .8, roughness: .25 }), r); }
 }
 
 // ---------- canvas textures (private generator, never R()) ----------
