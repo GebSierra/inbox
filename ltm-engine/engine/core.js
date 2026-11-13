@@ -75,13 +75,25 @@ const ao = new GTAOPass(scene, camera, innerWidth, innerHeight); ao.updateGtaoMa
 composer.addPass(new OutputPass());
 let useAO = !MOBILE && !new URLSearchParams(location.search).has('fast');
 
-// sky dome gradient
+// sky dome: a gradient, plus (L5, off until the owner picks) soft drifting clouds and a glow around the sun.
+// theme "clouds" (0-1) and "sunGlow" (0-1) in town.json; ?sky=1 previews 0.6 / 0.7 on any town. 0 = exactly the old sky.
 {
+  const q = new URLSearchParams(location.search), prev = q.has('sky') ? parseFloat(q.get('sky')) || 1 : 0;
+  const clouds = q.has('sky') ? .6 * prev : (THEME.clouds || 0), glow = q.has('sky') ? .7 * prev : (THEME.sunGlow || 0);
   const g = new THREE.SphereGeometry(800, 32, 16);
   const m = new THREE.ShaderMaterial({ side: THREE.BackSide, depthWrite: false, fog: false,
-    uniforms: { top: { value: new THREE.Color(THEME.skyTop) }, bot: { value: new THREE.Color(THEME.skyBot) } },
-    vertexShader: 'varying float h;void main(){h=normalize(position).y;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
-    fragmentShader: 'uniform vec3 top,bot;varying float h;void main(){gl_FragColor=vec4(mix(bot,top,smoothstep(0.,.55,h)),1.);}' });
+    uniforms: { top: { value: new THREE.Color(THEME.skyTop) }, bot: { value: new THREE.Color(THEME.skyBot) }, clouds: { value: clouds }, glow: { value: glow },
+      sunDir: { value: new THREE.Vector3(...THEME.sun.pos).normalize() }, sunCol: { value: new THREE.Color(THEME.sun.color) }, t: WATER_T },
+    vertexShader: 'varying vec3 d;void main(){d=normalize(position);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
+    fragmentShader: `uniform vec3 top,bot,sunDir,sunCol;uniform float clouds,glow,t;varying vec3 d;
+      float hs(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+      float ns(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(hs(i),hs(i+vec2(1,0)),f.x),mix(hs(i+vec2(0,1)),hs(i+vec2(1,1)),f.x),f.y);}
+      float fbm(vec2 p){float v=0.,a=.5;for(int k=0;k<5;k++){v+=a*ns(p);p=p*2.03+vec2(17.,9.);a*=.5;}return v;}
+      void main(){float h=d.y;vec3 c=mix(bot,top,smoothstep(0.,.55,h));
+        if(glow>0.){float s=max(dot(d,sunDir),0.);c+=sunCol*glow*(.35*pow(s,12.)+.9*pow(s,180.));}
+        if(clouds>0.&&h>0.){vec2 p=d.xz/(h+.12)*1.6+vec2(t*.006,t*.002);float n=fbm(p);float cov=smoothstep(.62-clouds*.3,.9,n)*smoothstep(0.,.18,h);
+          vec3 cc=mix(vec3(1.,.98,.95),bot*1.05,.35)*(.86+.14*fbm(p*2.+3.));c=mix(c,cc,cov*.85);}
+        gl_FragColor=vec4(c,1.);}` });
   scene.add(new THREE.Mesh(g, m));
 }
 scene.add(new THREE.HemisphereLight(THEME.hemi[0], THEME.hemi[1], THEME.hemi[2]));
