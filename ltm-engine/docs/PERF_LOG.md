@@ -171,4 +171,4 @@ Library objects: fruit-stall frame 61k → 28k, festival statue 46k → 30k, din
 
 ### N3 ground cover approved (2026-11-13)
 
-Owner: "ground cover looks great." On in the Mount, James and Colossae (theme `"ground": true`); not the Tabernacle (desert). The scatter keeps off paving, roads and floors (any flat mesh lying on the terrain is marked on a 1 m grid), solid things, the rooms and low water; rocks and thistles stay 13 m from a room. Cost: about +6 draw calls a town (one per kind) and +0.3 to +0.6 M triangles.
+Owner: "ground cover looks great." On in the Mount, James and Colossae (theme `"ground": true`); not the Tabernacle (desert). The scatter keeps off paving, roads and floors (any flat mesh lying on the terrain is marked on a 1 m grid), solid things, the rooms and low water; rocks and thistles stay 13 m from a room. Cost: about +6 draw calls a town (one per kind) and +0.35 M triangles (James, the Mount) to +0.67 M (Colossae, the most rooms; 1.48 → 2.15 M). Worth a phone frame-rate check in Colossae.
