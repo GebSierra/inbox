@@ -443,7 +443,7 @@
             { "id": "laundry-rack", "what": "drying laundry" },
             { "id": "salt-jar", "what": "jar of salt" },
             { "id": "grain-sack", "what": "sack of grain" },
-            { "id": "donkey-side-on", "what": "donkey" }
+            { "id": "grey-donkey", "what": "donkey" }
           ]
         },
         {
