@@ -12,8 +12,8 @@ Run this with a cheaper sub-agent (for example Sonnet) **three times per room** 
 | **Layout match** | 15% | Objects sit in the reference's arrangement: near-left, far-left, far-right, near-right, centre |
 | **Material and texture** | 15% | Wood grain, cloth, glazed or painted pottery, plaster and stone. No flat untextured surfaces |
 | **Lighting and mood** | 15% | Warm, soft key light, believable shadows, interiors lit. Nothing muddy or black |
-| **Density and clutter** | 10% | Supporting props make the scene feel lived-in without hiding the five objects |
-| **Framing** | 10% | All five objects in view at the stop, nothing cut off, nothing blocking the view |
+| **Density and clutter** | 10% | Supporting props make the scene feel lived-in without hiding the five spots objects |
+| **Framing** | 10% | All five spots in view at the stop, nothing cut off, nothing blocking the view |
 | **Craft** | 10% | No floating, clipping, bulging, z-fighting or stretched textures |
 
 **Pass:** an average of **8.0 or more across three runs**, with no single criterion below 6.

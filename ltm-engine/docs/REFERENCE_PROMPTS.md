@@ -15,7 +15,7 @@ No people. Game-environment concept art, 16:9.
 
 **Tips**
 - Name the material and colour of every object ("iron-banded wooden chest", "white marble basin on a slender pedestal"). The builder copies these directly.
-- Keep the five objects clearly different in outline. They are the verse addresses.
+- Keep the five spots clearly different from one another. They are the verse addresses. A spot can be a feature of the place (a corner, a doorway, a rock) or an object; every room has at least two objects natural to the place (method rule 4).
 - Interiors: say "viewed from the doorway" and give the wall colour, floor pattern and ceiling beams.
 - Statues: put any inscription text in the prompt. The builder reproduces it on the pedestal.
 

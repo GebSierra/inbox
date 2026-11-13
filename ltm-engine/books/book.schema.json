@@ -7,6 +7,7 @@
   "properties": {
     "book": { "type": "string" },
     "translation": { "const": "ESV" },
+    "chOffset": { "type": "integer", "description": "The book starts mid-way: chapter 1 of this file is shown as chapter 1 + chOffset (town.json has the same value)" },
     "chapters": {
       "type": "array", "minItems": 1,
       "items": {
@@ -16,6 +17,7 @@
           "chapter": { "type": "integer", "minimum": 1 },
           "verses": { "type": "integer", "minimum": 1 },
           "district": { "type": "string", "description": "One district per chapter" },
+          "partial": { "const": true, "description": "A prototype chapter: fewer rooms than the verses need is a warning, not an error" },
           "layout": { "$ref": "#/$defs/layout", "description": "Defaults for every vignette in the chapter; a room's own layout overrides them key by key" },
           "rooms": {
             "type": "array",
@@ -62,7 +64,8 @@
         "desc": { "type": "string", "description": "Fuller description of the object, as approved by the owner" },
         "args": { "type": "array", "description": "Extra arguments for the library builder (colours, counts); the library gives defaults" },
         "centre": { "$ref": "#/$defs/height", "description": "The 5th object is a centrepiece the town places itself (a statue, an altar fire): the marker rests at this height" },
-        "extra": { "const": true, "description": "Stands in the room but has no verse (the last room of a chapter may have fewer than five verses)" }
+        "extra": { "const": true, "description": "Stands in the room but has no verse: a natural furnishing of the place. Comes after the verse spots" },
+        "place": { "const": true, "description": "A spot that is a feature of the place itself (a corner of a wall, a rock, a doorway), not an object; has no id (method rule 4)" }
       },
       "additionalProperties": false
     },

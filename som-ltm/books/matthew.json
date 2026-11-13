@@ -5,161 +5,168 @@
   {
    "chapter": 1,
    "verses": 48,
-   "district": "The Hillside above the lake",
-   "layout": {
-    "dais": "none",
-    "spread": [
-     1.9,
-     1.45
-    ],
-    "big": 1.25
-   },
+   "district": "The Summit",
    "rooms": [
     {
      "room": 1,
-     "name": "The Seat on the Hill",
+     "name": "The Seat",
      "verses": "5:1–5",
-     "kind": "vignette",
+     "kind": "custom",
+     "builder": "som.seat",
      "at": [
-      12,
-      -6
+      0,
+      9
      ],
      "viewer": [
-      4,
-      -6
+      0,
+      1
      ],
      "objects": [
       {
-       "id": "signpost",
-       "what": "signpost pointing up the mountain, where he went up and sat down"
+       "place": true,
+       "what": "the rock on the near-left"
       },
       {
-       "id": "marble-ear",
-       "what": "giant marble ear: he opened his mouth and taught"
+       "place": true,
+       "what": "the rock on the far-left"
       },
       {
-       "id": "clay-bowl",
-       "what": "empty beggar's bowl: poor in spirit"
+       "place": true,
+       "what": "the rock on the far-right"
       },
       {
-       "id": "poppy-urn",
-       "what": "urn of wilting poppies: those who mourn"
+       "place": true,
+       "what": "the rock on the near-right"
       },
       {
-       "id": "lump-of-clay",
-       "what": "lump of earth: the meek inherit the earth"
+       "place": true,
+       "what": "the flat seat-rock where he sat"
+      },
+      {
+       "extra": true,
+       "what": "an old olive tree behind the seat"
+      },
+      {
+       "extra": true,
+       "what": "the ring of small stones round the crown"
       }
      ]
     },
     {
      "room": 2,
-     "name": "The Blessing Meadow",
+     "name": "The Sheepfold",
      "verses": "5:6–10",
-     "kind": "vignette",
+     "kind": "custom",
+     "builder": "som.fold",
      "at": [
-      12,
-      12
+      16,
+      -2
      ],
      "viewer": [
-      4,
-      12
+      8.5,
+      -2
      ],
      "objects": [
       {
-       "id": "bread-oven",
-       "what": "bread oven: hunger and thirst for righteousness"
+       "place": true,
+       "what": "near-left corner of the fold wall"
       },
       {
-       "id": "shackle-stele",
-       "what": "stele with open shackles: the merciful"
+       "place": true,
+       "what": "far-left corner of the fold wall"
       },
       {
-       "id": "bronze-hand-mirror",
-       "what": "bronze mirror: the pure in heart see God"
+       "place": true,
+       "what": "far-right corner of the fold wall"
       },
       {
-       "id": "dove-perch",
-       "what": "doves on a perch: the peacemakers"
+       "place": true,
+       "what": "near-right corner of the fold wall"
       },
       {
-       "id": "shield-and-arrow",
-       "what": "shield and snapped arrow: the persecuted"
+       "id": "water-trough",
+       "what": "the stone water trough"
+      },
+      {
+       "extra": true,
+       "what": "the sheep in the fold"
       }
      ]
     },
     {
      "room": 3,
-     "name": "The Salt and Light Terrace",
+     "name": "The Lookout",
      "verses": "5:11–15",
-     "kind": "vignette",
+     "kind": "custom",
+     "builder": "som.lookout",
      "at": [
-      -12,
-      12
+      8,
+      -17
      ],
      "viewer": [
-      -4,
-      12
+      3,
+      -11.5
      ],
      "objects": [
       {
-       "id": "theatre-mask",
-       "what": "mocking mask: when others revile you"
+       "id": "big-jar",
+       "what": "the water jar by the hut"
       },
       {
-       "id": "victors-crown",
-       "what": "victor's crown: great is your reward"
+       "place": true,
+       "what": "the left post of the field hut"
       },
       {
-       "id": "salt-jar",
-       "what": "jar of salt: the salt of the earth"
+       "place": true,
+       "what": "the right post of the field hut"
       },
       {
-       "id": "seven-flame-lampstand",
-       "what": "blazing lampstand: the light of the world"
+       "what": "the stone bench"
       },
       {
        "id": "candelabrum",
-       "what": "lamp on a stand, not under a basket"
+       "what": "the lamp on its stand"
       }
      ]
     },
     {
      "room": 4,
-     "name": "The Law Terrace",
+     "name": "The Threshing Floor",
      "verses": "5:16–20",
-     "kind": "vignette",
+     "kind": "custom",
+     "builder": "som.floor",
      "at": [
-      -12,
-      -6
+      -15,
+      -8
      ],
      "viewer": [
-      -4,
+      -7.5,
       -6
      ],
      "objects": [
       {
-       "id": "brazier",
-       "what": "burning brazier: let your light shine"
+       "what": "the near-left stack of sheaves"
       },
       {
-       "id": "scroll-rack",
-       "what": "rack of scrolls: the Law and the Prophets"
+       "what": "the far-left stack of sheaves"
       },
       {
-       "id": "writing-desk",
-       "what": "quill and papyrus: not an iota, not a dot"
+       "what": "the far-right stack of sheaves"
       },
       {
-       "id": "wax-tablets",
-       "what": "wax tablets: relax or teach the commandments"
+       "what": "the near-right stack of sheaves"
       },
       {
-       "id": "hanging-scales",
-       "what": "scales: righteousness that exceeds the scribes'"
+       "what": "the threshing sledge"
+      },
+      {
+       "extra": true,
+       "what": "the winnowing fork"
       }
      ]
     }
-   ]
+   ],
+   "partial": true
   }
  ],
  "outline": [
@@ -188,5 +195,6 @@
    "ref": "5:17–20",
    "from": 17
   }
- ]
+ ],
+ "chOffset": 4
 }

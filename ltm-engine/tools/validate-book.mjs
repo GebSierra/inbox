@@ -37,20 +37,28 @@ function checkLayout(tag, lay) {
     else if (k === 'rug') { if (typeof v !== 'string') errs.push(`${tag}: layout.rug must be a colour string`); }
     else if (k === 'minY') checkNum(tag, 'layout.minY', v);
     else errs.push(`${tag}: unknown layout option "${k}"`); } }
-// objects of one room (or of its fallback). Returns the count of objects that carry a verse.
+// spots and objects of one room (or of its fallback). Returns the count of entries that carry a verse.
+// Method rule 4 ("each verse on a spot", 2026-11-12): an entry is either an OBJECT (an "id" from the library, or a "centre" piece) or a
+// PLACE spot ("place": true: a feature of the place itself, a doorway, a corner of a wall, a step; it has no id). Entries marked "extra"
+// stand in the room without a verse (natural furnishings). Every room needs at least two objects, verse-carrying or extra.
 function checkObjects(tag, list, { todoOk }) {
-  if (!Array.isArray(list) || !list.length) { errs.push(`${tag}: no objects`); return 0; }
-  if (list.length > 5) errs.push(`${tag}: ${list.length} objects (a room stands at most 5)`);
-  list.forEach((o, i) => { const t = `${tag} object ${i + 1}`;
+  if (!Array.isArray(list) || !list.length) { errs.push(`${tag}: no spots`); return 0; }
+  const verse = list.filter(o => o && !o.extra);
+  if (verse.length > 5) errs.push(`${tag}: ${verse.length} verse spots (a room has at most 5)`);
+  let seenExtra = false;
+  list.forEach((o, i) => { const t = `${tag} spot ${i + 1}`;
     if (!o || typeof o !== 'object' || typeof o.what !== 'string' || !o.what) { errs.push(`${t}: needs a "what" label`); return; }
+    if (o.place !== undefined) { if (o.place !== true) errs.push(`${t}: place must be true`); if (o.id !== undefined) errs.push(`${t}: a place spot has no "id" (it is part of the place)`); if (o.extra) errs.push(`${t}: a place spot always carries a verse`); }
     if (o.id !== undefined) { if (typeof o.id !== 'string') errs.push(`${t}: id must be a string`); else if (o.id === 'TODO') { if (!todoOk) errs.push(`${t}: id "TODO"`); } else if (!OBJ.has(o.id)) errs.push(`${t}: unknown object id "${o.id}" (not registered in the object library)`); }
-    if (o.centre !== undefined) { if (o.id !== undefined) errs.push(`${t}: a centrepiece has "centre", not an "id"`); checkNum(t, 'centre', o.centre); if (i !== 4) errs.push(`${t}: "centre" belongs on the 5th object`); }
+    if (o.centre !== undefined) { if (o.id !== undefined) errs.push(`${t}: a centrepiece has "centre", not an "id"`); checkNum(t, 'centre', o.centre); if (i !== 4) errs.push(`${t}: "centre" belongs on the 5th spot`); }
     if (o.args !== undefined && !Array.isArray(o.args)) errs.push(`${t}: args must be an array`);
     if (o.desc !== undefined && typeof o.desc !== 'string') errs.push(`${t}: desc must be a string`);
     if (o.extra !== undefined && o.extra !== true) errs.push(`${t}: extra must be true`);
-    if (o.extra && i < 3) errs.push(`${t}: an "extra" object (no verse) cannot come before the verse objects`); });
-  const dup = list.map(o => o.desc ?? o.what).filter((o, k, a) => a.indexOf(o) !== k); if (dup.length) errs.push(`${tag}: duplicate objects ${dup}`);
-  return list.filter(o => !o.extra).length; }
+    if (o.extra) seenExtra = true; else if (seenExtra) errs.push(`${t}: verse spots come first, "extra" objects after them`); });
+  const nObj = list.filter(o => o && !o.place).length;
+  if (nObj < 2 && !todoOk) errs.push(`${tag}: ${nObj} object(s); every room has at least two objects, natural to the place (method rule 4)`);
+  const dup = list.map(o => o.desc ?? o.what).filter((o, k, a) => a.indexOf(o) !== k); if (dup.length) errs.push(`${tag}: duplicate spots ${dup}`);
+  return verse.length; }
 
 if (b.translation !== 'ESV') errs.push('translation must be ESV');
 const seenDistricts = new Set(), todo = [];
@@ -58,10 +66,10 @@ let nCustom = 0, nVig = 0;
 for (const c of b.chapters) {
   const want = Math.ceil(c.verses / 5);
   if (seenDistricts.has(c.district)) errs.push(`ch${c.chapter}: district "${c.district}" reused (one district per chapter)`); seenDistricts.add(c.district);
-  if (c.rooms.length !== want) errs.push(`ch${c.chapter}: ${c.rooms.length} rooms, expected ceil(${c.verses}/5) = ${want}`);
+  if (c.rooms.length !== want) (c.partial && c.rooms.length < want ? warns : errs).push(`ch${c.chapter}: ${c.rooms.length} rooms, expected ceil(${c.verses}/5) = ${want}`);
   checkLayout(`ch${c.chapter} layout`, c.layout);
   c.rooms.forEach((r, i) => {
-    const v0 = i * 5 + 1, v1 = Math.min(v0 + 4, c.verses), label = v0 === v1 ? `${c.chapter}:${v0}` : `${c.chapter}:${v0}–${v1}`, tag = `ch${c.chapter} room ${r.room}`;
+    const v0 = i * 5 + 1, v1 = Math.min(v0 + 4, c.verses), cn = c.chapter + (b.chOffset || 0), label = v0 === v1 ? `${cn}:${v0}` : `${cn}:${v0}–${v1}`, tag = `ch${c.chapter} room ${r.room}`;
     if (r.room !== i + 1) errs.push(`${tag}: rooms must be numbered 1..n in walking order`);
     if (r.verses !== label) errs.push(`${tag}: verses "${r.verses}", expected "${label}"`);
     const unfinished = /TODO/.test(r.name + JSON.stringify(r.objects)); if (unfinished) todo.push(`${c.chapter}.${r.room}`);
@@ -69,7 +77,7 @@ for (const c of b.chapters) {
     if (kind !== 'vignette' && kind !== 'custom') errs.push(`${tag}: kind "${r.kind}" must be "vignette" or "custom"`);
     for (const k of ['back', 'pitch', 'bannerLift']) if (r[k] !== undefined && !isNum(r[k])) errs.push(`${tag}: ${k} must be a number`);
     const n = checkObjects(tag, r.objects, { todoOk: unfinished });
-    if (n !== v1 - v0 + 1) errs.push(`${tag}: ${n} objects for ${v1 - v0 + 1} verses`);
+    if (n !== v1 - v0 + 1) errs.push(`${tag}: ${n} verse spots for ${v1 - v0 + 1} verses`);
     if (kind === 'custom') { nCustom++;
       if (typeof r.builder !== 'string') errs.push(`${tag}: a custom room needs a "builder"`); else if (!BUILD.has(r.builder)) errs.push(`${tag}: unknown room builder "${r.builder}" (no defBuilder('${r.builder}', ...) in ltm-engine or ${path.basename(TOWN)}/world)`);
       if (r.args !== undefined && (typeof r.args !== 'object' || Array.isArray(r.args))) errs.push(`${tag}: args must be an object`);
@@ -85,7 +93,7 @@ for (const c of b.chapters) {
   });
 }
 if (todo.length) (STRICT ? errs : warns).push(`unfinished rooms (TODO): ${todo.join(', ')}`);
-const all = b.chapters.flatMap(c => c.rooms.flatMap(r => r.objects.filter(o => !o.extra).map(o => o.desc ?? o.what))); const repeats = all.filter((o, k) => all.indexOf(o) !== k);
+const all = b.chapters.flatMap(c => c.rooms.flatMap(r => r.objects.filter(o => !o.extra && !o.place).map(o => o.desc ?? o.what))); const repeats = all.filter((o, k) => all.indexOf(o) !== k);
 if (repeats.length) warns.push(`objects repeated across rooms (allowed, but less memorable): ${[...new Set(repeats)].join(', ')}`);
 for (const w of warns) console.warn('warning: ' + w);
 if (errs.length) { console.error(errs.map(e => '✗ ' + e).join('\n')); process.exit(1); }

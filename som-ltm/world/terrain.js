@@ -1,23 +1,28 @@
 // ---------- a Galilean hillside above the lake ----------
-// The hilltop meadow (the Mount) is round (0, 3); the slope falls south to the shore of the lake at z = SHORE.
-// You arrive up the path from the lake (from the south, walking north, +z).
+// The crown of the Mount is at (0, 0). The walk starts there, where he sat down (Matthew 5:1), and comes down the mountain
+// (Matthew 8:1): chapter 5 on the summit, chapter 6 on the farmed slopes, chapter 7 at the foot of the hill and the shore.
+// The lake lies south (z < SHORE). A town stands on a hill on the shore to the south-east: "a city set on a hill" (5:14).
 const SHORE = -95;
-const HILL = 16;                                                     // height of the hilltop above the shore
+const HILL = 24;                                                     // height of the crown above the shore
+const CITY = [118, -112];                                            // the town on its hill
 function hRaw(x, z) {
   let h = Math.sin(x * 0.03) * 1.0 + Math.cos(z * 0.025) * .8 + Math.sin((x + z) * 0.05) * 0.4;
-  const d = Math.hypot(x * .8, z - 3);
-  h += HILL * Math.exp(-(d * d) / (2 * 55 * 55));                     // the mount
-  h += Math.max(0, z - 40) * 0.08;                                    // more hills inland, to the north
-  if (z < SHORE + 25) h = Math.min(h, h - (SHORE + 25 - z) * 0.12);   // the slope steepens down to the beach
-  if (z < SHORE) h = Math.min(h, (z - SHORE) * 0.2 - .3);              // the beach falls into the lake
+  const d = Math.hypot(x * .85, z);
+  h += HILL * Math.exp(-(d * d) / (2 * 48 * 48));                     // the mount: a rounded crest, falling away on every side
+  h += Math.max(0, z - 60) * 0.1;                                     // the hills of Galilee inland, to the north
+  const dc = Math.hypot(x - CITY[0], z - CITY[1]); h += 14 * Math.exp(-(dc * dc) / (2 * 30 * 30));   // the city's hill
+  const cut = SHORE + 20 + Math.max(0, 14 - dc * .25);
+  if (z < cut) h = Math.min(h, h - (cut - z) * 0.1);
+  if (z < SHORE && dc > 46) h = Math.min(h, (z - SHORE) * 0.2 - .3);  // the beach falls into the lake
   return h;
 }
-const FLAT = [[0, 3, 24, 20]];                                         // [cx, cz, halfW, halfD] the hilltop meadow
+// small level pads under each room (the rest of the summit keeps its natural roll). Kept in step with books/matthew.json.
+const FLAT = [[0, 9, 6, 6], [16, -2, 6, 6], [8, -17, 6, 6], [-15, -8, 6, 6]];   // [cx, cz, halfW, halfD]
 const heightAt0 = (x, z) => hRaw(x, z);
 const heightAt = (x, z) => { let h = heightAt0(x, z);
   for (const [cx, cz, hw, hd] of FLAT) { const dx = Math.max(0, Math.abs(x - cx) - hw), dz = Math.max(0, Math.abs(z - cz) - hd), d = Math.hypot(dx, dz);
     const fl = heightAt0(cx, cz); if (d === 0) { h = fl; continue; }
-    if (d < 8) { const w = 1 - d / 8, s = w * w * (3 - 2 * w); h = h * (1 - s) + fl * s; } }
+    if (d < 5) { const w = 1 - d / 5, s = w * w * (3 - 2 * w); h = h * (1 - s) + fl * s; } }
   return h; };
 {
   const S = 520, N = 260;
@@ -29,8 +34,8 @@ const heightAt = (x, z) => { let h = heightAt0(x, z);
     p.setY(i, heightAt(x, z));
     const c = cGrass.clone().lerp(cGrass2, (Math.sin(x * .13) * Math.cos(z * .11) + 1) / 2);
     const n2 = Math.sin(x * .041 + 2) * Math.sin(z * .047) + Math.sin(x * .09 - z * .07) * .5; if (n2 > .7) c.lerp(cFlower, .35); else if (n2 < -.6) c.lerp(new THREE.Color('#6f8c45'), .4);
-    if (Math.abs(x - Math.sin(z * .05) * 3 * Math.min(1, Math.max(0, -z - 20) / 20)) < 2.2 && z < -14 && z > SHORE) c.lerp(cPath, .7);   // the path up from the lake
-    if (Math.abs(x) < 3.5 && z > -18 && z < 24) c.lerp(cPath, .55);                                                                      // the walk across the hilltop
+    if (Math.abs(x + 18 - Math.sin(z * .05) * 4) < 2 && z < -14 && z > SHORE) c.lerp(cPath, .7);   // the path down towards the lake
+    if (Math.abs(Math.hypot(x, z) - 10) < 1.6 && z < 4) c.lerp(cPath, .4);                                                               // the trodden way round the crown
     if (z < SHORE + 8) c.lerp(cBank, Math.min(1, (SHORE + 8 - z) / 6));
     col.push(c.r, c.g, c.b);
   }
@@ -55,17 +60,13 @@ const heightAt = (x, z) => { let h = heightAt0(x, z);
      gl_FragColor.rgb += vec3(.35,.22,.1) * smoothstep(.65, 1., r) * .35;`); };
   const w = new THREE.Mesh(g, wm); w.position.set(0, -.35, SHORE - 258); w.userData.dyn = 1; w.receiveShadow = true; scene.add(w);
 }
-// the far shore and the hills of Galilee
-function mountain(x, z, r, h, c, sub = true) {
-  if (sub) for (let i = 0; i < 3; i++) mountain(x + R(-r * .7, r * .7), z + R(-r * .2, r * .5), r * R(.45, .65), h * R(.45, .75), c, false);
-  c = new THREE.Color(c).lerp(SKY, Math.min(.4, Math.max(0, (Math.abs(z) - 200) / 400))).getStyle();
-  const g = new THREE.ConeGeometry(r, h, 9, 4); const p = g.attributes.position;
-  for (let i = 0; i < p.count; i++) { if (p.getY(i) < h / 2 - .01) { p.setX(i, p.getX(i) * R(.8, 1.15)); p.setZ(i, p.getZ(i) * R(.8, 1.15)); p.setY(i, p.getY(i) + R(-h * .06, h * .06)); } }
-  const gg = g.toNonIndexed(); const pp = gg.attributes.position, cols = []; const base = new THREE.Color(c), low = new THREE.Color('#8f9a64'), hi = new THREE.Color(c).offsetHSL(0, -.05, .1), dk = new THREE.Color(c).offsetHSL(0, 0, -.12);
-  for (let i = 0; i < pp.count; i += 3) { const yy = (pp.getY(i) + pp.getY(i + 1) + pp.getY(i + 2)) / 3 / h + .5; const col = yy < .25 ? low.clone().lerp(base, yy * 4) : base.clone().lerp(rnd() > .5 ? hi : dk, R(.1, .6)); for (let k = 0; k < 3; k++) cols.push(col.r, col.g, col.b); }
-  gg.setAttribute('color', new THREE.Float32BufferAttribute(cols, 3)); gg.computeVertexNormals();
-  const m = add(gg, new THREE.MeshStandardMaterial({ vertexColors: true, flatShading: true, roughness: 1 }), x, h / 2 - 6, z); m.castShadow = false;
+// the far shore and the hills of Galilee: low, rounded and green, not sharp peaks
+function hillDome(x, z, r, h, c) {
+  c = new THREE.Color(c).lerp(SKY, Math.min(.45, Math.max(0, (Math.hypot(x, z) - 180) / 420)));
+  const g = new THREE.SphereGeometry(1, 14, 7, 0, Math.PI * 2, 0, Math.PI / 2); const p = g.attributes.position;
+  for (let i = 0; i < p.count; i++) { const k = R(.92, 1.08); p.setX(i, p.getX(i) * k); p.setZ(i, p.getZ(i) * k); }
+  const m = add(g, new THREE.MeshStandardMaterial({ color: c, flatShading: true, roughness: 1 }), x, -4, z); m.scale.set(r, h, r * R(.7, 1)); m.castShadow = false;
 }
-for (let i = 0; i < 9; i++) mountain(-260 + i * 65, -420 + R(-30, 30), R(60, 90), R(40, 70), '#9a8a6a');   // across the lake
-mountain(30, 330, 140, 150, '#8f9a64'); mountain(-150, 300, 110, 110, '#96906a'); mountain(190, 290, 120, 120, '#9a9468');
-mountain(-260, 60, 90, 60, '#9aa070'); mountain(270, 40, 100, 70, '#9aa070');
+for (let i = 0; i < 12; i++) hillDome(-330 + i * 60, -400 + R(-30, 30), R(70, 110), R(30, 55), i % 2 ? '#7d8f55' : '#8b8a5a');   // across the lake
+for (let i = 0; i < 9; i++) hillDome(-260 + i * 65, 260 + R(-40, 40), R(80, 120), R(40, 70), i % 3 ? '#7f9452' : '#8f8d5c');      // inland Galilee
+hillDome(-300, 40, 110, 50, '#869a58'); hillDome(310, 20, 110, 55, '#869a58');
