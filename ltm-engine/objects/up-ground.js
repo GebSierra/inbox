@@ -60,14 +60,20 @@ function upGroundCover() {
     if (sy > .6 || sx * sz < 2 || sx > 150 || sz > 150) return; const cx = (bb.min.x + bb.max.x) / 2, cz = (bb.min.z + bb.max.z) / 2, gy = heightAt(cx, cz); if (bb.max.y < gy - .3 || bb.min.y > gy + .8) return;
     for (let i = Math.floor(bb.min.x - PV.x0); i <= Math.floor(bb.max.x - PV.x0); i++) for (let j = Math.floor(bb.min.z - PV.z0); j <= Math.floor(bb.max.z - PV.z0); j++) if (i >= 0 && j >= 0 && i < PV.n && j < PV.n) PV.c[j * PV.n + i] = 1; });
   const paved = (x, z) => { const i = Math.floor(x - PV.x0), j = Math.floor(z - PV.z0); return i >= 0 && j >= 0 && i < PV.n && j < PV.n && PV.c[j * PV.n + i] === 1; };
-  const clearOf = (x, z, m) => !blocked(x, z) && !paved(x, z) && heightAt(x, z) > low && STATIONS.every(s => Math.hypot(s.x - x, s.z - z) > m);
-  const pick = (perRoom, sc, m = 4.5) => { const out = [];
-    for (const st of STATIONS) { let n = 0; for (let t = 0; t < perRoom * 3 && n < perRoom; t++) { const a = r() * 6.283, d = m + Math.pow(r(), 1.6) * 45, x = st.x + Math.cos(a) * d, z = st.z + Math.sin(a) * d;
-        if (clearOf(x, z, m)) { out.push([x, z, sc[0] + r() * (sc[1] - sc[0]), r() * 6.28]); n++; } } }
+  // the town (owner, 2026-11-13: "turn off the grass inside of the town structures ... just have it outside the towns"): a town part that
+  // defines TOWN(x, z) (Colossae, James: the flattened, built-up area, 1 inside and fading to 0 at its edge) marks it; nothing grows where it is above 0.
+  // Towns without one (the Mount, a hillside) only keep clear of paving, solid things and the rooms.
+  const inTown = (x, z) => typeof TOWN === 'function' && TOWN(x, z) > 0;
+  const clearOf = (x, z, m) => !blocked(x, z) && !paved(x, z) && !inTown(x, z) && heightAt(x, z) > low && STATIONS.every(s => Math.hypot(s.x - x, s.z - z) > m);
+  // "remove like 75% of it ... just here and there occasionally": a quarter of the first amounts, spread over a wider ring
+  // spread over all the open land around the rooms (150 m out), not bunched at the rooms
+  const xs = STATIONS.map(q => q.x), zs = STATIONS.map(q => q.z), X0 = Math.min(...xs) - 150, X1 = Math.max(...xs) + 150, Z0 = Math.min(...zs) - 150, Z1 = Math.max(...zs) + 150;
+  const pick = (perRoom, sc, m = 4.5) => { const out = [], want = perRoom * STATIONS.length;
+    for (let t = 0; t < want * 12 && out.length < want; t++) { const x = X0 + r() * (X1 - X0), z = Z0 + r() * (Z1 - Z0); if (clearOf(x, z, m)) out.push([x, z, sc[0] + r() * (sc[1] - sc[0]), r() * 6.28]); }
     return out; };
-  upCover(scene, 'grass', pick(420, [1.4, 2.6]), { sink: .02 });
-  upCover(scene, 'anemone', pick(45, [1.1, 1.6]));
-  upCover(scene, 'daisy', pick(40, [1.1, 1.6]));
-  upCover(scene, 'yellow', pick(30, [1.1, 1.6]));
-  upCover(scene, 'rock', pick(18, [.7, 2.4], 13), { sink: .04, shadow: true });
-  upCover(scene, 'thistle', pick(10, [1, 1.5], 13)); }
+  upCover(scene, 'grass', pick(105, [1.4, 2.6]), { sink: .02 });
+  upCover(scene, 'anemone', pick(11, [1.1, 1.6]));
+  upCover(scene, 'daisy', pick(10, [1.1, 1.6]));
+  upCover(scene, 'yellow', pick(8, [1.1, 1.6]));
+  upCover(scene, 'rock', pick(5, [.7, 2.4], 13), { sink: .04, shadow: true });
+  upCover(scene, 'thistle', pick(3, [1, 1.5], 13)); }

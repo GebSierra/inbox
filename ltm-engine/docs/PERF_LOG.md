@@ -172,3 +172,8 @@ Library objects: fruit-stall frame 61k → 28k, festival statue 46k → 30k, din
 ### N3 ground cover approved (2026-11-13)
 
 Owner: "ground cover looks great." On in the Mount, James and Colossae (theme `"ground": true`); not the Tabernacle (desert). The scatter keeps off paving, roads and floors (any flat mesh lying on the terrain is marked on a 1 m grid), solid things, the rooms and low water; rocks and thistles stay 13 m from a room. Cost: about +6 draw calls a town (one per kind) and +0.35 M triangles (James, the Mount) to +0.67 M (Colossae, the most rooms; 1.48 → 2.15 M). Worth a phone frame-rate check in Colossae.
+
+### Ground cover thinned and kept out of the towns (2026-11-13)
+
+Owner, from his phone at the Colossae potter: "Please turn off the grass inside of the town structures. And just have it outside the towns. And when you have it outside the towns remove like 75% of it. I just want it here and there occasionally."
+Paving in Colossae is painted into the ground, so the paving check missed it. Now nothing grows where the town part's own TOWN(x, z) is above 0 (the flattened, built-up area of Colossae and James); the Mount has no town and only keeps clear of rooms, paving and solid things. Amounts are a quarter of before, spread over all the open land 150 m around the rooms: Colossae 2100 grass tufts (from 8400), James 630, the Mount 1050, plus a few flowers, rocks and thistles.
