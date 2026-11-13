@@ -133,27 +133,27 @@
           "title": "We are complete in Christ",
           "verses": "2:9–10",
           "summary": "All of God's fullness lives in Christ in bodily form, and in him you have been filled.",
-          "anchor": { "label": "courtyard gateway", "where": {"at": [-4, 17], "top": 3.8},
-            "view": {"stand": [0, 29], "via": [[0, 44], [0, 34]]} },
-          "example": "For example, picture the two gate pillars as giant empty jars, and Christ pouring in light until they overflow and shine on everyone passing between them."
+          "anchor": { "label": "temple entrance", "where": {"at": [0, 0.6], "top": 4.2},
+            "view": {"stand": [0, 14.5], "via": [[0, 44], [0, 30], [0, 20]]} },
+          "example": "For example, picture the temple doorway as a giant jar with Christ standing in it, so full of God that golden light spills over the steps and floods the whole courtyard."
         },
         {
           "id": "captive",
           "title": "Don't be taken captive by human philosophy",
           "verses": "2:4, 8",
           "summary": "Don't let clever arguments and empty human tradition carry you off. Stay rooted in Christ.",
-          "anchor": { "label": "the temple", "where": {"at": [0, -2], "top": 11.5},
-            "view": {"stand": [0, 17.2], "via": [[0, 26], [0, 20]]} },
-          "example": "For example, picture a smooth-talking sophist in a flowing robe sneaking down the temple steps with you tucked under his arm like a rolled-up rug."
+          "anchor": { "label": "philosopher statue by the pigeon cages", "where": {"at": [-10, 7], "top": 5.4},
+            "view": {"stand": [2, 15], "via": []} },
+          "example": "For example, picture the marble philosopher stepping off his pedestal and tucking you under his arm like a rolled-up rug, while the pigeon cages rattle and flap behind him."
         },
         {
           "id": "shadows",
           "title": "Rules and rituals are only shadows",
           "verses": "2:16–17, 20–23",
           "summary": "Food laws and festivals are shadows of what was coming; the substance belongs to Christ.",
-          "anchor": { "label": "the stoa colonnade", "where": {"at": [-30, 6], "top": 6},
-            "view": {"stand": [-21, 19], "via": [[0, 19]]} },
-          "example": "For example, picture every column casting a long shadow shaped like a feast, while Christ, the solid real person, steps out and the shadows fade."
+          "anchor": { "label": "the temple itself", "where": {"at": [0, -4], "top": 12.5},
+            "view": {"stand": [0, 16], "via": []} },
+          "example": "For example, picture the whole temple casting a giant shadow shaped like a feast across the courtyard, while Christ, the solid real person, steps out into the sunshine and the shadow fades."
         }
       ],
       "rooms": [
@@ -261,27 +261,27 @@
           "title": "Put off the old, put on the new",
           "verses": "3:5–10",
           "summary": "Take off anger and lies like dirty clothes; put on the new self, renewed in God's image.",
-          "anchor": { "label": "front door and balcony", "where": {"at": [32, 12], "top": 6},
+          "anchor": { "label": "front door", "where": {"at": [32, 12], "top": 3.2},
             "view": {"stand": [32, 31], "via": [[0, 19], [22, 19], [30, 24]]} },
-          "example": "For example, picture a pile of stinking old clothes at the door, each labelled with a sin, and a glowing new robe hanging from the balcony."
+          "example": "For example, picture a pile of stinking old clothes dumped on the doorstep, each labelled with a sin, and a glowing new robe hanging in the open doorway."
         },
         {
           "id": "love",
           "title": "Love binds everything together",
           "verses": "3:12–14",
           "summary": "Wear compassion, kindness, humility and patience, and above all love, which binds everything in perfect harmony.",
-          "anchor": { "label": "atrium pool", "where": {"at": [32, 3], "top": 3},
-            "view": {"stand": [32, 14.5], "via": [[32, 20]]} },
-          "example": "For example, picture a giant golden belt of love wrapped around the pool and all its columns, cinching the whole house together."
+          "anchor": { "label": "loom room", "where": {"at": [24, 9], "top": 3},
+            "view": {"stand": [25, 0.5], "via": [[32, 18], [32, 8], [29, 6.5], [28, 3]]} },
+          "example": "For example, picture a giant golden thread of love running from the loom across the whole house, weaving every room and every person into one blanket."
         },
         {
           "id": "rules",
           "title": "Christ rules all of daily life",
           "verses": "3:17–25",
           "summary": "Whatever you do, at home or at work, do it heartily in Jesus' name.",
-          "anchor": { "label": "east doorway", "where": {"at": [43, 3], "top": 4},
-            "view": {"stand": [28, 1.5], "via": [[32, 9], [32, 2]]} },
-          "example": "For example, picture Christ himself waving you out the doorway, his name stamped on your tools, your lunch and your sandals."
+          "anchor": { "label": "atrium pool", "where": {"at": [32, 3], "top": 3},
+            "view": {"stand": [32, 9.5], "via": [[28, 3], [29, 6.5]]} },
+          "example": "For example, picture Christ himself sitting on the edge of the pool, his name floating on the water over your tools, your lunch and your sandals."
         }
       ],
       "rooms": [
@@ -390,8 +390,8 @@
           "title": "Pray, and watch for open doors",
           "verses": "4:2–4",
           "summary": "Keep praying with thankful alertness, and ask God to open a door for the message.",
-          "anchor": { "label": "stone arch bridge", "where": {"at": [63.8, 2], "top": 6},
-            "view": {"stand": [49, -7], "via": [[41, 4], [46, 4], [48, -2]]} },
+          "anchor": { "label": "stone arch bridge", "where": {"at": [63.8, 2], "top": 4},
+            "view": {"stand": [50, 2.5], "via": [[41, 4], [46, 4]]} },
           "example": "For example, picture each bridge arch as a doorway swinging open as you pray, with the gospel pouring through like a river of light."
         },
         {
@@ -399,9 +399,9 @@
           "title": "Speak with grace",
           "verses": "4:5–6",
           "summary": "Be wise with outsiders, and let your words be gracious and seasoned with salt.",
-          "anchor": { "label": "the river", "where": {"at": [60, -20], "top": 3},
-            "view": {"stand": [63.8, 2], "via": [[50, 0], [56, 2]]} },
-          "example": "For example, picture the river flowing with gentle words, every ripple a kind reply, sparkling with a pinch of salt."
+          "anchor": { "label": "the donkey", "where": {"at": [75.25, 10.5], "top": 3.6},
+            "view": {"stand": [83, 7], "via": [[50, 0], [56, 2], [80, 2], [82, 4]]} },
+          "example": "For example, picture the donkey carrying a huge salt shaker on its back and sprinkling gentle words on everyone it passes, so that every bray comes out as a kind reply."
         },
         {
           "id": "team",
@@ -409,7 +409,7 @@
           "verses": "4:7–18",
           "summary": "Paul sends news and greetings from friends who serve with him. Every person on the team matters.",
           "anchor": { "label": "the waystation", "where": {"at": [105.8, -9], "top": 7},
-            "view": {"stand": [93.8, 3], "via": [[77.8, 2], [87.8, 2]]} },
+            "view": {"stand": [93.8, 3], "via": [[87.8, 2]]} },
           "example": "For example, picture the waystation porch crammed with Paul's whole team waving, hugging and shouting greetings at you."
         }
       ],
