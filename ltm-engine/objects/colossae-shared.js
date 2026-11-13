@@ -242,19 +242,10 @@ const gateGuardModel = (g, x, y, z) => { const G = new THREE.Group(); G.position
       const bs = add(new THREE.SphereGeometry(.1, 10, 6, 0, Math.PI * 2, 0, Math.PI / 2), gold, -.38, 1.0, .22, G); bs.rotation.x = Math.PI / 2;     // boss
       for (const s of [-1, 1]) { const w = box(.02, .3, .01, gold, -.38 + s * .12, .86, .224, G); w.rotation.z = s * .5; } }                          // painted wings either side
     return y + 1.7; };
+// the woman at the well with a water jar on her head: since the 2026 rebuild a full townsperson (objects/up-c.js upPerson) in a long
+// dress and veil, one hand steadying the jar; same place, turn and top height as the old figure, and it draws no random numbers
 const waterCarrierModel = (g, x, y, z) => { const G = new THREE.Group(); G.position.set(x, y, z); G.rotation.y = .5; g.add(G);
-    const skin = mat('skin1', '#a8714c'), dress = mat('clothDressW', '#c9a46a', { side: THREE.DoubleSide }), veil = mat('clothVeilW', '#efe4cc', { side: THREE.DoubleSide }), sash = mat('clothSashW', '#8a3a2a'), eye = mat('eyeDk', '#1a0e08');
-    for (const s of [-1, 1]) box(.09, .04, .16, skin, s * .09, 0, .07, G);
-    add(new THREE.LatheGeometry([[.3, 0], [.29, .1], [.25, .4], [.2, .7], [.16, .93], [.18, 1.05], [.25, 1.17], [.23, 1.25], [.11, 1.3], [.05, 1.33]].map(([a, b]) => new THREE.Vector2(a, b)), 14), dress, 0, 0, 0, G);   // long dress
-    { const t = add(new THREE.TorusGeometry(.19, .026, 4, 14), sash, 0, .86, 0, G); t.rotation.x = Math.PI / 2; box(.05, .3, .03, sash, .06, .56, .19, G); }    // sash and its hanging end
-    cyl(.045, .05, .12, 6, skin, 0, 1.28, 0, G);
-    const hd = add(new THREE.IcosahedronGeometry(.145, 1), skin, 0, 1.47, 0, G); hd.scale.y = 1.08;
-    add(new THREE.ConeGeometry(.025, .06, 4), skin, 0, 1.45, .14, G).rotation.x = Math.PI / 2; for (const s of [-1, 1]) add(new THREE.SphereGeometry(.012, 5, 4), eye, s * .055, 1.5, .125, G);
-    add(new THREE.SphereGeometry(.175, 10, 7, 0, Math.PI * 2, 0, Math.PI * .6), veil, 0, 1.52, -.06, G);                          // veil over the hair
-    add(new THREE.CylinderGeometry(.16, .22, .3, 10, 1, true, Math.PI * .6, Math.PI * .8), veil, 0, 1.42, -.03, G);             // and down over the shoulders at the back
-    { const t = add(new THREE.TorusGeometry(.085, .035, 5, 12), mat('clothPad', '#b8503a'), 0, 1.66, 0, G); t.rotation.x = Math.PI / 2; }   // the folded cloth pad
-    for (const s of [-1, 1]) { LIMB(G, [s * .23, 1.2, 0], [s * .34, 1.45, .02], .04, dress); LIMB(G, [s * .34, 1.45, .02], [s * .16, 1.76, 0], .033, skin); add(new THREE.IcosahedronGeometry(.045, 0), skin, s * .155, 1.77, 0, G); }   // arms up to the jar
-    const j = new THREE.Group(); j.position.set(0, 1.68, 0); j.rotation.z = .04; G.add(j); amph(j, 0, 0, .5);
+    upPerson(G, '#c9a46a', { fem: true, veil: '#efe4cc', carry: 'jar', skin: 1, hair: 1 });
     return y + 2.3; };
 const spearRack_ = (g, x, y, z) => { const L = 2.3, lean = .12;
     for (const sx of [-.58, .58]) { box(.09, 1.45, .09, 'wood', x + sx, y, z, g); box(.2, .05, .22, 'wood', x + sx, y, z, g); }
