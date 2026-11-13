@@ -1,84 +1,149 @@
-// ---------- NEW (plan item N1): livestock from one parametric four-legged builder ----------
-// upQuad(g, x, y, z, spec, opts) builds an animal standing on the ground at (x, y, z), facing +x before opts.ry, and returns the top height.
-// spec (all lengths in metres, at the withers):
-//   H withers height, L body length, W body width, belly (0-1 how deep the barrel hangs), neck [length, angle up from level, thickness],
-//   head [length, depth, width], muzzle (0-1 how much the nose narrows), leg [thickness at top, at hoof], hoof colour, tail [length, tuft],
-//   ears [length, droop 0-1], horns null | { kind: 'ox' | 'goat', len }, hump null | height (camel), mane bool (horse/donkey),
-//   coat colour, belly colour, face colour, dewlap (0-1, the ox's throat fold)
-// opts: { ry, graze (head down), parent }.  Built from tapered limbs and lofted shells, merged into one mesh per material.
-// No R(): nothing random at all, so the same animal is the same everywhere.
-const UQ = {
-  ox:     { H: 1.35, L: 1.75, W: .62, belly: .55, neck: [.55, .25, .26], head: [.5, .26, .22], muzzle: .55, leg: [.085, .06], hoof: '#2a221e', tail: [.85, .14], ears: [.16, .1], horns: { kind: 'ox', len: .32 }, hump: null, mane: false, coat: '#8a5a34', bellyC: '#a87a54', face: '#7a4e2c', dewlap: .7 },
-  goat:   { H: .72, L: .8, W: .3, belly: .4, neck: [.32, .7, .1], head: [.25, .13, .1], muzzle: .6, leg: [.035, .025], hoof: '#2a221e', tail: [.12, 0], ears: [.12, .8], horns: { kind: 'goat', len: .26 }, hump: null, mane: false, coat: '#3a302a', bellyC: '#5a4a3a', face: '#2e2620', dewlap: 0, beard: true },
-  camel:  { H: 1.9, L: 1.55, W: .5, belly: .5, neck: [1.0, .35, .15], head: [.45, .2, .16], muzzle: .5, leg: [.08, .055], hoof: '#6a5040', tail: [.5, .1], ears: [.07, 0], horns: null, hump: .45, mane: false, coat: '#c9a06a', bellyC: '#d8b47e', face: '#b89060', dewlap: 0, knobKnees: true },
-  horse:  { H: 1.5, L: 1.55, W: .45, belly: .35, neck: [.75, .95, .2], head: [.58, .22, .16], muzzle: .65, leg: [.07, .045], hoof: '#2a221e', tail: [.8, .35], ears: [.13, 0], horns: null, hump: null, mane: true, coat: '#6a3e22', bellyC: '#6a3e22', face: '#5a321a', dewlap: 0, maneC: '#1e1612' },
-  donkey: { H: 1.1, L: 1.15, W: .4, belly: .45, neck: [.45, .7, .17], head: [.48, .21, .15], muzzle: .55, leg: [.055, .04], hoof: '#2a221e', tail: [.55, .12], ears: [.3, 0], horns: null, hump: null, mane: true, coat: '#8a8078', bellyC: '#cfc6ba', face: '#a49a90', dewlap: 0, maneC: '#3a3430', cross: true, mealy: true },
+// ---------- NEW (plan item N1): livestock, refined ----------
+// upQuad(g, x, y, z, kind, opts) builds a standing animal on the ground at (x, y, z), facing +x before opts.ry, and returns its top height.
+//   kind: 'horse' | 'donkey' | 'ox' | 'goat' | 'camel', or a template object (see UQ_T)   opts: { ry, graze, coat, parent }
+// Every body part is ONE smooth tube that follows a side-view path through the animal's anatomy, with its own depth and width at each
+// point, so shoulders, withers, back, hips and jaw flow into each other instead of being stuck-on parts:
+//   body   (rump → hips → loin → barrel → girth → withers → chest)
+//   neck+head in one piece (neck base → crest → poll → forehead → face → muzzle), so the head grows out of the neck
+//   each leg (top inside the body → elbow/stifle → knee/hock → fetlock → pastern → hoof), the hoof in its own material
+//   tail
+// Ears, eyes, nostrils, horns, beard, mane, hump and the donkey's cross are added on the finished shapes. All coordinates below are
+// in metres for an animal of the template's size; nothing random is drawn.
+const UQ_T = {
+  horse: { col: ['#7a4426', '#5e3218', '#2a1c14'], hoof: '#2a221e', mane: '#1e1612', muzzle: '#4a2a1a', H: 1.5,
+    body: { p: [[-.82, 1.12], [-.66, 1.2], [-.38, 1.2], [0, 1.12], [.32, 1.14], [.58, 1.2], [.76, 1.1], [.84, 1.0]], h: [.1, .25, .3, .34, .35, .32, .24, .1], w: [.08, .23, .25, .27, .27, .23, .17, .07] },
+    neck: { p: [[.56, 1.16], [.74, 1.36], [.88, 1.58], [.98, 1.76], [1.06, 1.76], [1.18, 1.56], [1.3, 1.36], [1.36, 1.27], [1.39, 1.24]],
+            h: [.3, .24, .17, .12, .12, .1, .085, .075, .04], w: [.2, .14, .1, .085, .1, .085, .07, .065, .03], poll: 3, eye: 4, nose: 7 },
+    legF: { x: .58, z: .15, p: [[.58, 1.02], [.55, .8], [.56, .46], [.57, .16], [.6, .08], [.62, 0]], r: [.1, .075, .05, .048, .042, .055] },
+    legH: { x: -.56, z: .15, p: [[-.6, 1.08], [-.45, .8], [-.7, .52], [-.64, .16], [-.61, .08], [-.6, 0]], r: [.16, .1, .055, .048, .042, .055] },
+    tail: { p: [[-.82, 1.22], [-.94, 1.06], [-.98, .8], [-.95, .58]], r: [.05, .08, .07, .02], hair: true },
+    ears: { len: .14, w: .045, tilt: .15, droop: 0 }, crest: .07 },
+  donkey: { col: ['#8c8278', '#c9c0b4', '#3a3430'], hoof: '#2a221e', mane: '#3a3430', muzzle: '#d8d0c4', H: 1.1, cross: true, mealy: true,
+    body: { p: [[-.6, .82], [-.48, .9], [-.26, .9], [0, .84], [.22, .85], [.4, .9], [.52, .82], [.58, .74]], h: [.08, .2, .24, .27, .27, .25, .19, .08], w: [.07, .19, .21, .23, .23, .19, .14, .06] },
+    neck: { p: [[.4, .87], [.54, 1.0], [.64, 1.14], [.7, 1.26], [.77, 1.26], [.88, 1.08], [.98, .92], [1.03, .85], [1.06, .82]],
+            h: [.24, .2, .15, .12, .12, .11, .09, .085, .05], w: [.17, .12, .095, .09, .1, .09, .075, .07, .035], poll: 3, eye: 4, nose: 7 },
+    legF: { x: .42, z: .12, p: [[.42, .74], [.4, .58], [.41, .33], [.42, .12], [.44, .06], [.45, 0]], r: [.08, .06, .04, .038, .034, .042] },
+    legH: { x: -.42, z: .12, p: [[-.45, .8], [-.33, .58], [-.52, .37], [-.47, .12], [-.45, .06], [-.44, 0]], r: [.12, .08, .042, .038, .034, .042] },
+    tail: { p: [[-.6, .9], [-.66, .76], [-.68, .56], [-.67, .44]], r: [.03, .025, .02, .015], tuft: .12 },
+    ears: { len: .3, w: .065, tilt: .1, droop: 0 }, crest: .045 },
+  ox: { col: ['#8a5530', '#a8774e', '#3a2618'], hoof: '#2a221e', muzzle: '#3a3028', H: 1.35, horns: 'ox', dewlap: true,
+    body: { p: [[-.9, 1.02], [-.74, 1.12], [-.42, 1.1], [0, 1.02], [.36, 1.04], [.62, 1.12], [.82, 1.02], [.9, .9]], h: [.12, .28, .34, .4, .42, .38, .3, .12], w: [.12, .32, .34, .36, .36, .31, .24, .1] },
+    neck: { p: [[.6, 1.04], [.82, 1.1], [.98, 1.12], [1.08, 1.13], [1.14, 1.08], [1.22, .94], [1.3, .8], [1.34, .74], [1.36, .71]],
+            h: [.36, .3, .24, .18, .17, .15, .12, .11, .06], w: [.27, .21, .17, .15, .16, .14, .12, .12, .05], poll: 3, eye: 4, nose: 7 },
+    legF: { x: .6, z: .2, p: [[.6, .82], [.57, .62], [.58, .36], [.59, .13], [.62, .06], [.64, 0]], r: [.13, .1, .065, .06, .055, .065] },
+    legH: { x: -.62, z: .2, p: [[-.66, .92], [-.52, .64], [-.74, .42], [-.68, .13], [-.65, .06], [-.64, 0]], r: [.2, .12, .068, .06, .055, .065] },
+    tail: { p: [[-.9, 1.12], [-.96, .9], [-.97, .6], [-.96, .38]], r: [.035, .025, .02, .015], tuft: .16 },
+    ears: { len: .16, w: .06, tilt: 1.35, droop: .15 } },
+  goat: { col: ['#3a2e26', '#4e3e32', '#1e1612'], hoof: '#2a221e', muzzle: '#2a201a', H: .72, horns: 'goat', beard: true,
+    body: { p: [[-.4, .54], [-.32, .6], [-.16, .6], [0, .56], [.16, .57], [.3, .62], [.38, .56], [.42, .5]], h: [.05, .12, .14, .16, .17, .15, .11, .05], w: [.05, .12, .13, .15, .15, .12, .09, .04] },
+    neck: { p: [[.28, .6], [.36, .7], [.42, .8], [.45, .88], [.5, .88], [.56, .8], [.62, .72], [.65, .68], [.67, .66]],
+            h: [.13, .1, .075, .06, .06, .055, .045, .04, .022], w: [.09, .065, .05, .045, .05, .045, .036, .033, .016], poll: 3, eye: 4, nose: 7 },
+    legF: { x: .3, z: .07, p: [[.3, .48], [.28, .36], [.29, .2], [.3, .07], [.31, .035], [.32, 0]], r: [.045, .032, .02, .019, .017, .022] },
+    legH: { x: -.3, z: .07, p: [[-.32, .52], [-.24, .36], [-.36, .24], [-.33, .07], [-.32, .035], [-.31, 0]], r: [.07, .045, .022, .019, .017, .022] },
+    tail: { p: [[-.4, .64], [-.45, .7], [-.47, .74]], r: [.03, .03, .01] },
+    ears: { len: .12, w: .035, tilt: 1.2, droop: .5 } },
+  camel: { col: ['#c49a62', '#d8b27c', '#6a5038'], hoof: '#6a5040', muzzle: '#a88458', H: 1.9, hump: true, pads: true,
+    body: { p: [[-.72, 1.4], [-.56, 1.5], [-.3, 1.52], [0, 1.48], [.3, 1.5], [.52, 1.5], [.68, 1.38], [.74, 1.26]], h: [.1, .24, .28, .32, .34, .32, .26, .1], w: [.08, .21, .23, .25, .25, .22, .17, .07] },
+    neck: { p: [[.55, 1.4], [.8, 1.2], [1.02, 1.12], [1.2, 1.24], [1.32, 1.5], [1.38, 1.76], [1.42, 1.9], [1.48, 1.94], [1.62, 1.86], [1.72, 1.78], [1.76, 1.75]],
+            h: [.28, .17, .13, .12, .12, .11, .1, .11, .085, .065, .04], w: [.2, .12, .09, .085, .085, .08, .08, .1, .08, .065, .03], poll: 6, eye: 7, nose: 9 },
+    legF: { x: .5, z: .16, p: [[.52, 1.24], [.48, .98], [.5, .58], [.52, .2], [.56, .07], [.6, 0]], r: [.11, .075, .055, .045, .05, .09] },
+    legH: { x: -.5, z: .16, p: [[-.54, 1.3], [-.36, .96], [-.6, .6], [-.55, .2], [-.52, .07], [-.5, 0]], r: [.15, .08, .055, .045, .05, .09] },
+    tail: { p: [[-.72, 1.52], [-.8, 1.3], [-.82, 1.04], [-.8, .9]], r: [.03, .025, .02, .015], tuft: .12 },
+    ears: { len: .07, w: .035, tilt: .5, droop: .2 } },
 };
-function upQuad(g, x, y, z, spec, o = {}) {
-  const s = typeof spec === 'string' ? UQ[spec] : spec, A = new THREE.Group(); A.position.set(x, y, z); A.rotation.y = o.ry || 0; (o.parent || g).add(A);
-  const coat = mat('uqCoat' + s.coat, s.coat, { roughness: .9, flatShading: false }), bel = mat('uqBelly' + s.bellyC, s.bellyC, { roughness: .9, flatShading: false }),
-    face = mat('uqFace' + s.face, s.face, { roughness: .9, flatShading: false }), hoof = mat('uqHoof' + s.hoof, s.hoof, { roughness: .8 }), dark = mat('uqDark', '#1a1410'),
-    horn = mat('uqHorn', '#d8ccb0', { roughness: .6, flatShading: false }), mane = mat('uqMane' + (s.maneC || s.coat), s.maneC || s.coat, { roughness: 1 });
-  const bag = new Map(), put = (m, geo) => { if (!bag.has(m)) bag.set(m, []); bag.get(m).push(geo); }, V = (a, b, c) => [a, b, c];
-  const H = s.H, L = s.L, W = s.W, legTop = H * .62, bodyMid = legTop + (H - legTop) * .45, bodyR = (H - legTop) * .62;
-  // ---- body: a lofted barrel along x, deeper at the chest, a little higher at the withers and the rump ----
-  const rings = []; for (let i = 0; i <= 10; i++) { const t = i / 10, u = t * 2 - 1, taper = Math.pow(Math.max(0, 1 - Math.pow(Math.abs(u), 2.6)), .5);
-    const ry = bodyR * (.8 + .2 * taper) * (1 + s.belly * .25 * Math.max(0, .6 - Math.abs(u + .1))), rz = W / 2 * (.82 + .18 * taper);
-    rings.push([u * L / 2, Math.max(.02, ry), Math.max(.02, rz), 0, Math.PI, 0, 0]); }
-  { const pos = [], idx = [], seg = 12; for (let j = 0; j < rings.length; j++) { const [cx, ry, rz] = rings[j]; for (let k = 0; k <= seg; k++) { const a = k / seg * Math.PI * 2;
-      const sn = Math.sin(a), deep = sn < 0 ? 1 + s.belly * .35 * Math.max(0, 1 - Math.abs(cx / (L / 2)) * 1.2) : 1; pos.push(cx, bodyMid + sn * ry * deep, Math.cos(a) * rz); } }   // the barrel hangs deeper below, smoothly
-    for (let j = 0; j < rings.length - 1; j++) for (let k = 0; k < seg; k++) { const a = j * (seg + 1) + k, b = a + 1, c = a + seg + 1, d = c + 1; idx.push(a, d, b, a, c, d); }
-    const bg = new THREE.BufferGeometry(); bg.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); bg.setIndex(idx); bg.computeVertexNormals(); put(coat, bg);
-    // end caps
-    for (const e of [-1, 1]) { const cap = new THREE.SphereGeometry(1, 10, 8); const r0 = rings[e < 0 ? 1 : rings.length - 2]; cap.scale(L * .15, r0[1] * 1.0, r0[2] * 1.0); cap.translate(e * L * .38, bodyMid + r0[1] * .05, 0); put(coat, cap); } }
-  if (s.hump) { const hp = new THREE.SphereGeometry(1, 12, 8, 0, Math.PI * 2, 0, Math.PI / 2); hp.scale(L * .26, s.hump, W * .36); hp.translate(-L * .02, bodyMid + bodyR * .8, 0); put(coat, hp); }
-  // ---- legs: upper and lower segments with a knee, angled like the real thing (hind hocks bend back), hooves ----
-  for (const [fx, sd] of [[1, 1], [1, -1], [-1, 1], [-1, -1]]) { const front = fx > 0, lx = fx * L * .34, lz = sd * W * .3, knee = legTop * .48;
-    const top = V(lx + (front ? 0 : -.04), bodyMid - bodyR * .2, lz), kn = V(lx + (front ? .02 : -.08 * H), knee, lz), ft = V(lx + (front ? .01 : -.02), .06, lz);
-    put(coat, upLimb(top, kn, s.leg[0] * 1.5, s.leg[0], 7, false)); put(s.cross || s.mealy ? bel : coat, upLimb(kn, ft, s.leg[0] * .9, s.leg[1], 7, false));
-    if (s.knobKnees) { const k = new THREE.SphereGeometry(s.leg[0] * 1.15, 8, 6); k.translate(...kn); put(coat, k); }
-    const hf = new THREE.CylinderGeometry(s.leg[1] * 1.15, s.leg[1] * 1.35, .07, 8); hf.translate(ft[0], .035, ft[2]); put(hoof, hf); }
-  // ---- neck and head ----
-  const [nl, na, nt] = s.neck, graze = !!o.graze, ang = graze ? -.7 : na, shoulder = V(L * .4, bodyMid + bodyR * .3, 0), poll = V(shoulder[0] + Math.cos(ang) * nl, shoulder[1] + Math.sin(ang) * nl, 0);
-  if (s.hump) { // the camel's neck dips forward and low, then rises to the head (an S)
-    const m1 = V(shoulder[0] + nl * .45, shoulder[1] - nl * .12, 0), m2 = V(shoulder[0] + nl * .78, shoulder[1] + nl * .1, 0);
-    poll[0] = shoulder[0] + nl * .82; poll[1] = shoulder[1] + nl * (graze ? -.5 : .5);
-    for (const [a2, b2, r0, r1] of [[shoulder, m1, nt * 1.5, nt * 1.15], [m1, m2, nt * 1.15, nt], [m2, poll, nt, nt * .95]]) { put(coat, upLimb(a2, b2, r0, r1, 9)); const j = new THREE.SphereGeometry(r1, 9, 7); j.translate(...b2); put(coat, j); } }
-  else put(coat, upLimb(shoulder, poll, nt * 1.35, nt, 9, false, s.W > .45 ? 1 : .8));
-
-  if (s.dewlap) { const dw = new THREE.SphereGeometry(1, 8, 6); dw.scale(nl * .45, nt * 1.6 * s.dewlap, nt * .35); dw.translate((shoulder[0] + poll[0]) / 2, (shoulder[1] + poll[1]) / 2 - nt * .9, 0); put(coat, dw); }
-  const [hl, hd, hw] = s.head, hAng = graze ? -1.35 : ang - 1.15, dir = V(Math.cos(hAng), Math.sin(hAng), 0), nose = V(poll[0] + dir[0] * hl, poll[1] + dir[1] * hl, 0);
-  { const hg = new THREE.SphereGeometry(1, 12, 9); hg.scale(hd * .55, hd * .55, hw * .55); hg.translate(...poll); put(face, hg);
-    put(face, upLimb(poll, nose, hd * .5, hd * .5 * s.muzzle, 10, true, hw / hd));
-    const mz = new THREE.SphereGeometry(hd * .5 * s.muzzle * 1.05, 10, 8); mz.scale(1, 1, hw / hd * 1.1); mz.translate(...nose); put(s.mealy ? bel : face, mz);
-    for (const e of [-1, 1]) { const ey = new THREE.SphereGeometry(Math.max(.012, hd * .07), 6, 5); ey.translate(poll[0] + dir[0] * hl * .12, poll[1] + hd * .22, e * hw * .48); put(dark, ey);
-      const ns = new THREE.SphereGeometry(Math.max(.008, hd * .05), 5, 4); ns.translate(nose[0] + dir[0] * hd * .2, nose[1] + dir[1] * hd * .2, e * hw * .18 * s.muzzle); put(dark, ns); } }
-  // ears: leaves from the back of the head, drooping by spec
-  const [el, droop] = s.ears; for (const e of [-1, 1]) { const ear = new THREE.ConeGeometry(Math.max(.02, el * .28), el, 6); ear.scale(1, 1, .45);
-    ear.translate(0, el / 2, 0); ear.rotateX(e * (.35 + droop * 1.5)); ear.rotateZ(-.25 - droop * .5); ear.translate(poll[0] - hd * .15, poll[1] + hd * .3, e * hw * .35); put(coat, ear); }
-  if (s.horns) { for (const e of [-1, 1]) { const b = V(poll[0] - hd * .1, poll[1] + hd * .42, e * hw * .32);
-      const pts = s.horns.kind === 'ox' ? [b, V(b[0] + .02, b[1] + .05, e * (hw * .32 + s.horns.len * .55)), V(b[0] + .06, b[1] + s.horns.len * .55, e * (hw * .32 + s.horns.len * .7))]
-        : [b, V(b[0] - s.horns.len * .4, b[1] + s.horns.len * .7, e * (hw * .38)), V(b[0] - s.horns.len * .85, b[1] + s.horns.len * .75, e * (hw * .5))];
-      put(horn, upLimb(pts[0], pts[1], hd * .1, hd * .08, 6, false)); put(horn, upLimb(pts[1], pts[2], hd * .08, .004, 6, true)); } }
-  if (s.beard) { const bd = new THREE.ConeGeometry(hd * .18, hd * .9, 5); bd.rotateZ(Math.PI); bd.translate(nose[0] - dir[0] * hl * .25, nose[1] - hd * .7, 0); put(mane, bd); }
-  if (s.mane) { // a crest of hair along the top of the neck, narrow side to side, a forelock between the ears
-    const up = nt * (s.cross ? .55 : .8), a2 = V(shoulder[0] - .04, shoulder[1] + nt * 1.1, 0), b2 = V(poll[0] - hd * .1, poll[1] + hd * .45, 0);
-    put(mane, upLimb([a2[0], a2[1] + up * .3, 0], [b2[0], b2[1] + up * .3, 0], up * .7, up * .5, 6, true, .25));
-    const fl = new THREE.ConeGeometry(hd * .12, hd * .5, 5); fl.rotateZ(Math.PI * .85); fl.translate(poll[0] + hd * .05, poll[1] + hd * .3, 0); put(mane, fl); }
-  if (s.cross) { const c1 = new THREE.BoxGeometry(L * .5, .012, .05); c1.translate(-.05, bodyMid + bodyR * 1.0, 0); put(mat('uqCross', '#4a4440'), c1); }   // the donkey's dark dorsal stripe
-  // tail: hangs from the rump, with a tuft
-  { const [tl, tf] = s.tail, root = V(-L * .48, bodyMid + bodyR * .55, 0), tip = V(-L * .55, root[1] - tl, 0);
-    if (s.mane && !s.cross) { // the horse's long hair tail, falling in a soft curve
-      const m1 = V(root[0] - .12, root[1] - tl * .25, 0), m2 = V(root[0] - .16, root[1] - tl * .65, 0), t2 = V(root[0] - .12, root[1] - tl, 0);
-      put(mane, upLimb(root, m1, .05, .07, 7)); put(mane, upLimb(m1, m2, .07, .065, 7)); put(mane, upLimb(m2, t2, .065, .02, 7, true)); }
-    else { put(coat, upLimb(root, tip, .025, .015, 5, false)); if (tf) { const tu = new THREE.SphereGeometry(1, 7, 6); tu.scale(tf * .22, tf * .5, tf * .22); tu.translate(tip[0], tip[1] - tf * .3, 0); put(s.mane ? mane : mat('uqTuft' + s.face, s.face), tu); } } }
-  for (const [m, list] of bag) { const geo = upMerge(list); geo.computeVertexNormals(); const mesh = new THREE.Mesh(geo, m); mesh.castShadow = mesh.receiveShadow = true; A.add(mesh); }
-  return y + Math.max(H + (s.hump || 0) + bodyR * .2, poll[1] + hd * .6 + (s.horns ? s.horns.len * .6 : 0) + (s.ears[1] < .3 ? s.ears[0] : 0)); }
-{ const T = (id, label, kind, tags, fn) => defObject(id, fn, { label, origin: 'plan N1', tags, kind });
-  T('ox', 'Ox', 'animal', ['farm', 'sacrifice', 'livestock'], (g, x, y, z) => upQuad(g, x, y, z, 'ox', { ry: .3 }));
-  T('goat', 'Goat', 'animal', ['farm', 'livestock', 'sacrifice'], (g, x, y, z) => upQuad(g, x, y, z, 'goat', { ry: .3 }));
-  T('camel', 'Camel', 'animal', ['travel', 'livestock', 'trade'], (g, x, y, z) => upQuad(g, x, y, z, 'camel', { ry: .3 }));
-  T('horse', 'Horse', 'animal', ['travel', 'livestock'], (g, x, y, z) => upQuad(g, x, y, z, 'horse', { ry: .3 }));
-  T('grey-donkey', 'Grey donkey', 'animal', ['travel', 'farm', 'livestock'], (g, x, y, z) => upQuad(g, x, y, z, 'donkey', { ry: .3 }));
-  T('ox-grazing', 'Ox grazing', 'animal', ['farm', 'livestock'], (g, x, y, z) => upQuad(g, x, y, z, 'ox', { ry: .3, graze: true }));
-  T('goats-grazing', 'Two goats grazing', 'animal', ['farm', 'livestock'], (g, x, y, z) => { upQuad(g, x - .4, y, z, 'goat', { ry: .4, graze: true }); return upQuad(g, x + .5, y, z + .3, { ...UQ.goat, coat: '#e8dcc4', bellyC: '#f0e6d4', face: '#d8ccb4' }, { ry: 2.4 }); }); }
+// a tube along a side-view path [[x, y], ...] (smoothed with Catmull-Rom), at depth z0; h = half its depth (in the plane of the path),
+// w = half its width (along z). Rings are slightly squarer than ellipses (sq), and below the path line each ring can hang deeper (deep).
+// Returns { geo, at(i) } where at(i) gives the smoothed point, tangent and normal nearest to control point i.
+function uqTube(P, h, w, o = {}) {
+  const seg = o.seg || 14, per = o.per || 5, z0 = o.z || 0, deep = o.deep || 0, sq = o.sq ?? .85, n = P.length;
+  const cr = (a, b, c, d, t) => { const t2 = t * t, t3 = t2 * t; return .5 * (2 * b + (-a + c) * t + (2 * a - 5 * b + 4 * c - d) * t2 + (-a + 3 * b - 3 * c + d) * t3); };
+  const pts = [], hs = [], ws = [], ctl = [];
+  for (let i = 0; i < n - 1; i++) { const a = P[Math.max(0, i - 1)], b = P[i], c = P[i + 1], d = P[Math.min(n - 1, i + 2)]; ctl.push(pts.length);
+    for (let k = 0; k < per; k++) { const t = k / per, s = t * t * (3 - 2 * t); pts.push([cr(a[0], b[0], c[0], d[0], t), cr(a[1], b[1], c[1], d[1], t)]); hs.push(h[i] + (h[i + 1] - h[i]) * s); ws.push(w[i] + (w[i + 1] - w[i]) * s); } }
+  ctl.push(pts.length); pts.push(P[n - 1]); hs.push(h[n - 1]); ws.push(w[n - 1]);
+  const N = pts.length, pos = [], uv = [], idx = [], tan = [], nor = [];
+  for (let j = 0; j < N; j++) { const p0 = pts[Math.max(0, j - 1)], p1 = pts[Math.min(N - 1, j + 1)]; let tx = p1[0] - p0[0], ty = p1[1] - p0[1]; const l = Math.hypot(tx, ty) || 1; tx /= l; ty /= l;
+    const nx = -ty, ny = tx; tan.push([tx, ty]); nor.push([nx, ny]);
+    for (let k = 0; k <= seg; k++) { const a = k / seg * Math.PI * 2, s = Math.sin(a), c = Math.cos(a), ss = Math.sign(s) * Math.pow(Math.abs(s), sq), cc = Math.sign(c) * Math.pow(Math.abs(c), sq);
+      const hh = hs[j] * (s < 0 ? 1 + deep : 1); pos.push(pts[j][0] + nx * hh * ss, pts[j][1] + ny * hh * ss, z0 + ws[j] * cc); uv.push(k / seg, j / (N - 1)); } }
+  for (let j = 0; j < N - 1; j++) for (let k = 0; k < seg; k++) { const a = j * (seg + 1) + k, b = a + 1, c = a + seg + 1, d = c + 1; idx.push(a, d, b, a, c, d); }
+  // closing caps: a fan to each end's centre
+  if (o.caps !== false) for (const [j, flip] of [[0, true], [N - 1, false]]) { const r0 = pos.length / 3;
+    for (let k = 0; k <= seg; k++) { const q = (j * (seg + 1) + k) * 3; pos.push(pos[q], pos[q + 1], pos[q + 2]); uv.push(.5, j ? 1 : 0); }
+    const ci = pos.length / 3; pos.push(pts[j][0], pts[j][1], z0); uv.push(.5, j ? 1 : 0);
+    for (let k = 0; k < seg; k++) { const a = r0 + k, b = a + 1; if (flip) idx.push(ci, b, a); else idx.push(ci, a, b); } }
+  const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); geo.setIndex(idx); geo.computeVertexNormals();
+  return { geo, at: i => { const j = ctl[i]; return { p: pts[j], t: tan[j], n: nor[j], h: hs[j], w: ws[j] }; } }; }
+// a soft coat texture: short directional hairs and gentle mottling, tinted by the material colour
+const uqHair = () => upTex('uqHair', 128, 128, (c, w, h, r) => { c.fillStyle = '#d8d8d8'; c.fillRect(0, 0, w, h);
+  for (let i = 0; i < 40; i++) { c.fillStyle = `rgba(${r() < .5 ? '255,255,255' : '0,0,0'},${.04 + r() * .05})`; c.beginPath(); c.ellipse(r() * w, r() * h, 8 + r() * 24, 6 + r() * 16, r() * 3, 0, 7); c.fill(); }
+  for (let i = 0; i < 900; i++) { c.strokeStyle = `rgba(${r() < .5 ? '255,255,255' : '40,30,20'},${.05 + r() * .08})`; c.lineWidth = 1; const x = r() * w, y = r() * h; c.beginPath(); c.moveTo(x, y); c.lineTo(x + 1, y + 3 + r() * 3); c.stroke(); } });
+function upQuad(g, x, y, z, kind, o = {}) {
+  const T = typeof kind === 'string' ? UQ_T[kind] : kind, col = o.coat || T.col, A = new THREE.Group(); A.position.set(x, y, z); A.rotation.y = o.ry || 0; (o.parent || g).add(A);
+  const hairMap = uqHair(), key = col.join('');
+  const coat = mat('uqC' + key, col[0], { roughness: .92, flatShading: false, map: hairMap }), pale = mat('uqP' + key, col[1], { roughness: .92, flatShading: false, map: hairMap }),
+    dark = mat('uqD' + key, col[2], { roughness: .85, flatShading: false }), hoof = mat('uqHoof' + T.hoof, T.hoof, { roughness: .6, flatShading: false }),
+    muz = mat('uqM' + T.muzzle, T.muzzle, { roughness: .7, flatShading: false }), eyeM = mat('uqEye', '#120c08', { roughness: .2, flatShading: false }),
+    horn = mat('uqHorn', '#d9ccb0', { roughness: .5, flatShading: false }), hair = mat('uqMane' + (T.mane || col[2]), T.mane || col[2], { roughness: 1, flatShading: false });
+  const bag = new Map(), put = (m, geo) => { if (!bag.has(m)) bag.set(m, []); bag.get(m).push(geo); };
+  // ---- body ----
+  const B = T.body; put(coat, uqTube(B.p, B.h, B.w, { seg: 14, per: 4, deep: .12, sq: .8 }).geo);
+  if (T.hump) { const hp = new THREE.SphereGeometry(1, 16, 10, 0, Math.PI * 2, 0, Math.PI * .55); hp.scale(.36, .42, .2); hp.translate(.02, 1.66, 0); put(coat, hp); }
+  // ---- neck and head in one tube; grazing swings it down about the neck's base until the muzzle nears the ground ----
+  let NP = T.neck.p.map(p => p.slice());
+  if (o.graze) { const [bx, by] = NP[0]; let ang = 0; const R2 = ([px, py], [cx, cy], aa) => { const dx = px - cx, dy = py - cy; return [cx + dx * Math.cos(aa) - dy * Math.sin(aa), cy + dx * Math.sin(aa) + dy * Math.cos(aa)]; }, pi = T.neck.poll;
+      // the neck swings down about its base; the head then turns back up a little about the poll, so the face points down and forward
+      const rot = a => { const q = T.neck.p.map((pt, i) => i ? R2(pt, [bx, by], a) : pt.slice()); for (let i = pi + 1; i < q.length; i++) q[i] = R2(q[i], q[pi], -a * .45); return q; };
+    for (ang = 0; ang > -2.2; ang -= .05) { NP = rot(ang); if (NP[NP.length - 1][1] < .08 + T.neck.h[T.neck.h.length - 1]) break; } }
+  const NK = uqTube(NP, T.neck.h, T.neck.w, { seg: 12, per: 4, sq: .9 }); put(coat, NK.geo);
+  // muzzle: the last stretch of the face in its own colour, a soft rounded nose with nostrils
+  { const nz = NK.at(T.neck.nose), tip = NK.at(T.neck.p.length - 1), m = new THREE.SphereGeometry(1, 12, 9); m.scale(Math.hypot(tip.p[0] - nz.p[0], tip.p[1] - nz.p[1]) * .9, nz.h * 1.02, nz.w * 1.05);
+    m.rotateZ(Math.atan2(tip.p[1] - nz.p[1], tip.p[0] - nz.p[0])); m.translate((nz.p[0] + tip.p[0]) / 2, (nz.p[1] + tip.p[1]) / 2, 0); put(muz, m);
+    for (const s of [-1, 1]) { const ns = new THREE.SphereGeometry(nz.w * .22, 6, 5); ns.scale(1, 1.4, .6); ns.translate(tip.p[0] - tip.t[0] * nz.w * .3 + tip.n[0] * nz.h * .2, tip.p[1] - tip.t[1] * nz.w * .3 + tip.n[1] * nz.h * .2, s * nz.w * .55); put(eyeM, ns); } }
+  // eyes: on the sides of the head, set a little high, with a lid of coat
+  { const e = NK.at(T.neck.eye); for (const s of [-1, 1]) { const ex = e.p[0] + e.n[0] * e.h * .35, ey = e.p[1] + e.n[1] * e.h * .35, ez = s * e.w * .9, r = Math.max(.012, e.h * .2);
+      const eb = new THREE.SphereGeometry(r, 10, 8); eb.translate(ex, ey, ez); put(eyeM, eb); const lid = new THREE.SphereGeometry(r * 1.25, 10, 6, 0, Math.PI * 2, 0, Math.PI * .45); lid.translate(ex, ey + r * .1, ez); put(coat, lid); } }
+  // ears: hollow leaves from the poll, pointing up and back (tilt) and out, drooping by template
+  { const pl = NK.at(T.neck.poll), E = T.ears; for (const s of [-1, 1]) { const ear = new THREE.LatheGeometry([[0, 0], [E.w * .8, E.len * .12], [E.w, E.len * .4], [E.w * .7, E.len * .75], [0, E.len]].map(([u, v]) => new THREE.Vector2(u, v)), 10); ear.scale(1, 1, .4);
+      ear.rotateX(s * (E.tilt * .6 + E.droop * 1.2)); ear.rotateZ(.35 + E.droop * .6); ear.translate(pl.p[0] - pl.t[0] * pl.h * .3 + pl.n[0] * pl.h * .55, pl.p[1] - pl.t[1] * pl.h * .3 + pl.n[1] * pl.h * .55, s * pl.w * .55); put(coat, ear); } }
+  // horns
+  if (T.horns) { const pl = NK.at(T.neck.poll), bx = pl.p[0] + pl.n[0] * pl.h * .7, by = pl.p[1] + pl.n[1] * pl.h * .7;
+    for (const s of [-1, 1]) { const path = T.horns === 'ox'
+        ? [[bx, by, s * pl.w * .7], [bx + .02, by + .04, s * (pl.w + .12)], [bx + .06, by + .14, s * (pl.w + .22)], [bx + .02, by + .26, s * (pl.w + .25)]]   // out, then up and forward: the lyre of the region's cattle
+        : [[bx, by, s * pl.w * .4], [bx - .05, by + .1, s * pl.w * .55], [bx - .15, by + .17, s * pl.w * .75], [bx - .25, by + .15, s * pl.w * .9]];   // the goat's scimitar, sweeping back
+      const c = new THREE.CatmullRomCurve3(path.map(p => new THREE.Vector3(...p))), tg = new THREE.TubeGeometry(c, 12, 1, 7, false), q = tg.attributes.position, base = T.horns === 'ox' ? .045 : .022;
+      // taper the tube from base to tip
+      for (let i = 0; i < q.count; i++) { const t = Math.floor(i / 8) / 12, pt = c.getPoint(Math.min(1, t)), r = base * (1 - t * .85); q.setXYZ(i, pt.x + (q.getX(i) - pt.x) * r, pt.y + (q.getY(i) - pt.y) * r, pt.z + (q.getZ(i) - pt.z) * r); }
+      tg.computeVertexNormals(); put(horn, tg); } }
+  if (T.beard) { const nz = NK.at(T.neck.nose), bd = new THREE.ConeGeometry(nz.w * .5, nz.h * 2.6, 6); bd.rotateZ(Math.PI); bd.translate(nz.p[0] - .02, nz.p[1] - nz.h * 1.8, 0); put(dark, bd); }
+  if (T.dewlap) { const a = NK.at(1), b = NK.at(3), dl = new THREE.SphereGeometry(1, 12, 8); dl.scale(Math.hypot(b.p[0] - a.p[0], b.p[1] - a.p[1]) * .55, .16, .05); dl.translate((a.p[0] + b.p[0]) / 2, (a.p[1] + b.p[1]) / 2 - a.h * .75, 0); put(coat, dl); }
+  // mane: a crest of hair along the top of the neck (narrow), and a forelock
+  if (T.crest) { const top = [], th = [], tw = []; for (let i = 0; i <= T.neck.poll; i++) { const a = NK.at(i); top.push([a.p[0] - a.n[0] * -a.h * .9, a.p[1] + a.n[1] * a.h * .9]); th.push(T.crest * (i === 0 ? .5 : 1)); tw.push(T.crest * .35); }
+    put(hair, uqTube(top, th, tw, { seg: 8, per: 4, sq: 1 }).geo); }
+  // ---- legs: coat down to the fetlock, hoof below; mealy (pale) lower legs on the donkey; camel's knee callus and broad pads ----
+  for (const [L, front] of [[T.legF, true], [T.legH, false]]) for (const s of [-1, 1]) {
+    const p = L.p, r = L.r, z0 = s * L.z;
+    { const [ax, ay] = p[0], [bx, by] = p[1], m = new THREE.SphereGeometry(1, 10, 8), len = Math.hypot(bx - ax, by - ay);   // shoulder / thigh muscle, blending into the body
+      const t = .42; m.scale(r[0] * (front ? .95 : 1.1), len * .5 + r[1] * .6, r[0] * .62); m.rotateZ(Math.atan2(by - ay, bx - ax) + Math.PI / 2);   // sits high, mostly inside the body, shaping the flank above the leg
+      m.translate(ax + (bx - ax) * t, ay + (by - ay) * t, z0 * .7); put(coat, m); }
+    { const rr = [r[1] * 1.1, r[1], r[2], r[3]]; put(coat, uqTube(p.slice(0, 4), rr, rr.map(v => v * .85), { z: z0, seg: 8, per: 4, sq: .95 }).geo); }   // from inside the body, slim enough at the top not to fold
+    put(T.mealy ? pale : coat, uqTube(p.slice(2, 5), r.slice(2, 5), r.slice(2, 5).map(v => v * .88), { z: z0, seg: 8, per: 2, sq: .95 }).geo);
+    if (T.pads) { const pd = new THREE.SphereGeometry(1, 12, 8, 0, Math.PI * 2, 0, Math.PI / 2); pd.scale(r[5] * 1.2, .06, r[5]); pd.translate(p[5][0], 0, z0); put(hoof, pd);
+      if (front) { const cl = new THREE.SphereGeometry(r[2] * 1.15, 8, 6); cl.translate(p[2][0] + .02, p[2][1], z0); put(dark, cl); } }
+    else put(hoof, uqTube([p[4], [p[5][0], .005]], [r[4] * 1.05, r[5]], [r[4] * 1.05, r[5]], { z: z0, seg: 8, per: 2, sq: .9 }).geo); }
+  // ---- tail ----
+  { const tl = T.tail, tt = uqTube(tl.p, tl.r, tl.r, { seg: 8, per: 4, sq: 1 }); put(tl.hair ? hair : coat, tt.geo);
+    if (tl.tuft) { const end = tl.p[tl.p.length - 1], tu = new THREE.SphereGeometry(1, 8, 7); tu.scale(tl.tuft * .22, tl.tuft * .5, tl.tuft * .22); tu.translate(end[0], end[1] - tl.tuft * .35, 0); put(dark, tu); } }
+  let top = 0; for (const [m, list] of bag) { const geo = mergeGeometries(list.map(q => { const c = q.index ? q.toNonIndexed() : q; for (const k of Object.keys(c.attributes)) if (!['position', 'normal', 'uv'].includes(k)) c.deleteAttribute(k);
+      if (!c.attributes.uv) c.setAttribute('uv', new THREE.Float32BufferAttribute(new Float32Array(c.attributes.position.count * 2), 2)); return c; }), false);
+    geo.computeBoundingBox(); top = Math.max(top, geo.boundingBox.max.y); const mesh = new THREE.Mesh(geo, m); mesh.castShadow = mesh.receiveShadow = true; A.add(mesh); }
+  return y + top; }
+{ const T = (id, label, tags, fn) => defObject(id, fn, { label, origin: 'plan N1', tags, kind: 'animal' });
+  T('ox', 'Ox', ['farm', 'sacrifice', 'livestock'], (g, x, y, z) => upQuad(g, x, y, z, 'ox', { ry: .3 }));
+  T('goat', 'Goat', ['farm', 'livestock', 'sacrifice'], (g, x, y, z) => upQuad(g, x, y, z, 'goat', { ry: .3 }));
+  T('camel', 'Camel', ['travel', 'livestock', 'trade'], (g, x, y, z) => upQuad(g, x, y, z, 'camel', { ry: .3 }));
+  T('horse', 'Horse', ['travel', 'livestock'], (g, x, y, z) => upQuad(g, x, y, z, 'horse', { ry: .3 }));
+  T('grey-donkey', 'Grey donkey', ['travel', 'farm', 'livestock'], (g, x, y, z) => upQuad(g, x, y, z, 'donkey', { ry: .3 }));
+  T('ox-grazing', 'Ox grazing', ['farm', 'livestock'], (g, x, y, z) => upQuad(g, x, y, z, 'ox', { ry: .3, graze: true }));
+  T('goats-grazing', 'Two goats grazing', ['farm', 'livestock'], (g, x, y, z) => { upQuad(g, x - .4, y, z, 'goat', { ry: .4, graze: true });
+    return upQuad(g, x + .5, y, z + .3, 'goat', { ry: 2.4, coat: ['#e6dac4', '#f0e8d8', '#b8ab94'] }); }); }
