@@ -168,3 +168,7 @@ Mesh simplification (meshoptimizer through gltf-transform) on the model meshes t
 | Statue robe (`statue.js`, 150 points × 96 segments → 100 × 64) | 29.5k → 13.5k |
 
 Library objects: fruit-stall frame 61k → 28k, festival statue 46k → 30k, dining table with chairs 32k → 18k. Colossae per frame 1.60 M → 1.48 M triangles (less than the plan's −35%: most of the town's triangles are spread over many objects, not these few). Download a little smaller again (Colossae ≈4.0 MB). The stall crates' goods moved by at most 3.5 cm (they are placed from the fruit mesh); all marker checks pass and screenshots match (Colossae 99/99; the largest difference is where the drifting clouds happened to be).
+
+### N3 ground cover approved (2026-11-13)
+
+Owner: "ground cover looks great." On in the Mount, James and Colossae (theme `"ground": true`); not the Tabernacle (desert). The scatter keeps off paving, roads and floors (any flat mesh lying on the terrain is marked on a 1 m grid), solid things, the rooms and low water; rocks and thistles stay 13 m from a room. Cost: about +6 draw calls a town (one per kind) and +0.3 to +0.6 M triangles.

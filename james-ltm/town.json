@@ -7,6 +7,7 @@
   "zones": ["The Agora", "The Synagogue", "The Harbour", "The Craftsmen’s Street", "The Farm & Vineyard"],
   "built": 1,
   "theme": {
+    "ground": true,
     "houses": "dressed",
     "clouds": 0.6,
     "sunGlow": 0.7,

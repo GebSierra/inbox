@@ -16,6 +16,7 @@
   "built": 1,
   "chOffset": 4,
   "theme": {
+    "ground": true,
     "signs": ["ΚΑΦΑΡΝΑΟΥΜ", "ΒΗΘΣΑΙΔΑ"],
     "clouds": 0.6,
     "sunGlow": 0.7,
