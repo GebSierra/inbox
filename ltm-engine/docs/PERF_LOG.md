@@ -154,3 +154,17 @@ On the way the static merge failed silently on the compressed attributes and dro
 
 Owner: "That all looks great." Turned on in the town themes: James `"houses": "dressed"` (the only town with the flat-roofed houses); all four towns `"clouds": 0.6, "sunGlow": 0.7, "textures": "varied"`. Screenshot baselines re-taken in every town.
 Also fixed: the rebuilt signpost (batch 1) pointed to Laodicea and Hierapolis in every town. It now reads the theme's `"signs"`; the Mount points to Capernaum and Bethsaida, and long names shrink to fit the board.
+
+### S13: slim the heaviest objects (2026-11-13)
+
+Mesh simplification (meshoptimizer through gltf-transform) on the model meshes that carried most of the weight, and fewer segments on the statues' robes:
+
+| What | Triangles before → after |
+|---|---|
+| Stall awning cloth (`models/gstall`, every stall) | 24.4k → 7.4k |
+| Stall's own fruit (`models/gstall`, the fruit stall) | 25.0k → 8.6k |
+| Table set (`models/table`: mugs, apples, pears, jug, candle, bowl, bread, dish) | 58k → 28k |
+| Bird (`models/bird`, dove cages and the bird's-eye bird) | 2.3k → 1.1k each |
+| Statue robe (`statue.js`, 150 points × 96 segments → 100 × 64) | 29.5k → 13.5k |
+
+Library objects: fruit-stall frame 61k → 28k, festival statue 46k → 30k, dining table with chairs 32k → 18k. Colossae per frame 1.60 M → 1.48 M triangles (less than the plan's −35%: most of the town's triangles are spread over many objects, not these few). Download a little smaller again (Colossae ≈4.0 MB). The stall crates' goods moved by at most 3.5 cm (they are placed from the fruit mesh); all marker checks pass and screenshots match (Colossae 99/99; the largest difference is where the drifting clouds happened to be).

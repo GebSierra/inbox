@@ -185,8 +185,8 @@ export function makeStatue(THREE, { pose = 'philosopher', height = 2.3 } = {}) {
 
   /* ---- robe body (lathe + folds) ---- */
   const curve = new THREE.CatmullRomCurve3(PROFILE.map(([y, r]) => new THREE.Vector3(r, y, 0)), false, 'centripetal');
-  const pts = curve.getPoints(150).map((p) => new THREE.Vector2(Math.max(p.x, 0), p.y));
-  const SEG = 96;
+  const pts = curve.getPoints(100).map((p) => new THREE.Vector2(Math.max(p.x, 0), p.y));
+  const SEG = 64;   // S13: was 96 (with 150 profile points): 29k triangles a robe, now about 13k
   const robeGeo = new THREE.LatheGeometry(pts, SEG);
   {
     const pos = robeGeo.attributes.position;
