@@ -5,7 +5,7 @@
 // Hippos, the town on its hill across the lake, lies to the south-east: "a city set on a hill" (5:14).
 const SHORE = -95;
 // the switchback trail down the Crown: from the Seat at the top, turning at each room, down to the stile (kept in step with world/mount.js)
-const TRAIL = [[-34, 0], [-24, 4], [-10, -4], [4, 4], [15, 0]];
+const TRAIL = [[-34, 0], [-24, 4], [-10, -4], [4, 4], [15, 0], [29, -4], [43, 4], [57, -4], [71, 4], [85, -4], [99, 4], [108, 0]];
 const TRAIL_D = (x, z) => { let d = 1e9; for (let i = 0; i < TRAIL.length - 1; i++) { const [ax, az] = TRAIL[i], [bx, bz] = TRAIL[i + 1], dx = bx - ax, dz = bz - az, t = Math.max(0, Math.min(1, ((x - ax) * dx + (z - az) * dz) / (dx * dx + dz * dz))); d = Math.min(d, Math.hypot(x - ax - dx * t, z - az - dz * t)); } return d; };
 const HILL = 24;                                                     // height of the Crown above the shore
 const STILE_X = 15;
@@ -23,7 +23,7 @@ function hRaw(x, z) {
 }
 // level pads under each room, kept in step with books/matthew.json. [cx, cz, halfW, halfD]
 const FLAT = [[-42, 0, 5.5, 5.5], [-24, 12, 5.5, 5.5], [-10, -12, 5.5, 5.5], [4, 12, 5.5, 5.5],
-  [32, -11, 5.5, 5.5], [52, -11, 5.5, 5.5], [72, -11, 5.5, 5.5], [72, 11, 5.5, 5.5], [52, 11, 5.5, 5.5], [32, 11, 5.5, 5.5]];
+  [29, -12, 5.5, 5.5], [43, 12, 5.5, 5.5], [57, -12, 5.5, 5.5], [71, 12, 5.5, 5.5], [85, -12, 5.5, 5.5], [99, 12, 5.5, 5.5]];
 const heightAt0 = (x, z) => hRaw(x, z);
 const heightAt = (x, z) => { let h = heightAt0(x, z);
   for (const [cx, cz, hw, hd] of FLAT) { const dx = Math.max(0, Math.abs(x - cx) - hw), dz = Math.max(0, Math.abs(z - cz) - hd), d = Math.hypot(dx, dz);
@@ -40,8 +40,8 @@ const heightAt = (x, z) => { let h = heightAt0(x, z);
     p.setY(i, heightAt(x, z));
     const c = cGrass.clone().lerp(cGrass2, (Math.sin(x * .13) * Math.cos(z * .11) + 1) / 2);
     const n2 = Math.sin(x * .041 + 2) * Math.sin(z * .047) + Math.sin(x * .09 - z * .07) * .5; if (n2 > .7) c.lerp(cFlower, .35); else if (n2 < -.6) c.lerp(new THREE.Color('#6f8c45'), .4);
-    if (Math.abs(x - 19 - Math.sin(z * .05) * 4) < 2 && z < -2 && z > SHORE) c.lerp(cPath, .7);   // the path down, west of the stile
-    if ((Math.abs(z) < 2.6 && x > STILE_X - 4 && x < 88) || TRAIL_D(x, z) < 1.6) c.lerp(cPath, .45);                                                                  // the trodden way along the ridge
+    if (Math.abs(x - 110 - Math.sin(z * .05) * 4) < 2 && z < 0 && z > SHORE) c.lerp(cPath, .7);   // the path down from the Watchtower
+    if (TRAIL_D(x, z) < 1.6) c.lerp(cPath, .45);                                                                  // the trodden way along the ridge
     if (z < SHORE + 8) c.lerp(cBank, Math.min(1, (SHORE + 8 - z) / 6));
     col.push(c.r, c.g, c.b);
   }

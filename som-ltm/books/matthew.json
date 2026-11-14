@@ -93,11 +93,11 @@
      ],
      "objects": [
       {
-       "what": "the gourd bottle on its pole"
+       "place": true,
+       "what": "the near end of the long flat rock"
       },
       {
-       "place": true,
-       "what": "the booth's brushwood back wall"
+       "what": "the great terebinth's trunk"
       },
       {
        "what": "the heap of cucumbers"
@@ -152,12 +152,12 @@
      "kind": "custom",
      "builder": "som.quarry",
      "at": [
-      32,
-      -11
+      29,
+      -12
      ],
      "viewer": [
-      32,
-      -3
+      29,
+      -4
      ],
      "objects": [
       {
@@ -186,12 +186,12 @@
      "kind": "custom",
      "builder": "som.charcoal",
      "at": [
-      52,
-      -11
+      43,
+      12
      ],
      "viewer": [
-      52,
-      -3
+      43,
+      4
      ],
      "objects": [
       {
@@ -220,12 +220,12 @@
      "kind": "custom",
      "builder": "som.bees",
      "at": [
-      72,
-      -11
+      57,
+      -12
      ],
      "viewer": [
-      72,
-      -3
+      57,
+      -4
      ],
      "objects": [
       {
@@ -253,12 +253,12 @@
      "kind": "custom",
      "builder": "som.camp",
      "at": [
-      72,
-      11
+      71,
+      12
      ],
      "viewer": [
-      72,
-      3
+      71,
+      4
      ],
      "objects": [
       {
@@ -291,12 +291,12 @@
      "kind": "custom",
      "builder": "som.road",
      "at": [
-      52,
-      11
+      85,
+      -12
      ],
      "viewer": [
-      52,
-      3
+      85,
+      -4
      ],
      "objects": [
       {
@@ -325,12 +325,12 @@
      "kind": "custom",
      "builder": "som.tower",
      "at": [
-      32,
-      11
+      99,
+      12
      ],
      "viewer": [
-      32,
-      3
+      99,
+      4
      ],
      "objects": [
       {

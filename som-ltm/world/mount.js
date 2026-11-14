@@ -2,10 +2,9 @@
 // Method rule 4: each verse on a SPOT, a feature of the place (P) or an object (O); at least two natural objects per room.
 // Spots in the fixed order, as seen standing on the path facing the room: 1 near-left, 2 far-left, 3 far-right, 4 near-right, 5 centre.
 // Layout: the ridge runs along z = 0, with the trodden path on its crest. Compass: east = -x, north = +z (see world/terrain.js).
-//   The Crown (east of the stile at x = STILE_X), TRIAL 2026-11-13: highest at its east end. Start at the Seat on the top,
-//   then a switchback trail (TRAIL, world/terrain.js) zigzags down the hill: room 2 north, room 3 south (the lake edge), room 4 north, then the stile.
-//   The Upper Meadow (west of the stile): facing west, rooms 5-7 on the left (south), turn, rooms 8-10 on the right (north) back to the stile.
-//   The path down to chapter 6 leaves from the Watchtower (room 10), down the west side of the field wall.
+//   Rule 6, hillside form: a switchback trail (TRAIL, world/terrain.js) runs down the ridge from the Seat on the top (east end),
+//   rooms at its turns alternating north and south, each lower than the last: rooms 1-4 on the Crown, the stile, rooms 5-10 in the Upper Meadow.
+//   The path down to chapter 6 leaves from the Watchtower (room 10) at the low west end.
 const GZ = -16, TZ = 0, HX = 0, HZ = 400;            // the player starts at (0, GZ + 16) = (0, 0), on the ridge path; HX/HZ unused
 const RAISED = [];
 const WALKWAYS = [[STILE_X - 1.5, -1.8, STILE_X + 1.5, 1.8]];   // the stile gap
@@ -54,15 +53,12 @@ defBuilder('som.fold', (r, { ch }) => { const F = roomFrame(r), h = 3, W = .55, 
   for (const [f, s] of [[1.4, -1.4], [.5, 1.6], [-1.3, 1.1]]) { const [x, z] = F.at(f, s); sheep(x, z); }
   finishRoom(ch, r, F, out); });
 
-// ---- 5.3 THE LOOKOUT (5:11–15): gourd on a pole · brushwood back wall · heap of cucumbers · cliff-edge boulder · lamp on its stand ----
+// ---- 5.3 THE LOOKOUT (5:11–15): a long flat rock under a great terebinth on the lake edge, the view open to Hippos ----
+// near end of the long flat rock · the terebinth's trunk · heap of cucumbers · cliff-edge boulder · lamp on its stand
 defBuilder('som.lookout', (r, { ch }) => { const F = roomFrame(r), h = 2.4, sp = SQ(h).map(([f, s]) => F.at(f, s)), out = [];
-  const booth = atR(F, h * .55, 0, Math.PI);                     // local +z = forward
-  for (const s of [-h - .6, h + .6]) for (const f of [0, h * .9]) cyl(.07, .08, 2.3, 6, 'wood', s, 0, f, booth);
-  box(2 * h + 1.6, 2.1, .25, brushM, 0, 0, h * .9 + .15, booth);                       // the woven back wall
-  box(2 * h + 2, .2, h * .9 + 1, brushM, 0, 2.25, h * .45, booth);                     // the brushwood roof
-  { const g = atR(F, -h, -h); cyl(.06, .07, 1.9, 6, 'wood', 0, 0, 0, g); add(new THREE.SphereGeometry(.22, 8, 6), mat('somGourd', '#c9a24e'), .14, 1.45, 0, g).scale.y = 1.4; out.push(ground(sp[0], 1.95)); }
-  out.push(ground(F.at(h + .4, -h), 1.2));                                                // on the back wall (its middle, so the marker rests on it)
-  { const g = atR(F, h - .3, h); for (let k = 0; k < 14; k++) { const c = add(new THREE.CapsuleGeometry(.07, .28, 3, 6), cukeM, R(-.4, .4), .1 + (k % 3) * .1, R(-.3, .3), g); c.rotation.z = Math.PI / 2; c.rotation.y = R(0, 3); } out.push(ground(F.at(h - .3, h), .5)); }
+  { const g = atR(F, -h + .2, -h - .2, -.15); const rk = box(1.1, .5, 4.2, rockM, 0, -.05, -1.6, g); rk.scale.set(1, 1, 1); box(1, .12, 4, paleM, 0, .45, -1.6, g); out.push(ground(sp[0], .65)); }   // the long flat rock, running away from you along the left
+  { const [x, z] = F.at(h + .3, -h - .3); tree(x, z, 1.9); out.push(ground(sp[1], .7)); }                                   // the great terebinth over it
+  { const g = atR(F, h, h); for (let k = 0; k < 16; k++) { const c = add(new THREE.CapsuleGeometry(.07, .28, 3, 6), cukeM, R(-.45, .45), .08 + (k % 3) * .1, R(-.35, .35), g); c.rotation.z = Math.PI / 2; c.rotation.y = R(0, 3); } for (let k = 0; k < 10; k++) add(new THREE.IcosahedronGeometry(R(.15, .25), 0), leafM, R(.8, 2.4), .1, R(-1.5, 1.5), g); out.push(ground(sp[2], .45)); }
   { const [x, z] = sp[3]; out.push({ x, z, y: somRock(x, z, 1.1) }); }
   { const [cx, cz] = sp[4]; out.push({ x: cx, z: cz, y: libAt('candelabrum', cx, cz, 0, 1) }); }
   finishRoom(ch, r, F, out); });
@@ -97,7 +93,7 @@ defBuilder('som.charcoal', (r, { ch }) => { const F = roomFrame(r), h = 2.6, sp 
   { const g = atR(F, h, h); cyl(.35, .38, .5, 8, 'wood', 0, 0, 0, g); const hd = cyl(.025, .025, .8, 5, 'wood', .1, .5, 0, g); hd.rotation.z = .5; box(.04, .14, .22, ironM, -.08, .5, 0, g); out.push(ground(sp[2], .55)); }
   { const g = atR(F, -h, h); for (const s of [-.35, .35]) { cyl(.3, .24, .55, 8, mat('somRush', '#a08a52'), s, 0, 0, g); cyl(.27, .27, .05, 8, darkM, s, .52, 0, g); } out.push(ground(sp[3], .6)); }
   { const m = add(new THREE.RingGeometry(.8, 1.5, 18), ashM, F.x, F.y + .04, F.z); m.rotation.x = -Math.PI / 2; out.push({ x: F.x, z: F.z, y: F.y + .1 }); }
-  for (let i = 0; i < 12; i++) { const a = R(0, 6.3), d = R(7, 11), x = F.x + Math.cos(a) * d, z = F.z + Math.sin(a) * d; if (Math.abs(z) > 4) shrub(x, z, R(1, 1.4)); }   // the scrub round the clearing
+  for (let i = 0; i < 12; i++) { const a = R(0, 6.3), d = R(7, 11), x = F.x + Math.cos(a) * d, z = F.z + Math.sin(a) * d; if (TRAIL_D(x, z) > 4) shrub(x, z, R(1, 1.4)); }   // the scrub round the clearing, off the trail
   finishRoom(ch, r, F, out); });
 
 // ---- 5.7 THE BEE BANK (5:31–35): capped bank end · stacked hive pipes · smoker pot · bees' water dish · tray of comb ----
@@ -156,7 +152,7 @@ defBuilder('som.tower', (r, { ch }) => { const F = roomFrame(r), h = 2.3, sp = S
     placed.push([x, z]); person(x, z, Math.atan2(sx - x, sz - z), ROBES[(rnd() * ROBES.length) | 0], { y: heightAt(x, z) - .55, veil: rnd() > .65 ? '#e8dcc4' : undefined, hair: (rnd() * 4) | 0 }); }
 }
 // ---------- olive trees and scrub on the slopes, clear of the ridge path, the rooms, the crowd and the path down ----------
-{ const clear = (x, z) => (Math.abs(z) < 21 && x > -52 && x < 95) || (x > -62 && x < -26 && z > 5 && z < 44) || (Math.abs(x - 19) < 5 && z < 0) || Math.hypot(x - CITY[0], z - CITY[1]) < 40;
+{ const clear = (x, z) => (Math.abs(z) < 21 && x > -52 && x < 112) || (x > -62 && x < -26 && z > 5 && z < 44) || (Math.abs(x - 110) < 5 && z < 0) || Math.hypot(x - CITY[0], z - CITY[1]) < 40;
   for (let i = 0; i < 340; i++) { const x = R(-180, 200), z = R(-90, 150); if (clear(x, z)) continue; const r = rnd(); if (r < .5) tree(x, z, R(.7, 1.1)); else if (r < .58) cypress(x, z, R(.8, 1.1)); else shrub(x, z, R(.9, 1.5)); }
   for (let i = 0; i < 14; i++) sheep(R(110, 150), R(30, 70));
 }
@@ -168,5 +164,4 @@ for (const [x, r] of [[-30, .3], [-24, -.2], [-6, .1]]) { const z = SHORE + 2, b
 buildRooms(1);
 // walking routes: along the ridge path, through the stile, never across a room
 VIA['1.5'] = [[10, 1], [STILE_X, 0], [22, 0]];                     // down the last leg of the trail and over the stile into the Upper Meadow
-VIA['1.8'] = [[78, 0], [88, 0], [78, 0]];                          // the Meadow loop turns at its west end
 zoneLabel(5, 'The Summit', 20, 0);

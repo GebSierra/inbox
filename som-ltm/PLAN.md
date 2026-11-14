@@ -22,7 +22,7 @@ You **begin where he sat down** (5:1) and **walk down the mountain** (8:1):
 **Clockwise, as the method defines it.** Chapter 5 is two clockwise loops joined at the stile, the Crown and then the Upper Meadow; chapters 6 and 7 are one loop each. You enter a district facing in. Rooms run up your **left** side, cross at the far end, and come back down your **right** side. Seen from above, that's clockwise.
 
 The way from one district to the next leaves from the last room, never from the far end:
-- The summit's last room is the Watchtower, where the path down starts.
+- The summit's last room is the Watchtower, at the low west end of the ridge, where the path down starts.
 - The farm's last room is at its upper-west corner, beside the west gate, where the lane down starts.
 - The village ends beside its own entrance, at the wadi.
 
@@ -45,23 +45,23 @@ The way from one district to the next leaves from the last room, never from the 
 
 ## 3. Chapter 5: the Summit (10 rooms)
 
-**Layout.** The top of the hill is a ridge running east–west. A dry-stone field wall with a **stile** crosses it and divides it in two:
-- **The Crown** lies east of the wall. It is the highest point, where he sat, and holds rooms 1–4 (outline: Setting, Beatitudes, Set Apart).
-- **The Upper Meadow** lies west of the wall. It holds rooms 5–10 (outline: But I Tell You).
+**Layout.** The top of the hill is a ridge running east–west. It is highest at its east end, where he sat, and falls steadily west. A dry-stone field wall with a **stile** crosses it and divides it in two:
+- **The Crown** lies east of the wall and holds rooms 1–4 (outline: Setting, Beatitudes, Set Apart).
+- **The Upper Meadow** lies west of the wall and holds rooms 5–10 (outline: But I Tell You).
 
 The outline's first big break (5:20 / 5:21) is the stile itself.
 
-**Route.**
-1. You start just east of the stile, facing east, with the Crown ahead.
-2. **The Crown loop** goes up the left side (north): 1 the Seat, then 2 the Sheepfold. It turns at the east end and comes back down the right side (south, the lake edge): 3 the Lookout, facing Hippos across the lake, then 4 the Threshing Floor, beside the stile.
-3. Over the stile, facing west, **the Upper Meadow loop** goes up the left side (south): 5 the Quarry, 6 the Charcoal Burners' Clearing, 7 the Bee Bank. It turns at the west end and comes back down the right side (north): 8 the Shepherds' Camp, 9 the Ridge Road, 10 the Watchtower, beside the stile.
-4. The path down to chapter 6 leaves from the Watchtower. It runs along the west side of the field wall to the ridge's south edge, without crossing the stile, then down the slope.
+**Route** (rule 6, hillside form). A switchback trail runs down the ridge from the top. Rooms stand at its turns, alternating sides (north = the inland side, south = the lake side), and each is lower than the one before.
+1. **The Seat** is on the very top. You start there, facing it.
+2. The trail turns down to the north for **the Sheepfold**, then to the south for **the Lookout** on the lake edge, then to the north for **the Threshing Floor**. Its last leg goes down to the stile.
+3. Over the stile, it keeps zigzagging west and down: south for **the Quarry**, north for **the Charcoal Burners' Clearing**, south for **the Bee Bank**, north for **the Shepherds' Camp**, south for **the Ridge Road**, and north for **the Watchtower** at the meadow's low west end.
+4. The path down to chapter 6 leaves from the Watchtower, south down the slope.
 
 | Room | Verses | Place | 1 near-left | 2 far-left | 3 far-right | 4 near-right | 5 centre | Objects in the room |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | 5.1 | 5:1–5 | **The Seat**: a rock outcrop on the crown | the old olive tree (O) | a patch of bare limestone pavement (P) | a split boulder with a thornbush in its crack (P) | a goatskin water bag hung on a stake (O) | the flat seat-rock where he sat (P) | olive tree; water bag on its stake |
 | 5.2 | 5:6–10 | **The Sheepfold**: a dry-stone pen | the gateway (P) | the corner roofed with flat slabs as a shelter (P) | the corner shaded by an oak (O) | the shepherd's crook hung on the wall (O) | the stone water trough (O) | trough; oak; crook; the flock |
-| 5.3 | 5:11–15 | **The Lookout**: a brushwood field booth in a cucumber field on the south edge. You face it from the path, and Hippos across the lake lies beyond it on your left | a gourd bottle hung on the booth's front pole (O) | the booth's woven brushwood back wall (P) | a heap of cucumbers from the field (O) | the cliff-edge boulder over the lake (P) | lamp on its stand, set out on the open ground in front of the booth **(v)** (O) | gourd; cucumbers; lamp stand |
+| 5.3 | 5:11–15 | **The Lookout**: a long flat rock under a great terebinth on the lake edge, open to the view of Hippos across the water, beside a cucumber field | the near end of the long flat rock (P) | the terebinth's trunk (O) | a heap of cucumbers from the field (O) | the cliff-edge boulder over the lake (P) | lamp on its stand **(v)** (O) | terebinth; cucumbers; lamp stand |
 | 5.4 | 5:16–20 | **The Threshing Floor**: a round floor of beaten earth ringed with stones, open to the west wind | a stack of sheaves (O) | the lone thorn tree at the floor's windward side (O) | the winnowing fork (O) | the floor's raised stone edge, worn smooth (P) | the threshing sledge (O) | sheaves; thorn tree; fork; sledge |
 | — | — | **The Stile**: the field wall across the ridge (5:20 / 5:21) | | | | | | |
 | 5.5 | 5:21–25 | **The Quarry**: a small stone quarry cut into the ridge | the left quarry face, striped with chisel marks (P) | a spoil heap of rock chippings at the foot of the face (P) | iron wedges hammered into a crack (O) | wooden shear-legs for lifting stone (O) | a squared block on wooden rollers (O) | wedges; shear-legs; block on rollers |
@@ -69,7 +69,7 @@ The outline's first big break (5:20 / 5:21) is the stile itself.
 | 5.7 | 5:31–35 | **The Bee Bank**: clay-pipe beehives set in a stone bank | the bank's rounded end with a capstone (P) | the stacked hive pipes (O) | the smoker pot (O) | a shallow clay water dish for the bees (O) | the beekeeper's tray of comb (O) | hive pipes; smoker; water dish; tray |
 | 5.8 | 5:36–40 | **The Shepherds' Camp**: a black goat-hair tent | the tent's left guy-rope peg (P) | the tent's open front and its pole (P) | a quern at the tent's right corner (O) | a ground loom pegged out on the grass (O) | the hearth stones (O) | tent; quern; loom; hearth |
 | 5.9 | 5:41–45 | **The Ridge Road**: the road over the hill, where the village track forks off | the culvert stones where the road crosses a gully (P) | a lone carob tree (O) | a broken amphora half-buried by the road (O) | a cart with a broken wheel, propped on stones (O) | the flat stone at the fork where travellers rest (P) | carob tree; amphora; broken cart; a camel resting beyond the fork |
-| 5.10 | 5:46–48 | **The Watchtower**: a round stone vineyard tower on the ridge's north side, near the stile | the tower's wooden ladder (O) | the tower's lookout window (P) | the vine trellis (O) | — | — | ladder; trellis |
+| 5.10 | 5:46–48 | **The Watchtower**: a round stone vineyard tower at the meadow's low west end | the tower's wooden ladder (O) | the tower's lookout window (P) | the vine trellis (O) | — | — | ladder; trellis |
 
 **Outline signposts in chapter 5.** Each stands beside the spot where its section's first verse lives. A sign names the full path when a new higher section begins.
 - *Setting* (5:1–2), with the PDF's own heading for the whole sermon (*Discourse: Ethics*) on the board at the start: 5.1 spot 1.
@@ -100,7 +100,7 @@ The outline's big break, Focus Internally (6:1–18) / Focus Eternally (6:19–3
 | 6.1 | 6:1–5 | **The Courtyard**: the paved court of the farmhouse | the gate's left pier (P) | the curtained doorway into the house (P) | the stone stair up to the roof (P) | the stone roof-roller (O) | the cistern mouth with its round stone lid (O) | roof-roller; cistern lid; a donkey tethered by the gate |
 | 6.2 | 6:6–10 | **The Inner Storeroom**: a windowless room behind a shut door | the shut door's stone threshold (P) | a row of tall storage jars (O) | bunches of dried herbs from a beam (O) | a plastered wall shelf (P) | a wooden chest (O) | jars; herbs; chest |
 | 6.3 | 6:11–15 | **The Bakehouse Yard**: the clay oven and kneading yard | the sieve on its hook (O) | the woodpile (O) | the clay oven (O) | the yard's smoke-stained corner (P) | the kneading bowl with its cloth (O) | sieve; woodpile; oven; kneading bowl; loaves cooling by the oven |
-| 6.4 | 6:16–20 | **The Spring**: where the spring runs out of the rock at the bottom of the farm | the spout (P) | flask of oil on a ledge of rock **(v)** (O) | a wash-line with a tunic drying (O) | a terebinth shading the bank (O) | the stepping stones across the outflow (P) | oil flask; wash-line; terebinth; a linen towel spread on the rocks |
+| 6.4 | 6:16–20 | **The Spring**: where the spring runs out of the rock at the bottom of the farm | the spout (P) | flask of oil on a ledge of rock **(v)** (O) | a wash-line with a tunic drying (O) | a willow shading the bank (O) | the stepping stones across the outflow (P) | oil flask; wash-line; willow; a linen towel spread on the rocks |
 | 6.5 | 6:21–25 | **The Ox Stall**: an open-fronted stall | the left stall post (P) | the yoke on its peg (O) | the plough (O) | a heap of straw bedding (O) | the feeding niche cut in the back wall (P) | yoke; plough; straw; the ox |
 | 6.6 | 6:26–30 | **The Granary Field**: a granary at the edge of a field | the terrace steps (P) | a patch of lentils (O) | the scarecrow (O) | the granary door (P) | a hoe left in the furrow (O) | lentils; scarecrow; hoe |
 | 6.7 | 6:31–34 | **The Olive Press**: the press at the farm's upper-west corner, beside the west gate | the crushing stone: a round millstone in its stone bed (O) | the press beam's socket in the wall (P) | a stack of rope pulp-baskets (O) | the rock-cut collecting pit for the oil (P) | — | crushing stone; pulp baskets |
@@ -168,8 +168,8 @@ Animals, the crowd and loose things are scenery and don't count as objects.
 
 | Chapter | Objects (O) | Place features (P) |
 | --- | --- | --- |
-| 5 | olive tree · water bag on a stake · stone water trough · oak · shepherd's crook · gourd bottle · heap of cucumbers · lamp stand (v) · sheaves · winnowing fork · thorn tree · threshing sledge · iron wedges · shear-legs · squared block on rollers · charcoal mound · axe and chopping block · rush baskets of charcoal · hive pipes · smoker pot · bees' water dish · tray of comb · quern · ground loom · hearth stones · goat-hair tent · carob tree · half-buried amphora · broken cart · tower ladder · vine trellis | limestone pavement · split boulder · seat-rock · fold gateway · slab-roofed corner · brushwood back wall · cliff-edge boulder  worn floor edge · chisel-marked face · spoil heap · cut stumps · ash ring · capped bank end · guy-rope peg · tent front · gully culvert · resting stone at the fork · tower lookout window  the stile |
-| 6 | roof-roller · cistern lid · storage jars · dried herbs · wooden chest · sieve · woodpile · clay oven · kneading bowl · oil flask (v) · wash-line · terebinth · linen towel · yoke · plough · straw bedding · lentils · scarecrow · hoe · crushing stone · pulp baskets | gate pier · curtained doorway · roof stair · storeroom threshold · wall shelf · smoke-stained corner · spout · stepping stones · stall post · feeding niche · terrace steps · granary door · press-beam socket · oil collecting pit · west gate |
+| 5 | olive tree · water bag on a stake · stone water trough · oak · shepherd's crook · terebinth · heap of cucumbers · lamp stand (v) · sheaves · winnowing fork · thorn tree · threshing sledge · iron wedges · shear-legs · squared block on rollers · charcoal mound · axe and chopping block · rush baskets of charcoal · hive pipes · smoker pot · bees' water dish · tray of comb · quern · ground loom · hearth stones · goat-hair tent · carob tree · half-buried amphora · broken cart · tower ladder · vine trellis | limestone pavement · split boulder · seat-rock · fold gateway · slab-roofed corner · long flat rock · cliff-edge boulder  worn floor edge · chisel-marked face · spoil heap · cut stumps · ash ring · capped bank end · guy-rope peg · tent front · gully culvert · resting stone at the fork · tower lookout window  the stile |
+| 6 | roof-roller · cistern lid · storage jars · dried herbs · wooden chest · sieve · woodpile · clay oven · kneading bowl · oil flask (v) · wash-line · willow · linen towel · yoke · plough · straw bedding · lentils · scarecrow · hoe · crushing stone · pulp baskets | gate pier · curtained doorway · roof stair · storeroom threshold · wall shelf · smoke-stained corner · spout · stepping stones · stall post · feeding niche · terrace steps · granary door · press-beam socket · oil collecting pit · west gate |
 | 7 | planks · pitch pot · trestle and adze · boat on stocks · salting vat · net · fish basket · mending stone and rope coil · tax table · mounting block · tethering rail · trade bales · almond tree · pomegranate tree · well with rope and bucket · pruned branches · stone bench · stone mortar · roofing reeds · drying flax · basket of dates · mud-brick stack | saw pit · courtyard entrance · narrow hill path · irrigation sluice · hewn doorstep · shelf edge · far bank · mud-brick front wall |
 | Scenery | the flock · camel · donkey · ox · mules · the crowd · loaves cooling (6.3) | |
 
@@ -179,7 +179,7 @@ Animals, the crowd and loose things are scenery and don't count as objects.
 
 1. **Chapter 5, rooms 1–4.** These are built already. Rework them to this plan:
    - distinct spots in the Seat and the Sheepfold;
-   - the Lookout's gourd, cucumbers and lamp, with Hippos in view (dropping the jar and bench);
+   - the Lookout as a long flat rock under a great terebinth, with the view open to the lake and Hippos (no hut);
    - the threshing floor's thorn tree and worn edge (dropping the corner sheaves);
    - the stile.
 2. **Chapter 5, rooms 5–10.**
