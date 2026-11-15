@@ -11,9 +11,8 @@ function campTent(x, z, rot, s = 1) {
 // the standard of each camp: a tall pole with a coloured banner (Num 2:2)
 function standard(x, z, col) { const y = heightAt(x, z); cyl(.05, .06, 6, 6, 'wood', x, y, z); const f = box(1.4, .9, .03, mat('std' + col, col, { side: THREE.DoubleSide }), x + .72, y + 4.9, z); f.userData.dyn = 1; }
 // an acacia: the wood of the tabernacle (Ex 25:5)
-function acacia(x, z, s = 1) { const y = heightAt(x, z);
-  const t = cyl(.1 * s, .18 * s, 2.4 * s, 6, 'trunk', x, y, z); t.rotation.z = R(-.15, .15);
-  for (let i = 0; i < 3; i++) { const a = R(0, 6.3), r = R(.6, 1.5) * s; const c = add(new THREE.IcosahedronGeometry(1.3 * s, 0), i % 2 ? 'leaf' : 'leafDk', x + Math.cos(a) * r, y + 2.6 * s + R(-.1, .2), z + Math.sin(a) * r); c.scale.set(1.5, .35, 1.3); } }
+function acacia(x, z, s = 1) { for (let k = 0; k < 10; k++) R(0, 1);   // the library's acacia (objects/up-plants.js); the old one drew 10 random numbers
+  upAcacia(scene, x, heightAt(x, z), z, s, Math.round(x * 7 + z * 3)); }
 {
   const CX = 0, CZ = -22.86;                                    // the centre of the court
   const placed = [];

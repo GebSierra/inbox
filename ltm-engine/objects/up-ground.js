@@ -50,16 +50,20 @@ function upCover(g, kind, pts, o = {}) {
   T('ploughed-field', 'Ploughed rows', ['field', 'farm'], patch([['furrow', [-.72, -.48, -.24, 0, .24, .48, .72].flatMap(zz => [[-.5, zz, 1, 0], [.5, zz, 1, 0]])]], .1));
   T('vineyard-rows', 'Vineyard rows', ['field', 'farm', 'vine'], patch([['vine', [-.45, .45].flatMap(zz => [-.6, 0, .6].map(xx => [xx, zz, 1, xx * 3]))]], 1.25)); }
 // ---- a town's scatter (only with theme "ground" or ?ground=1) ----
+// paved and floored ground (plazas, roads, floors, decks): any flat mesh lying on the terrain, marked once on a 1 m grid (shared with up-scenery.js)
+let UG_PAVED = null;
+function upPavedMask() { if (UG_PAVED) return UG_PAVED;
+const PV = { x0: -300, z0: -300, n: 600 }; PV.c = new Uint8Array(PV.n * PV.n); scene.updateMatrixWorld(true); const bb = new THREE.Box3();
+scene.traverse(o => { if (!o.isMesh || o.isInstancedMesh || o.isSprite || !o.geometry) return; bb.setFromObject(o); const sx = bb.max.x - bb.min.x, sy = bb.max.y - bb.min.y, sz = bb.max.z - bb.min.z;
+  if (sy > .6 || sx * sz < 2 || sx > 150 || sz > 150) return; const cx = (bb.min.x + bb.max.x) / 2, cz = (bb.min.z + bb.max.z) / 2, gy = heightAt(cx, cz); if (bb.max.y < gy - .3 || bb.min.y > gy + .8) return;
+  for (let i = Math.floor(bb.min.x - PV.x0); i <= Math.floor(bb.max.x - PV.x0); i++) for (let j = Math.floor(bb.min.z - PV.z0); j <= Math.floor(bb.max.z - PV.z0); j++) if (i >= 0 && j >= 0 && i < PV.n && j < PV.n) PV.c[j * PV.n + i] = 1; });
+UG_PAVED = (x, z) => { const i = Math.floor(x - PV.x0), j = Math.floor(z - PV.z0); return i >= 0 && j >= 0 && i < PV.n && j < PV.n && PV.c[j * PV.n + i] === 1; };
+  return UG_PAVED; }
 function upGroundCover() {
   if (!(THEME.ground || new URLSearchParams(location.search).has('ground')) || !STATIONS.length) return;
   // scattered where people look: within 45 m of each room, thinning out with distance; nothing on solid things, in the rooms or in low water
   const r = upRng(4243), low = Math.min(...STATIONS.map(s => heightAt(s.x, s.z))) - 1.5;
-  // paved and floored ground (plazas, roads, floors, decks): any flat mesh lying on the terrain, marked on a 1 m grid; nothing grows there
-  const PV = { x0: -300, z0: -300, n: 600 }; PV.c = new Uint8Array(PV.n * PV.n); scene.updateMatrixWorld(true); const bb = new THREE.Box3();
-  scene.traverse(o => { if (!o.isMesh || o.isInstancedMesh || o.isSprite || !o.geometry) return; bb.setFromObject(o); const sx = bb.max.x - bb.min.x, sy = bb.max.y - bb.min.y, sz = bb.max.z - bb.min.z;
-    if (sy > .6 || sx * sz < 2 || sx > 150 || sz > 150) return; const cx = (bb.min.x + bb.max.x) / 2, cz = (bb.min.z + bb.max.z) / 2, gy = heightAt(cx, cz); if (bb.max.y < gy - .3 || bb.min.y > gy + .8) return;
-    for (let i = Math.floor(bb.min.x - PV.x0); i <= Math.floor(bb.max.x - PV.x0); i++) for (let j = Math.floor(bb.min.z - PV.z0); j <= Math.floor(bb.max.z - PV.z0); j++) if (i >= 0 && j >= 0 && i < PV.n && j < PV.n) PV.c[j * PV.n + i] = 1; });
-  const paved = (x, z) => { const i = Math.floor(x - PV.x0), j = Math.floor(z - PV.z0); return i >= 0 && j >= 0 && i < PV.n && j < PV.n && PV.c[j * PV.n + i] === 1; };
+  const paved = upPavedMask();
   // the town (owner, 2026-11-13: "turn off the grass inside of the town structures ... just have it outside the towns"): a town part that
   // defines TOWN(x, z) (Colossae, James: the flattened, built-up area, 1 inside and fading to 0 at its edge) marks it; nothing grows where it is above 0.
   // Towns without one (the Mount, a hillside) only keep clear of paving, solid things and the rooms.
