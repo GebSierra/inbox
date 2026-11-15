@@ -52,7 +52,8 @@
     if (scene.children.length > s0) { window.__library.leaks.push(e.id); console.warn(`[library] ${e.id} added ${scene.children.length - s0} object(s) to the town scene instead of its group`); while (scene.children.length > s0) scene.remove(scene.children[scene.children.length - 1]); }
     const lights = []; g.traverse(o => { if (o.isLight) lights.push(o); }); lights.forEach(l => l.parent.remove(l));   // thumbnails use the stage light only
     g.updateMatrixWorld(true);
-    const box = new THREE.Box3(); g.traverse(o => { if (!o.isMesh || !o.geometry || !o.visible) return; let v = true; for (let q = o; q && q !== g; q = q.parent) if (!q.visible) v = false; if (!v) return;
+    const box = new THREE.Box3(); g.traverse(o => { if (o.userData.frameBox) { const [w, h] = o.userData.frameBox; box.union(new THREE.Box3(new THREE.Vector3(-w / 2, 0, -w / 2), new THREE.Vector3(w / 2, h, w / 2)).applyMatrix4(o.matrixWorld)); }   // effects made of sprites say how much room they take
+      if (!o.isMesh || !o.geometry || !o.visible) return; let v = true; for (let q = o; q && q !== g; q = q.parent) if (!q.visible) v = false; if (!v) return;
       if (o.isInstancedMesh) { if (!o.boundingBox) o.computeBoundingBox(); box.union(o.boundingBox.clone().applyMatrix4(o.matrixWorld)); return; }   // instances: the box of all of them
       if (!o.geometry.boundingBox) o.geometry.computeBoundingBox(); box.union(o.geometry.boundingBox.clone().applyMatrix4(o.matrixWorld)); });
     if (box.isEmpty()) box.set(new THREE.Vector3(-.3, 0, -.3), new THREE.Vector3(.3, .6, .3));

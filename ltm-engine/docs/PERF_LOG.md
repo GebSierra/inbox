@@ -177,3 +177,11 @@ Owner: "ground cover looks great." On in the Mount, James and Colossae (theme `"
 
 Owner, from his phone at the Colossae potter: "Please turn off the grass inside of the town structures. And just have it outside the towns. And when you have it outside the towns remove like 75% of it. I just want it here and there occasionally."
 Paving in Colossae is painted into the ground, so the paving check missed it. Now nothing grows where the town part's own TOWN(x, z) is above 0 (the flattened, built-up area of Colossae and James); the Mount has no town and only keeps clear of rooms, paving and solid things. Amounts are a quarter of before, spread over all the open land 150 m around the rooms: Colossae 2100 grass tufts (from 8400), James 630, the Mount 1050, plus a few flowers, rocks and thistles.
+
+### Scenery, camp tents, and N5–N7 (2026-11-14)
+
+- **Scenery** (`objects/up-scenery.js`): the approved animals, people and plants placed as background dressing in the four towns, never in a room (goatherd and goats at the Sheepfold, lilies by the Seat, reapers by the Threshing Floor; James 2:2–3 rich man and poor man by the Almshouse, horse by the Gate, reapers in the fields; oxen and a donkey outside Colossae, a fisherman at the Landing; herds round the Tabernacle camp). Merged with the static scenery.
+- **Camp tents** (`objects/up-tent.js`): black goat-hair tents replace the Tabernacle camp's old tents (same positions and random draws).
+- **N5** (`objects/up-tabernacle.js`): ark, lampstand, table of showbread, incense altar, bronze altar with fire, laver, court pillars with linen hanging as library objects, same look as the Tabernacle (which keeps its own copies).
+- **N6** (`objects/up-effects.js`): `upSmoke` (plume or incense thread), `upCloudPillar`, `upGlow`; animated through the engine's FIRES updaters, kept out of the merge and hidden from the AO pass. Library framing now reads `userData.frameBox` for sprite effects.
+- **N7** (`objects/up-water.js`): `upWaterSurface(g, x, y, z, w, d, { shallow, band })` (James's sea shader, movable, shallows toward any edge) and `upFishingBoat` (8 m Galilee boat: planked, pitched bottom, mast with furled sail, four oars out or shipped, steering oar, dragnet heaped and hung over the side, basket of fish, the cushion in the stern of Mark 4:38; `bob` joins the engine's bobbing ships).
