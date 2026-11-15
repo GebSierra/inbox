@@ -49,7 +49,7 @@ Recommendation: **just outside the west wall, inside its own walled grounds**, n
 Agora (simpler): 1 The Gate · 2 The Tower · 3 The Dome · 4 The Lamp Porch · 5 The Mirror Bench · 6 The Almshouse.
 Synagogue, in the owner's order (sketch `refs/plan/2-synagogue-rooms-sketch.png`): 1 The Steps (2:1–5) · 2 The Pools (2:6–10) · 3 The Hall (2:11–15) · 4 The Scroll Room (2:16–20) · 5 The Porch, the colonnade on the right (2:21–25) · 6 for 2:26 (one verse), options: The Side Door at the far end of the porch, where you leave, or The Main Door at the top of the entrance steps.
 
-## G. Chapter 2 objects (proposed 2026-11-12, waiting for the owner)
+## G. Chapter 2 objects, first proposal (2026-11-12; owner: too many objects, superseded by G2)
 Names approved: The Steps, The Pools, The Hall, The Scroll Room, The Porch, The Back Steps (built: `refs/plan/2-back-steps-sketch.png`).
 Order in each room: 1 near-left, 2 far-left, 3 far-right, 4 near-right, 5 centre. The objects are addresses; learners make their own pictures. (lib) = already in the object library.
 
@@ -69,3 +69,17 @@ Reference prompts (setting line: "in a first-century Galilean synagogue: cream p
 - 2.4 The Scroll Room: viewed from its inner doorway, tall scrolls on wooden rollers standing upright, a lidded chest. near-left a cold iron brazier with an empty clay pot; far-left a withered fig tree in a terracotta pot; far-right a small glass-fronted niche, empty; near-right a bronze gong on a frame; centre a broken iron plough share.
 - 2.5 The Porch: under the roofed colonnade on the right side, a stone bench along the wall. near-left a rough stone altar with bound firewood and a knife; far-left a small stone arch with its capstone hanging on a rope; far-right a bowl of sand under a hanging star-shaped lamp; near-right balanced brass scales; centre a window frame with a scarlet cord hanging down.
 - 2.6 The Back Steps: the small flight of steps leading down off the courtyard behind the porch. an empty white tunic lying on the top step.
+
+## G2. Chapter 2 objects, second proposal (2026-11-15, waiting for the owner)
+Owner: "Look at the plan. The objects available… I don't think we need that many objects." So: the synagogue's own features carry most spots (method rule: not every spot needs a distinct object), plus people and things already in the library. One small new detail only (the scarlet cord). (lib) = in the library; (built) = part of the synagogue model.
+
+| Room | 1 near-left | 2 far-left | 3 far-right | 4 near-right | 5 centre |
+|---|---|---|---|---|---|
+| 1 The Steps 2:1–5 | the bottom step (built) | rich man with a gold ring (lib) | poor man sitting with a bowl (lib) | elder with a staff, the "judge" (lib) | the middle of the steps (built) |
+| 2 The Pools 2:6–10 | the near pool (built) | the far pool (built) | gate guard with spear and shield (lib) | money-changer's table of coins (lib) | the paving between the pools (built) |
+| 3 The Hall 2:11–15 | the left lectern (built) | teacher seated with a scroll, on the benches (lib) | the far columns and benches (built) | the right lectern (built) | an empty wicker basket on the floor (lib) |
+| 4 The Scroll Room 2:16–20 | cold brazier (lib) | the upright scrolls (built) | the lidded chest (built) | tall candle (lib) | cart wheel lying flat (lib) |
+| 5 The Porch 2:21–25 | bronze altar (lib) | the side door (built) | shepherd with a crook (lib) | hanging scales (lib) | the middle column with a scarlet cord tied round it (new, small) |
+| 6 The Back Steps 2:26 | the back steps (built) | | | | |
+
+Totals: 13 library items, 13 built features, 1 new detail (was 26 new objects).
