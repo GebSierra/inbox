@@ -267,26 +267,52 @@
      "name": "The Steps",
      "verses": "2:1–5",
      "kind": "vignette",
+     "at": [
+      3.7,
+      14
+     ],
+     "viewer": [
+      -3,
+      14
+     ],
+     "layout": {
+      "spread": [
+       2.6,
+       1.3
+      ],
+      "minY": {
+       "ground": [
+        18.5,
+        14
+       ],
+       "plus": 0
+      }
+     },
      "objects": [
       {
-       "id": "TODO",
-       "what": "TODO 2:1 near-left object"
+       "what": "the bottom step",
+       "lift": 0.2,
+       "place": true
       },
       {
-       "id": "TODO",
-       "what": "TODO 2:2 far-left object"
+       "id": "rich-man",
+       "what": "rich man with a gold ring",
+       "lift": 1.0
       },
       {
-       "id": "TODO",
-       "what": "TODO 2:3 far-right object"
+       "id": "poor-man",
+       "what": "poor man sitting with a bowl",
+       "lift": 1.0
       },
       {
-       "id": "TODO",
-       "what": "TODO 2:4 near-right object"
+       "id": "elder",
+       "what": "elder with a staff",
+       "lift": 0.2
       },
       {
-       "id": "TODO",
-       "what": "TODO 2:5 centre object"
+       "what": "the middle of the steps",
+       "lift": 0.8,
+       "place": true
       }
      ]
     },
@@ -295,82 +321,155 @@
      "name": "The Pools",
      "verses": "2:6–10",
      "kind": "vignette",
+     "at": [
+      8.25,
+      20.5
+     ],
+     "viewer": [
+      8.25,
+      13.5
+     ],
+     "layout": {
+      "spread": [
+       1.75,
+       3.0
+      ],
+      "minY": {
+       "ground": [
+        18.5,
+        14
+       ],
+       "plus": 1
+      }
+     },
      "objects": [
       {
-       "id": "TODO",
-       "what": "TODO 2:6 near-left object"
+       "what": "the near pool",
+       "lift": -0.4,
+       "place": true
       },
       {
-       "id": "TODO",
-       "what": "TODO 2:7 far-left object"
+       "what": "the far pool",
+       "lift": -0.4,
+       "place": true
       },
       {
-       "id": "TODO",
-       "what": "TODO 2:8 far-right object"
+       "id": "gate-guard",
+       "what": "guard with spear and shield"
       },
       {
-       "id": "TODO",
-       "what": "TODO 2:9 near-right object"
+       "id": "coin-table",
+       "what": "money-changer's table of coins"
       },
       {
-       "id": "TODO",
-       "what": "TODO 2:10 centre object"
+       "what": "the paving between the pools",
+       "place": true
       }
-     ]
+     ],
+     "back": 7.5,
+     "pitch": -0.3
     },
     {
      "room": 3,
      "name": "The Hall",
      "verses": "2:11–15",
      "kind": "vignette",
+     "at": [
+      25.6,
+      14.25
+     ],
+     "viewer": [
+      18.6,
+      14.25
+     ],
+     "layout": {
+      "spread": [
+       1.25,
+       3.0
+      ],
+      "minY": {
+       "ground": [
+        18.5,
+        14
+       ],
+       "plus": 1.5
+      }
+     },
      "objects": [
       {
-       "id": "TODO",
-       "what": "TODO 2:11 near-left object"
+       "what": "the left lectern",
+       "lift": 1.2,
+       "place": true
       },
       {
-       "id": "TODO",
-       "what": "TODO 2:12 far-left object"
+       "id": "seated-teacher",
+       "what": "teacher seated with a scroll"
       },
       {
-       "id": "TODO",
-       "what": "TODO 2:13 far-right object"
+       "what": "the far columns and benches",
+       "place": true
       },
       {
-       "id": "TODO",
-       "what": "TODO 2:14 near-right object"
+       "what": "the right lectern",
+       "lift": 1.2,
+       "place": true
       },
       {
-       "id": "TODO",
-       "what": "TODO 2:15 centre object"
+       "id": "wicker-basket",
+       "what": "empty wicker basket"
       }
-     ]
+     ],
+     "back": 6.6
     },
     {
      "room": 4,
      "name": "The Scroll Room",
      "verses": "2:16–20",
      "kind": "vignette",
+     "at": [
+      26.0,
+      7.0
+     ],
+     "viewer": [
+      26.0,
+      11.2
+     ],
+     "back": 3.6,
+     "layout": {
+      "spread": [
+       2.0,
+       1.0
+      ],
+      "minY": {
+       "ground": [
+        18.5,
+        14
+       ],
+       "plus": 1.5
+      }
+     },
      "objects": [
       {
-       "id": "TODO",
-       "what": "TODO 2:16 near-left object"
+       "id": "brazier",
+       "what": "brazier"
       },
       {
-       "id": "TODO",
-       "what": "TODO 2:17 far-left object"
+       "what": "the upright scrolls",
+       "lift": 1.05,
+       "place": true
       },
       {
-       "id": "TODO",
-       "what": "TODO 2:18 far-right object"
+       "what": "the lidded chest",
+       "lift": 0.85,
+       "place": true
       },
       {
-       "id": "TODO",
-       "what": "TODO 2:19 near-right object"
+       "id": "tall-candle",
+       "what": "tall candle"
       },
       {
-       "id": "TODO",
-       "what": "TODO 2:20 centre object"
+       "id": "cart-wheel",
+       "what": "cart wheel"
       }
      ]
     },
@@ -379,26 +478,51 @@
      "name": "The Porch",
      "verses": "2:21–25",
      "kind": "vignette",
+     "at": [
+      24.0,
+      22.6
+     ],
+     "viewer": [
+      24.0,
+      27.0
+     ],
+     "back": 4.2,
+     "layout": {
+      "spread": [
+       1.6,
+       1.0
+      ],
+      "minY": {
+       "ground": [
+        18.5,
+        14
+       ],
+       "plus": 1
+      }
+     },
      "objects": [
       {
-       "id": "TODO",
-       "what": "TODO 2:21 near-left object"
+       "id": "bronze-altar",
+       "what": "altar with firewood"
       },
       {
-       "id": "TODO",
-       "what": "TODO 2:22 far-left object"
+       "what": "the side door",
+       "lift": 0.5,
+       "place": true
       },
       {
-       "id": "TODO",
-       "what": "TODO 2:23 far-right object"
+       "id": "shepherd",
+       "what": "shepherd with a crook",
+       "lift": 0.5
       },
       {
-       "id": "TODO",
-       "what": "TODO 2:24 near-right object"
+       "id": "hanging-scales",
+       "what": "hanging scales"
       },
       {
-       "id": "TODO",
-       "what": "TODO 2:25 centre object"
+       "what": "the middle column with a scarlet cord",
+       "lift": 1.6,
+       "place": true
       }
      ]
     },
@@ -407,14 +531,54 @@
      "name": "The Back Steps",
      "verses": "2:26",
      "kind": "vignette",
+     "at": [
+      27.6,
+      27.3
+     ],
+     "viewer": [
+      27.6,
+      31.9
+     ],
+     "layout": {
+      "spread": [
+       0.6,
+       0.6
+      ],
+      "minY": {
+       "ground": [
+        18.5,
+        14
+       ],
+       "plus": 0
+      }
+     },
      "objects": [
       {
-       "id": "TODO",
-       "what": "TODO 2:26 near-left object"
+       "place": true,
+       "what": "the back steps",
+       "lift": 0.5
+      },
+      {
+       "id": "big-jar",
+       "what": "big storage jar",
+       "extra": true,
+       "lift": 1.0
+      },
+      {
+       "id": "clay-bowl",
+       "what": "clay bowl",
+       "extra": true,
+       "lift": 1.0
       }
-     ]
+     ],
+     "back": 4.2,
+     "pitch": -0.05
     }
-   ]
+   ],
+   "layout": {
+    "dais": "none",
+    "big": 1
+   }
   },
   {
    "chapter": 3,

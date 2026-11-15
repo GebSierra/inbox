@@ -13,6 +13,7 @@
 //     "layout": { "dais": "none", "spread": [1.9, 1.45], "big": 1.25, "minY": 0.3, "rug": "#9a4a3a" },   // optional; chapter.layout gives defaults
 //     "back": 5.8, "pitch": -0.2, "bannerLift": 3.4,                                      // optional camera / banner tweaks, applied after the room is built
 //     "objects": [ { "id": "scorched-sundial", "what": "scorched sundial in dry grass", "desc": "…", "args": [...] }, ... ] }   // 5 = near-left, far-left, far-right, near-right, centre
+//   "lift" (optional, default 0) raises one object above the room's floor, for a spot on a step or a raised court.
 //   "what" is the label the learner sees at the spot, "desc" the fuller description the owner approved (optional), "args" extra arguments for the builder.
 //   An object marked "extra": true stands in the room but carries no verse (the last room of a chapter can have fewer than five verses).
 //   An object with "centre": { "ground": [x, z], "plus": dy } (instead of an id) is the room's centrepiece, placed by the town (statue, altar fire): its marker rests at heightAt(x, z) + dy.
@@ -69,13 +70,14 @@ const num = (v, what) => typeof v === 'number' ? v : (v && v.ground ? (([x, z]) 
 // ---- vignette rooms ----
 function objectFn(o, what) {
   const e = OBJECTS.get(o.id); if (!e) bookError(`${what}: unknown object id "${o.id}"`);
-  const args = o.args || e.args; return (g, x, y, z) => e.fn(g, x, y, z, ...args);
+  const args = o.args || e.args, lift = o.lift || 0; return (g, x, y, z) => e.fn(g, x, y + lift, z, ...args);   // "lift": metres above the room's floor (a spot on a step or a raised court); default 0
 }
 function placeVignette(ch, r, spec = r) {
   const tag = `${ch}.${r.room} ${r.name}`, lay = { ...(bookChapter(ch).layout || {}), ...(spec.layout || {}) };
   if (!spec.objects || !spec.objects.length) bookError(`${tag}: no objects`);
   const at = pos(spec.at || r.at, `${tag} at`), viewer = pos(spec.viewer, `${tag} viewer`);
-  const opts = { props: spec.objects.map((o, i) => o.centre ? [null, o.what] : [objectFn(o, `${tag} object ${i + 1}`), o.what]) };
+  // a "place" spot is a feature of the place itself (a step, a pool, a doorway): nothing is built, its marker sits at the room floor + "lift"
+  const opts = { props: spec.objects.map((o, i) => o.centre ? [null, o.what] : o.place ? [(g, x, y, z) => y + (o.lift || 0), o.what] : [objectFn(o, `${tag} object ${i + 1}`), o.what]) };
   for (const k of ['dais', 'spread', 'big', 'rug']) if (lay[k] !== undefined) opts[k] = lay[k];
   if (lay.minY !== undefined) opts.minY = num(lay.minY, `${tag} minY`);
   const c = spec.objects.find(o => o.centre); if (c) opts.centre = { top: num(c.centre, `${tag} centre`), what: c.what };

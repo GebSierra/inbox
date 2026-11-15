@@ -14,11 +14,7 @@ const USC = {
     { near: 'The Lookout', r: 4, d: [14, 36], put: (x, z) => upFig(scene, x, heightAt(x, z), z, 1, 2) },
     { near: "The Shepherds' Camp", r: 5, d: [14, 36], put: (x, z, a) => { upQuad(scene, x, heightAt(x, z), z, 'donkey', { ry: a }); upAlmond(scene, x + 3, heightAt(x + 3, z + 1), z + 1, 1, 4); } },
   ],
-  james: [
-    { near: 'The Almshouse', r: 2.5, d: [12, 40], paving: true, put: (x, z, a) => { person(x, z, a, '#5a2a6a', { pose: 'stand', arms: 'reach', ring: true, cloak: '#c9a24a', hair: 1 });   // James 2:2-3
-        const sx = x + Math.cos(a) * 2.2, sz = z - Math.sin(a) * 2.2; upStool(sx, sz, a + Math.PI); person(sx, sz, a + Math.PI, '#8a7a62', { pose: 'sit', prop: 'bowl', hair: 2, skin: 1, y: heightAt(sx, sz) }); } },
-    { near: 'The Lamp Porch', r: 4, d: [14, 70], put: (x, z, a) => { upFig(scene, x, heightAt(x, z), z, 1, 3); upVine(scene, x + 4 * Math.cos(a), heightAt(x + 4 * Math.cos(a), z + 4 * Math.sin(a)), z + 4 * Math.sin(a), .9, 2); } },   // James 3:12
-    { near: 'The Gate', r: 4, d: [14, 40], put: (x, z, a) => upQuad(scene, x, heightAt(x, z), z, 'horse', { ry: a }) },   // James 3:3
+  james: [   // (owner 2026-11-15: the fig tree, vine and horse outside the town gate were removed; the rich man and poor man (2:2-3) now stand in the synagogue's Steps room, so their scenery copy is gone)
     { near: 'The Gate', r: 8, d: [30, 90], out: true, put: (x, z, a) => { upWheat(x, z, 12, 8, a);   // James 5:4, the reapers of the fields
         for (const k of [-1, 1]) person(x + Math.cos(a) * 7 + k * 2, z - Math.sin(a) * 7 + k, a + Math.PI / 2, k > 0 ? '#b8a070' : '#9a8a60', { pose: 'kneel', prop: 'sickle', hair: k > 0 ? 2 : 1 }); } },
   ],

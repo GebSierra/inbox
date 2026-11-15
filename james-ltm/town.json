@@ -5,7 +5,7 @@
   "store": "james",
   "verses": [27, 26, 18, 17, 20],
   "zones": ["The Agora", "The Synagogue", "The Harbour", "The Craftsmen’s Street", "The Farm & Vineyard"],
-  "built": 1,
+  "built": 2,
   "theme": {
     "ground": true,
     "houses": "dressed",
@@ -51,6 +51,7 @@
     "obj:up-e",
     "obj:up-f",
     "obj:up-james-civic",
+    "obj:up-roles", "obj:up-tent", "obj:up-tabernacle", "obj:up-effects", "obj:lib-util", "obj:townsfolk",
     "world/gate.js",
     "ltm:kit",
     "ltm:crates",

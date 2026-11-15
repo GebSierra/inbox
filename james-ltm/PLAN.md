@@ -83,3 +83,5 @@ Owner: "Look at the plan. The objects available… I don't think we need that ma
 | 6 The Back Steps 2:26 | the back steps (built) | | | | |
 
 Totals: 13 library items, 13 built features, 1 new detail (was 26 new objects).
+
+**Status 2026-11-15:** G2 built as chapter 2 (all checks pass). Changes from G2 while building: the scroll-room brazier is lit and the cart wheel stands upright, so their labels are "brazier" and "cart wheel"; the Back Steps carry two extra, verse-free objects (a storage jar and a clay bowl) because every room needs two objects. Engine: book objects can now have a "lift", and "place": true spots (a step, a pool, a door) work in plain rooms.

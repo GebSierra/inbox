@@ -96,8 +96,8 @@ function jcSynagogue(x, z) {
   const W = (a0, b0, a1, b1, q) => jcPaintedWall(g, a0, b0, a1, b1, F, WH, .6, q);
   W(X0, -2.2, X0, Z1); W(X0, Z0, X0, -3.8, false);                       // front wall, the main door between z -3.8 and -2.2
   W(X1, SZ0, X1, Z1);                                                    // back wall (hall and storeroom)
-  W(X0, Z1, 5.3, Z1); W(6.7, Z1, X1, Z1, false);                         // right wall onto the portico, side door at x 6
-  W(X0, Z0, 5.3, Z0, false); W(6.7, Z0, X1, Z0, false);                  // hall / storeroom wall, inner doorway at x 6
+  W(X0, Z1, 1.7, Z1); W(3.1, Z1, X1, Z1, false);                         // right wall onto the portico, side door at x 2.4
+  W(X0, Z0, 3.8, Z0, false); W(8.2, Z0, X1, Z0, false);                  // hall / storeroom wall, a wide inner doorway (x 3.8..8.2) so the scrolls are seen from the hall
   W(X0, SZ0, X1, SZ0); W(X0, SZ0, X0, Z0, false);                        // the storeroom's outer walls
   // the stepped main entrance: a framed ashlar portal with a panelled door standing open, and steps down to the courtyard
   for (const s of [-1, 1]) box(.7, 3.4, .5, jcM.ash(), X0 - .1, F, -3 + s * 1.05, g);
@@ -110,8 +110,8 @@ function jcSynagogue(x, z) {
     const B = (a0, b0, a1, b1) => { if (a1 - a0 > .05 && b1 - b0 > .05) box(a1 - a0, h, b1 - b0, jcM.ash(), (a0 + a1) / 2, F, (b0 + b1) / 2, g); };
     B(hx0, hz0, hx0 + d, -3.9); B(hx0, -2.1, hx0 + d, hz1);                          // front (door gap)
     B(hx1 - d, hz0, hx1, hz1);                                                        // back
-    B(hx0 + d, hz1 - d, 5.2, hz1); B(6.8, hz1 - d, hx1 - d, hz1);                     // right (side door gap)
-    B(hx0 + d, hz0, 5.2, hz0 + d); B(6.8, hz0, hx1 - d, hz0 + d);                     // left (storeroom door gap)
+    B(hx0 + d, hz1 - d, 1.6, hz1); B(3.2, hz1 - d, hx1 - d, hz1);                     // right (side door gap)
+    B(hx0 + d, hz0, 3.7, hz0 + d); B(8.3, hz0, hx1 - d, hz0 + d);                     // left (storeroom door gap)
   }
   // the interior colonnade on the inner edge of the benches, carrying architraves and the ceiling joists
   const cx0 = hx0 + 2.1, cx1 = hx1 - 2.1, cz0 = hz0 + 2.1, cz1 = hz1 - 2.1, CH = WH - .5, cols = [];
@@ -124,13 +124,13 @@ function jcSynagogue(x, z) {
   box(X1 - X0 + .6, .12, Z1 - SZ0 + .6, mat('jcDeck', '#8a6440'), (X0 + X1) / 2, F + WH - .04, (SZ0 + Z1) / 2, g).userData.nocol = 1;
   box(X1 - X0 + .9, .35, Z1 - SZ0 + .9, jcM.roof(), (X0 + X1) / 2, F + WH + .08, (SZ0 + Z1) / 2, g).userData.nocol = 1;
   // two wooden reading lecterns in the middle of the floor, each with an unrolled scroll
-  for (const [lx, lz, r] of [[2.2, -.9, .25], [6.8, 1.1, -.25]]) { const L = new THREE.Group(); L.position.set(lx, F, lz); L.rotation.y = r; g.add(L);
+  for (const [lx, lz, r] of [[2.6, -1.0, 0], [2.6, 1.5, 0]]) { const L = new THREE.Group(); L.position.set(lx, F, lz); L.rotation.y = r; g.add(L);
     box(.5, .08, .5, jcM.beam(), 0, 0, 0, L); box(.12, 1.05, .12, jcM.beam(), 0, .08, 0, L); const t = box(.9, .07, .62, jcM.beam(), 0, 1.15, 0, L); t.rotation.z = -.28;
     const sc = box(.72, .02, .5, jcM.parch(), 0, 1.21, 0, L); sc.rotation.z = -.28; for (const e of [-1, 1]) { const rl = cyl(.05, .05, .58, 8, jcM.beam(), e * .36, 1.18 - e * .1, -.29, L); rl.rotation.x = Math.PI / 2; } }
   // the scroll storeroom: tall scrolls on wooden rollers standing upright along the back, and a lidded chest
-  for (let k = 0; k < 7; k++) { const sx = 4.35 + k * .55, sz = SZ0 + .75; cyl(.13, .13, .9, 10, jcM.parch(), sx, F + .12, sz, g); for (const e of [-1, 1]) { cyl(.035, .035, 1.2, 6, jcM.beam(), sx + e * .12, F, sz, g); add(new THREE.SphereGeometry(.06, 6, 4), jcM.beam(), sx + e * .12, F + 1.22, sz, g); } }
-  box(4.2, .1, .6, jcM.beam(), 6, F, SZ0 + .75, g);
-  box(1.4, .7, .8, jcM.beam(), X1 - 2.2, F, SZ0 + 1, g); box(1.5, .14, .9, mat('jcLid', '#5e3d22'), X1 - 2.2, F + .7, SZ0 + 1, g); box(1.42, .06, .1, jcM.gold(), X1 - 2.2, F + .45, SZ0 + 1.42, g);
+  for (let k = 0; k < 7; k++) { const sx = 2.4 + k * .55, sz = SZ0 + .75; cyl(.13, .13, .9, 10, jcM.parch(), sx, F + .12, sz, g); for (const e of [-1, 1]) { cyl(.035, .035, 1.2, 6, jcM.beam(), sx + e * .12, F, sz, g); add(new THREE.SphereGeometry(.06, 6, 4), jcM.beam(), sx + e * .12, F + 1.22, sz, g); } }
+  box(4.2, .1, .6, jcM.beam(), 4.05, F, SZ0 + .75, g);
+  box(1.4, .7, .8, jcM.beam(), 8.2, F, SZ0 + 1, g); box(1.5, .14, .9, mat('jcLid', '#5e3d22'), 8.2, F + .7, SZ0 + 1, g); box(1.42, .06, .1, jcM.gold(), 8.2, F + .45, SZ0 + 1.42, g);
   box(X1 - X0 - .6, .12, 4 - .6, mat('jcDeck', '#8a6440'), (X0 + X1) / 2, F + WH - .04, (SZ0 + Z0) / 2, g).userData.nocol = 1;
   // the covered portico along the right wing: columns, a roof, and the elders' bench on the inner wall
   const PZ = Z1 + 3.5;
@@ -138,7 +138,10 @@ function jcSynagogue(x, z) {
   box(X1 - X0 + .6, .45, .6, jcM.ash(), (X0 + X1) / 2, F + 3.6, PZ - .4, g).userData.nocol = 1;
   for (let k = 0; k <= 6; k++) box(.18, .22, 3.8, jcM.beam(), X0 + .2 + (X1 - X0 - .4) * k / 6, F + 3.85, Z1 + 1.8, g).userData.nocol = 1;
   box(X1 - X0 + .8, .3, 4.1, jcM.roof(), (X0 + X1) / 2, F + 4.05, Z1 + 1.8, g).userData.nocol = 1;
-  box(X1 - X0 - 1, .45, .55, jcM.ash(), (X0 + X1) / 2, F, Z1 + .62, g); box(X1 - X0 - 1, .1, .62, jcM.ashDk(), (X0 + X1) / 2, F + .45, Z1 + .62, g);
+  for (const [b0, b1] of [[X0 + .5, 1.6], [3.2, X1 - .5]]) { box(b1 - b0, .45, .55, jcM.ash(), (b0 + b1) / 2, F, Z1 + .62, g); box(b1 - b0, .1, .62, jcM.ashDk(), (b0 + b1) / 2, F + .45, Z1 + .62, g); }   // the elders' bench, open at the side door
+  { const cx = X0 + .4 + (X1 - X0 - .8) / 2, cz = PZ - .4;   // a scarlet cord tied round the middle column, hanging down (James 2:25)
+    const red = mat('jcScarlet', '#c01a1a'), t = add(new THREE.TorusGeometry(.3, .045, 6, 16), red, cx, F + 1.7, cz, g); t.rotation.x = Math.PI / 2; t.userData.nocol = 1;
+    const c = cyl(.03, .03, 1.2, 5, red, cx + .2, F + .5, cz + .22, g); c.rotation.z = .12; c.userData.nocol = 1; }
   for (const [px, pz] of [[X0 - .1, Z1 + 1.8]]) box(.6, .5, 3.6, flag, px, P, pz, g);   // a step at the portico's open front end
   // walking: platform, steps (half height), floors
   const raised = [[z, 13, x + (FX + 13) / 2, (13 - FX) / 2, y0 + P], [z + 13.9, .75, x + 7, 2, y0 + P * .5], [z, 3.5, x + FX - .9, .9, y0 + P * .5], [z + (SZ0 + Z1) / 2, (Z1 - SZ0) / 2 + .3, x + (X0 + X1) / 2, (X1 - X0) / 2 + .3, y0 + F], [z + Z1 + 2.1, 1.8, x + (X0 + X1) / 2, (X1 - X0) / 2 + .3, y0 + F]];

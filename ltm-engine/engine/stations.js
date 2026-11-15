@@ -31,14 +31,14 @@ function station(ch, room, name, x, z, look, custom) {
       const gem = add(new THREE.OctahedronGeometry(.13, 0), stationMat, c.x, c.y + .35, c.z); gem.castShadow = false; gem.userData.dyn = 1; gem.userData.isGem = 1;
       const l = label(`${cn}:${v}`); l.position.set(c.x, c.y + .7, c.z); l.scale.set(.7, .35, 1); labelScene.add(l);
       loci.push({ v, x: c.x, z: c.z, fy: c.y, base: null, gem, label: l, where: `${CORNER[i]} · ${c.what}` }); });
-    const ban = label2(name, `${cn}:${v0}–${v1}`); ban.position.set(x, THEME.bannerClear ? Math.max(heightAt(x, z) + 3.3, ...loci.map(l => l.fy + 1.05)) : heightAt(x, z) + 4.4, z); ban.scale.set(2.2, .76, 1); labelScene.add(ban);
-    STATIONS.push({ ch, room, name, x, z, look, loci, banner: ban, text: `${BOOK} ${cn}:${v0}–${v1}` }); return; }
+    const ban = label2(name, `${cn}:${v0}${v1 > v0 ? '–' + v1 : ''}`); ban.position.set(x, THEME.bannerClear ? Math.max(heightAt(x, z) + 3.3, ...loci.map(l => l.fy + 1.05)) : heightAt(x, z) + 4.4, z); ban.scale.set(2.2, .76, 1); labelScene.add(ban);
+    STATIONS.push({ ch, room, name, x, z, look, loci, banner: ban, text: `${BOOK} ${cn}:${v0}${v1 > v0 ? '–' + v1 : ''}` }); return; }
   spots.forEach(([f, r], i) => { const v = v0 + i; if (v > v1) return;
     const lx = x + fx * f * h + rx * r * h, lz = z + fz * f * h + rz * r * h, y = heightAt(lx, lz);
     const base = add(new THREE.CylinderGeometry(.3, .36, .16, 8), 'marble', lx, y + .08, lz); base.userData.dyn = 1;
     const gem = add(new THREE.OctahedronGeometry(.17, 0), stationMat, lx, y + .65, lz); gem.castShadow = false; gem.userData.dyn = 1;
     const l = label(`${cn}:${v}`); l.position.set(lx, y + 1.15, lz); l.scale.set(.9, .45, 1); labelScene.add(l);
     loci.push({ v, x: lx, z: lz, base, gem, label: l, where: CORNER[i] }); });
-  STATIONS.push({ ch, room, name, x, z, look, loci, text: `${BOOK} ${cn}:${v0}–${v1}` });
+  STATIONS.push({ ch, room, name, x, z, look, loci, text: `${BOOK} ${cn}:${v0}${v1 > v0 ? '–' + v1 : ''}` });
 }
 
