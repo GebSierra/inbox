@@ -3,13 +3,9 @@
 // the twelve tribes further out in four camps, each under its standard: Judah east, Reuben south, Ephraim west, Dan north.
 const tentMs = ['#2e2724', '#3a302a', '#4a3a2e', '#33291f', '#56463a'].map((c, i) => mat('campTent' + i, c, { map: TEX.cloth }));
 function campTent(x, z, rot, s = 1) {
-  const g = new THREE.Group(); g.position.set(x, heightAt(x, z), z); g.rotation.y = rot; scene.add(g);
-  const w = 3.6 * s, d = 2.6 * s, h = 1.7 * s, m = tentMs[(rnd() * tentMs.length) | 0];
-  const sh = new THREE.Shape(); sh.moveTo(-d / 2, 0); sh.lineTo(-d / 2 + .15, h * .55); sh.lineTo(0, h); sh.lineTo(d / 2 - .15, h * .55); sh.lineTo(d / 2, 0); sh.lineTo(-d / 2, 0);
-  const geo = new THREE.ExtrudeGeometry(sh, { depth: w, bevelEnabled: false }); geo.translate(0, 0, -w / 2);
-  const t = add(geo, m, 0, 0, 0, g); t.rotation.y = Math.PI / 2;
-  box(w * .35, h * .5, .04, mat('campDoor', '#1a1512'), 0, 0, d / 2 + .01, g);                 // the dark doorway
-  if (rnd() < .35) { box(1.2 * s, .05, .8 * s, mat('campMat', '#a8874e'), R(-1, 1), .02, d / 2 + .9, g); }
+  // the black goat-hair tent (objects/up-tent.js). The same random draws as the old box tent: one for the colour, one for the rug, and its position.
+  const col = tentMs[(rnd() * tentMs.length) | 0].color, rug = rnd() < .35, rugX = rug ? R(-1, 1) : 0;
+  const g = new THREE.Group(); scene.add(g); upTent(g, x, heightAt(x, z), z, rot, s, '#' + col.getHexString(), { mat: rug, rugX });
   return g;
 }
 // the standard of each camp: a tall pole with a coloured banner (Num 2:2)
