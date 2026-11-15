@@ -94,7 +94,7 @@ function buildRoom(ch, n) {
   else bookError(`${key} ${r.name}: unknown room kind "${r.kind}"`);
   const st = stationOf(ch, n); if (!st) bookError(`${key} ${r.name}: nothing was built`);
   if (st.name !== r.name) bookError(`${key}: built as "${st.name}", the book says "${r.name}"`);
-  if (r.back !== undefined) st.back = r.back; if (r.pitch !== undefined) st.pitch = r.pitch;
+  if (r.back !== undefined) { st.back = r.back; st.bookBack = true; } if (r.pitch !== undefined) st.pitch = r.pitch;
   if (r.bannerLift && st.banner) st.banner.position.y += r.bannerLift;
 }
 // buildRooms(ch) builds every room of the chapter in the book's order; buildRooms(ch, from, to) only rooms from..to (when a bit of the town's

@@ -139,9 +139,10 @@ function jcSynagogue(x, z) {
   for (let k = 0; k <= 6; k++) box(.18, .22, 3.8, jcM.beam(), X0 + .2 + (X1 - X0 - .4) * k / 6, F + 3.85, Z1 + 1.8, g).userData.nocol = 1;
   box(X1 - X0 + .8, .3, 4.1, jcM.roof(), (X0 + X1) / 2, F + 4.05, Z1 + 1.8, g).userData.nocol = 1;
   for (const [b0, b1] of [[X0 + .5, 1.6], [3.2, X1 - .5]]) { box(b1 - b0, .45, .55, jcM.ash(), (b0 + b1) / 2, F, Z1 + .62, g); box(b1 - b0, .1, .62, jcM.ashDk(), (b0 + b1) / 2, F + .45, Z1 + .62, g); }   // the elders' bench, open at the side door
-  { const cx = X0 + .4 + (X1 - X0 - .8) / 2, cz = PZ - .4;   // a scarlet cord tied round the middle column, hanging down (James 2:25)
-    const red = mat('jcScarlet', '#c01a1a'), t = add(new THREE.TorusGeometry(.3, .045, 6, 16), red, cx, F + 1.7, cz, g); t.rotation.x = Math.PI / 2; t.userData.nocol = 1;
-    const c = cyl(.03, .03, 1.2, 5, red, cx + .2, F + .5, cz + .22, g); c.rotation.z = .12; c.userData.nocol = 1; }
+  { const cx = 5.9, cz = 10.1;   // (owner 2026-11-15, looking out from the porch) a post in the courtyard with a scarlet cord tied to it and hanging down (James 2:25)
+    const red = mat('jcScarlet', '#c01a1a'); box(.22, 1.7, .22, jcM.beam(), cx, P, cz, g); box(.34, .12, .34, jcM.ash(), cx, P, cz, g);
+    const t = add(new THREE.TorusGeometry(.17, .045, 6, 14), red, cx, P + 1.45, cz, g); t.rotation.x = Math.PI / 2; t.userData.nocol = 1;
+    const c = cyl(.03, .03, 1.1, 5, red, cx + .15, P + .3, cz + .1, g); c.rotation.z = .1; c.userData.nocol = 1; }
   for (const [px, pz] of [[X0 - .1, Z1 + 1.8]]) box(.6, .5, 3.6, flag, px, P, pz, g);   // a step at the portico's open front end
   // walking: platform, steps (half height), floors
   const raised = [[z, 13, x + (FX + 13) / 2, (13 - FX) / 2, y0 + P], [z + 13.9, .75, x + 7, 2, y0 + P * .5], [z, 3.5, x + FX - .9, .9, y0 + P * .5], [z + (SZ0 + Z1) / 2, (Z1 - SZ0) / 2 + .3, x + (X0 + X1) / 2, (X1 - X0) / 2 + .3, y0 + F], [z + Z1 + 2.1, 1.8, x + (X0 + X1) / 2, (X1 - X0) / 2 + .3, y0 + F]];

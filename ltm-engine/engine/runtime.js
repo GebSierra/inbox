@@ -178,7 +178,7 @@ window.__measure = i => { const st = STATIONS[i]; camera.updateMatrixWorld(); co
 window.__stopMeasure = i => { window.__snap(i); placeCamera(); return window.__measure(i); };
 window.__state = () => ({ idx, x: player.x, z: player.z, hud: hudS.textContent, n: STATIONS.length, moving: !!tween });
 window.__blockers = () => { const out = [], rc = new THREE.Raycaster(); const meshes = scene.children.filter(o => o.isMesh && !o.userData.dyn);
-  const view = st => { const yaw = Math.atan2(-(st.look[0] - st.x), -(st.look[2] - st.z)); const b = st.banner ? 5.6 : 6.2; return [st.x + Math.sin(yaw) * b, st.z + Math.cos(yaw) * b]; };
+  const view = st => { const yaw = Math.atan2(-(st.look[0] - st.x), -(st.look[2] - st.z)); const b = st.bookBack ? st.back : st.banner ? 5.6 : 6.2; return [st.x + Math.sin(yaw) * b, st.z + Math.cos(yaw) * b]; };
   for (let i = 0; i < STATIONS.length - 1; i++) { const nx = STATIONS[i + 1], pts = [view(STATIONS[i]), ...(VIA[`${nx.ch}.${nx.room}`] || []), view(nx)];
     for (let j = 0; j < pts.length - 1; j++) { const [ax, az] = pts[j], [bx, bz] = pts[j + 1];
       const a = new THREE.Vector3(ax, groundY(ax, az) + 1, az), b = new THREE.Vector3(bx, groundY(bx, bz) + 1, bz), d = b.clone().sub(a), L = d.length(); if (L < .01) continue; d.normalize();

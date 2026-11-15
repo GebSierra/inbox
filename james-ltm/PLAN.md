@@ -85,3 +85,13 @@ Owner: "Look at the plan. The objects available… I don't think we need that ma
 Totals: 13 library items, 13 built features, 1 new detail (was 26 new objects).
 
 **Status 2026-11-15:** G2 built as chapter 2 (all checks pass). Changes from G2 while building: the scroll-room brazier is lit and the cart wheel stands upright, so their labels are "brazier" and "cart wheel"; the Back Steps carry two extra, verse-free objects (a storage jar and a clay bowl) because every room needs two objects. Engine: book objects can now have a "lift", and "place": true spots (a step, a pool, a door) work in plain rooms.
+
+## H. Chapter 3: The Harbour (built 2026-11-15, owner: "build the harbor next then tell me what you did")
+Enter through the harbour gate onto the quay. Rooms clockwise from the left: two on the west quay (facing west along it), then out to the lighthouse at the end of the mole and back to the mole's root.
+| Room | Verses | 1 near-left | 2 far-left | 3 far-right | 4 near-right | 5 centre |
+|---|---|---|---|---|---|---|
+| 1 The Moorings | 3:1–5 | fisherman with a net | stacked crates | horse with a bridle | the moored ship's steering oar (built) | the fisherman's small fire (built) |
+| 2 The Landing Steps | 3:6–10 | oil lamps on a post | songbird cage | fishing net | the top of the landing steps (built) | barrel |
+| 3 The Lighthouse | 3:11–15 | basin of fresh water | olive press | the foot of the lighthouse (built) | the bollard on the mole's edge (built) | painted jar |
+| 4 The Mole | 3:16–18 | grey donkey | bowl of figs | dove cages | | |
+Quay: shore levelled (terrain FLAT), deck flush with the harbour gate road, walkable deck and mole (RAISED), landing steps to the water.

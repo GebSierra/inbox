@@ -22,11 +22,27 @@
   VIA['2.2'] = [[1, 14], [6, 14.2]];                                                    // up the steps onto the courtyard
   VIA['2.3'] = [[13.5, 11], [17.2, 11]];                                                // through the main door into the hall
   VIA['2.4'] = [[26.1, 12.8]];                                                          // across the hall to the storeroom doorway
-  VIA['2.5'] = [[27, 15], [24.4, 16.4], [22.6, 16.8], [22.4, 19.5], [22.4, 20.9], [18.4, 21.6], [18.4, 24]];   // round the hall, out by the side door, along the porch, out between the columns
-  VIA['2.6'] = [[26, 30]];                                                            // along the lane to the foot of the back steps
+  VIA['2.5'] = [[27, 15], [24.4, 16.4], [22.6, 16.8], [22.4, 19.5], [22.4, 20.9]];   // round the hall, out by the side door onto the porch (you stand with your back to the building)
+  VIA['2.6'] = [[26.7, 23.6], [26, 26.4]];                                                            // out between the columns, round the scarlet-cord post, down the back steps
   buildRooms(2);
 }
 { // chapter 5: the rich man's walled house, just outside the west gate among his fields
   jcRichHouse(-82, -13);
   WALKWAYS.push([-83.6, -23, -80.4, -21]);
+}
+{ // chapter 3: the harbour. The quay and mole are in world/harbour.js (deck top HARB_QT); here: walking on them, the rooms' built details, the rooms
+  const QT = HARB_QT;
+  RAISED.push([-44.35, 3.75, -11, 55, QT], [-60, 17.2, 31, 3.2, QT]);   // the quay deck (out over the water) and the mole
+  { const sh = TN.ship(-1, -.35, -51, Math.PI / 2); sh.userData.moored = 1; }   // a ship moored along the quay, its stern (steering oar) at x -7: The Moorings
+  { const g = new THREE.Group(); g.position.set(-10, QT, -44.65); scene.add(g);  // the fisherman's small fire: a ring of stones, embers and three flames
+    for (let k = 0; k < 9; k++) { const a = k / 9 * Math.PI * 2, st = add(new THREE.DodecahedronGeometry(.13, 0), 'stoneDk', Math.cos(a) * .42, .06, Math.sin(a) * .42, g); st.scale.y = .7; }
+    cyl(.32, .36, .05, 8, mat('ember', '#ff8a3a', { emissive: '#ff5a1a', emissiveIntensity: .8 }), 0, 0, 0, g);
+    for (const [fx, fz, fs] of [[0, 0, 2.2], [.12, .08, 1.5], [-.1, -.06, 1.6]]) flame(g, fx, .04, fz, fs); }
+  for (let k = 0; k < 5; k++) box(2.2, QT + 2.2 - (k + 1) * .32, .5, 'stone', -23, -2.2, -48.25 - k * .5);   // landing steps down to the water: The Landing Steps
+  cyl(.22, .26, .7, 6, 'stoneDk', 32.9, QT, -66.55);                                                       // a bollard on the mole's edge: The Lighthouse
+  zoneLabel(3, 'The Harbour', 0, -55);
+  VIA['3.1'] = [[20, 29.2], [4.5, 29.2], [-.8, 24], [-.8, -38], [0, -41.5], [-3, -43.5]];        // from the back steps along the lane, down the avenue, out of the harbour gate
+  VIA['3.2'] = [[-5.5, -43.5], [-16, -43.5]];                                                    // west along the quay, round the fire
+  VIA['3.3'] = [[-16, -43.5], [-5.5, -43.5], [10, -43.5], [29, -44.2], [30.6, -50]];             // back east along the quay and out along the mole
+  buildRooms(3);
 }
