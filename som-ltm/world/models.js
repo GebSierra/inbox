@@ -24,127 +24,145 @@ function thornBush(g, x, y, z, s = 1) { for (let i = 0; i < 9; i++) { const a = 
 function def(id, label, fn) { defObject(id, (g, x, y, z) => { const h = G(); h.position.set(x, y, z); g.add(h); return fn(h); }, { label, origin: 'sermon on the mount', kind: 'object' }); }
 
 // ---- the Seat (5:1–5) ----
-def('som-goatskin-bag', 'Goatskin water bag on a forked stake', g => {
-  cy(g, .05, .07, 1.75, 7, mWoodDk, 0, 0, 0); cy(g, .03, .045, .5, 6, mWoodDk, -.12, 1.6, 0, 0, 0, .6); cy(g, .03, .045, .5, 6, mWoodDk, .12, 1.6, 0, 0, 0, -.6);   // the forked stake
-  const hair = MM('somGoatHair', '#8a6440', TEX.cloth);
-  const body = add(new THREE.CapsuleGeometry(.24, .62, 6, 12), hair, 0, 1.05, .32, g); body.rotation.z = Math.PI / 2; body.scale.set(1, 1.05, .85);   // the whole skin, swollen with water, hanging sideways
-  const belly = add(new THREE.SphereGeometry(.26, 12, 8), hair, .05, .93, .32, g); belly.scale.set(1.5, .7, .85);   // sagging belly
-  for (const [x, up] of [[-.45, 1], [-.3, 1], [.3, 1], [.45, 1]]) { const lg = cy(g, .05, .07, .26, 7, mLeatherDk, x, 1.18, .32, 0, 0, x < 0 ? .5 : -.5); cy(g, .055, .055, .04, 7, mCord, x * 1.1, 1.35, .32, 0, 0, x < 0 ? .5 : -.5); }   // four leg stumps, each tied off
-  const nk = cy(g, .07, .1, .26, 8, mLeatherDk, -.62, 1.02, .32, 0, 0, 1.2); cy(g, .075, .075, .05, 8, mCord, -.74, 1.07, .32, 0, 0, 1.2);   // the neck, the spout, tied with cord
-  for (const sx of [-.4, .4]) { const c2 = cy(g, .012, .012, .55, 4, mCord, sx * .55, 1.5, .2, .5, 0, sx < 0 ? -.45 : .45); }   // cords from the legs up to the fork
-  return 1.9; });
+def('som-goatskin-bag', 'Goatskin water bag hung from a forked stake', g => {
+  cy(g, .05, .07, 1.9, 7, mWoodDk, 0, 0, -.35); cy(g, .03, .045, .55, 6, mWoodDk, -.14, 1.75, -.35, 0, 0, .6); cy(g, .03, .045, .55, 6, mWoodDk, .14, 1.75, -.35, 0, 0, -.6);   // the forked stake, behind the bag
+  const hair = MM('somGoatHair', '#8a6440', TEX.cloth), seam = MM('somSeam', '#4a3020');
+  const body = add(new THREE.CapsuleGeometry(.25, .62, 6, 12), hair, 0, .95, .1, g); body.rotation.z = Math.PI / 2; body.scale.set(1, 1.05, .85); const belly = add(new THREE.SphereGeometry(.27, 12, 8), hair, .05, .83, .1, g); belly.scale.set(1.5, .72, .85);
+  bx(g, 1.0, .02, .02, seam, 0, 1.12, .3); bx(g, .02, .35, .02, seam, -.15, .95, .32);   // seams of the stitched skin
+  for (const x of [-.45, -.3, .3, .45]) { cy(g, .055, .075, .3, 7, mLeatherDk, x, 1.12, .1, 0, 0, x < 0 ? .45 : -.45); cy(g, .06, .06, .04, 7, mCord, x * 1.12, 1.3, .1, 0, 0, x < 0 ? .45 : -.45); }   // four leg stubs, tied off
+  cy(g, .08, .11, .3, 8, mLeatherDk, -.66, .95, .1, 0, 0, 1.15); cy(g, .085, .085, .05, 8, mCord, -.8, 1.01, .1, 0, 0, 1.15); cy(g, .05, .05, .06, 6, mWoodLt, -.84, 1.04, .1, 0, 0, 1.15);   // the neck, tied, a wooden stopper
+  for (const x of [-.5, .5]) { const lx = x * .9, ly = 1.32, tx = x * .32, ty = 1.95, L = Math.hypot(tx - lx, ty - ly, .45); const c = cy(g, .013, .013, L, 4, mCord, (lx + tx) / 2, (ly + ty) / 2 - L / 2, -.12, .55, 0, Math.atan2(tx - lx, ty - ly) * -1); }   // cords from the legs up to the fork
+  return 2.0; });
 def('som-limestone-pavement', 'Bare limestone pavement', g => {
-  const P = [[0, 0, 1.0], [1.35, -.3, .75], [-1.25, .2, .8], [.4, 1.1, .7], [-.5, -1.0, .65], [1.1, .9, .5], [-1.4, -.9, .45], [.2, -1.6, .5]];
-  P.forEach(([x, z, r], i) => slab(g, r * .92, R(.08, .14), i % 3 ? mLime : mLimeDk, x, R(-.02, .03), z, 6, R(0, 3)));
-  bx(g, 4.2, .02, 4, MM('somCrack', '#5a5040'), 0, -.01, 0);   // the dark soil showing in the cracks between the slabs
-  for (let i = 0; i < 14; i++) { const t = add(new THREE.ConeGeometry(.03, R(.12, .25), 3), mGrass, R(-1.6, 1.6), .05, R(-1.6, 1.4), g); }   // grass in the cracks
-  return .2; });
+  const soil = add(new THREE.CircleGeometry(2.1, 9), MM('somCrack', '#6a5e48'), 0, .005, 0, g); soil.rotation.x = -Math.PI / 2; soil.scale.set(1, .9, 1);
+  const P = [[0, 0, .9], [1.25, -.35, .65], [-1.15, .2, .7], [.35, 1.05, .62], [-.45, -.95, .6], [1.05, .85, .45], [-1.3, -.85, .4], [.25, -1.5, .45], [-.8, 1.1, .45]];
+  P.forEach(([x, z, r], i) => { const sh = new THREE.Shape(); const n = 4 + (i % 3); for (let k = 0; k < n; k++) { const a = k / n * 6.283 + R(-.3, .3), rr = r * R(.7, 1.05); k ? sh.lineTo(Math.cos(a) * rr, Math.sin(a) * rr) : sh.moveTo(Math.cos(a) * rr, Math.sin(a) * rr); }
+    const geo = new THREE.ExtrudeGeometry(sh, { depth: R(.12, .2), bevelEnabled: false }); geo.rotateX(-Math.PI / 2); const o = add(geo, i % 3 ? mLime : mLimeDk, x, 0, z, g); o.rotation.y = R(0, 3); });   // angular blocks with deep cracks between
+  for (let i = 0; i < 26; i++) { const a = R(0, 6.3), d = R(.4, 1.9); add(new THREE.ConeGeometry(.035, R(.15, .3), 3), mGrass, Math.cos(a) * d, .08, Math.sin(a) * d, g); }   // grass in the grikes
+  return .22; });
 def('som-seat-rock', 'Flat seat-rock', g => {
-  boulder(g, 1.2, mRock, 0, -.15, 0, .55); slab(g, .95, .1, mLime, 0, .52, 0, 7, .4); boulder(g, .4, mRockDk, -1.1, 0, .5, .6); boulder(g, .3, mRockDk, .9, 0, .8, .6);
-  return .65; });
+  const rk = MM('somSeatRock', '#b4aa96'); const shp = new THREE.Shape(); [[1.2, 0], [.8, .9], [-.4, 1.05], [-1.15, .35], [-1, -.6], [-.1, -1.1], [.9, -.75]].forEach(([x, z], i) => i ? shp.lineTo(x, z) : shp.moveTo(x, z));
+  const geo = new THREE.ExtrudeGeometry(shp, { depth: .55, bevelEnabled: true, bevelThickness: .12, bevelSize: .15, bevelSegments: 2 }); geo.rotateX(-Math.PI / 2); add(geo, rk, 0, 0, 0, g);   // one stone, its top worn flat
+  for (const [x, z, r] of [[-1.35, .55, .3], [1.25, .7, .25], [1.4, -.5, .2], [-.9, -1.15, .22], [.3, 1.35, .18]]) boulder(g, r, mRockDk, x, 0, z, .7);
+  return .8; });
 def('som-split-boulder', 'Split boulder with a thornbush in the crack', g => {
-  const a = boulder(g, .85, mRock, -.55, 0, 0, .85); a.scale.x = .8; const b = boulder(g, .8, mRockDk, .55, 0, .05, .85); b.scale.x = .8;
-  bx(g, .18, .3, 1.2, mDark, 0, 0, 0); thornBush(g, 0, .3, .1, 1.5);
-  return 1.25; });
+  const geo = new THREE.DodecahedronGeometry(.9, 0); const half = (s) => { const o = add(geo.clone(), mRock, s * .52, .55, 0, g); o.scale.set(.62, .78, .95); o.rotation.y = .3; return o; }; half(-1); half(1);   // the two halves of one stone
+  for (let k = 0; k < 3; k++) thornBush(g, R(-.05, .05), .25 + k * .1, R(-.25, .25), 1.6);
+  return 1.3; });
 
 // ---- the Sheepfold (5:6–10) ----
 function dryWall(g, x0, z0, x1, z1, hh, th = .5) { const L = Math.hypot(x1 - x0, z1 - z0), n = Math.max(2, Math.round(L / .42)); for (let row = 0; row < Math.round(hh / .26); row++) for (let k = 0; k <= n; k++) { const t = Math.min(1, (k + (row % 2) * .5) / n);
   const st = add(new THREE.BoxGeometry(R(.38, .5), R(.2, .28), th * R(.85, 1.05)), rnd() > .45 ? mRock : mRockDk, x0 + (x1 - x0) * t, .13 + row * .25, z0 + (z1 - z0) * t, g); st.rotation.y = -Math.atan2(z1 - z0, x1 - x0) + R(-.1, .1); st.rotation.z = R(-.06, .06); } }
 def('som-slab-corner', 'Corner of the fold roofed with flat slabs', g => {
-  dryWall(g, -1.2, -1.2, 1.2, -1.2, 1.3); dryWall(g, -1.2, -1.2, -1.2, 1.0, 1.3);   // two walls meeting at the back-left
-  for (let k = 0; k < 3; k++) slab(g, .8, .14, mRockDk, -.5 + k * .55, 1.32, -.5 + k * .1, 5, R(0, 3));   // thick flat slabs laid across
-  bx(g, 1.8, .02, 1.8, mDark, -.3, .01, -.3);   // the shade beneath
-  return 1.6; });
-def('som-crook', 'Shepherd\'s crook hung on the wall', g => {
-  dryWall(g, -.8, 0, .8, 0, .9, .45); cy(g, .03, .03, .25, 5, mWoodDk, .25, .78, .2, Math.PI / 2);   // a stretch of wall with a peg
-  const st = cy(g, .03, .035, 1.9, 7, mWoodLt, .2, -.05, .26, -.04, 0, .1); const hk = add(new THREE.TorusGeometry(.14, .03, 6, 12, Math.PI * 1.25), mWoodLt, .38, 1.9, .26, g); hk.rotation.z = -.3;
-  return 2.1; });
+  bx(g, 2.6, .02, 2.4, MM('somFoldFloor', '#9a8458'), 0, .01, -.1);   // trodden earth floor
+  dryWall(g, -1.25, -1.25, 1.25, -1.25, 1.35, .7); dryWall(g, -1.25, -1.25, -1.25, 1.05, 1.35, .7);
+  slab(g, 1.0, .2, mRockDk, -.35, 1.38, -.5, 5, .4); slab(g, .9, .2, mRock, .3, 1.4, -.25, 5, 1.6); slab(g, .8, .18, mRockDk, -.5, 1.42, .3, 5, 2.6);   // three thick slabs laid across for shade
+  return 1.7; });
+def('som-crook', 'Shepherd\'s crook hung on a peg on the wall', g => {
+  dryWall(g, -.9, 0, .9, 0, 1.0, .45); const peg = cy(g, .045, .045, .32, 6, mWoodLt, .2, 1.0, .22, Math.PI / 2);   // dry-stone wall, a stout wooden peg
+  cy(g, .03, .035, 1.25, 7, mWoodLt, .48, -.05, .3, 0, 0, .02); const hk = add(new THREE.TorusGeometry(.15, .03, 6, 12, Math.PI * 1.1), mWoodLt, .33, 1.2, .3, g); hk.rotation.z = -.05;   // the crook hanging by its hook over the peg
+  return 1.4; });
 def('som-fold-gateway', 'Gateway of the fold', g => {
-  dryWall(g, -2, 0, -.75, 0, 1.0); dryWall(g, .75, 0, 2, 0, 1.0);
-  for (const s of [-1, 1]) { boulder(g, .42, mRockDk, s * .72, 0, 0, 2.2); } slab(g, .95, .16, mRock, 0, 1.25, 0, 5, 1.57);   // two upright stones, a lintel slab across
-  bx(g, 1.2, .02, .8, MM('somWorn', '#b8a070'), 0, .01, .3);   // worn earth through the gap
-  return 1.45; });
+  dryWall(g, -2.8, 0, -.85, 0, 1.25, .6); dryWall(g, .85, 0, 2.8, 0, 1.25, .6);
+  for (const s of [-1, 1]) bx(g, .45, 1.6, .55, mRock, s * .68, 0, 0, s * .04);   // two upright slabs with flat bearing faces
+  bx(g, 1.9, .26, .6, mRockDk, 0, 1.6, 0, .03); bx(g, 1.2, .02, .9, MM('somWorn', '#b8a070'), 0, .01, .3);   // the lintel; worn earth through the gap
+  return 1.9; });
 
 // ---- the House on the Sand (7:26–29) ----
 def('som-date-palm', 'Date palm leaning over the house', g => {
-  const n = 9; let x = 0, y = 0, lean = .08; for (let i = 0; i < n; i++) { const h = .55, seg = cy(g, .16 - i * .006, .19 - i * .006, h, 8, mPalmTrunk, x, y, 0, 0, 0, -lean * (i + 1) * .5); x += Math.sin(lean * (i + 1) * .5) * h; y += Math.cos(lean * (i + 1) * .5) * h; add(new THREE.TorusGeometry(.17 - i * .006, .03, 4, 8), mWoodDk, x, y - .02, 0, g).rotation.x = Math.PI / 2; }
-  for (let k = 0; k < 11; k++) { const a = k / 11 * 6.28, fr = new THREE.Group(); fr.position.set(x, y + .1, 0); fr.rotation.set(0, a, 0); g.add(fr);
-    const shape = new THREE.Shape(); shape.moveTo(0, 0); shape.quadraticCurveTo(.9, .35, 2, -.5); shape.quadraticCurveTo(.9, .1, 0, -.08); const leaf = add(new THREE.ShapeGeometry(shape), mFrond, 0, 0, 0, fr); leaf.rotation.set(Math.PI / 2 - R(.2, .5), 0, 0); }
-  for (let k = 0; k < 4; k++) add(new THREE.SphereGeometry(.12, 6, 5), mDates, x + R(-.2, .2), y - .15, R(-.2, .2), g).scale.y = 1.6;
-  return y + .4; });
+  let x = 0, y = 0; for (let i = 0; i < 10; i++) { const lean = .07 * (i + 1) * .45, r0 = .26 - i * .013, h = .55; cy(g, r0 - .015, r0, h, 9, mPalmTrunk, x, y, 0, 0, 0, -lean); x += Math.sin(lean) * h; y += Math.cos(lean) * h; add(new THREE.TorusGeometry(r0 - .01, .035, 4, 9), mWoodDk, x, y - .03, 0, g).rotation.set(Math.PI / 2, 0, -lean); }   // tapering, scarred trunk, leaning
+  for (let k = 0; k < 15; k++) { const a = k / 15 * 6.28, droop = k % 2 ? .55 : .25, fr = new THREE.Group(); fr.position.set(x, y + .1, 0); fr.rotation.set(0, a, 0); g.add(fr);
+    for (let j = 0; j < 7; j++) { const t = (j + .5) / 7, L = 2.2, px = t * L, py = Math.sin(t * 2.4) * .5 - t * t * droop * 2; const lf = bx(fr, .3, .015, .55 * (1 - t * .6), mFrond, px, py, 0, 0, 0, -.3 - t * droop); }
+  }   // fifteen arching fronds
+  for (let k = 0; k < 4; k++) { const a = k / 4 * 6.28; for (let j = 0; j < 8; j++) add(new THREE.SphereGeometry(.06, 5, 4), mDates, x + Math.cos(a) * .35 + R(-.08, .08), y - .2 - j * .05, Math.sin(a) * .35 + R(-.08, .08), g).scale.y = 1.4; }   // hanging date clusters
+  return y + .5; });
 def('som-mudbrick-wall', 'Low mud-brick wall of the yard', g => {
-  for (let row = 0; row < 4; row++) for (let k = 0; k < 7; k++) bx(g, .44, .18, .3, rnd() > .5 ? mBrick : mMud, -1.4 + k * .46 + (row % 2) * .23, row * .2, 0, R(-.03, .03));
-  bx(g, 3.4, .06, .34, mMud, 0, .8, 0);   // a plastered top course
-  return .9; });
+  const mb = MM('somMudBrick', '#b49a74', TEX.plaster), mb2 = MM('somMudBrick2', '#a68c66', TEX.plaster);
+  for (let row = 0; row < 3; row++) for (let k = 0; k < 6; k++) bx(g, .56 * R(.94, 1.02), .24, .36, rnd() > .5 ? mb : mb2, -1.45 + k * .58 + (row % 2) * .29, row * .25, 0, R(-.04, .04), 0, R(-.03, .03));
+  const cap = add(new THREE.CapsuleGeometry(.2, 3.1, 4, 8), mb, 0, .82, 0, g); cap.rotation.z = Math.PI / 2; cap.scale.set(1, .6, 1);   // a rounded mud coping
+  return .95; });
 
 // ---- the Ox Stall (6:21–25) ----
 def('som-yoke-on-peg', 'Yoke for two oxen, hung on its peg', g => {
-  bx(g, 2.6, 1.8, .3, mRock, 0, 0, -.2); cy(g, .05, .05, .35, 6, mWoodDk, 0, 1.55, 0, Math.PI / 2);   // a stretch of the stall wall with a peg
-  const beam = bx(g, 2.1, .16, .18, mWoodLt, 0, 1.38, .12); for (const s of [-.6, .6]) { const bow = add(new THREE.TorusGeometry(.22, .045, 6, 12, Math.PI), mWood, s, 1.36, .12, g); bow.rotation.z = Math.PI; cy(g, .03, .03, .12, 5, mWoodDk, s - .22, 1.42, .12); cy(g, .03, .03, .12, 5, mWoodDk, s + .22, 1.42, .12); }
-  add(new THREE.TorusGeometry(.07, .02, 4, 8), mIron, 0, 1.3, .2, g);   // the ring for the pole
-  return 1.8; });
-def('som-plough', 'Wooden plough with an iron share', g => {
-  const beam = bx(g, .12, .12, 2.4, mWoodLt, 0, .62, -.1, 0, -.32); const sole = bx(g, .16, .12, .9, mWood, 0, .08, .75); const share = bx(g, .1, .08, .4, mIron, 0, .06, 1.3, 0, -.1);
-  const stilt = bx(g, .09, 1.0, .09, mWood, 0, .1, .3, 0, -.35); bx(g, .45, .07, .07, mWood, 0, 1.0, .0, 0, -.35);   // the upright and its handle
-  return 1.1; });
+  dryWall(g, -1.5, -.3, 1.5, -.3, 2.1, .45); cy(g, .07, .07, .6, 7, mWoodLt, 0, 1.85, .0, Math.PI / 2);   // coursed stall wall and a stout peg
+  const yk = MM('somYokeWood', '#c89a62', TEX.wood); const beam = add(new THREE.TorusGeometry(3.2, .1, 6, 30, .62), yk, 0, -1.45, .35, g); beam.rotation.z = Math.PI / 2 - .31;   // a long, gently curved beam hung at its middle
+  for (const s of [-.75, .75]) { const bow = add(new THREE.TorusGeometry(.3, .055, 6, 14, Math.PI), yk, s, 1.42, .35, g); bow.rotation.z = Math.PI; for (const d of [-.3, .3]) cy(g, .04, .04, .2, 5, mWoodDk, s + d, 1.6, .35); }   // two big U-shaped bows hanging below, pegged through the beam
+  add(new THREE.TorusGeometry(.09, .025, 4, 10), mIron, 0, 1.55, .45, g);
+  return 2.1; });
+def('som-plough', 'Wooden plough (ard) with an iron share', g => {
+  bx(g, .16, .14, 1.0, mWood, 0, .06, .45);   // the sole, along the ground
+  const share = add(new THREE.ConeGeometry(.08, .45, 4), mIron, 0, .1, 1.12, g); share.rotation.x = Math.PI / 2;   // the pointed iron share on its tip
+  const beam = bx(g, .12, .12, 2.6, mWoodLt, 0, .75, -.45, 0, .42);   // the long beam rising from the sole to the yoke
+  const stilt = bx(g, .1, 1.1, .1, mWood, 0, .1, .05, 0, -.3); bx(g, .5, .08, .08, mWoodLt, 0, 1.15, -.25, 0, -.3);   // the handle upright and its grip
+  return 1.3; });
 def('som-feeding-niche', 'Roof pillar with a feeding niche of hay', g => {
-  bx(g, .8, 2.7, .8, mRock, 0, 0, 0); bx(g, .62, .55, .2, mDark, 0, .75, .32); for (let i = 0; i < 10; i++) { const s = bx(g, .5, .02, .03, mStraw, R(-.2, .2), .8 + R(0, .3), .36, R(0, 3), 0, R(-.4, .4)); }
-  bx(g, .68, .08, .3, mWoodLt, 0, .7, .38);   // the niche's wooden lip
-  return 2.75; });
+  for (let row = 0; row < 9; row++) for (const [x, z, w, d] of [[0, -.3, .9, .3], [0, .3, .9, .3], [-.3, 0, .3, .3], [.3, 0, .3, .3]]) { if (row >= 2 && row <= 4 && z > .2) continue; bx(g, w * R(.97, 1.03), .28, d, rnd() > .5 ? mRock : mRockDk, x, row * .3, z, R(-.03, .03)); }
+  bx(g, .7, .08, .5, mRockDk, 0, .58, .15); bx(g, .7, .08, .5, mRockDk, 0, 1.5, .15);
+  bx(g, .6, .25, .4, mWood, 0, .66, .18); for (let i = 0; i < 26; i++) bx(g, R(.3, .6), .025, .03, mStraw, R(-.22, .22), .9 + R(0, .3), R(.05, .45), R(0, 3), 0, R(-.5, .5));
+  bx(g, 1.2, .25, 1.0, mWoodDk, 0, 2.7, 0);
+  return 2.95; });
 
 // ---- the Bee Bank (5:31–35) ----
 def('som-hive-pipes', 'Stack of clay hive pipes', g => {
-  for (let row = 0; row < 3; row++) for (let k = 0; k < 4 - row; k++) { const x = (k - (3 - row) / 2) * .46, y = .24 + row * .42; cy(g, .22, .22, 1.1, 12, row % 2 ? mClay : mClayDk, x, y, 0, Math.PI / 2);
-    cy(g, .2, .2, .03, 12, mMud, x, y, .56, Math.PI / 2); add(new THREE.CircleGeometry(.04, 6), mDark, x, y - .08, .58, g); }   // mud-sealed ends with a small entrance hole
-  bx(g, 2.1, .1, 1.2, mRock, 0, -.05, 0);
-  for (let i = 0; i < 10; i++) add(new THREE.SphereGeometry(.03, 5, 4), mDark, R(-.9, .9), R(.2, 1.5), R(.6, 1.0), g);   // bees
-  return 1.5; });
+  const lid = MM('somHiveLid', '#d8c4a0', TEX.plaster);
+  for (let row = 0; row < 3; row++) for (let k = 0; k < 4 - row; k++) { const x = (k - (3 - row) / 2) * .36, y = .2 + row * .33; cy(g, .16, .16, 1.4, 12, row % 2 ? mClay : mClayDk, x, y, 0, Math.PI / 2);
+    cy(g, .165, .165, .05, 12, lid, x, y, .71, Math.PI / 2); add(new THREE.CircleGeometry(.035, 8), mDark, x, y - .06, .74, g); }
+  bx(g, 1.8, .08, 1.5, mRock, 0, -.04, 0); for (let i = 0; i < 7; i++) add(new THREE.SphereGeometry(.014, 4, 3), mDark, R(-.6, .6), R(.15, .9), R(.76, .95), g);
+  return 1.2; });
 def('som-smoker-pot', 'Beekeeper\'s smoker pot', g => {
-  boulder(g, .35, mRock, 0, 0, 0, .7); lathe(g, [[0, 0], [.2, .02], [.28, .2], [.26, .42], [.12, .52], [.1, .6]], mClay, 0, .42, 0); cy(g, .05, .07, .32, 8, mClay, .25, .85, 0, 0, 0, -.9);
-  for (let k = 0; k < 6; k++) add(new THREE.SphereGeometry(.08 + k * .05, 8, 6), mSmoke, .38 + k * .12, 1.0 + k * .25, R(-.05, .05), g);
-  return 1.05; });
+  boulder(g, .35, mRock, 0, 0, 0, .7); lathe(g, [[0, 0], [.2, .02], [.28, .2], [.27, .42], [.2, .52], [.21, .56], [.17, .56], [.16, .5]], mClay, 0, .42, 0); cy(g, .17, .17, .02, 12, mDark, 0, .96, 0);
+  cy(g, .06, .1, .5, 10, mClay, .3, .78, 0, 0, 0, -1.0); cy(g, .07, .07, .03, 10, mDark, .52, .93, 0, 0, 0, -1.0);
+  for (let k = 0; k < 5; k++) add(new THREE.SphereGeometry(.05 + k * .035, 8, 6), MM('somSmokeT', '#ece8e0', null, { transparent: true, opacity: .3, depthWrite: false }), .58 + k * .1, .98 + k * .16, 0, g);
+  return 1.0; });
 def('som-comb-tray', 'Tray of golden honeycomb', g => {
   bx(g, 1.2, .55, .9, mRock, 0, 0, 0); bx(g, 1.05, .06, .75, mWoodLt, 0, .55, 0); for (const s of [-.5, .5]) bx(g, 1.05, .1, .05, mWoodLt, 0, .58, s * .72);
-  for (let r = 0; r < 4; r++) for (let c = 0; c < 6; c++) { const x = -.4 + c * .16 + (r % 2) * .08, z = -.24 + r * .15; cy(g, .08, .08, .12, 6, mComb, x, .62, z); add(new THREE.CircleGeometry(.055, 6), mHoney, x, .685, z, g).rotation.x = -Math.PI / 2; }
-  for (let i = 0; i < 8; i++) add(new THREE.SphereGeometry(.03, 5, 4), mDark, R(-.5, .5), R(.75, 1.2), R(-.4, .4), g);
-  return .8; });
+  for (let k = 0; k < 4; k++) { const w = R(.18, .26), x = -.36 + k * .24; bx(g, w, R(.07, .1), .55, mComb, x, .61, R(-.03, .03), R(-.15, .15)); for (let c = 0; c < 5; c++) add(new THREE.CircleGeometry(.03, 6), mHoney, x + R(-.07, .07), .7, -.22 + c * .11, g).rotation.x = -Math.PI / 2; }
+  for (let i = 0; i < 6; i++) { const dr = add(new THREE.SphereGeometry(.03, 6, 5), mHoney, R(-.5, .5), .52, R(.36, .4), g); dr.scale.y = 2.2; }
+  return .75; });
 
 // ---- the Fisherman's Court (7:6–10) ----
 def('som-salting-vat', 'Fish-salting vat', g => {
   lathe(g, [[0, 0], [.75, 0], [.82, .1], [.8, .75], [.86, .82], [.7, .82], [.68, .2], [0, .2]], mPlaster, 0, 0, 0, 20); cy(g, .68, .68, .04, 20, mBrine, 0, .62, 0);
-  for (let i = 0; i < 9; i++) { const f = add(new THREE.CapsuleGeometry(.05, .26, 3, 6), mFishM, R(-.4, .4), .66, R(-.4, .4), g); f.rotation.set(Math.PI / 2, 0, R(0, 3)); }
-  for (let i = 0; i < 14; i++) add(new THREE.DodecahedronGeometry(.045, 0), mSalt, R(-.5, .5), .66, R(-.5, .5), g);
-  const lid = cy(g, .5, .5, .05, 14, mWoodLt, 1.0, .35, .3, 1.2, 0, 0);   // its wooden lid leaning against it
+  add(new THREE.TorusGeometry(.72, .05, 5, 24), mSalt, 0, .78, 0, g).rotation.x = Math.PI / 2;
+  for (let i = 0; i < 7; i++) { const a = i / 7 * 6.28, f = add(new THREE.CapsuleGeometry(.08, .38, 4, 8), mFishM, Math.cos(a) * .36, .67, Math.sin(a) * .36, g); f.rotation.set(Math.PI / 2, 0, a + 1.57); }
+  const lid = new THREE.Group(); lid.position.set(1.05, .55, .2); lid.rotation.set(0, .4, .35); g.add(lid); cy(lid, .55, .55, .06, 18, mWoodLt, 0, 0, 0, Math.PI / 2); for (const s of [-.22, .22]) bx(lid, .08, 1.0, .06, mWood, s, -.5, .05);
   return .9; });
-def('som-mending-stone', 'Mending stone with a coil of rope and a net needle', g => {
-  boulder(g, .65, mRock, 0, 0, 0, .6); slab(g, .5, .06, mLime, 0, .42, 0, 6);
-  for (let k = 0; k < 4; k++) add(new THREE.TorusGeometry(.3 - k * .06, .045, 6, 16), mRope, .1, .52 + k * .05, 0, g).rotation.x = Math.PI / 2;
-  bx(g, .03, .02, .28, mWoodLt, -.3, .52, .2, .5);
+def('som-mending-stone', 'Mending stone with a net spread over it', g => {
+  boulder(g, .7, mRock, 0, 0, 0, .6);
+  const net = MM('somNetM', '#8a7a5a'); for (let i = -6; i <= 6; i++) { bx(g, 1.6, .012, .012, net, 0, .5 - Math.abs(i) * .01, i * .1); bx(g, .012, .012, 1.3, net, i * .12, .5 - Math.abs(i) * .01, 0); }
+  for (let k = 0; k < 3; k++) add(new THREE.TorusGeometry(.26 - k * .07, .04, 6, 16), mRope, -.6, .08 + k * .07, .5, g).rotation.x = Math.PI / 2;
+  bx(g, .05, .025, .4, mWoodLt, .2, .54, .1, .6); bx(g, .012, .03, .3, mCord, .2, .56, .1, .6);
   return .75; });
 def('som-court-entrance', 'Entrance of a basalt courtyard', g => {
-  const bas = MM('somBasaltM', '#6e6862', TEX.stone); for (const s of [-1, 1]) { for (let row = 0; row < 5; row++) bx(g, .5, .32, .5, bas, s * .85, row * .33, 0, R(-.05, .05)); dryWall(g, s * 1.1, 0, s * 2.4, 0, .9); }
-  bx(g, 2.2, .3, .55, bas, 0, 1.65, 0); bx(g, 1.2, .03, .7, MM('somWorn', '#b8a070'), 0, .01, .3);
-  return 1.95; });
+  const bas = MM('somBasaltM2', '#7c766e'), basDk = MM('somBasaltM3', '#625c56');
+  for (const s of [-1, 1]) { for (let row = 0; row < 6; row++) bx(g, .55, .3, .55, row % 2 ? bas : basDk, s * .85, row * .31, 0, R(-.04, .04));
+    for (let row = 0; row < 5; row++) for (let k = 0; k < 4; k++) bx(g, .42, .28, .45, rnd() > .5 ? bas : basDk, s * (1.35 + k * .44 + (row % 2) * .2), row * .3, 0, R(-.05, .05)); }
+  bx(g, 2.4, .32, .6, basDk, 0, 1.86, 0); bx(g, 1.2, .03, .7, MM('somWorn', '#b8a070'), 0, .01, .3);
+  return 2.2; });
 
 // ---- the Ridge Road (5:41–45) ----
 def('som-culvert', 'Culvert stones over a gully', g => {
-  const dip = bx(g, 2.6, .02, 1.1, MM('somGullyM', '#8a7a52'), 0, -.02, 0, Math.PI / 2);
-  for (const s of [-1, 1]) for (let k = 0; k < 3; k++) boulder(g, .32, mRockDk, s * .55, k * .25, (k - 1) * .4, .9);
-  slab(g, .75, .16, mRock, 0, .72, 0, 5, .3); slab(g, .6, .14, mRock, 0, .72, .7, 5, 1.2); slab(g, .6, .14, mRock, 0, .72, -.7, 5, 2);
-  return .95; });
+  const earth = MM('somEarthBank', '#a8905e'); for (const s of [-1, 1]) bx(g, 1.4, .7, 2.4, earth, s * 1.15, -.15, 0, 0, 0, -s * .18);
+  bx(g, .9, .02, 3.2, MM('somGullyBed', '#7a6a48'), 0, -.02, 0); for (let i = 0; i < 6; i++) boulder(g, R(.08, .14), mRockDk, R(-.3, .3), 0, R(-1.4, 1.4), .6);
+  for (const s of [-1, 1]) for (let row = 0; row < 2; row++) for (let k = 0; k < 3; k++) bx(g, .35, .26, .42, row ? mRock : mRockDk, s * .58, row * .27, (k - 1) * .46, R(-.05, .05));
+  for (let k = -1; k <= 1; k++) bx(g, 1.6, .16, .48, mRock, 0, .54, k * .5, R(-.04, .04));
+  return .75; });
 def('som-amphora-buried', 'Old amphora half-buried by the road', g => {
-  const am = lathe(g, [[0, 0], [.08, .02], [.22, .3], [.3, .7], [.28, 1.0], [.16, 1.2], [.1, 1.25], [.1, 1.5], [.14, 1.55]], mClay, 0, -.15, 0); am.rotation.z = .7;
-  for (const s of [-1, 1]) { const h = add(new THREE.TorusGeometry(.13, .035, 5, 10, Math.PI), mClay, -.8, .82, s * .1, g); h.rotation.set(0, Math.PI / 2, .7); }
-  for (let i = 0; i < 12; i++) boulder(g, R(.1, .2), MM('somEarthM', '#9a7e56'), R(-.1, .5), 0, R(-.4, .4), .5);
+  const earth = MM('somEarthM', '#9a7e56'); const mound = add(new THREE.SphereGeometry(.9, 12, 6, 0, 6.3, 0, 1.57), earth, -.1, -.05, 0, g); mound.scale.set(1.2, .35, 1);
+  const am = new THREE.Group(); am.position.set(.1, .05, 0); am.rotation.z = .75; g.add(am);
+  lathe(am, [[0, 0], [.08, .02], [.22, .3], [.3, .7], [.28, 1.0], [.16, 1.2], [.1, 1.25], [.1, 1.5], [.14, 1.55], [.12, 1.58], [.08, 1.56]], mClay, 0, 0, 0, 16);
+  add(new THREE.TorusGeometry(.12, .025, 6, 14), mClay, 0, 1.56, 0, am).rotation.x = Math.PI / 2; for (const s of [-1, 1]) { const h = add(new THREE.TorusGeometry(.16, .035, 6, 12, Math.PI), mClay, s * .12, 1.3, 0, am); h.rotation.set(0, Math.PI / 2, s > 0 ? -.4 : .4); }
   return .9; });
 def('som-broken-cart', 'Cart with a broken wheel, propped on stones', g => {
-  bx(g, 1.4, .1, 2.2, mWoodLt, 0, .62, 0, 0, 0, .12); for (const s of [-1, 1]) bx(g, .08, .3, 2.2, mWood, s * .68, .7, 0, 0, 0, .12);   // bed and side rails
-  for (const s of [-1, 1]) bx(g, .07, .07, 1.6, mWood, s * .3, .6, 1.8, 0, .25);   // the shafts
-  const w = cy(g, .55, .55, .1, 14, mWood, .82, .55, 0, 0, 0, Math.PI / 2); for (let k = 0; k < 6; k++) bx(g, .04, 1.0, .04, mWoodDk, .84, .55, 0, k / 6 * Math.PI);   // the good wheel
-  boulder(g, .35, mRockDk, -.75, 0, .1, .9);   // propped on stones where the other wheel was
-  const bw = cy(g, .55, .55, .1, 14, mWood, -1.6, .06, .9, 0, 0, 0); for (let k = 0; k < 3; k++) bx(g, .04, .9, .04, mWoodDk, -1.6, .1, .9, 0, Math.PI / 2, k * .8);   // the broken wheel, lying in the grass, spokes missing
+  bx(g, 1.4, .1, 2.2, mWoodLt, 0, .62, 0, 0, 0, .12); for (const s of [-1, 1]) bx(g, .08, .3, 2.2, mWood, s * .68, .7, 0, 0, 0, .12);
+  for (const s of [-1, 1]) bx(g, .07, .07, 1.6, mWood, s * .3, .6, 1.8, 0, .25); cy(g, .06, .06, 1.7, 6, mWoodDk, 0, .5, 0, 0, 0, Math.PI / 2);
+  const wheel = (gg, x, y, z, rx, ry, rz, broken) => { const w = new THREE.Group(); w.position.set(x, y, z); w.rotation.set(rx, ry, rz); gg.add(w); add(new THREE.TorusGeometry(.5, .05, 6, 18, broken ? 4.6 : 6.3), mWood, 0, 0, 0, w); cy(w, .1, .1, .14, 10, mWoodDk, 0, 0, 0, Math.PI / 2);
+    for (let k = 0; k < (broken ? 4 : 8); k++) { const sp = bx(w, .035, .5, .035, mWoodDk, 0, 0, 0, 0, 0, k / 8 * 6.28); sp.position.set(Math.sin(k / 8 * 6.28) * -.25, Math.cos(k / 8 * 6.28) * .25 - .25, 0); } };
+  wheel(g, .84, .55, 0, 0, Math.PI / 2, 0, false);
+  for (let k = 0; k < 3; k++) boulder(g, .26, mRockDk, -.75, k * .22, R(-.15, .15), .8);
+  wheel(g, -1.6, .06, 1.0, -Math.PI / 2, 0, 0, true);
   return 1.2; });
 def('som-resting-stone', 'Resting stone at the fork of the road', g => {
-  boulder(g, .7, mRock, 0, 0, 0, .55); slab(g, .6, .08, mLime, 0, .4, 0, 7);
-  bx(g, 1.1, .02, 3, MM('somTrack', '#b8a07a'), -.9, .005, -1.6, .45); bx(g, 1.1, .02, 3, MM('somTrack', '#b8a07a'), .9, .005, -1.6, -.45);   // the two tracks forking around it
-  return .5; });
+  slab(g, .95, .42, mRock, 0, 0, 0, 7, .3); slab(g, .82, .05, mLime, 0, .52, 0, 7, .5);
+  const tr = MM('somTrack', '#b8a07a'); bx(g, .9, .03, 4.4, tr, 0, .025, 2.6); bx(g, .9, .03, 3.6, tr, -1.1, .025, -1.7, .5); bx(g, .9, .03, 3.6, tr, 1.1, .025, -1.7, -.5);
+  return .6; });
