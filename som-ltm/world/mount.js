@@ -35,6 +35,14 @@ function libAt(id, x, z, rot = 0, s = 1, dy = 0) { const g = new THREE.Group(), 
   g.updateMatrixWorld(true); return new THREE.Box3().setFromObject(g).max.y; }
 function somRock(x, z, s, y) { const m = add(new THREE.DodecahedronGeometry(s, 0), rnd() > .4 ? rockM : rockDk, x, (y ?? heightAt(x, z)) + s * .3, z); m.rotation.set(R(0, 3), R(0, 3), R(0, 3)); m.scale.y = .65; return (y ?? heightAt(x, z)) + s * .95; }
 const ground = ([x, z], up = .12) => ({ x, z, y: heightAt(x, z) + up });
+// a plain first-century Galilean house: thick walls (stone or mud plaster), a flat roof of beams under packed reeds, a low parapet,
+// a dark doorway on its front (local +z) and a small window. Used instead of library houses that read as later or European.
+function galHouse(x, z, w, d, hgt, rot, m, dy = 0) { const g = new THREE.Group(); g.position.set(x, heightAt(x, z) + dy - .1, z); g.rotation.y = rot; scene.add(g);
+  box(w, hgt, d, m, 0, 0, 0, g); for (let k = 0; k < Math.floor(w / .6); k++) box(.14, .14, d + .3, 'wood', -w / 2 + .3 + k * .6, hgt - .1, 0, g);
+  const rf = box(w + .1, .14, d + .1, mat('somRoofReed', '#b8a070'), 0, hgt, 0, g); rf.material.map = TEX.wicker;
+  for (const [a, b, c, e] of [[w + .1, .3, .14, d / 2], [w + .1, .3, .14, -d / 2]]) box(a, b, c, m, 0, hgt + .1, e, g);
+  box(.95, 1.8, .06, mat('somDoorDark', '#2a2018'), -w * .2, 0, d / 2 + .02, g); box(1.15, .16, .12, 'wood', -w * .2, 1.8, d / 2 + .04, g);
+  box(.45, .4, .06, mat('somDoorDark', '#2a2018'), w * .25, 1.35, d / 2 + .02, g); return g; }
 // hand the room to the engine: spots [{ x, y, z }] in the fixed order, one per verse
 function finishRoom(ch, r, F, spots) {
   station(ch, r.room, r.name, F.x, F.z, [F.x + F.fx, 0, F.z + F.fz], spots.slice(0, r.objects.filter(o => !o.extra).length).map((p, i) => ({ ...p, what: r.objects[i].what })));
@@ -43,19 +51,19 @@ function finishRoom(ch, r, F, spots) {
 
 // ---- 5.1 THE SEAT (5:1–5): olive tree · limestone pavement · split boulder with a thornbush · water bag on a stake · the seat-rock ----
 defBuilder('som.seat', (r, { ch }) => { const F = roomFrame(r), h = 2.6, sp = SQ(h).map(([f, s]) => F.at(f, s)), out = [];
-  { const [x, z] = sp[0]; libAt('olive-tree-gnarled', x, z, 0, 1); out.push(ground([x, z], .6)); }
-  { const g = atR(F, h, -h, .3); box(2.8, .22, 2, paleM, 0, -.02, 0, g); box(1.7, .2, 1.4, paleM, .9, .04, -1, g); box(.02, .05, 1.8, darkM, .4, .2, 0, g); box(1.4, .05, .02, darkM, -.4, .2, .3, g); out.push(ground(sp[1], .32)); }   // bare limestone pavement, pale and cracked
+  { const [x, z] = sp[0]; libAt('olive-tree-gnarled', x, z, 0, .72); out.push(ground([x, z], .6)); }
+  { const g = atR(F, h, -h, .3); box(3.4, .24, 2.4, paleM, 0, -.02, 0, g); box(2, .22, 1.6, paleM, 1.1, .04, -1.1, g); box(1.4, .2, 1.2, paleM, -1.2, .03, 1, g); box(.02, .05, 1.8, darkM, .4, .2, 0, g); box(1.4, .05, .02, darkM, -.4, .2, .3, g); out.push(ground(sp[1], .32)); }   // bare limestone pavement, pale and cracked
   { const [x, z] = sp[2]; const a = somRock(x - .8, z, .85), b = somRock(x + .8, z + .05, .8); for (let k = 0; k < 9; k++) { const t = add(new THREE.ConeGeometry(.05, .5, 4), mat('somThorn', '#7a9a3e'), x + R(-.2, .2), heightAt(x, z) + R(.2, .7), z + R(-.25, .25)); t.rotation.set(R(-.6, .6), 0, R(-.6, .6)); } out.push({ x, z, y: Math.max(a, b) + .1 }); }   // the split boulder, a thornbush in the gap
   { const g = atR(F, -h, h); const st = cyl(.06, .08, 1.6, 6, 'wood', 0, 0, 0, g); for (const k of [-1, 1]) { const fk = cyl(.03, .04, .35, 5, 'wood', k * .08, 1.55, 0, g); fk.rotation.z = -k * .5; }
     const sk = mat('somSkin2', '#8a6040'); sk.map = TEX.cloth; const bag = add(new THREE.CapsuleGeometry(.26, .42, 4, 10), sk, 0, 1.05, .2, g); bag.rotation.x = .25; for (const [lx, ly] of [[-.2, .82], [.2, .82], [-.18, 1.3], [.18, 1.3]]) { const lg = cyl(.04, .03, .2, 5, sk, lx, ly, .22, g); lg.rotation.z = lx < 0 ? .6 : -.6; } cyl(.05, .07, .16, 6, sk, 0, 1.45, .14, g); out.push(ground(sp[3], 1.75)); }   // the goatskin water bag, its tied legs and neck, hung on a forked stake
-  { const [cx, cz] = sp[4]; const seat = cyl(1.3, 1.5, .6, 8, rockM, cx, F.y - .05, cz); seat.rotation.y = .3; box(1.5, .06, 1, paleM, cx, F.y + .5, cz).rotation.y = F.yaw; for (let k = 0; k < 6; k++) { const a = k / 6 * 6.28; somRock(cx + Math.cos(a) * 1.7, cz + Math.sin(a) * 1.7, .22); } out.push({ x: cx, z: cz, y: F.y + .7 }); }   // the flat seat-rock where he sat
+  { const [cx, cz] = sp[4]; const seat = add(new THREE.DodecahedronGeometry(1.35, 0), rockM, cx, F.y + .15, cz); seat.scale.set(1.25, .38, 1); seat.rotation.y = .5; const top = add(new THREE.CylinderGeometry(.95, 1, .12, 7), paleM, cx, F.y + .58, cz); top.rotation.y = .2; for (let k = 0; k < 6; k++) { const a = k / 6 * 6.28; somRock(cx + Math.cos(a) * 1.7, cz + Math.sin(a) * 1.7, .22); } out.push({ x: cx, z: cz, y: F.y + .7 }); }   // the flat seat-rock where he sat
 
   finishRoom(ch, r, F, out); });
 
 // ---- 5.2 THE SHEEPFOLD (5:6–10): gateway · slab-roofed corner · oak corner · crook on the wall · water trough ----
 defBuilder('som.fold', (r, { ch }) => { const F = roomFrame(r), h = 3, W = .55, H = .95, sp = SQ(h).map(([f, s]) => F.at(f, s)), out = [];
   const seg = (a, b, hh = H) => { const [x0, z0] = F.at(...a), [x1, z1] = F.at(...b), L = Math.hypot(x1 - x0, z1 - z0);
-    const m = box(L, hh, W, dryStone, (x0 + x1) / 2, Math.min(heightAt(x0, z0), heightAt(x1, z1)) - .1, (z0 + z1) / 2); m.rotation.y = -Math.atan2(z1 - z0, x1 - x0); };
+    const y0 = Math.min(heightAt(x0, z0), heightAt(x1, z1)) - .1; const n = Math.max(2, Math.round(L / .5)); for (let row = 0; row < Math.round(hh / .3); row++) for (let k = 0; k < n; k++) { const t = (k + (row % 2) * .5) / n; if (t > 1) continue; const st = add(new THREE.DodecahedronGeometry(R(.24, .32), 0), rnd() > .5 ? rockM : rockDk, x0 + (x1 - x0) * t, y0 + .15 + row * .28, z0 + (z1 - z0) * t); st.scale.set(1.2, .7, 1); st.rotation.y = R(0, 3); } };
   seg([-h, -h + 1.5], [-h, h], .5);   // the near wall kept low so you can see into the fold seg([-h + 1.5, -h], [h, -h]); seg([h, -h], [h, h]); seg([h, h], [-h, h]);   // the gateway is the open near-left corner
   for (const s of [-h + 1.5, -h + 1.6]) { const g = atR(F, -h, s); }
   { for (const [f, s2] of [[-h, -h + 1.6], [-h + 1.6, -h]]) { const [x, z] = F.at(f, s2); box(.6, 1.3, .6, rockM, x, heightAt(x, z) - .1, z); } out.push(ground(sp[0], .12)); }   // the gateway, two big stones either side of the gap
@@ -112,12 +120,12 @@ defBuilder('som.charcoal', (r, { ch }) => { const F = roomFrame(r), h = 2.6, sp 
 
 // ---- 5.7 THE BEE BANK (5:31–35): capped bank end · stacked hive pipes · smoker pot · bees' water dish · tray of comb ----
 defBuilder('som.bees', (r, { ch }) => { const F = roomFrame(r), h = 2.5, sp = SQ(h).map(([f, s]) => F.at(f, s)), out = [];
-  { const g = atR(F, .2, -h - .9); box(1.1, .8, 2 * h + .9, dryStone, 0, 0, 0, g); }                         // the bank along the left side, from near to far
+  { const g = atR(F, .2, -h - .9); const bk = box(1.3, .9, 2 * h + .9, mat('somEarth', '#a88a5e'), 0, 0, 0, g); bk.material.map = TEX.plaster; for (let k = 0; k < 6; k++) add(new THREE.CircleGeometry(.11, 8), darkM, -.66, .5, -h + .2 + k * .8, g).rotation.y = -Math.PI / 2; }   // the earth bank, hive mouths in its face                         // the bank along the left side, from near to far
   { const [x, z] = sp[0]; box(1.2, .9, 1.2, dryStone, x, heightAt(x, z) - .05, z); add(new THREE.SphereGeometry(.62, 8, 5, 0, 6.3, 0, 1.57), rockM, x, heightAt(x, z) + .85, z); out.push(ground(sp[0], 1.5)); }   // the bank's rounded end, with its capstone   // the capstone on its near end
   { const g = atR(F, h, -h); for (let row = 0; row < 3; row++) for (let k = 0; k < 3 - row; k++) { const p = cyl(.2, .2, 1.1, 10, clayM, (k - (2 - row) / 2) * .44, 0, 0, g); p.rotation.x = Math.PI / 2; p.position.y = .2 + row * .38; add(new THREE.CircleGeometry(.12, 10), darkM, (k - (2 - row) / 2) * .44, .2 + row * .38, .56, g); } out.push(ground(sp[1], 1.25)); }   // the stacked clay hive pipes, mouths towards you
   { const g = atR(F, h, h); somRock(...F.at(h, h), .45); cyl(.22, .28, .55, 10, clayM, 0, .5, 0, g); const sp2 = cyl(.04, .06, .3, 6, clayM, .16, .82, 0, g); sp2.rotation.z = -.6; for (let k = 0; k < 4; k++) { const m = add(new THREE.SphereGeometry(.12 + k * .06, 8, 6), mat('somSmoke', '#e6e1da', { transparent: true, opacity: .5 }), .3 + k * .12, 1.0 + k * .3, 0, g); } out.push(ground(sp[2], 1.0)); }   // the smoker pot, smoking
   { const g = atR(F, -h, h); const bw = add(new THREE.SphereGeometry(.45, 14, 6, 0, 6.3, Math.PI / 2, Math.PI / 2), clayM, 0, .3, 0, g); bw.material.side = THREE.DoubleSide; add(new THREE.CircleGeometry(.4, 14), mat('somWater', '#6fb3c8'), 0, .24, 0, g).rotation.x = -Math.PI / 2; for (let k = 0; k < 3; k++) add(new THREE.DodecahedronGeometry(.07, 0), rockM, -.15 + k * .15, .27, R(-.1, .1), g); out.push(ground(sp[3], .45)); }   // a shallow clay bowl of water, stones for the bees to land on
-  { const g = atR(F, 0, 0); box(1.1, .6, .8, rockM, 0, 0, 0, g); box(1, .07, .7, 'woodLt', 0, .6, 0, g); for (let k = 0; k < 4; k++) { const c2 = box(.2, .1, .55, combM, -.33 + k * .22, .67, 0, g); c2.material.map = TEX.wicker; } out.push({ x: F.x, z: F.z, y: F.y + .85 }); }   // the tray of golden comb on a stone
+  { const g = atR(F, 0, 0); box(1.1, .6, .8, rockM, 0, 0, 0, g); box(1, .07, .7, 'woodLt', 0, .6, 0, g); for (let a = 0; a < 6; a++) for (let b = 0; b < 4; b++) cyl(.07, .07, .1, 6, combM, -.38 + a * .15 + (b % 2) * .075, .68, -.25 + b * .13, g); for (let k = 0; k < 12; k++) add(new THREE.SphereGeometry(.035, 5, 4), darkM, R(-.8, .8), R(.9, 1.6), R(-.6, .6), g); out.push({ x: F.x, z: F.z, y: F.y + .85 }); }   // the tray of golden comb on a stone
   finishRoom(ch, r, F, out); });
 
 // ---- 5.8 THE SHEPHERDS' CAMP (5:36–40): guy-rope peg · the tent's open front and pole · quern · ground loom · hearth stones ----
