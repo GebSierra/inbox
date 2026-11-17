@@ -3,13 +3,13 @@
 // The summit is a ridge running east-west along z = 0, highest at its east end (x = -42) and falling westward. A field wall with a stile
 // crosses the ridge at x = STILE_X: the Crown (chapter 5 rooms 1-4) lies east of it, the Upper Meadow (rooms 5-10) west of it.
 // Hippos, the town on its hill across the lake, lies to the south-east: "a city set on a hill" (5:14).
-const SHORE = -95;
+const SHORE = -180;                                                  // moved south 2026-11-17: room on the lake side for the farm (ch 6) and the shore village (ch 7)
 // the switchback trail down the Crown: from the Seat at the top, turning at each room, down to the stile (kept in step with world/mount.js)
 const TRAIL = [[-34, 0], [-24, 4], [-10, -4], [4, 4], [15, 0], [29, -4], [43, 4], [57, -4], [71, 4], [85, -4], [99, 4], [108, 0]];
 const TRAIL_D = (x, z) => { let d = 1e9; for (let i = 0; i < TRAIL.length - 1; i++) { const [ax, az] = TRAIL[i], [bx, bz] = TRAIL[i + 1], dx = bx - ax, dz = bz - az, t = Math.max(0, Math.min(1, ((x - ax) * dx + (z - az) * dz) / (dx * dx + dz * dz))); d = Math.min(d, Math.hypot(x - ax - dx * t, z - az - dz * t)); } return d; };
 const HILL = 24;                                                     // height of the Crown above the shore
 const STILE_X = 15;
-const CITY = [-150, -235];                                           // Hippos, across the lake
+const CITY = [-150, -290];                                           // Hippos, across the lake
 function hRaw(x, z) {
   let h = Math.sin(x * 0.03) * 1.0 + Math.cos(z * 0.025) * .8 + Math.sin((x + z) * 0.05) * 0.4;
   // the ridge is highest at its east end (the Seat, x = -42) and falls steadily west, so the walk goes down the hill
@@ -31,7 +31,7 @@ const heightAt = (x, z) => { let h = heightAt0(x, z);
     if (d < 5) { const w = 1 - d / 5, s = w * w * (3 - 2 * w); h = h * (1 - s) + fl * s; } }
   return h; };
 {
-  const S = 520, N = 260;
+  const S = 720, N = 320;
   const g = new THREE.PlaneGeometry(S, S, N, N); g.rotateX(-Math.PI / 2);
   const p = g.attributes.position, col = [];
   const cGrass = new THREE.Color('#9fae5e'), cGrass2 = new THREE.Color('#8a9c50'), cPath = new THREE.Color('#d8bb88'), cBank = new THREE.Color('#ead7a8'), cFlower = new THREE.Color('#c9b04e');

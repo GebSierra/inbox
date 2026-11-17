@@ -25,3 +25,10 @@ window.__outline = () => ({ on: outlineMode, signs: SIGNS.length });
     if (overview) s.scale.set(d * .05, d * .0175, 1); else s.scale.set(1.9, .66, 1); }
   requestAnimationFrame(signs);
 })();
+
+// ---------- start at the first room, the Seat (5:1–5), facing it: the owner's chosen opening view (2026-11-17) ----------
+if (STATIONS[0] && !overview) { const s = STATIONS[0], yaw = Math.atan2(-(s.look[0] - s.x), -(s.look[2] - s.z)), back = s.back || 6;
+  idx = 0; tween = null; player.x = s.x + Math.sin(yaw) * back; player.z = s.z + Math.cos(yaw) * back; player.yaw = yaw; player.pitch = s.pitch ?? -.12; }
+// test hook for the planning map: world point -> screen pixel with the current camera
+window.__project = (x, y, z) => { const v = new THREE.Vector3(x, y ?? heightAt(x, z), z).project(camera); return [(v.x + 1) / 2 * innerWidth, (1 - v.y) / 2 * innerHeight, v.z]; };
+window.__h = (x, z) => heightAt(x, z);

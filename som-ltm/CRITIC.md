@@ -3,7 +3,10 @@
 The critic is a fresh agent. It has not seen the conversation with the owner. It reads only:
 - `ltm-engine/docs/METHOD.md` (the owner's method);
 - the outline system's sections (below);
-- `som-ltm/PLAN.md`.
+- `som-ltm/PLAN.md`;
+- `som-ltm/refs/plan/layout-map.png`, the site plan drawn on a bird's-eye view of the world.
+
+It judges the **plan**, in light of the rules and of what would look natural, not the build or the graphics. The map shows the current world: the summit (chapter 5) is built as plain blocks, and the farm and village are only drawn on.
 
 It scores the plan out of 10. **Pass: 8 or more.**
 
@@ -11,9 +14,9 @@ It scores the plan out of 10. **Pass: 8 or more.**
 
 | # | Criterion | Weight | What a 10 looks like |
 | --- | --- | --- | --- |
-| 1 | **Method compliance** | 25% | Room counts and verse ranges are exact. Every verse has exactly one spot, in the order 1 near-left, 2 far-left, 3 far-right, 4 near-right, 5 centre. One district per chapter. Rooms run clockwise from each district's entrance. Every room has at least two objects. Objects made for a verse are rare. No object repeats. |
+| 1 | **Method compliance** | 25% | Room counts and verse ranges are exact. Every verse has exactly one spot, in the order 1 near-left, 2 far-left, 3 far-right, 4 near-right, 5 centre. One district per chapter. Rooms follow rule 6 in the form that fits the ground: clockwise in a town or court, a downhill switchback on a hillside. Every room has at least two objects. Objects made for a verse are rare. No object repeats. |
 | 2 | **Outline compatibility** | 20% | Every outline section has a signpost at the right verse and spot. Breaks inside a room are handled without splitting the room. The two modes share one walk. Section boundaries fall at natural thresholds where possible. |
-| 3 | **Natural, distinct places** | 20% | Each room is a believable first-century Galilean place whose objects belong there. The five spots in each room are easy to tell apart. No two rooms in the book are alike. |
+| 3 | **Natural, distinct places and site** | 20% | Each room is a believable first-century Galilean place whose objects belong there. The five spots in each room are easy to tell apart. No two rooms in the book are alike. The whole site (summit, farm, shore, the wall and stile, the wadi) sits on the land the way such places really would. |
 | 4 | **Fit to the text** | 15% | The setting and journey suit the sermon (the mountain, the descent, the shore). Places resonate with their passages without doing the learner's imagery for them (rule 7). |
 | 5 | **Clarity and buildability** | 10% | A builder could build it from the plan without guessing: routes, entrances, spot positions and object lists are unambiguous. |
 | 6 | **Learnability** | 10% | The route is easy to walk in the mind. Districts and rooms are memorable. There is no confusing back-tracking. |
@@ -38,7 +41,7 @@ The critic also lists every factual error, such as a wrong verse range, a signpo
 - Two Choices 7:13–27: Two Gates and Ways 13–14 · Two Trees and Fruits 15–20 · False Professors 21–23 · Two Foundations 24–27
 - Reaction 7:28–29
 
-## Rounds (2026-11-13)
+## Rounds, first plan (2026-11-13)
 
 Each round used a fresh critic with no memory of the earlier rounds.
 

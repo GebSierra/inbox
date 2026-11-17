@@ -13,18 +13,28 @@ You **begin where he sat down** (5:1) and **walk down the mountain** (8:1):
 
 | Chapter | Verses | Rooms | District | Ground | Landmark (seen from its open rooms) |
 | --- | --- | --- | --- | --- | --- |
-| 5 | 48 | 10 | **The Summit**: the Crown and the Upper Meadow | rock and pasture, the top of the hill | the stone watchtower |
-| 6 | 34 | 7 | **The Farm** | walled terraces, halfway down | the farmhouse's flat roof and its smoke |
+| 5 | 48 | 10 | **The Summit**: the Crown and the Upper Meadow | open rock and grass on the Crown; worked land (quarry, hives, vines) in the Meadow | the stone watchtower |
+| 6 | 34 | 7 | **The Farm** | walled terraces on the lake-side slope below the ridge's west end | the farmhouse's flat roof and its smoke |
 | 7 | 29 | 6 | **The Shore Village** | the beach, the lakeside highway, the wadi mouth | the boats on the beach |
 
-**Compass.** From this hill on the north-west shore the lake lies to the south and south-east, and **Hippos**, the town on its flat-topped hill across the lake to the south-east, is visible from the summit (5:14, "a city set on a hill").
+**Compass.** From this hill on the north-west shore the lake lies to the south, and **Hippos**, the town on its flat-topped hill across the lake to the south-east, is visible from the summit (5:14, "a city set on a hill").
 
-**Clockwise, as the method defines it.** Chapter 5 is two clockwise loops joined at the stile, the Crown and then the Upper Meadow; chapters 6 and 7 are one loop each. You enter a district facing in. Rooms run up your **left** side, cross at the far end, and come back down your **right** side. Seen from above, that's clockwise.
+**Site plan** (see `refs/plan/layout-map.png`, drawn on a bird's-eye view of the world):
+- **The Summit** is a ridge running east–west on the north side of the site, highest at its east end.
+- **The Farm** lies on the long lake-side slope beyond the ridge's low west end. It starts just below the Watchtower and runs south, down terraces, towards the shore.
+- **The Shore Village** strings along the beach at the foot of the farm. A dry wadi comes down the slope beside it.
+- The lake shore has been moved well south of the summit, so that the slope between them holds the whole farm and the village has its own flat strip of beach. The walk goes downhill all the way: summit, farm, shore.
 
-The way from one district to the next leaves from the last room, never from the far end:
-- The summit's last room is the Watchtower, at the low west end of the ridge, where the path down starts.
-- The farm's last room is at its upper-west corner, beside the west gate, where the lane down starts.
+**Routes (method rule 6).** The route takes the form that fits the ground:
+- **On the hillside, the summit and the farm:** a switchback trail from the top down. Rooms stand at its turns, alternating sides, and each is lower than the one before.
+- **On the flat beach, the village:** a clockwise loop. You enter facing in, rooms run up your left side, cross at the far end, and come back down your right side.
+
+The way from one district to the next leaves from the last room:
+- The summit's last room is the Watchtower, at the low west end of the ridge. The path down to the farm's upper gate starts there.
+- The farm's last room, the Olive Press, is beside its lower gate. The lane down to the beach starts there.
 - The village ends beside its own entrance, at the wadi.
+
+**Start.** The walk opens at the first room's own stop. You stand on the trail just below the crown, facing the Seat, with the olive tree on your left and the lake on your right. There is no landing anywhere else first.
 
 ## 2. Rules this plan follows
 
@@ -37,7 +47,7 @@ The way from one district to the next leaves from the last room, never from the 
   - Animals and loose things never count towards the two objects.
   - The five spots in a room are all different kinds of thing.
 - **Rule 5:** spots run 1 near-left → 2 far-left → 3 far-right → 4 near-right → 5 centre, as seen standing in front of the room. A shorter room uses 1, 2, 3… in that order.
-- **Rule 6:** rooms in a district run clockwise from the entrance (§1).
+- **Rule 6:** rooms follow one fixed route, in the form that fits the ground (§1): a switchback down the summit and the farm, and a clockwise loop in the village.
 - **Facing:** every room's front faces the path. The viewer stands on the path, looking at the room on the side the route gives it. Spot 1 is the corner nearest the viewer on their left.
 - **Rule 7:** the place gives the spot, and the learner makes the picture. Places may suit the passage as a whole (an inner storeroom for "go into your room"), but objects aren't chosen to illustrate single verses.
 - **Rule 8:** ESV text.
@@ -45,17 +55,23 @@ The way from one district to the next leaves from the last room, never from the 
 
 ## 3. Chapter 5: the Summit (10 rooms)
 
-**Layout.** The top of the hill is a ridge running east–west. It is highest at its east end, where he sat, and falls steadily west. A dry-stone field wall with a **stile** crosses it and divides it in two:
+**Layout.** The top of the hill is a ridge running east–west. It is highest at its east end, where he sat, and falls steadily west. A dry-stone **field wall** crosses it and divides it in two:
 - **The Crown** lies east of the wall and holds rooms 1–4 (outline: Setting, Beatitudes, Set Apart).
 - **The Upper Meadow** lies west of the wall and holds rooms 5–10 (outline: But I Tell You).
+
+**The field wall and the stile.** The wall must read as a real boundary, not a line dropped on the grass. It marks where the open hilltop ends and worked land begins:
+- **Where it runs:** the full width of the ridge, from the brow of the north slope to the cliff edge above the lake, so there is no way round it.
+- **What it's built of:** stones cleared from the Meadow's fields. It is knee to waist high, uneven, and ends at each side in a heap of clearance stones.
+- **The ground changes at it.** The Crown side is open grass, rock and wildflowers, with no fields. The Meadow side has the marks of work: low terrace lines across the slope, ploughed strips, and paths to the quarry and the hives.
+- **The stile:** where the trail meets the wall, three stepping stones are built through it, with a single upright gatepost beside them. An old olive tree shades the crossing, and the trail is worn bare as it passes through.
 
 The outline's first big break (5:20 / 5:21) is the stile itself.
 
 **Route** (rule 6, hillside form). A switchback trail runs down the ridge from the top. Rooms stand at its turns, alternating sides (north = the inland side, south = the lake side), and each is lower than the one before.
-1. **The Seat** is on the very top. You start there, facing it.
+1. **The Seat** is on the very top. The walk opens here, at the Seat's own stop, facing it (§1, Start).
 2. The trail turns down to the north for **the Sheepfold**, then to the south for **the Lookout** on the lake edge, then to the north for **the Threshing Floor**. Its last leg goes down to the stile.
 3. Over the stile, it keeps zigzagging west and down: south for **the Quarry**, north for **the Charcoal Burners' Clearing**, south for **the Bee Bank**, north for **the Shepherds' Camp**, south for **the Ridge Road**, and north for **the Watchtower** at the meadow's low west end.
-4. The path down to chapter 6 leaves from the Watchtower, south down the slope.
+4. The path down to chapter 6 leaves from the Watchtower. It runs west off the ridge's end to the farm's upper gate.
 
 | Room | Verses | Place | 1 near-left | 2 far-left | 3 far-right | 4 near-right | 5 centre | Objects in the room |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -86,14 +102,13 @@ The outline's first big break (5:20 / 5:21) is the stile itself.
 
 ## 4. Chapter 6: the Farm (7 rooms)
 
-**Layout.** A walled farmstead on terraces halfway down the lake side of the hill, directly below the stile.
-- The path down enters at the **north-east gate**, facing south (downhill).
-- **Left side (east), going down:** rooms 1–4, through the house and its yards, to the spring at the bottom.
-- **The loop turns at the spring,** at the south end.
-- **Right side (west), coming back up:** rooms 5–7, through the stall and the fields, to the olive press at the upper-west corner.
-- **The west gate** beside the press opens onto the lane that runs down outside the west wall to the shore.
+**Layout.** A walled farmstead on the long lake-side slope below the ridge's west end. A farm lane switchbacks down its terraces from the **upper gate** (north, reached from the Watchtower) to the **lower gate** (south, above the beach). This is rule 6's hillside form. The rooms stand at the lane's turns, alternating sides, each a terrace lower than the last:
+- 6.1 the Courtyard (east side), then 6.2 the Inner Storeroom (west side, built into the terrace across the lane from the house);
+- 6.3 the Bakehouse Yard (east), then 6.4 the Spring (west), at the bottom of the house terraces;
+- a **terrace wall** with a gate crosses the farm just below the Spring. Above it are the house terraces, and below it are the field terraces;
+- 6.5 the Ox Stall (east), 6.6 the Granary Field (west), then 6.7 the Olive Press (east), beside the lower gate.
 
-The outline's big break, Focus Internally (6:1–18) / Focus Eternally (6:19–34), falls inside room 6.4, the spring, **at the turn of the loop**. The house side holds the hidden life; the field side holds treasure, masters, birds and fields.
+The outline's big break, Focus Internally (6:1–18) / Focus Eternally (6:19–34), falls inside room 6.4, the Spring. Its signpost stands between the Spring's third and fourth spots, and the lane passes through the terrace-wall gate straight after. The house terraces hold the hidden life; the field terraces hold treasure, masters, birds and fields.
 
 | Room | Verses | Place | 1 near-left | 2 far-left | 3 far-right | 4 near-right | 5 centre | Objects in the room |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -103,7 +118,7 @@ The outline's big break, Focus Internally (6:1–18) / Focus Eternally (6:19–3
 | 6.4 | 6:16–20 | **The Spring**: where the spring runs out of the rock at the bottom of the farm | the spout (P) | flask of oil on a ledge of rock **(v)** (O) | a wash-line with a tunic drying (O) | a willow shading the bank (O) | the stepping stones across the outflow (P) | oil flask; wash-line; willow; a linen towel spread on the rocks |
 | 6.5 | 6:21–25 | **The Ox Stall**: an open-fronted stall | the left stall post (P) | the yoke on its peg (O) | the plough (O) | a heap of straw bedding (O) | the feeding niche cut in the back wall (P) | yoke; plough; straw; the ox |
 | 6.6 | 6:26–30 | **The Granary Field**: a granary at the edge of a field | the terrace steps (P) | a patch of lentils (O) | the scarecrow (O) | the granary door (P) | a hoe left in the furrow (O) | lentils; scarecrow; hoe |
-| 6.7 | 6:31–34 | **The Olive Press**: the press at the farm's upper-west corner, beside the west gate | the crushing stone: a round millstone in its stone bed (O) | the press beam's socket in the wall (P) | a stack of rope pulp-baskets (O) | the rock-cut collecting pit for the oil (P) | — | crushing stone; pulp baskets |
+| 6.7 | 6:31–34 | **The Olive Press**: the press at the foot of the farm, beside the lower gate | the crushing stone: a round millstone in its stone bed (O) | the press beam's socket in the wall (P) | a stack of rope pulp-baskets (O) | the rock-cut collecting pit for the oil (P) | — | crushing stone; pulp baskets |
 
 **Outline signposts in chapter 6.**
 - *Sanctified Focus › Focus Internally › Public Righteousness* (6:1): 6.1 spot 1.
@@ -113,7 +128,7 @@ The outline's big break, Focus Internally (6:1–18) / Focus Eternally (6:19–3
 - *Disciples' Prayer* (6:9–13): 6.2 spot 4.
 - *Forgiveness* (6:14–15): 6.3 spot 4.
 - *Fasting* (6:16–18): 6.4 spot 1.
-- *Focus Eternally › Store Up Treasures* (6:19–21): 6.4 spot 4, at the turn of the loop.
+- *Focus Eternally › Store Up Treasures* (6:19–21): 6.4 spot 4, just above the terrace-wall gate.
 - *Lamp of the Body* (6:22–23): 6.5 spot 2.
 - *God or Money* (6:24): 6.5 spot 4.
 - *Do Not Worry* (6:25): 6.5 spot 5.
@@ -122,10 +137,11 @@ The outline's big break, Focus Internally (6:1–18) / Focus Eternally (6:19–3
 
 ## 5. Chapter 7: the Shore Village (6 rooms)
 
-**Layout.** An unwalled fishing village, like Capernaum, strung along the shore where the **lakeside highway** passes. The lane from the farm reaches the shore at the village's east end, beside the mouth of a dry **wadi** (a stream bed that floods in winter storms) coming down the hill. That is the entrance.
+**Layout.** An unwalled fishing village, like Capernaum, on the flat strip of beach at the foot of the farm, where the **lakeside highway** passes. The lane from the farm's lower gate reaches the beach at the village's east end. That is the entrance. Because the beach is flat, the village uses rule 6's clockwise form:
 - Facing west along the shore, the **left side is the lakeside:** rooms 1–3, going west.
 - The loop turns at the west end of the village.
-- The **right side is the hillside:** rooms 4–6, coming back east to the wadi, beside the entrance.
+- The **right side is the hillside:** rooms 4–6, coming back east.
+- A dry **wadi** (a stream bed that floods in winter storms) comes down the slope between the farm and the village and crosses the street just west of the entrance. 7.5, the House on the Rock, stands on the rock shelf of its west bank. 7.6, the House on the Sand, stands in its sandy bed, beside the entrance.
 
 The wadi gives the last pair of rooms their real setting: a house on the rock shelf of its bank, and a house in its sandy bed. Both are plain, standing houses. The learner pictures the storm. The crowd's reaction (7:28–29) closes the walk there.
 
@@ -169,7 +185,7 @@ Animals, the crowd and loose things are scenery and don't count as objects.
 | Chapter | Objects (O) | Place features (P) |
 | --- | --- | --- |
 | 5 | olive tree · water bag on a stake · stone water trough · oak · shepherd's crook · terebinth · heap of cucumbers · lamp stand (v) · sheaves · winnowing fork · thorn tree · threshing sledge · iron wedges · shear-legs · squared block on rollers · charcoal mound · axe and chopping block · rush baskets of charcoal · hive pipes · smoker pot · bees' water dish · tray of comb · quern · ground loom · hearth stones · goat-hair tent · carob tree · half-buried amphora · broken cart · tower ladder · vine trellis | limestone pavement · split boulder · seat-rock · fold gateway · slab-roofed corner · long flat rock · cliff-edge boulder  worn floor edge · chisel-marked face · spoil heap · cut stumps · ash ring · capped bank end · guy-rope peg · tent front · gully culvert · resting stone at the fork · tower lookout window  the stile |
-| 6 | roof-roller · cistern lid · storage jars · dried herbs · wooden chest · sieve · woodpile · clay oven · kneading bowl · oil flask (v) · wash-line · willow · linen towel · yoke · plough · straw bedding · lentils · scarecrow · hoe · crushing stone · pulp baskets | gate pier · curtained doorway · roof stair · storeroom threshold · wall shelf · smoke-stained corner · spout · stepping stones · stall post · feeding niche · terrace steps · granary door · press-beam socket · oil collecting pit · west gate |
+| 6 | roof-roller · cistern lid · storage jars · dried herbs · wooden chest · sieve · woodpile · clay oven · kneading bowl · oil flask (v) · wash-line · willow · linen towel · yoke · plough · straw bedding · lentils · scarecrow · hoe · crushing stone · pulp baskets | gate pier · curtained doorway · roof stair · storeroom threshold · wall shelf · smoke-stained corner · spout · stepping stones · stall post · feeding niche · terrace steps · granary door · press-beam socket · oil collecting pit · lower gate · terrace-wall gate |
 | 7 | planks · pitch pot · trestle and adze · boat on stocks · salting vat · net · fish basket · mending stone and rope coil · tax table · mounting block · tethering rail · trade bales · almond tree · pomegranate tree · well with rope and bucket · pruned branches · stone bench · stone mortar · roofing reeds · drying flax · basket of dates · mud-brick stack | saw pit · courtyard entrance · narrow hill path · irrigation sluice · hewn doorstep · shelf edge · far bank · mud-brick front wall |
 | Scenery | the flock · camel · donkey · ox · mules · the crowd · loaves cooling (6.3) | |
 
@@ -181,7 +197,8 @@ Animals, the crowd and loose things are scenery and don't count as objects.
    - distinct spots in the Seat and the Sheepfold;
    - the Lookout as a long flat rock under a great terebinth, with the view open to the lake and Hippos (no hut);
    - the threshing floor's thorn tree and worn edge (dropping the corner sheaves);
-   - the stile.
+   - the field wall rebuilt as a real boundary (full width of the ridge, clearance-stone ends, worked ground on the Meadow side, the stepping-stone stile with its gatepost and olive tree);
+   - the opening view at the Seat (done 2026-11-17).
 2. **Chapter 5, rooms 5–10.**
 3. **Chapter 6.**
 4. **Chapter 7.**
