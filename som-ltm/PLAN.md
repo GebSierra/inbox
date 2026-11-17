@@ -42,12 +42,13 @@ The way from one district to the next leaves from the last room:
 - **Rule 3:** ceil(n/5) rooms per chapter. Room k holds verses 5k−4 … 5k, and spot i holds verse 5(k−1)+i.
 - **Rule 4:** each verse is on a spot. A spot is either a feature of the place (**P**) or an object (**O**).
   - Every room has **at least two objects** that belong to the place.
-  - Things chosen for a verse are rare: two in the whole book, marked **(v)**, each on the spot of its own verse and each natural to its place (the lamp stand 5:15 and the oil flask 6:17; the storeroom of 6:6 is the room itself, and its spot 1 is the threshold, not the door). Where a place suits a passage as a whole (a storeroom, a granary field, a house on rock), the plan avoids putting a part on the very verse it would illustrate.
+  - Things chosen for a verse are rare: two in the whole book, marked **(v)**, each on the spot of its own verse and each natural to its place (the lantern post 5:15 and the oil flask 6:17; the storeroom of 6:6 is the room itself, and its spot 1 is the threshold, not the door). Where a place suits a passage as a whole (a storeroom, a granary field, a house on rock), the plan avoids putting a part on the very verse it would illustrate.
   - **No object or named feature repeats** (see the ledger in §7).
   - Animals and loose things never count towards the two objects.
   - The five spots in a room are all different kinds of thing.
 - **Rule 5:** spots run 1 near-left → 2 far-left → 3 far-right → 4 near-right → 5 centre, as seen standing in front of the room. A shorter room uses 1, 2, 3… in that order.
 - **Rule 6:** rooms follow one fixed route, in the form that fits the ground (§1): a switchback down the summit and the farm, and a clockwise loop in the village.
+- **Size:** each room is about 6 × 6 m, its spots on a square of about 5 m. The viewer stands on the trail or street about 7 m from the centre.
 - **Facing:** every room's front faces the path. The viewer stands on the path, looking at the room on the side the route gives it. Spot 1 is the corner nearest the viewer on their left.
 - **Rule 7:** the place gives the spot, and the learner makes the picture. Places may suit the passage as a whole (an inner storeroom for "go into your room"), but objects aren't chosen to illustrate single verses.
 - **Rule 8:** ESV text.
@@ -59,11 +60,13 @@ The way from one district to the next leaves from the last room:
 - **The Crown** lies east of the wall and holds rooms 1–4 (outline: Setting, Beatitudes, Set Apart).
 - **The Upper Meadow** lies west of the wall and holds rooms 5–10 (outline: But I Tell You).
 
+**Why the Upper Meadow holds what it does.** It is one farming family's hill land, and its rooms are the work of that land, linked by low terrace lines and field paths: the quarry that supplies the terrace walls, charcoal for the farm's oven, bees among the wild thyme, the shepherds who graze the stubble, the road that takes the produce down, and the vineyard with its watchtower at the bottom of the hill.
+
 **The field wall and the stile.** The wall must read as a real boundary, not a line dropped on the grass. It marks where the open hilltop ends and worked land begins:
-- **Where it runs:** the full width of the ridge, from the brow of the north slope to the cliff edge above the lake, so there is no way round it.
+- **Where it runs:** the full width of the ridge, from the brow of the north slope to the brow of the south slope, where the hillside drops away towards the lake, so there is no way round it.
 - **What it's built of:** stones cleared from the Meadow's fields. It is knee to waist high, uneven, and ends at each side in a heap of clearance stones.
 - **The ground changes at it.** The Crown side is open grass, rock and wildflowers, with no fields. The Meadow side has the marks of work: low terrace lines across the slope, ploughed strips, and paths to the quarry and the hives.
-- **The stile:** where the trail meets the wall, three stepping stones are built through it, with a single upright gatepost beside them. An old olive tree shades the crossing, and the trail is worn bare as it passes through.
+- **The stile:** where the trail meets the wall, a gap is closed by a worn stone threshold slab you step over, with a single upright gatepost beside it. A tall cairn of clearance stones, topped with one white stone, marks the crossing, and the trail is worn bare as it passes through.
 
 The outline's first big break (5:20 / 5:21) is the stile itself.
 
@@ -75,16 +78,16 @@ The outline's first big break (5:20 / 5:21) is the stile itself.
 
 | Room | Verses | Place | 1 near-left | 2 far-left | 3 far-right | 4 near-right | 5 centre | Objects in the room |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 5.1 | 5:1–5 | **The Seat**: a rock outcrop on the crown | the old olive tree (O) | a patch of bare limestone pavement (P) | a split boulder with a thornbush in its crack (P) | a goatskin water bag hung on a stake (O) | the flat seat-rock where he sat (P) | olive tree; water bag on its stake |
+| 5.1 | 5:1–5 | **The Seat**: a rock outcrop on the crown | the old olive tree (O) | a patch of bare limestone pavement (P) | a split boulder with a caper bush in its crack (P) | a goatskin water bag hung on a stake (O) | the flat seat-rock where he sat (P) | olive tree; water bag on its stake |
 | 5.2 | 5:6–10 | **The Sheepfold**: a dry-stone pen | the gateway (P) | the corner roofed with flat slabs as a shelter (P) | the corner shaded by an oak (O) | the shepherd's crook hung on the wall (O) | the stone water trough (O) | trough; oak; crook; the flock |
-| 5.3 | 5:11–15 | **The Lookout**: a long flat rock under a great terebinth on the lake edge, open to the view of Hippos across the water, beside a cucumber field | the near end of the long flat rock (P) | the terebinth's trunk (O) | a heap of cucumbers from the field (O) | the cliff-edge boulder over the lake (P) | lamp on its stand **(v)** (O) | terebinth; cucumbers; lamp stand |
+| 5.3 | 5:11–15 | **The Lookout**: a long flat rock under a great terebinth on the south brow of the ridge, looking down the long slope to the lake and across it to Hippos, beside a cucumber field | the near end of the long flat rock (P) | the terebinth's trunk (O) | a heap of cucumbers from the field (O) | the boulder at the brow where the slope drops away (P) | a shepherd's lantern on a stone post, marking the lookout **(v)** (O) | terebinth; lantern post |
 | 5.4 | 5:16–20 | **The Threshing Floor**: a round floor of beaten earth ringed with stones, open to the west wind | a stack of sheaves (O) | the lone thorn tree at the floor's windward side (O) | the winnowing fork (O) | the floor's raised stone edge, worn smooth (P) | the threshing sledge (O) | sheaves; thorn tree; fork; sledge |
 | — | — | **The Stile**: the field wall across the ridge (5:20 / 5:21) | | | | | | |
-| 5.5 | 5:21–25 | **The Quarry**: a small stone quarry cut into the ridge | the left quarry face, striped with chisel marks (P) | a spoil heap of rock chippings at the foot of the face (P) | iron wedges hammered into a crack (O) | wooden shear-legs for lifting stone (O) | a squared block on wooden rollers (O) | wedges; shear-legs; block on rollers |
-| 5.6 | 5:26–30 | **The Charcoal Burners' Clearing**: a clearing cut in the scrub where wood is burned to charcoal | the smoking charcoal mound under its turf (O) | a row of cut stumps (P) | an axe in a chopping block (O) | charcoal heaped in rush baskets (O) | the raked ring of ash where the last mound stood (P) | mound; axe and block; rush baskets |
+| 5.5 | 5:21–25 | **The Quarry**: a small stone quarry cut into the ridge | the left quarry face, striped with chisel marks (P) | a spoil heap of rock chippings at the foot of the face (P) | iron wedges hammered into a crack (O) | wooden shear-legs for lifting stone (O) | a squared building stone on wooden rollers (O) | wedges; shear-legs; building stone on rollers |
+| 5.6 | 5:26–30 | **The Charcoal Burners' Clearing**: a clearing cut in the scrub where wood is burned to charcoal | the smoking charcoal mound under its turf (O) | a row of cut stumps (P) | an axe in a chopping stump (O) | charcoal heaped in rush baskets (O) | the raked ring of ash where the last mound stood (P) | mound; axe and stump; rush baskets |
 | 5.7 | 5:31–35 | **The Bee Bank**: clay-pipe beehives set in a stone bank | the bank's rounded end with a capstone (P) | the stacked hive pipes (O) | the smoker pot (O) | a shallow clay water dish for the bees (O) | the beekeeper's tray of comb (O) | hive pipes; smoker; water dish; tray |
 | 5.8 | 5:36–40 | **The Shepherds' Camp**: a black goat-hair tent | the tent's left guy-rope peg (P) | the tent's open front and its pole (P) | a quern at the tent's right corner (O) | a ground loom pegged out on the grass (O) | the hearth stones (O) | tent; quern; loom; hearth |
-| 5.9 | 5:41–45 | **The Ridge Road**: the road over the hill, where the village track forks off | the culvert stones where the road crosses a gully (P) | a lone carob tree (O) | a broken amphora half-buried by the road (O) | a cart with a broken wheel, propped on stones (O) | the flat stone at the fork where travellers rest (P) | carob tree; amphora; broken cart; a camel resting beyond the fork |
+| 5.9 | 5:41–45 | **The Ridge Road**: the road over the hill, where the village track forks off | the culvert stones where the road crosses a gully (P) | a lone carob tree (O) | an old fallen column drum by the road (O) | a cart with a broken wheel, propped on stones (O) | the flat stone at the fork where travellers rest (P) | carob tree; column drum; broken cart; a camel resting beyond the fork |
 | 5.10 | 5:46–48 | **The Watchtower**: a round stone vineyard tower at the meadow's low west end | the tower's wooden ladder (O) | the tower's lookout window (P) | the vine trellis (O) | — | — | ladder; trellis |
 
 **Outline signposts in chapter 5.** Each stands beside the spot where its section's first verse lives. A sign names the full path when a new higher section begins.
@@ -103,22 +106,22 @@ The outline's first big break (5:20 / 5:21) is the stile itself.
 ## 4. Chapter 6: the Farm (7 rooms)
 
 **Layout.** A walled farmstead on the long lake-side slope below the ridge's west end. A farm lane switchbacks down its terraces from the **upper gate** (north, reached from the Watchtower) to the **lower gate** (south, above the beach). This is rule 6's hillside form. The rooms stand at the lane's turns, alternating sides, each a terrace lower than the last:
-- 6.1 the Courtyard (east side), then 6.2 the Inner Storeroom (west side, built into the terrace across the lane from the house);
-- 6.3 the Bakehouse Yard (east), then 6.4 the Spring (west), at the bottom of the house terraces;
-- a **terrace wall** with a gate crosses the farm just below the Spring. Above it are the house terraces, and below it are the field terraces;
+- 6.1 the Courtyard (east side), then 6.2 the Inner Storeroom (west side, an open-fronted storeroom cut into the terrace across the lane from the house);
+- 6.3 the Bakehouse Yard (east), then 6.4 the Spring (west), the lowest of the house terraces;
+- a **terrace wall** with a gate crosses the farm just below the Spring. Above it are the house terraces (6:1–20), and below it are the field terraces (6:21–34);
 - 6.5 the Ox Stall (east), 6.6 the Granary Field (west), then 6.7 the Olive Press (east), beside the lower gate.
 
-The outline's big break, Focus Internally (6:1–18) / Focus Eternally (6:19–34), falls inside room 6.4, the Spring. Its signpost stands between the Spring's third and fourth spots, and the lane passes through the terrace-wall gate straight after. The house terraces hold the hidden life; the field terraces hold treasure, masters, birds and fields.
+The outline's big break, Focus Internally (6:1–18) / Focus Eternally (6:19–34), falls inside room 6.4, the Spring: its signpost stands between the Spring's third and fourth spots. The terrace wall below the Spring is not that break. It is simply where the house ends and the fields begin, at 6:20 / 6:21. The house terraces hold the hidden life and the start of "treasures in heaven"; the field terraces hold the lamp of the eye, the two masters, the birds and the lilies.
 
 | Room | Verses | Place | 1 near-left | 2 far-left | 3 far-right | 4 near-right | 5 centre | Objects in the room |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | 6.1 | 6:1–5 | **The Courtyard**: the paved court of the farmhouse | the gate's left pier (P) | the curtained doorway into the house (P) | the stone stair up to the roof (P) | the stone roof-roller (O) | the cistern mouth with its round stone lid (O) | roof-roller; cistern lid; a donkey tethered by the gate |
-| 6.2 | 6:6–10 | **The Inner Storeroom**: a windowless room behind a shut door | the shut door's stone threshold (P) | a row of tall storage jars (O) | bunches of dried herbs from a beam (O) | a plastered wall shelf (P) | a wooden chest (O) | jars; herbs; chest |
+| 6.2 | 6:6–10 | **The Inner Storeroom**: an open-fronted storeroom cut into the terrace, its door swung back against the wall so the room can be seen | the doorway's stone threshold (P) | a row of tall storage jars (O) | bunches of dried herbs from a beam (O) | a plastered wall shelf (P) | a wooden chest (O) | jars; chest |
 | 6.3 | 6:11–15 | **The Bakehouse Yard**: the clay oven and kneading yard | the sieve on its hook (O) | the woodpile (O) | the clay oven (O) | the yard's smoke-stained corner (P) | the kneading bowl with its cloth (O) | sieve; woodpile; oven; kneading bowl; loaves cooling by the oven |
-| 6.4 | 6:16–20 | **The Spring**: where the spring runs out of the rock at the bottom of the farm | the spout (P) | flask of oil on a ledge of rock **(v)** (O) | a wash-line with a tunic drying (O) | a willow shading the bank (O) | the stepping stones across the outflow (P) | oil flask; wash-line; willow; a linen towel spread on the rocks |
+| 6.4 | 6:16–20 | **The Spring**: where the spring runs out of the rock on the lowest house terrace | the spout (P) | flask of oil on a ledge of rock **(v)** (O) | a wash-line with a tunic drying (O) | a willow shading the bank (O) | the flat stones across the outflow (P) | oil flask; wash-line; willow; a linen towel spread on the rocks |
 | 6.5 | 6:21–25 | **The Ox Stall**: an open-fronted stall | the left stall post (P) | the yoke on its peg (O) | the plough (O) | a heap of straw bedding (O) | the feeding niche cut in the back wall (P) | yoke; plough; straw; the ox |
-| 6.6 | 6:26–30 | **The Granary Field**: a granary at the edge of a field | the terrace steps (P) | a patch of lentils (O) | the scarecrow (O) | the granary door (P) | a hoe left in the furrow (O) | lentils; scarecrow; hoe |
-| 6.7 | 6:31–34 | **The Olive Press**: the press at the foot of the farm, beside the lower gate | the crushing stone: a round millstone in its stone bed (O) | the press beam's socket in the wall (P) | a stack of rope pulp-baskets (O) | the rock-cut collecting pit for the oil (P) | — | crushing stone; pulp baskets |
+| 6.6 | 6:26–30 | **The Granary Field**: a stone granary at the edge of a field | the terrace steps (P) | a patch of lentils (O) | the scarecrow on its pole (O) | the granary door (P) | a hoe left in the furrow (O) | the granary itself; scarecrow pole; (lentils and hoe are loose) |
+| 6.7 | 6:31–34 | **The Olive Press**: the press at the foot of the farm, beside the lower gate | the crushing stone: a round millstone in its stone bed (O) | the press beam in its wall socket (O) | a stack of rope pulp-baskets (O) | the rock-cut oil collecting pit (P) | — | crushing stone; press beam |
 
 **Outline signposts in chapter 6.**
 - *Sanctified Focus › Focus Internally › Public Righteousness* (6:1): 6.1 spot 1.
@@ -141,7 +144,8 @@ The outline's big break, Focus Internally (6:1–18) / Focus Eternally (6:19–3
 - Facing west along the shore, the **left side is the lakeside:** rooms 1–3, going west.
 - The loop turns at the west end of the village.
 - The **right side is the hillside:** rooms 4–6, coming back east.
-- A dry **wadi** (a stream bed that floods in winter storms) comes down the slope between the farm and the village and crosses the street just west of the entrance. 7.5, the House on the Rock, stands on the rock shelf of its west bank. 7.6, the House on the Sand, stands in its sandy bed, beside the entrance.
+- The **lakeside highway** is the village street itself: the packed-earth road along the shore that the whole loop walks, with the lakeside rooms below it and the hillside rooms above it. The Tax Table (7.3) stands on it at the west end.
+- A dry **wadi** (a stream bed that floods in winter storms) comes down the slope from below the farm and crosses the street just west of the entrance, before the first lakeside room. 7.5, the House on the Rock, stands on the rock shelf of its west bank. 7.6, the House on the Sand, stands in its sandy bed, beside the entrance.
 
 The wadi gives the last pair of rooms their real setting: a house on the rock shelf of its bank, and a house in its sandy bed. Both are plain, standing houses. The learner pictures the storm. The crowd's reaction (7:28–29) closes the walk there.
 
@@ -149,10 +153,10 @@ The wadi gives the last pair of rooms their real setting: a house on the rock sh
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | 7.1 | 7:1–5 | **The Boatwright's Yard**: a boat on stocks on the beach | a stack of planks (O) | the saw pit (P) | a pot of pitch (O) | the trestle with an adze (O) | the boat on its stocks (O) | planks; pitch pot; trestle; boat |
 | 7.2 | 7:6–10 | **The Fisherman's Court**: a basalt courtyard house on the shore | the courtyard entrance (P) | the fish-salting vat (O) | the net drying on poles (O) | a basket of fish (O) | the mending stone with a coil of rope (O) | salting vat; net; fish basket; rope |
-| 7.3 | 7:11–15 | **The Tax Table**: the lakeside highway at the west end of the village | the tax collector's table (O) | a stone mounting block by the road (O) | the merchants' tethering rail (O) | trade bales stacked for the tax (O) | the foot of the narrow path up the hillside (P) | tax table; mounting block; rail; bales; laden mules at the rail (scenery) |
-| 7.4 | 7:16–20 | **The Orchard**: a walled orchard on the hillside | the sluice of the irrigation channel (P) | an almond tree (O) | the pomegranate tree (O) | a shallow well with rope and bucket (O) | a pile of pruned branches (O) | almond; pomegranate; well; pruned branches |
+| 7.3 | 7:11–15 | **The Tax Table**: the lakeside highway at the west end of the village | the tax collector's table (O) | a stone mounting step by the road (O) | the merchants' tethering rail (O) | trade bales stacked for the tax (O) | the foot of the narrow path up the hillside (P) | tax table; mounting step; rail; bales; laden mules at the rail (scenery) |
+| 7.4 | 7:16–20 | **The Orchard**: a walled orchard on the hillside | the sluice of the irrigation channel (P) | an almond tree (O) | the gardener's stone seat in the wall (P) | a shallow well with rope and bucket (O) | a pile of pruned branches (O) | almond; well |
 | 7.5 | 7:21–25 | **The House on the Rock**: a stone house on the rock shelf of the wadi bank | the doorstep hewn in the rock (P) | a stone bench against the house wall (O) | the shelf's edge over the wadi (P) | the stone mortar in the yard (O) | a bundle of roofing reeds (O) | stone bench; mortar; roofing reeds; flax drying on the roof |
-| 7.6 | 7:26–29 | **The House on the Sand**: a mud-brick house standing in the wadi's sandy bed; the crowd sits on the far bank | a reed basket of dates on a palm-log seat (O) | a stack of new mud bricks drying (O) | the bank across the wadi (P) | the house's mud-brick front wall (P) | — | basket of dates; brick stack |
+| 7.6 | 7:26–29 | **The House on the Sand**: a mud-brick house standing in the wadi's sandy bed, beside the entrance; the crowd sits on the far bank | a date palm leaning over the house (O) | a reed fence round the little yard (O) | the bank across the wadi (P) | the house's mud-brick front wall (P) | — | date palm; reed fence |
 
 **Outline signposts in chapter 7.**
 - *Exhortations › Judging Hypocritically* (7:1–5): 7.1 spot 1.
@@ -184,12 +188,12 @@ Animals, the crowd and loose things are scenery and don't count as objects.
 
 | Chapter | Objects (O) | Place features (P) |
 | --- | --- | --- |
-| 5 | olive tree · water bag on a stake · stone water trough · oak · shepherd's crook · terebinth · heap of cucumbers · lamp stand (v) · sheaves · winnowing fork · thorn tree · threshing sledge · iron wedges · shear-legs · squared block on rollers · charcoal mound · axe and chopping block · rush baskets of charcoal · hive pipes · smoker pot · bees' water dish · tray of comb · quern · ground loom · hearth stones · goat-hair tent · carob tree · half-buried amphora · broken cart · tower ladder · vine trellis | limestone pavement · split boulder · seat-rock · fold gateway · slab-roofed corner · long flat rock · cliff-edge boulder  worn floor edge · chisel-marked face · spoil heap · cut stumps · ash ring · capped bank end · guy-rope peg · tent front · gully culvert · resting stone at the fork · tower lookout window  the stile |
-| 6 | roof-roller · cistern lid · storage jars · dried herbs · wooden chest · sieve · woodpile · clay oven · kneading bowl · oil flask (v) · wash-line · willow · linen towel · yoke · plough · straw bedding · lentils · scarecrow · hoe · crushing stone · pulp baskets | gate pier · curtained doorway · roof stair · storeroom threshold · wall shelf · smoke-stained corner · spout · stepping stones · stall post · feeding niche · terrace steps · granary door · press-beam socket · oil collecting pit · lower gate · terrace-wall gate |
-| 7 | planks · pitch pot · trestle and adze · boat on stocks · salting vat · net · fish basket · mending stone and rope coil · tax table · mounting block · tethering rail · trade bales · almond tree · pomegranate tree · well with rope and bucket · pruned branches · stone bench · stone mortar · roofing reeds · drying flax · basket of dates · mud-brick stack | saw pit · courtyard entrance · narrow hill path · irrigation sluice · hewn doorstep · shelf edge · far bank · mud-brick front wall |
+| 5 | olive tree · water bag on a stake · stone water trough · oak · shepherd's crook · terebinth · heap of cucumbers · lantern post (v) · sheaves · winnowing fork · thorn tree · threshing sledge · iron wedges · shear-legs · squared building stone on rollers · charcoal mound · axe and chopping stump · rush baskets of charcoal · hive pipes · smoker pot · bees' water dish · tray of comb · quern · ground loom · hearth stones · goat-hair tent · carob tree · fallen column drum · broken cart · tower ladder · vine trellis | limestone pavement · split boulder · seat-rock · fold gateway · slab-roofed corner · long flat rock · brow boulder · worn floor edge · chisel-marked face · spoil heap · cut stumps · ash ring · capped bank end · guy-rope peg · tent front · gully culvert · resting stone at the fork · tower lookout window · the stile: threshold slab, gatepost and white-topped cairn |
+| 6 | roof-roller · cistern lid · storage jars · dried herbs · wooden chest · sieve · woodpile · clay oven · kneading bowl · oil flask (v) · wash-line · willow · linen towel · yoke · plough · straw bedding · lentils · scarecrow · hoe · crushing stone · press beam · pulp baskets | gate pier · curtained doorway · roof stair · storeroom threshold · wall shelf · smoke-stained corner · spout · outflow stones · stall post · feeding niche · terrace steps · granary door · oil collecting pit · lower gate · terrace-wall gate |
+| 7 | planks · pitch pot · trestle and adze · boat on stocks · salting vat · net · fish basket · mending stone and rope coil · tax table · mounting step · tethering rail · trade bales · almond tree · well with rope and bucket · pruned branches · stone bench · stone mortar · roofing reeds · drying flax · date palm · reed fence | saw pit · courtyard entrance · narrow hill path · irrigation sluice · hewn doorstep · shelf edge · far bank · mud-brick front wall |
 | Scenery | the flock · camel · donkey · ox · mules · the crowd · loaves cooling (6.3) | |
 
-**Every room has at least two fixed objects, and none has fewer.** The rooms with exactly two are 5.1, 5.10, 6.1, 6.7 and 7.6.
+**Every room has at least two fixed objects:** trees, and things built or set in place. Loose things (a heap, a basket, a hoe) may be spots, but they are never counted towards the two.
 
 ## 8. Build order and checks
 
