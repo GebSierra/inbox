@@ -52,3 +52,12 @@ Each round used a fresh critic with no memory of the earlier rounds.
 | 3 | 8.1 (pass) | small slips: the two-object list, loose debris counted as objects, section names |
 | 4 | 7.7 | the fixes added new near-repeats (cisterns, blocks, heaps); animals and sandals used as spots |
 | 5 | **8.4 (pass)** | clerical slips cleared afterwards: repeated niches, a doorstep, the stale build list, the lamp inside a brushwood booth |
+
+## Rounds, site plan (2026-11-17)
+
+Judged with the site map. Each round used a fresh critic.
+
+| Round | Score | Main points fixed after it |
+| --- | --- | --- |
+| 1 | 8.1 (pass) | the terrace wall had been put at the 6:18/19 break; the lake was described as both near and far; repeats at the stile and elsewhere; loose things counted as objects; the wadi and highway were unclear on the map |
+| 2 | **8.2 (pass)** | clerical slips afterwards: the stale build list, the Crown's "no fields" line, a boat too big for its room, the wadi's course |

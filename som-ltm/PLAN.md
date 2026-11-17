@@ -65,7 +65,7 @@ The way from one district to the next leaves from the last room:
 **The field wall and the stile.** The wall must read as a real boundary, not a line dropped on the grass. It marks where the open hilltop ends and worked land begins:
 - **Where it runs:** the full width of the ridge, from the brow of the north slope to the brow of the south slope, where the hillside drops away towards the lake, so there is no way round it.
 - **What it's built of:** stones cleared from the Meadow's fields. It is knee to waist high, uneven, and ends at each side in a heap of clearance stones.
-- **The ground changes at it.** The Crown side is open grass, rock and wildflowers, with no fields. The Meadow side has the marks of work: low terrace lines across the slope, ploughed strips, and paths to the quarry and the hives.
+- **The ground changes at it.** The Crown side is open hilltop: grass, rock and wildflowers, with only a small cucumber patch and a threshing floor, and no terraces or ploughing. The Meadow side has the marks of work: low terrace lines across the slope, ploughed strips, and paths to the quarry and the hives.
 - **The stile:** where the trail meets the wall, a gap is closed by a worn stone threshold slab you step over, with a single upright gatepost beside it. A tall cairn of clearance stones, topped with one white stone, marks the crossing, and the trail is worn bare as it passes through.
 
 The outline's first big break (5:20 / 5:21) is the stile itself.
@@ -145,13 +145,13 @@ The outline's big break, Focus Internally (6:1–18) / Focus Eternally (6:19–3
 - The loop turns at the west end of the village.
 - The **right side is the hillside:** rooms 4–6, coming back east.
 - The **lakeside highway** is the village street itself: the packed-earth road along the shore that the whole loop walks, with the lakeside rooms below it and the hillside rooms above it. The Tax Table (7.3) stands on it at the west end.
-- A dry **wadi** (a stream bed that floods in winter storms) comes down the slope from below the farm and crosses the street just west of the entrance, before the first lakeside room. 7.5, the House on the Rock, stands on the rock shelf of its west bank. 7.6, the House on the Sand, stands in its sandy bed, beside the entrance.
+- A dry **wadi** (a stream bed that floods in winter storms) starts in a gully below the farm's lower gate, runs down beside the lane on its west side and crosses the street just west of the entrance, before the first lakeside room. 7.5, the House on the Rock, stands on the rock shelf of its west bank. 7.6, the House on the Sand, stands in its sandy bed, beside the entrance.
 
 The wadi gives the last pair of rooms their real setting: a house on the rock shelf of its bank, and a house in its sandy bed. Both are plain, standing houses. The learner pictures the storm. The crowd's reaction (7:28–29) closes the walk there.
 
 | Room | Verses | Place | 1 near-left | 2 far-left | 3 far-right | 4 near-right | 5 centre | Objects in the room |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 7.1 | 7:1–5 | **The Boatwright's Yard**: a boat on stocks on the beach | a stack of planks (O) | the saw pit (P) | a pot of pitch (O) | the trestle with an adze (O) | the boat on its stocks (O) | planks; pitch pot; trestle; boat |
+| 7.1 | 7:1–5 | **The Boatwright's Yard**: a half-built hull on trestles on the beach | a stack of planks (O) | the saw pit (P) | a pot of pitch (O) | the trestle with an adze (O) | a small half-built hull on trestles (O) | planks; pitch pot; trestle; boat |
 | 7.2 | 7:6–10 | **The Fisherman's Court**: a basalt courtyard house on the shore | the courtyard entrance (P) | the fish-salting vat (O) | the net drying on poles (O) | a basket of fish (O) | the mending stone with a coil of rope (O) | salting vat; net; fish basket; rope |
 | 7.3 | 7:11–15 | **The Tax Table**: the lakeside highway at the west end of the village | the tax collector's table (O) | a stone mounting step by the road (O) | the merchants' tethering rail (O) | trade bales stacked for the tax (O) | the foot of the narrow path up the hillside (P) | tax table; mounting step; rail; bales; laden mules at the rail (scenery) |
 | 7.4 | 7:16–20 | **The Orchard**: a walled orchard on the hillside | the sluice of the irrigation channel (P) | an almond tree (O) | the gardener's stone seat in the wall (P) | a shallow well with rope and bucket (O) | a pile of pruned branches (O) | almond; well |
@@ -190,7 +190,7 @@ Animals, the crowd and loose things are scenery and don't count as objects.
 | --- | --- | --- |
 | 5 | olive tree · water bag on a stake · stone water trough · oak · shepherd's crook · terebinth · heap of cucumbers · lantern post (v) · sheaves · winnowing fork · thorn tree · threshing sledge · iron wedges · shear-legs · squared building stone on rollers · charcoal mound · axe and chopping stump · rush baskets of charcoal · hive pipes · smoker pot · bees' water dish · tray of comb · quern · ground loom · hearth stones · goat-hair tent · carob tree · fallen column drum · broken cart · tower ladder · vine trellis | limestone pavement · split boulder · seat-rock · fold gateway · slab-roofed corner · long flat rock · brow boulder · worn floor edge · chisel-marked face · spoil heap · cut stumps · ash ring · capped bank end · guy-rope peg · tent front · gully culvert · resting stone at the fork · tower lookout window · the stile: threshold slab, gatepost and white-topped cairn |
 | 6 | roof-roller · cistern lid · storage jars · dried herbs · wooden chest · sieve · woodpile · clay oven · kneading bowl · oil flask (v) · wash-line · willow · linen towel · yoke · plough · straw bedding · lentils · scarecrow · hoe · crushing stone · press beam · pulp baskets | gate pier · curtained doorway · roof stair · storeroom threshold · wall shelf · smoke-stained corner · spout · outflow stones · stall post · feeding niche · terrace steps · granary door · oil collecting pit · lower gate · terrace-wall gate |
-| 7 | planks · pitch pot · trestle and adze · boat on stocks · salting vat · net · fish basket · mending stone and rope coil · tax table · mounting step · tethering rail · trade bales · almond tree · well with rope and bucket · pruned branches · stone bench · stone mortar · roofing reeds · drying flax · date palm · reed fence | saw pit · courtyard entrance · narrow hill path · irrigation sluice · hewn doorstep · shelf edge · far bank · mud-brick front wall |
+| 7 | planks · pitch pot · trestle and adze · half-built hull on trestles · salting vat · net · fish basket · mending stone and rope coil · tax table · mounting step · tethering rail · trade bales · almond tree · well with rope and bucket · pruned branches · stone bench · stone mortar · roofing reeds · drying flax · date palm · reed fence | saw pit · courtyard entrance · narrow hill path · irrigation sluice · hewn doorstep · shelf edge · far bank · mud-brick front wall |
 | Scenery | the flock · camel · donkey · ox · mules · the crowd · loaves cooling (6.3) | |
 
 **Every room has at least two fixed objects:** trees, and things built or set in place. Loose things (a heap, a basket, a hoe) may be spots, but they are never counted towards the two.
@@ -200,8 +200,8 @@ Animals, the crowd and loose things are scenery and don't count as objects.
 1. **Chapter 5, rooms 1–4.** These are built already. Rework them to this plan:
    - distinct spots in the Seat and the Sheepfold;
    - the Lookout as a long flat rock under a great terebinth, with the view open to the lake and Hippos (no hut);
-   - the threshing floor's thorn tree and worn edge (dropping the corner sheaves);
-   - the field wall rebuilt as a real boundary (full width of the ridge, clearance-stone ends, worked ground on the Meadow side, the stepping-stone stile with its gatepost and olive tree);
+   - the threshing floor's thorn tree and worn edge;
+   - the field wall rebuilt as a real boundary (full width of the ridge, clearance-stone ends, worked ground on the Meadow side, the stile's threshold slab, gatepost and white-topped cairn);
    - the opening view at the Seat (done 2026-11-17).
 2. **Chapter 5, rooms 5–10.**
 3. **Chapter 6.**
