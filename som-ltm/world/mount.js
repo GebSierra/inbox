@@ -21,7 +21,12 @@ const SQ = h => [[-h, -h], [h, -h], [h, h], [-h, h], [0, 0]];
 // a group standing at room coordinates (f, s), turned with the room (local +z = towards the viewer, local +x = the viewer's left)
 function atR(F, f, s, rot = 0) { const [x, z] = F.at(f, s), g = new THREE.Group(); g.position.set(x, heightAt(x, z), z); g.rotation.y = F.yaw + rot; scene.add(g); return g; }
 function libAt(id, x, z, rot = 0, s = 1, dy = 0) { const g = new THREE.Group(), y = heightAt(x, z) + dy; g.position.set(x, y, z); g.rotation.y = rot; g.scale.setScalar(s); scene.add(g);
-  const e = OBJECTS.get(id); if (!e) { console.warn('[som] missing library object ' + id); return y + 1; } const top = e.fn(g, 0, 0, 0); return y + (top || 1) * s; }
+  const e = OBJECTS.get(id); if (!e) { console.warn('[som] missing library object ' + id); return y + 1; } e.fn(g, 0, 0, 0);
+  // some library pieces are built at the world origin (and so at the hilltop's height): set every piece down on its own spot
+  g.updateMatrixWorld(true); const bb = new THREE.Box3().setFromObject(g); if (bb.isEmpty()) return y + 1;
+  const c = bb.getCenter(new THREE.Vector3()); if (Math.hypot(c.x - x, c.z - z) > 2.5) { g.position.x -= c.x - x; g.position.z -= c.z - z; }
+  if (Math.abs(bb.min.y - y) > .4) g.position.y -= bb.min.y - y;
+  g.updateMatrixWorld(true); return new THREE.Box3().setFromObject(g).max.y; }
 function somRock(x, z, s, y) { const m = add(new THREE.DodecahedronGeometry(s, 0), rnd() > .4 ? rockM : rockDk, x, (y ?? heightAt(x, z)) + s * .3, z); m.rotation.set(R(0, 3), R(0, 3), R(0, 3)); m.scale.y = .65; return (y ?? heightAt(x, z)) + s * .95; }
 const ground = ([x, z], up = .12) => ({ x, z, y: heightAt(x, z) + up });
 // hand the room to the engine: spots [{ x, y, z }] in the fixed order, one per verse
