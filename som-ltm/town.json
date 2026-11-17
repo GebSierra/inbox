@@ -27,7 +27,7 @@
     "trees": "mix",
     "halfTex": true,
     "loadName": "the Sermon on the Mount",
-    "exposure": 1.0,
+    "exposure": 1.08,
     "sky": "#f0c39a",
     "fog": [
       180,
@@ -36,17 +36,17 @@
     "skyTop": "#6d7fb2",
     "skyBot": "#f7b47a",
     "hemi": [
-      "#ffdcb8",
-      "#7a5e46",
-      1.05
+      "#ffe6c8",
+      "#a08462",
+      1.55
     ],
     "sun": {
-      "color": "#ffae6a",
-      "intensity": 3.6,
+      "color": "#ffb878",
+      "intensity": 3.4,
       "pos": [
-        -130,
-        46,
-        -30
+        -110,
+        78,
+        -55
       ]
     },
     "leaf": "#8c9658",
@@ -123,6 +123,7 @@
     "world/mount.js",
     "world/farm.js",
     "world/village.js",
+    "world/dress.js",
     "ltm:runtime",
     "world/tutorial.js",
     "ltm:tutorial",

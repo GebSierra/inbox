@@ -81,7 +81,7 @@ Spots are listed in the fixed order. P = a feature of the place itself; O = an o
 - spot 1 near-left: the doorway's stone threshold (P)
 - spot 2 far-left: the row of tall storage jars (O)
 - spot 3 far-right: the bunches of dried herbs from a beam (O)
-- spot 4 near-right: the plastered wall shelf (P)
+- spot 4 near-right: the plastered wall shelf with small pots (P)
 - spot 5 centre: the wooden chest (O)
 
 ## Room 13: 6.3 The Bakehouse Yard (6:11–15) — screenshot: room-13.png

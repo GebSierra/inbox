@@ -452,7 +452,8 @@
       {
        "what": "the kneading bowl with its cloth"
       }
-     ]
+     ],
+     "back": 6.2
     },
     {
      "room": 4,
@@ -558,7 +559,8 @@
        "extra": true,
        "what": "the stone granary"
       }
-     ]
+     ],
+     "back": 8.5
     },
     {
      "room": 7,
@@ -794,7 +796,8 @@
        "what": "the low mud-brick wall of the yard"
       }
      ],
-     "back": 9
+     "back": 9,
+     "pitch": -0.08
     }
    ]
   }
