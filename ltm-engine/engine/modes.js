@@ -47,6 +47,7 @@ if (MD) {
   <button class="mdbig alt" data-m="ideas">Memorize the big ideas of each chapter</button>
   <button class="mdbig alt" data-m="free">Just look around for now</button>
   <p class="mdfoot">You can switch any time from the top.</p></div></div>
+<div id="mdhint" hidden></div>
 <div id="mdtest" class="mdov" hidden><div class="mdbox mdt" id="mdtestin"></div></div>`;
   while (dom.firstChild) document.body.appendChild(dom.firstChild);
   const cardEl = $('mdcard'), cardIn = $('mdcardin');
@@ -245,13 +246,19 @@ if (MD) {
     setTimeout(() => { idx = i - 1; goOrig(1); if (tween) { tween.path = []; player.x = tween.x; player.z = tween.z; player.yaw = tween.yaw; player.pitch = tween.pitch; tween = null; } overview = false; }, 1600); }
 
   // =========================================================== START
+  // Free roam from the start question: show the whole town from above with the chapter labels, until the first double-tap drops you in.
+  function freeOverview() {
+    const f = MD.freeOverview || {}, [x, z] = f.at || [26, 8]; overview = true; tween = null; doll.target.set(x, 0, z); doll.theta = f.theta ?? 0; doll.dist = f.dist ?? 215; doll.userTilt = false; mapbtnEl.textContent = 'Walk';
+    const h = $('mdhint'); h.textContent = (matchMedia('(pointer:coarse)').matches ? 'Double-tap' : 'Double-click') + ' anywhere to enter'; h.hidden = false;
+    const iv = setInterval(() => { if (!overview || MODE !== 'free') { h.hidden = true; clearInterval(iv); } }, 250); }
+  window.__mdFreeOverview = freeOverview;
   { let initial = 'verse', first = false; const um = Q.get('mode'), sm = lsGet('mode');
     if (ALL.includes(um) && avail(um)) initial = um; else if (ALL.includes(sm) && avail(sm)) initial = sm; else first = !Q.has('notut');
     document.body.classList.add('md-' + initial); syncBtn(); syncCredit();
     loadText(ver).then(j => { if (!j) { /* no verses file: hide Test and versions */ if (MODE === 'test') setMode('verse', { persist: false }); } else if (tutI >= 0) tutShow(tutI); });
     const st = $('mdstart'); st.querySelector('[data-m="ideas"]').hidden = !hasIdeas();
     if (first) { cancelTut(); st.hidden = false; }
-    st.onclick = e => { const b = e.target.closest('button'); if (!b) return; st.hidden = true; const m = b.dataset.m; setMode(m);
+    st.onclick = e => { const b = e.target.closest('button'); if (!b) return; st.hidden = true; const m = b.dataset.m; setMode(m); if (m === 'free') freeOverview();
       if (m === 'verse' && !store.get(STORE + '-tut-done')) tutShow(0); };
     if (initial !== 'verse') setMode(initial, { persist: false }); else { MODE = 'verse'; window.__mdHide = false; }
     syncBtn(); }
