@@ -120,6 +120,7 @@
     "obj:structures",
     "ltm:house",
     "ltm:zones",
+    "world/models.js",
     "world/mount.js",
     "world/farm.js",
     "world/village.js",

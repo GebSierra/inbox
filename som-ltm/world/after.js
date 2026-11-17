@@ -31,3 +31,11 @@ if (STATIONS[0] && !overview) { const s = STATIONS[0], yaw = Math.atan2(-(s.look
 // test hook for the planning map: world point -> screen pixel with the current camera
 window.__project = (x, y, z) => { const v = new THREE.Vector3(x, y ?? heightAt(x, z), z).project(camera); return [(v.x + 1) / 2 * innerWidth, (1 - v.y) / 2 * innerHeight, v.z]; };
 window.__h = (x, z) => heightAt(x, z);
+
+// ---------- model showcase for the blind model critic: window.__showModel(id, angle) builds a library model alone on a plain floor ----------
+{ const SX = 40, SZ = 112; let cur = null; const floor = new THREE.Mesh(new THREE.CircleGeometry(7, 32), new THREE.MeshStandardMaterial({ color: '#c8b48a', roughness: 1 }));
+  floor.rotation.x = -Math.PI / 2; floor.position.set(SX, heightAt(SX, SZ) + .02, SZ); floor.receiveShadow = true; floor.visible = false; scene.add(floor);
+  window.__showModel = (id, angle = .5, dist) => { if (cur) { scene.remove(cur); cur = null; } const e = OBJECTS.get(id); if (!e) return 'missing ' + id;
+    floor.visible = true; cur = new THREE.Group(); cur.position.set(SX, heightAt(SX, SZ) + .02, SZ); scene.add(cur); const top = e.fn(cur, 0, 0, 0) || 1;
+    cur.updateMatrixWorld(true); const bb = new THREE.Box3().setFromObject(cur), c = bb.getCenter(new THREE.Vector3()), sz = bb.getSize(new THREE.Vector3()), d = dist || Math.max(1.6, Math.max(sz.x, sz.y, sz.z) * 1.25);
+    window.__cam(c.x + Math.sin(angle) * d, c.y + d * .3, c.z + Math.cos(angle) * d, c.x, c.y, c.z); return 'ok'; }; }
