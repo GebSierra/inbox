@@ -7,7 +7,7 @@
 //   The path down to chapter 6 leaves from the Watchtower (room 10) at the low west end.
 const GZ = -16, TZ = 0, HX = 0, HZ = 400;            // the player starts at (0, GZ + 16) = (0, 0), on the ridge path; HX/HZ unused
 const RAISED = [];
-const WALKWAYS = [[STILE_X - 1.5, -1.8, STILE_X + 1.5, 1.8]];   // the stile gap
+const WALKWAYS = [[STILE_X - 1.5, -1.8, STILE_X + 1.5, 1.8], [131, -8, 137, -4], [137, -142, 143, -138], [138, -86, 144, -80]];   // the stile gap; the farm's upper, lower and terrace-wall gates
 const rockM = mat('somRock', '#9a9282'), rockDk = mat('somRockDk', '#7d776b'), paleM = mat('somPale', '#d9d0bb'), dryStone = mat('somWall', '#b3a58a'),
   brushM = mat('somBrush', '#8a7a52'), floorM = mat('somFloor', '#cdb88e'), strawM = mat('somStraw', '#d9c27a'), darkM = mat('somDark', '#2c2620'),
   ironM = mat('somIron', '#4a4744'), clayM = mat('somClay', '#b5653e'), hideM = mat('somHide', '#6b4a32'), tentM = mat('somTent', '#262220'),
@@ -135,10 +135,23 @@ defBuilder('som.tower', (r, { ch }) => { const F = roomFrame(r), h = 2.3, sp = S
   { const g = atR(F, h, h); for (const s of [-.8, .8]) cyl(.05, .06, 2, 5, 'wood', s, 0, 0, g); box(1.9, .06, .1, 'wood', 0, 1.95, 0, g); for (let k = 0; k < 7; k++) add(new THREE.IcosahedronGeometry(R(.25, .35), 0), leafM, R(-.9, .9), R(1.3, 2.1), R(-.15, .15), g); out.push(ground(sp[2], .9)); }
   finishRoom(ch, r, F, out); });
 
-// ---------- the stile: the field wall across the ridge, between the Crown and the Upper Meadow (outline break 5:20 / 5:21) ----------
-{ for (const [z0, z1] of [[-26, -1.6], [1.6, 26]]) { const L = z1 - z0, zc = (z0 + z1) / 2; box(.6, 1.1, L, dryStone, STILE_X, heightAt(STILE_X, zc) - .15, zc); }
-  for (const dx of [-.7, 0, .7]) box(.6, .25 + (dx === 0 ? .25 : 0), 1.6, rockM, STILE_X + dx, heightAt(STILE_X, 0) - .05, 0); }
-
+// ---------- the field wall and its stile, between the Crown and the Upper Meadow (outline break 5:20 / 5:21) ----------
+// The wall marks where the open hilltop ends and worked land begins. It crosses the full width of the ridge, brow to brow,
+// built of stones cleared from the Meadow's fields: uneven, knee to waist high, ending at each side in a heap of clearance stones.
+// The stile: a gap in the wall closed by a worn threshold slab you step over, marked by a tall cairn topped with a white stone.
+{ const W0 = -44, W1 = 44;
+  for (let z = W0; z < W1; z += 1.1) { if (Math.abs(z) < 1.3) continue;
+    const x = STILE_X + Math.sin(z * .21) * .5, hgt = R(.75, 1.15) * (1 - Math.max(0, Math.abs(z) - 36) / 14);
+    const m = box(1.1, hgt, 1.2, rnd() > .3 ? dryStone : rockM, x, heightAt(x, z) - .12, z + .55); m.rotation.y = R(-.08, .08);
+    if (rnd() > .55) add(new THREE.DodecahedronGeometry(R(.18, .3), 0), rockDk, x + R(-.3, .3), heightAt(x, z) + hgt - .05, z + R(0, 1)); }
+  for (const zEnd of [W0 - 1.5, W1 + 1.5]) for (let k = 0; k < 22; k++) somRock(STILE_X + R(-2, 2), zEnd + R(-2, 2), R(.25, .55));   // clearance heaps at each end
+  box(1.5, .2, 2.3, paleM, STILE_X, heightAt(STILE_X, 0) - .02, 0);                                                         // the worn threshold slab
+  { const cx = STILE_X - 1.6, cz = 2.4, y = heightAt(cx, cz); for (let k = 0; k < 7; k++) add(new THREE.DodecahedronGeometry(.55 - k * .06, 0), rockM, cx + R(-.1, .1), y + .3 + k * .42, cz + R(-.1, .1)).rotation.y = R(0, 3);
+    add(new THREE.DodecahedronGeometry(.22, 0), paleM, cx, y + 3.25, cz); }   // the cairn, topped with one white stone
+  // the Meadow side shows work: low terrace lines across the slope and a ploughed strip
+  for (const zl of [-27, -34, 25, 32]) for (let x = STILE_X + 4; x < 106; x += 1.4) { if (FLAT.some(([cx, cz, hw, hd]) => Math.abs(x - cx) < hw + 2 && Math.abs(zl - cz) < hd + 2)) continue; box(1.4, .35, .5, dryStone, x, heightAt(x, zl) - .1, zl); }
+  for (let k = 0; k < 8; k++) { const z = -40 - k * 1.2; drape(STILE_X + 6, z, 60, z + .5, 'path', .02); }
+}
 // ---------- Hippos, the city on its hill across the lake (5:14) ----------
 { const [X, Z] = CITY;
   for (let i = 0; i < 60; i++) { const a = R(0, 6.3), d = Math.sqrt(rnd()) * 30, x = X + Math.cos(a) * d, z = Z + Math.sin(a) * d;
@@ -152,7 +165,7 @@ defBuilder('som.tower', (r, { ch }) => { const F = roomFrame(r), h = 2.3, sp = S
     placed.push([x, z]); person(x, z, Math.atan2(sx - x, sz - z), ROBES[(rnd() * ROBES.length) | 0], { y: heightAt(x, z) - .55, veil: rnd() > .65 ? '#e8dcc4' : undefined, hair: (rnd() * 4) | 0 }); }
 }
 // ---------- olive trees and scrub on the slopes, clear of the ridge path, the rooms, the crowd and the path down ----------
-{ const clear = (x, z) => (Math.abs(z) < 21 && x > -52 && x < 112) || (x > -62 && x < -26 && z > 5 && z < 44) || (Math.abs(x - 110) < 5 && z < 0) || Math.hypot(x - CITY[0], z - CITY[1]) < 40;
+{ const clear = (x, z) => (Math.abs(z) < 21 && x > -52 && x < 112) || (x > 100 && x < 185 && z < 4 && z > -150) || (x > 90 && x < 250 && z < -132) || (x > -62 && x < -26 && z > 5 && z < 44) || (Math.abs(x - 110) < 5 && z < 0) || Math.hypot(x - CITY[0], z - CITY[1]) < 40;
   for (let i = 0; i < 340; i++) { const x = R(-180, 200), z = R(-90, 150); if (clear(x, z)) continue; const r = rnd(); if (r < .5) tree(x, z, R(.7, 1.1)); else if (r < .58) cypress(x, z, R(.8, 1.1)); else shrub(x, z, R(.9, 1.5)); }
   for (let i = 0; i < 14; i++) sheep(R(110, 150), R(30, 70));
 }

@@ -5,9 +5,8 @@
 let outlineMode = false; try { outlineMode = localStorage.getItem(STORE + '-outline') === '1'; } catch (e) {}
 const SIGNS = [];
 {
-  const st1 = STATIONS.filter(s => s.ch === 1), loci = st1.flatMap(s => s.loci);
   for (const sec of (BOOKDATA && BOOKDATA.outline) || []) {
-    const lc = loci.find(l => l.v === sec.from); if (!lc) continue;
+    const lc = STATIONS.filter(s => s.ch === (sec.ch || 1)).flatMap(s => s.loci).find(l => l.v === sec.from); if (!lc) continue;
     const s = label2(sec.title, sec.ref); s.material.color.set('#e8f0ff');
     s.position.set(lc.x, (lc.fy ?? heightAt(lc.x, lc.z)) + 1.9, lc.z); s.visible = false; labelScene.add(s); SIGNS.push(s);
   }

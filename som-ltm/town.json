@@ -9,15 +9,18 @@
     29
   ],
   "zones": [
-    "The Hillside",
-    "The Village",
-    "The Summit Road"
+    "The Summit",
+    "The Farm",
+    "The Shore Village"
   ],
-  "built": 1,
+  "built": 3,
   "chOffset": 4,
   "theme": {
     "ground": true,
-    "signs": ["ΚΑΦΑΡΝΑΟΥΜ", "ΒΗΘΣΑΙΔΑ"],
+    "signs": [
+      "ΚΑΦΑΡΝΑΟΥΜ",
+      "ΒΗΘΣΑΙΔΑ"
+    ],
     "clouds": 0.6,
     "sunGlow": 0.7,
     "textures": "varied",
@@ -66,7 +69,13 @@
       ]
     }
   },
-  "assets": {"kit": false, "models": ["bird", "gstall"]},
+  "assets": {
+    "kit": false,
+    "models": [
+      "bird",
+      "gstall"
+    ]
+  },
   "parts": [
     "ltm:core",
     "world/terrain.js",
@@ -80,7 +89,20 @@
     "obj:up-b",
     "obj:up-a",
     "obj:up-d",
-    "obj:up-c", "obj:up-sheep", "obj:up-trees", "obj:up-g", "obj:up-h", "obj:up-i", "obj:up-j", "obj:up-k", "obj:up-houses", "obj:up-tex", "obj:up-ground", "obj:up-quad", "obj:up-plants", "obj:up-scenery",
+    "obj:up-c",
+    "obj:up-sheep",
+    "obj:up-trees",
+    "obj:up-g",
+    "obj:up-h",
+    "obj:up-i",
+    "obj:up-j",
+    "obj:up-k",
+    "obj:up-houses",
+    "obj:up-tex",
+    "obj:up-ground",
+    "obj:up-quad",
+    "obj:up-plants",
+    "obj:up-scenery",
     "obj:up-e",
     "obj:up-f",
     "obj:up-james-civic",
@@ -90,6 +112,8 @@
     "ltm:people",
     "ltm:zones",
     "world/mount.js",
+    "world/farm.js",
+    "world/village.js",
     "ltm:runtime",
     "world/tutorial.js",
     "ltm:tutorial",
