@@ -25,14 +25,14 @@ function def(id, label, fn) { defObject(id, (g, x, y, z) => { const h = G(); h.p
 
 // ---- the Seat (5:1–5) ----
 def('som-goatskin-bag', 'Goatskin water bag hung from a forked stake', g => {
-  cy(g, .05, .07, 1.9, 7, mWoodDk, 0, 0, -.35); cy(g, .03, .045, .55, 6, mWoodDk, -.14, 1.75, -.35, 0, 0, .6); cy(g, .03, .045, .55, 6, mWoodDk, .14, 1.75, -.35, 0, 0, -.6);   // the forked stake, behind the bag
-  const hair = MM('somGoatHair', '#8a6440', TEX.cloth), seam = MM('somSeam', '#4a3020');
-  const body = add(new THREE.CapsuleGeometry(.25, .62, 6, 12), hair, 0, .95, .1, g); body.rotation.z = Math.PI / 2; body.scale.set(1, 1.05, .85); const belly = add(new THREE.SphereGeometry(.27, 12, 8), hair, .05, .83, .1, g); belly.scale.set(1.5, .72, .85);
-  bx(g, 1.0, .02, .02, seam, 0, 1.12, .3); bx(g, .02, .35, .02, seam, -.15, .95, .32);   // seams of the stitched skin
-  for (const x of [-.45, -.3, .3, .45]) { cy(g, .055, .075, .3, 7, mLeatherDk, x, 1.12, .1, 0, 0, x < 0 ? .45 : -.45); cy(g, .06, .06, .04, 7, mCord, x * 1.12, 1.3, .1, 0, 0, x < 0 ? .45 : -.45); }   // four leg stubs, tied off
-  cy(g, .08, .11, .3, 8, mLeatherDk, -.66, .95, .1, 0, 0, 1.15); cy(g, .085, .085, .05, 8, mCord, -.8, 1.01, .1, 0, 0, 1.15); cy(g, .05, .05, .06, 6, mWoodLt, -.84, 1.04, .1, 0, 0, 1.15);   // the neck, tied, a wooden stopper
-  for (const x of [-.5, .5]) { const lx = x * .9, ly = 1.32, tx = x * .32, ty = 1.95, L = Math.hypot(tx - lx, ty - ly, .45); const c = cy(g, .013, .013, L, 4, mCord, (lx + tx) / 2, (ly + ty) / 2 - L / 2, -.12, .55, 0, Math.atan2(tx - lx, ty - ly) * -1); }   // cords from the legs up to the fork
-  return 2.0; });
+  cy(g, .06, .08, 2.1, 7, mWoodDk, 0, 0, 0); for (const s of [-1, 1]) cy(g, .035, .05, .55, 6, mWoodDk, s * .14, 2.0, 0, 0, 0, -s * .5);   // a stout stake, forked at the top
+  cy(g, .02, .02, .5, 5, mWood, 0, 2.26, 0, 0, 0, Math.PI / 2);   // a crossbar resting in the fork
+  const bag = add(new THREE.SphereGeometry(.34, 14, 10), mLeather, 0, 1.15, .32, g); bag.scale.set(1.05, 1.25, .8);   // the swollen skin, full of water
+  for (const s of [-1, 1]) { cy(g, .012, .012, .7, 4, mCord, s * .17, 1.88, .2, .35, 0, -s * .2);   // two cords from the crossbar to the tied legs
+    cy(g, .05, .045, .22, 7, mLeatherDk, s * .22, 1.5, .28, 0, 0, s * .9); cy(g, .045, .04, .2, 7, mLeatherDk, s * .3, .78, .32, 0, 0, -s * 2.4); }   // four tied leg stumps
+  cy(g, .06, .08, .28, 8, mLeatherDk, 0, .7, .4, .5); cy(g, .07, .07, .04, 8, mCord, 0, .72, .48, .5);   // the neck spout, tied off, hanging at the bottom
+  const drip = add(new THREE.SphereGeometry(.02, 6, 5), mBrine, 0, .6, .52, g); drip.scale.y = 1.8;
+  return 2.3; });
 def('som-limestone-pavement', 'Bare limestone pavement', g => {
   const soil = add(new THREE.CircleGeometry(2.1, 9), MM('somCrack', '#6a5e48'), 0, .005, 0, g); soil.rotation.x = -Math.PI / 2; soil.scale.set(1, .9, 1);
   const P = [[0, 0, .9], [1.25, -.35, .65], [-1.15, .2, .7], [.35, 1.05, .62], [-.45, -.95, .6], [1.05, .85, .45], [-1.3, -.85, .4], [.25, -1.5, .45], [-.8, 1.1, .45]];
@@ -70,12 +70,15 @@ def('som-fold-gateway', 'Gateway of the fold', g => {
 
 // ---- the House on the Sand (7:26–29) ----
 def('som-date-palm', 'Date palm leaning over the house', g => {
-  let x = 0, y = 0; for (let i = 0; i < 10; i++) { const lean = .07 * (i + 1) * .45, r0 = .26 - i * .013, h = .55; cy(g, r0 - .015, r0, h, 9, mPalmTrunk, x, y, 0, 0, 0, -lean); x += Math.sin(lean) * h; y += Math.cos(lean) * h; add(new THREE.TorusGeometry(r0 - .01, .035, 4, 9), mWoodDk, x, y - .03, 0, g).rotation.set(Math.PI / 2, 0, -lean); }   // tapering, scarred trunk, leaning
-  for (let k = 0; k < 15; k++) { const a = k / 15 * 6.28, droop = k % 2 ? .55 : .25, fr = new THREE.Group(); fr.position.set(x, y + .1, 0); fr.rotation.set(0, a, 0); g.add(fr);
-    for (let j = 0; j < 7; j++) { const t = (j + .5) / 7, L = 2.2, px = t * L, py = Math.sin(t * 2.4) * .5 - t * t * droop * 2; const lf = bx(fr, .3, .015, .55 * (1 - t * .6), mFrond, px, py, 0, 0, 0, -.3 - t * droop); }
-  }   // fifteen arching fronds
-  for (let k = 0; k < 4; k++) { const a = k / 4 * 6.28; for (let j = 0; j < 8; j++) add(new THREE.SphereGeometry(.06, 5, 4), mDates, x + Math.cos(a) * .35 + R(-.08, .08), y - .2 - j * .05, Math.sin(a) * .35 + R(-.08, .08), g).scale.y = 1.4; }   // hanging date clusters
-  return y + .5; });
+  const lean = .22, H = 6.2, segs = 14; for (let i = 0; i < segs; i++) { const t = i / segs, r = .24 - t * .06; cy(g, r * .92, r, H / segs * 1.02, 9, mPalmTrunk, Math.sin(lean) * t * H, t * H, 0, 0, 0, -lean); }   // thick ringed trunk
+  const top = new THREE.Group(); top.position.set(Math.sin(lean) * H, H, 0); g.add(top);
+  for (let k = 0; k < 16; k++) { const a = k / 16 * 6.28 + R(-.1, .1), up = k % 2 ? .5 : -.1, fr = new THREE.Group(); fr.rotation.y = a; top.add(fr);
+    const pts = []; for (let j = 0; j <= 8; j++) { const t = j / 8; pts.push(new THREE.Vector3(t * 2.6, Math.sin(t * 2.4) * (.6 + up) - t * t * 1.4, 0)); } const curve = new THREE.CatmullRomCurve3(pts);
+    add(new THREE.TubeGeometry(curve, 10, .025, 4), mPalmTrunk, 0, 0, 0, fr);   // the arching midrib
+    for (let j = 1; j < 14; j++) { const p = curve.getPoint(j / 14), w = .5 * Math.sin(j / 14 * 3.1); for (const s of [-1, 1]) { const lf = bx(fr, .07, .015, w, mFrond, p.x, p.y, s * w / 2); lf.rotation.x = s * .5; } } }   // leaflets either side, making a feathered crown
+  for (let k = 0; k < 4; k++) { const a = k * 1.6 + .4, dx = Math.cos(a) * .35, dz = Math.sin(a) * .35; for (let i = 0; i < 26; i++) add(new THREE.SphereGeometry(.05, 6, 5), mDates, top.position.x + dx + R(-.13, .13), H - .35 - R(0, .6), dz + R(-.13, .13), g);   // big date bunches hanging below the crown
+    cy(g, .015, .015, .6, 4, mStraw, top.position.x + dx, H - .3, dz, 0, 0, .2); }
+  return H + 1; });
 def('som-mudbrick-wall', 'Low mud-brick wall of the yard', g => {
   const mb = MM('somMudBrick', '#b49a74', TEX.plaster), mb2 = MM('somMudBrick2', '#a68c66', TEX.plaster);
   for (let row = 0; row < 3; row++) for (let k = 0; k < 6; k++) bx(g, .56 * R(.94, 1.02), .24, .36, rnd() > .5 ? mb : mb2, -1.45 + k * .58 + (row % 2) * .29, row * .25, 0, R(-.04, .04), 0, R(-.03, .03));
@@ -84,16 +87,21 @@ def('som-mudbrick-wall', 'Low mud-brick wall of the yard', g => {
 
 // ---- the Ox Stall (6:21–25) ----
 def('som-yoke-on-peg', 'Yoke for two oxen, hung on its peg', g => {
-  dryWall(g, -1.5, -.3, 1.5, -.3, 2.1, .45); cy(g, .07, .07, .6, 7, mWoodLt, 0, 1.85, .0, Math.PI / 2);   // coursed stall wall and a stout peg
-  const yk = MM('somYokeWood', '#c89a62', TEX.wood); const beam = add(new THREE.TorusGeometry(3.2, .1, 6, 30, .62), yk, 0, -1.45, .35, g); beam.rotation.z = Math.PI / 2 - .31;   // a long, gently curved beam hung at its middle
-  for (const s of [-.75, .75]) { const bow = add(new THREE.TorusGeometry(.3, .055, 6, 14, Math.PI), yk, s, 1.42, .35, g); bow.rotation.z = Math.PI; for (const d of [-.3, .3]) cy(g, .04, .04, .2, 5, mWoodDk, s + d, 1.6, .35); }   // two big U-shaped bows hanging below, pegged through the beam
-  add(new THREE.TorusGeometry(.09, .025, 4, 10), mIron, 0, 1.55, .45, g);
-  return 2.1; });
+  dryWall(g, -1.2, -.3, 1.2, -.3, 1.3, .5);   // a low field-stone wall behind
+  cy(g, .05, .05, .45, 8, mWoodDk, 0, 1.15, -.1, Math.PI / 2);   // one stout peg driven into the wall
+  const beam = new THREE.Group(); beam.position.set(0, 1.18, .12); g.add(beam);
+  bx(beam, 1.9, .13, .13, mWood, 0, 0, 0); for (const s of [-1, 1]) bx(beam, .2, .17, .15, mWood, s * .95, -.02, 0);   // a thick beam with flared ends
+  for (const s of [-.55, .55]) { const bow = add(new THREE.TorusGeometry(.2, .03, 6, 16, Math.PI), mWoodLt, s, -.02, 0, beam); bow.rotation.z = Math.PI;   // the U-shaped bow under each neck
+    for (const t of [-1, 1]) cy(beam, .022, .022, .2, 5, mWoodDk, s + t * .2, .05, 0); }   // bow ends pinned through the beam
+  return 1.45; });
 def('som-plough', 'Wooden plough (ard) with an iron share', g => {
-  bx(g, .16, .14, 1.0, mWood, 0, .06, .45);   // the sole, along the ground
-  const share = add(new THREE.ConeGeometry(.08, .45, 4), mIron, 0, .1, 1.12, g); share.rotation.x = Math.PI / 2;   // the pointed iron share on its tip
-  const beam = bx(g, .12, .12, 2.6, mWoodLt, 0, .75, -.45, 0, .42);   // the long beam rising from the sole to the yoke
-  const stilt = bx(g, .1, 1.1, .1, mWood, 0, .1, .05, 0, -.3); bx(g, .5, .08, .08, mWoodLt, 0, 1.15, -.25, 0, -.3);   // the handle upright and its grip
+  const sole = bx(g, .14, .12, 1.0, mWood, 0, .05, 0, 0, .15);   // the sole dragging along the ground
+  const sh = new THREE.ConeGeometry(.09, .4, 4); sh.rotateX(Math.PI / 2); add(sh, mIron, 0, .02, .66, g).scale.x = 1.4;   // a big iron share on its point
+  cy(g, .06, .07, 1.25, 7, mWood, 0, .55, -.45, .45);   // the stilt rising at the back
+  bx(g, .5, .07, .07, mWoodDk, 0, 1.17, -.75); for (const s of [-1, 1]) cy(g, .035, .035, .2, 5, mWoodDk, s * .25, 1.15, -.75, 0, 0, Math.PI / 2);   // a crosswise handle on top
+  const beam = cy(g, .06, .08, 3.0, 8, mWoodLt, 0, .4, .9, -1.32);   // the long beam from the stilt out to the yoke
+  bx(g, .1, .12, .12, mWoodDk, 0, .6, -.1); for (let k = 0; k < 3; k++) cy(g, .068, .068, .05, 7, mRope, 0, .75, .1 + k * .2, -1.32);   // lashings where beam meets stilt
+  bx(g, .9, .1, .1, mWood, 0, 1.15, 2.2); cy(g, .02, .02, .3, 4, mWoodDk, 0, 1.05, 2.2);   // the yoke-bar at the far end of the beam
   return 1.3; });
 def('som-feeding-niche', 'Roof pillar with a feeding niche of hay', g => {
   const tones = [mRock, mRockDk, MM('somRockWarm', '#b8a68a')];

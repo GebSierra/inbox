@@ -24,3 +24,8 @@
 | som-amphora-buried | 7.7 |
 | som-broken-cart | 8.0 |
 | som-resting-stone | 4.9 |
+
+## Round 2 (batch a) / round 3 (batch b)
+goatskin 5.2, pavement 6.9, seat 7.3, split boulder 6.8, slab corner 7.5, crook 7.0, fold gateway 8.0 ✓, palm 6.0, mud-brick wall 7.6, yoke 5.6, plough 6.5
+niche 5.6, hive pipes 4.6, smoker 6.6, comb 3.9, vat 7.0, mending 5.0, court entrance 6.4, culvert 5.2, amphora 7.1, cart 7.2, resting stone 5.0
+Goatskin, yoke, palm and plough rebuilt again (round 3, not yet scored).
