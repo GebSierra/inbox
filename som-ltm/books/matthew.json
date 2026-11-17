@@ -747,7 +747,7 @@
      "objects": [
       {
        "place": true,
-       "what": "the doorstep hewn in the rock"
+       "what": "the step hewn in the rock, up onto the shelf"
       },
       {
        "what": "the stone bench against the house wall"
@@ -791,9 +791,10 @@
       },
       {
        "place": true,
-       "what": "the house's mud-brick front wall"
+       "what": "the low mud-brick wall of the yard"
       }
-     ]
+     ],
+     "back": 9
     }
    ]
   }

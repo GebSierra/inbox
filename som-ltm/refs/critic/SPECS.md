@@ -148,7 +148,7 @@ Spots are listed in the fixed order. P = a feature of the place itself; O = an o
 - spot 5 centre: the pile of pruned branches (O)
 
 ## Room 22: 7.5 The House on the Rock (7:21–25) — screenshot: room-22.png
-- spot 1 near-left: the doorstep hewn in the rock (P)
+- spot 1 near-left: the step hewn in the rock, up onto the shelf (P)
 - spot 2 far-left: the stone bench against the house wall (O)
 - spot 3 far-right: the shelf's edge over the wadi (P)
 - spot 4 near-right: the stone mortar (O)
@@ -158,4 +158,4 @@ Spots are listed in the fixed order. P = a feature of the place itself; O = an o
 - spot 1 near-left: the date palm leaning over the house (O)
 - spot 2 far-left: the reed fence round the yard (O)
 - spot 3 far-right: the bank across the wadi (P)
-- spot 4 near-right: the house's mud-brick front wall (P)
+- spot 4 near-right: the low mud-brick wall of the yard (P)
