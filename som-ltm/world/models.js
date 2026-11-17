@@ -96,73 +96,85 @@ def('som-plough', 'Wooden plough (ard) with an iron share', g => {
   const stilt = bx(g, .1, 1.1, .1, mWood, 0, .1, .05, 0, -.3); bx(g, .5, .08, .08, mWoodLt, 0, 1.15, -.25, 0, -.3);   // the handle upright and its grip
   return 1.3; });
 def('som-feeding-niche', 'Roof pillar with a feeding niche of hay', g => {
-  for (let row = 0; row < 9; row++) for (const [x, z, w, d] of [[0, -.3, .9, .3], [0, .3, .9, .3], [-.3, 0, .3, .3], [.3, 0, .3, .3]]) { if (row >= 2 && row <= 4 && z > .2) continue; bx(g, w * R(.97, 1.03), .28, d, rnd() > .5 ? mRock : mRockDk, x, row * .3, z, R(-.03, .03)); }
-  bx(g, .7, .08, .5, mRockDk, 0, .58, .15); bx(g, .7, .08, .5, mRockDk, 0, 1.5, .15);
-  bx(g, .6, .25, .4, mWood, 0, .66, .18); for (let i = 0; i < 26; i++) bx(g, R(.3, .6), .025, .03, mStraw, R(-.22, .22), .9 + R(0, .3), R(.05, .45), R(0, 3), 0, R(-.5, .5));
-  bx(g, 1.2, .25, 1.0, mWoodDk, 0, 2.7, 0);
-  return 2.95; });
+  const tones = [mRock, mRockDk, MM('somRockWarm', '#b8a68a')];
+  for (let row = 0; row < 9; row++) for (const [x, z, w, d] of [[0, -.32, .95, .32], [0, .32, .95, .32], [-.32, 0, .32, .32], [.32, 0, .32, .32]]) { if (row >= 2 && row <= 4 && z > .2) continue; bx(g, w * R(.97, 1.03), .28, d, tones[(rnd() * 3) | 0], x, row * .3, z, R(-.03, .03)); }
+  for (const s of [-1, 1]) bx(g, .14, .95, .36, mRockDk, s * .4, .6, .32);   // the niche's cut sides
+  bx(g, .8, .1, .5, mRockDk, 0, .56, .2); bx(g, .8, .12, .5, mRockDk, 0, 1.5, .2);
+  bx(g, .66, .28, .42, mWood, 0, .66, .2); for (let i = 0; i < 34; i++) bx(g, R(.3, .6), .025, .03, mStraw, R(-.25, .25), .9 + R(0, .32), R(.05, .45), R(0, 3), 0, R(-.5, .5));   // the manger in the niche, heaped with hay
+  bx(g, 3.2, .3, .45, mWoodDk, 0, 2.7, 0); for (const s of [-1, 1]) bx(g, .9, .1, .9, mRockDk, 0, 2.62, 0);   // the roof beam running across on a capstone
+  return 3.0; });
 
 // ---- the Bee Bank (5:31–35) ----
 def('som-hive-pipes', 'Stack of clay hive pipes', g => {
-  const lid = MM('somHiveLid', '#d8c4a0', TEX.plaster);
-  for (let row = 0; row < 3; row++) for (let k = 0; k < 4 - row; k++) { const x = (k - (3 - row) / 2) * .36, y = .2 + row * .33; cy(g, .16, .16, 1.4, 12, row % 2 ? mClay : mClayDk, x, y, 0, Math.PI / 2);
-    cy(g, .165, .165, .05, 12, lid, x, y, .71, Math.PI / 2); add(new THREE.CircleGeometry(.035, 8), mDark, x, y - .06, .74, g); }
-  bx(g, 1.8, .08, 1.5, mRock, 0, -.04, 0); for (let i = 0; i < 7; i++) add(new THREE.SphereGeometry(.014, 4, 3), mDark, R(-.6, .6), R(.15, .9), R(.76, .95), g);
-  return 1.2; });
+  const lid = MM('somHiveLid', '#cdb894', TEX.plaster), pipeA = MM('somPipeA', '#a8714c', TEX.pot), pipeB = MM('somPipeB', '#946446', TEX.pot);
+  for (let i = 0; i < 6; i++) boulder(g, .35, mRock, -1 + i * .4, -.1, R(-.3, .3), .5);   // a low stone bed
+  for (let row = 0; row < 3; row++) for (let k = 0; k < 4 - row; k++) { const x = (k - (3 - row) / 2) * .36 + R(-.02, .02), y = .32 + row * .33; cy(g, .16 * R(.95, 1.05), .16, 1.4, 12, (row + k) % 2 ? pipeA : pipeB, x, y, R(-.05, .05), Math.PI / 2);
+    const cap = add(new THREE.SphereGeometry(.16, 10, 6, 0, 6.3, 0, 1.2), lid, x, y, .7, g); cap.rotation.x = Math.PI / 2; cap.scale.set(1, .4, 1); add(new THREE.CircleGeometry(.03, 8), mDark, x, y - .07, .77, g); }   // domed mud caps, each with a small hole
+  for (let i = 0; i < 16; i++) { const b = add(new THREE.SphereGeometry(.025, 5, 4), MM('somBee', '#3a2a10'), R(-.7, .7), R(.2, 1.3), R(.75, 1.1), g); b.scale.x = 1.6; }   // bees about the holes
+  return 1.35; });
 def('som-smoker-pot', 'Beekeeper\'s smoker pot', g => {
-  boulder(g, .35, mRock, 0, 0, 0, .7); lathe(g, [[0, 0], [.2, .02], [.28, .2], [.27, .42], [.2, .52], [.21, .56], [.17, .56], [.16, .5]], mClay, 0, .42, 0); cy(g, .17, .17, .02, 12, mDark, 0, .96, 0);
-  cy(g, .06, .1, .5, 10, mClay, .3, .78, 0, 0, 0, -1.0); cy(g, .07, .07, .03, 10, mDark, .52, .93, 0, 0, 0, -1.0);
-  for (let k = 0; k < 5; k++) add(new THREE.SphereGeometry(.05 + k * .035, 8, 6), MM('somSmokeT', '#ece8e0', null, { transparent: true, opacity: .3, depthWrite: false }), .58 + k * .1, .98 + k * .16, 0, g);
-  return 1.0; });
+  slab(g, .45, .25, mRock, 0, 0, 0, 6); lathe(g, [[0, 0], [.2, .02], [.28, .2], [.27, .42], [.2, .52], [.21, .56], [.17, .56], [.16, .5]], mClay, 0, .3, 0); cy(g, .17, .17, .02, 12, MM('somEmber', '#5a2a18'), 0, .84, 0);
+  cy(g, .06, .1, .5, 10, mClay, .3, .66, 0, 0, 0, -1.0);
+  for (let k = 0; k < 9; k++) add(new THREE.SphereGeometry(.04 + k * .025, 8, 6), MM('somSmokeT2', '#ece8e0', null, { transparent: true, opacity: .38, depthWrite: false }), .56 + k * .07, .86 + k * .13, R(-.03, .03), g);   // smoke rising from the spout
+  return .95; });
 def('som-comb-tray', 'Tray of golden honeycomb', g => {
-  bx(g, 1.2, .55, .9, mRock, 0, 0, 0); bx(g, 1.05, .06, .75, mWoodLt, 0, .55, 0); for (const s of [-.5, .5]) bx(g, 1.05, .1, .05, mWoodLt, 0, .58, s * .72);
-  for (let k = 0; k < 4; k++) { const w = R(.18, .26), x = -.36 + k * .24; bx(g, w, R(.07, .1), .55, mComb, x, .61, R(-.03, .03), R(-.15, .15)); for (let c = 0; c < 5; c++) add(new THREE.CircleGeometry(.03, 6), mHoney, x + R(-.07, .07), .7, -.22 + c * .11, g).rotation.x = -Math.PI / 2; }
-  for (let i = 0; i < 6; i++) { const dr = add(new THREE.SphereGeometry(.03, 6, 5), mHoney, R(-.5, .5), .52, R(.36, .4), g); dr.scale.y = 2.2; }
-  return .75; });
+  boulder(g, .6, mRock, 0, -.15, 0, .55); bx(g, 1.05, .06, .75, mWoodLt, 0, .42, 0); for (const s of [-.5, .5]) bx(g, 1.05, .1, .05, mWoodLt, 0, .45, s * .72);
+  const cell = MM('somCombCells', '#e4ac3c', TEX.wicker);
+  for (let k = 0; k < 4; k++) { const x = -.36 + k * .24, sh = new THREE.Shape(); sh.moveTo(-.1, 0); sh.lineTo(.1, 0); sh.lineTo(.12, .3); sh.quadraticCurveTo(0, .4, -.12, .3); sh.lineTo(-.1, 0); const comb = add(new THREE.ExtrudeGeometry(sh, { depth: .45, bevelEnabled: false }), cell, x, .48, -.22, g); comb.rotation.z = R(-.2, .2); }   // four slabs of comb, rounded tops, cells showing
+  for (let i = 0; i < 8; i++) { const dr = add(new THREE.SphereGeometry(.03, 6, 5), mHoney, R(-.5, .5), .4, R(.36, .4), g); dr.scale.y = 2.4; }
+  return .9; });
 
 // ---- the Fisherman's Court (7:6–10) ----
 def('som-salting-vat', 'Fish-salting vat', g => {
-  lathe(g, [[0, 0], [.75, 0], [.82, .1], [.8, .75], [.86, .82], [.7, .82], [.68, .2], [0, .2]], mPlaster, 0, 0, 0, 20); cy(g, .68, .68, .04, 20, mBrine, 0, .62, 0);
+  lathe(g, [[0, 0], [.75, 0], [.82, .1], [.8, .75], [.86, .82], [.7, .82], [.68, .2], [0, .2]], mPlaster, 0, 0, 0, 20); cy(g, .68, .68, .04, 20, MM('somBrine2', '#7fa8a0', null, { roughness: .1, metalness: .1 }), 0, .62, 0);
   add(new THREE.TorusGeometry(.72, .05, 5, 24), mSalt, 0, .78, 0, g).rotation.x = Math.PI / 2;
-  for (let i = 0; i < 7; i++) { const a = i / 7 * 6.28, f = add(new THREE.CapsuleGeometry(.08, .38, 4, 8), mFishM, Math.cos(a) * .36, .67, Math.sin(a) * .36, g); f.rotation.set(Math.PI / 2, 0, a + 1.57); }
-  const lid = new THREE.Group(); lid.position.set(1.05, .55, .2); lid.rotation.set(0, .4, .35); g.add(lid); cy(lid, .55, .55, .06, 18, mWoodLt, 0, 0, 0, Math.PI / 2); for (const s of [-.22, .22]) bx(lid, .08, 1.0, .06, mWood, s, -.5, .05);
+  for (let i = 0; i < 6; i++) { const z = -.4 + i * .16, f = add(new THREE.CapsuleGeometry(.07, .5, 4, 8), mFishM, R(-.05, .05), .66, z, g); f.rotation.set(0, 0, Math.PI / 2); add(new THREE.ConeGeometry(.08, .14, 4), mFishM, .4, .66, z, g).rotation.z = -Math.PI / 2; }   // fish laid side by side, heads one way
+  for (let i = 0; i < 18; i++) add(new THREE.DodecahedronGeometry(.04, 0), mSalt, R(-.55, .55), .68, R(-.5, .5), g);
+  const lid = new THREE.Group(); lid.position.set(.93, .48, 0); lid.rotation.set(0, 0, .3); g.add(lid); cy(lid, .55, .55, .06, 18, mWoodLt, 0, 0, 0, 0, 0, Math.PI / 2); for (const s of [-.22, .22]) bx(lid, .06, .08, 1.0, mWood, .04, -.04, s);   // the lid leaning against the vat
   return .9; });
 def('som-mending-stone', 'Mending stone with a net spread over it', g => {
-  boulder(g, .7, mRock, 0, 0, 0, .6);
-  const net = MM('somNetM', '#8a7a5a'); for (let i = -6; i <= 6; i++) { bx(g, 1.6, .012, .012, net, 0, .5 - Math.abs(i) * .01, i * .1); bx(g, .012, .012, 1.3, net, i * .12, .5 - Math.abs(i) * .01, 0); }
-  for (let k = 0; k < 3; k++) add(new THREE.TorusGeometry(.26 - k * .07, .04, 6, 16), mRope, -.6, .08 + k * .07, .5, g).rotation.x = Math.PI / 2;
-  bx(g, .05, .025, .4, mWoodLt, .2, .54, .1, .6); bx(g, .012, .03, .3, mCord, .2, .56, .1, .6);
-  return .75; });
+  boulder(g, .75, mRock, 0, -.2, 0, .55); slab(g, .7, .12, mRock, 0, .3, 0, 7);   // a flat-topped stone
+  const geo = new THREE.PlaneGeometry(1.9, 1.6, 18, 16); geo.rotateX(-Math.PI / 2); const p = geo.attributes.position; for (let i = 0; i < p.count; i++) { const x = p.getX(i), z = p.getZ(i), d = Math.hypot(x / .75, z / .7); p.setY(i, d < 1 ? .45 : .45 - (d - 1) * .55); }
+  add(geo, new THREE.MeshBasicMaterial({ color: '#5a4a32', wireframe: true }), 0, 0, 0, g);   // the net draped over it, sagging at the edges
+  for (let k = 0; k < 3; k++) add(new THREE.TorusGeometry(.2 - k * .05, .04, 6, 16), mRope, .3, .5 + k * .04, .2, g).rotation.x = Math.PI / 2;   // a coil of cord on top
+  const nd = bx(g, .08, .03, .45, mWoodLt, -.25, .5, -.1, .5); bx(g, .03, .04, .3, mCord, -.25, .52, -.1, .5);   // a big wooden net needle wound with twine
+  return .7; });
 def('som-court-entrance', 'Entrance of a basalt courtyard', g => {
   const bas = MM('somBasaltM2', '#7c766e'), basDk = MM('somBasaltM3', '#625c56');
-  for (const s of [-1, 1]) { for (let row = 0; row < 6; row++) bx(g, .55, .3, .55, row % 2 ? bas : basDk, s * .85, row * .31, 0, R(-.04, .04));
-    for (let row = 0; row < 5; row++) for (let k = 0; k < 4; k++) bx(g, .42, .28, .45, rnd() > .5 ? bas : basDk, s * (1.35 + k * .44 + (row % 2) * .2), row * .3, 0, R(-.05, .05)); }
-  bx(g, 2.4, .32, .6, basDk, 0, 1.86, 0); bx(g, 1.2, .03, .7, MM('somWorn', '#b8a070'), 0, .01, .3);
-  return 2.2; });
+  for (const s of [-1, 1]) { for (let row = 0; row < 6; row++) bx(g, .78, .3, .7, row % 2 ? bas : basDk, s * .9, row * .31, 0, R(-.03, .03));   // thick built posts
+    for (let row = 0; row < 4; row++) for (let k = 0; k < 4; k++) bx(g, R(.45, .6), .3, .45, rnd() > .5 ? bas : basDk, s * (1.55 + k * .5), row * .31, 0); bx(g, .55, .25, .5, basDk, s * 3.3, 1.2, 0); }   // coursed walls, capped at the ends
+  bx(g, 2.6, .45, .8, basDk, 0, 1.86, 0); bx(g, 1.1, .03, .8, MM('somWorn', '#b8a070'), 0, .01, .3);   // a heavy lintel
+  return 2.3; });
 
 // ---- the Ridge Road (5:41–45) ----
 def('som-culvert', 'Culvert stones over a gully', g => {
-  const earth = MM('somEarthBank', '#a8905e'); for (const s of [-1, 1]) bx(g, 1.4, .7, 2.4, earth, s * 1.15, -.15, 0, 0, 0, -s * .18);
-  bx(g, .9, .02, 3.2, MM('somGullyBed', '#7a6a48'), 0, -.02, 0); for (let i = 0; i < 6; i++) boulder(g, R(.08, .14), mRockDk, R(-.3, .3), 0, R(-1.4, 1.4), .6);
-  for (const s of [-1, 1]) for (let row = 0; row < 2; row++) for (let k = 0; k < 3; k++) bx(g, .35, .26, .42, row ? mRock : mRockDk, s * .58, row * .27, (k - 1) * .46, R(-.05, .05));
-  for (let k = -1; k <= 1; k++) bx(g, 1.6, .16, .48, mRock, 0, .54, k * .5, R(-.04, .04));
+  const earth = MM('somEarthBank', '#a8905e'), road = MM('somTrack', '#b8a07a');
+  for (const s of [-1, 1]) { const sh = new THREE.Shape(); sh.moveTo(0, 0); sh.lineTo(1.6, 0); sh.lineTo(1.6, .2); sh.lineTo(.2, .62); sh.lineTo(0, .62); const emb = add(new THREE.ExtrudeGeometry(sh, { depth: 1.5, bevelEnabled: false }), earth, s * .5, 0, -.75, g); emb.scale.x = s;
+    bx(g, 1.5, .02, 1.5, road, s * 1.25, .45, 0, 0, 0, -s * .28); }   // the road embankment ramping down each side
+  bx(g, .9, .02, 4, MM('somGullyBed', '#7a6a48'), 0, -.02, 0); for (let i = 0; i < 8; i++) boulder(g, R(.08, .14), mRockDk, R(-.3, .3), 0, R(-1.8, 1.8), .6);   // the gully bed running out both sides
+  for (const s of [-1, 1]) for (let row = 0; row < 2; row++) for (let k = 0; k < 3; k++) bx(g, .32, .29, .48, row ? mRock : mRockDk, s * .58, row * .3, (k - 1) * .5, R(-.05, .05));   // built abutments
+  for (let k = -1; k <= 1; k++) bx(g, 1.5, .14, .48, MM('somSlabGrey', '#9a9286'), 0, .6, k * .5, R(-.04, .04));   // three grey stone slabs spanning the gully
   return .75; });
 def('som-amphora-buried', 'Old amphora half-buried by the road', g => {
-  const earth = MM('somEarthM', '#9a7e56'); const mound = add(new THREE.SphereGeometry(.9, 12, 6, 0, 6.3, 0, 1.57), earth, -.1, -.05, 0, g); mound.scale.set(1.2, .35, 1);
-  const am = new THREE.Group(); am.position.set(.1, .05, 0); am.rotation.z = .75; g.add(am);
+  const earth = MM('somEarthM', '#9a7e56');
+  const am = new THREE.Group(); am.position.set(.1, -.25, 0); am.rotation.z = .75; g.add(am);
   lathe(am, [[0, 0], [.08, .02], [.22, .3], [.3, .7], [.28, 1.0], [.16, 1.2], [.1, 1.25], [.1, 1.5], [.14, 1.55], [.12, 1.58], [.08, 1.56]], mClay, 0, 0, 0, 16);
-  add(new THREE.TorusGeometry(.12, .025, 6, 14), mClay, 0, 1.56, 0, am).rotation.x = Math.PI / 2; for (const s of [-1, 1]) { const h = add(new THREE.TorusGeometry(.16, .035, 6, 12, Math.PI), mClay, s * .12, 1.3, 0, am); h.rotation.set(0, Math.PI / 2, s > 0 ? -.4 : .4); }
+  add(new THREE.TorusGeometry(.12, .025, 6, 14), mClay, 0, 1.56, 0, am).rotation.x = Math.PI / 2; for (const s of [-1, 1]) { const h = add(new THREE.TorusGeometry(.18, .045, 6, 12, Math.PI), MM('somClayDk2', '#a85e36', TEX.pot), s * .12, 1.3, 0, am); h.rotation.set(0, Math.PI / 2, s > 0 ? -.4 : .4); }
+  for (let i = 0; i < 22; i++) { const a = R(0, 6.3), d = R(.1, .8); boulder(g, R(.12, .25), i % 3 ? earth : mRockDk, .35 + Math.cos(a) * d * .7, -.05, Math.sin(a) * d, .45); }   // earth heaped round and over its foot
   return .9; });
 def('som-broken-cart', 'Cart with a broken wheel, propped on stones', g => {
-  bx(g, 1.4, .1, 2.2, mWoodLt, 0, .62, 0, 0, 0, .12); for (const s of [-1, 1]) bx(g, .08, .3, 2.2, mWood, s * .68, .7, 0, 0, 0, .12);
-  for (const s of [-1, 1]) bx(g, .07, .07, 1.6, mWood, s * .3, .6, 1.8, 0, .25); cy(g, .06, .06, 1.7, 6, mWoodDk, 0, .5, 0, 0, 0, Math.PI / 2);
-  const wheel = (gg, x, y, z, rx, ry, rz, broken) => { const w = new THREE.Group(); w.position.set(x, y, z); w.rotation.set(rx, ry, rz); gg.add(w); add(new THREE.TorusGeometry(.5, .05, 6, 18, broken ? 4.6 : 6.3), mWood, 0, 0, 0, w); cy(w, .1, .1, .14, 10, mWoodDk, 0, 0, 0, Math.PI / 2);
-    for (let k = 0; k < (broken ? 4 : 8); k++) { const sp = bx(w, .035, .5, .035, mWoodDk, 0, 0, 0, 0, 0, k / 8 * 6.28); sp.position.set(Math.sin(k / 8 * 6.28) * -.25, Math.cos(k / 8 * 6.28) * .25 - .25, 0); } };
-  wheel(g, .84, .55, 0, 0, Math.PI / 2, 0, false);
-  for (let k = 0; k < 3; k++) boulder(g, .26, mRockDk, -.75, k * .22, R(-.15, .15), .8);
-  wheel(g, -1.6, .06, 1.0, -Math.PI / 2, 0, 0, true);
+  const tilt = .12; bx(g, 1.4, .1, 2.2, mWoodLt, 0, .62, 0, 0, 0, tilt); for (const s of [-1, 1]) bx(g, .08, .3, 2.2, mWood, s * .68, .7 + s * .08, 0, 0, 0, tilt);
+  for (const s of [-1, 1]) bx(g, .08, .08, 1.7, mWood, s * .3, .55, 1.85, 0, .12);   // the shafts, fixed under the front of the bed
+  cy(g, .06, .06, 1.7, 6, mWoodDk, 0, .5, 0, 0, 0, Math.PI / 2);
+  const wheel = (gg, x, y, z, rx, ry, rz, n) => { const w = new THREE.Group(); w.position.set(x, y, z); w.rotation.set(rx, ry, rz); gg.add(w); add(new THREE.TorusGeometry(.5, .06, 6, 20), mWood, 0, 0, 0, w); cy(w, .1, .1, .14, 10, mWoodDk, 0, 0, 0, Math.PI / 2);
+    for (let k = 0; k < n; k++) { const sp = bx(w, .04, .46, .04, mWoodDk, 0, 0, 0, 0, 0, k / 8 * 6.28); sp.position.set(-Math.sin(k / 8 * 6.28) * .23, Math.cos(k / 8 * 6.28) * .23 - .23, 0); } return w; };
+  wheel(g, .84, .55, 0, 0, Math.PI / 2, 0, 8);
+  for (let k = 0; k < 4; k++) boulder(g, .24, mRockDk, -.75, k * .17, (k % 2) * .2 - .1, .8);   // stones piled under the bare axle end
+  wheel(g, -1.65, .06, 1.0, -Math.PI / 2, 0, 0, 5);   // the fallen wheel, three spokes broken out
   return 1.2; });
 def('som-resting-stone', 'Resting stone at the fork of the road', g => {
-  slab(g, .95, .42, mRock, 0, 0, 0, 7, .3); slab(g, .82, .05, mLime, 0, .52, 0, 7, .5);
-  const tr = MM('somTrack', '#b8a07a'); bx(g, .9, .03, 4.4, tr, 0, .025, 2.6); bx(g, .9, .03, 3.6, tr, -1.1, .025, -1.7, .5); bx(g, .9, .03, 3.6, tr, 1.1, .025, -1.7, -.5);
-  return .6; });
+  const rk = MM('somRestRock', '#b0a690'); const sh = new THREE.Shape(); [[1.0, 0], [.6, .55], [-.3, .62], [-.95, .2], [-.85, -.4], [-.1, -.6], [.75, -.45]].forEach(([x, z], i) => i ? sh.lineTo(x, z) : sh.moveTo(x, z));
+  const geo = new THREE.ExtrudeGeometry(sh, { depth: .45, bevelEnabled: true, bevelThickness: .1, bevelSize: .12, bevelSegments: 2 }); geo.rotateX(-Math.PI / 2); add(geo, rk, 0, 0, 0, g);   // a wide, low, rough flat-topped stone
+  const worn = add(new THREE.CircleGeometry(1.7, 10), MM('somTrack', '#b8a07a'), 0, .01, 0, g); worn.rotation.x = -Math.PI / 2;   // the worn ground where travellers stop
+  for (let i = 0; i < 4; i++) boulder(g, R(.1, .18), mRockDk, R(-1.3, 1.3), 0, R(-1.2, 1.2), .6);
+  return .65; });
