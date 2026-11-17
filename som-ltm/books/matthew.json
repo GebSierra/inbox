@@ -359,12 +359,12 @@
      "kind": "custom",
      "builder": "som.court",
      "at": [
-      120,
-      -20
+      124,
+      -16
      ],
      "viewer": [
-      130,
-      -20
+      133,
+      -16
      ],
      "objects": [
       {
@@ -394,12 +394,12 @@
      "kind": "custom",
      "builder": "som.store",
      "at": [
-      162,
-      -38
+      156,
+      -29
      ],
      "viewer": [
-      152,
-      -38
+      147,
+      -29
      ],
      "objects": [
       {
@@ -428,12 +428,12 @@
      "kind": "custom",
      "builder": "som.bake",
      "at": [
-      120,
-      -56
+      124,
+      -42
      ],
      "viewer": [
-      130,
-      -56
+      133,
+      -42
      ],
      "objects": [
       {
@@ -461,12 +461,12 @@
      "kind": "custom",
      "builder": "som.spring",
      "at": [
-      162,
-      -74
+      156,
+      -55
      ],
      "viewer": [
-      152,
-      -74
+      147,
+      -55
      ],
      "objects": [
       {
@@ -495,12 +495,12 @@
      "kind": "custom",
      "builder": "som.stall",
      "at": [
-      120,
-      -92
+      124,
+      -69
      ],
      "viewer": [
-      130,
-      -92
+      133,
+      -69
      ],
      "objects": [
       {
@@ -529,12 +529,12 @@
      "kind": "custom",
      "builder": "som.granary",
      "at": [
-      162,
-      -110
+      156,
+      -82
      ],
      "viewer": [
-      152,
-      -110
+      147,
+      -82
      ],
      "objects": [
       {
@@ -567,12 +567,12 @@
      "kind": "custom",
      "builder": "som.press",
      "at": [
-      120,
-      -128
+      124,
+      -95
      ],
      "viewer": [
-      130,
-      -128
+      133,
+      -95
      ],
      "objects": [
       {
@@ -604,11 +604,11 @@
      "kind": "custom",
      "builder": "som.boat",
      "at": [
-      166,
+      168,
       -176
      ],
      "viewer": [
-      166,
+      168,
       -166
      ],
      "objects": [
@@ -637,11 +637,11 @@
      "kind": "custom",
      "builder": "som.fisher",
      "at": [
-      190,
+      196,
       -176
      ],
      "viewer": [
-      190,
+      196,
       -166
      ],
      "objects": [
@@ -670,11 +670,11 @@
      "kind": "custom",
      "builder": "som.tax",
      "at": [
-      214,
+      224,
       -176
      ],
      "viewer": [
-      214,
+      224,
       -166
      ],
      "objects": [
@@ -703,12 +703,12 @@
      "kind": "custom",
      "builder": "som.orchard",
      "at": [
-      204,
-      -150
+      226,
+      -148
      ],
      "viewer": [
-      204,
-      -160
+      226,
+      -158
      ],
      "objects": [
       {
@@ -737,12 +737,12 @@
      "kind": "custom",
      "builder": "som.rock",
      "at": [
-      176,
-      -148
+      184,
+      -146
      ],
      "viewer": [
-      176,
-      -158
+      184,
+      -156
      ],
      "objects": [
       {
@@ -771,12 +771,12 @@
      "kind": "custom",
      "builder": "som.sand",
      "at": [
-      154,
-      -151
+      158,
+      -149
      ],
      "viewer": [
-      154,
-      -160
+      158,
+      -158
      ],
      "objects": [
       {

@@ -6,7 +6,7 @@
 const SHORE = -180;                                                  // moved south 2026-11-17: room on the lake side for the farm (ch 6) and the shore village (ch 7)
 // the switchback trail down the Crown: from the Seat at the top, turning at each room, down to the stile (kept in step with world/mount.js)
 const TRAIL = [[-34, 0], [-24, 4], [-10, -4], [4, 4], [15, 0], [29, -4], [43, 4], [57, -4], [71, 4], [85, -4], [99, 4], [110, 0], [134, -6],
-  [130, -20], [152, -38], [130, -56], [152, -74], [130, -92], [152, -110], [130, -128], [140, -140], [140, -163], [228, -163], [228, -160], [140, -160]];   // summit trail, farm lane, village street
+  [133, -16], [147, -29], [133, -42], [147, -55], [133, -69], [147, -82], [133, -95], [140, -104], [140, -163], [240, -163], [240, -160], [140, -160]];   // summit trail, farm lane, village street
 const TRAIL_D = (x, z) => { let d = 1e9; for (let i = 0; i < TRAIL.length - 1; i++) { const [ax, az] = TRAIL[i], [bx, bz] = TRAIL[i + 1], dx = bx - ax, dz = bz - az, t = Math.max(0, Math.min(1, ((x - ax) * dx + (z - az) * dz) / (dx * dx + dz * dz))); d = Math.min(d, Math.hypot(x - ax - dx * t, z - az - dz * t)); } return d; };
 const HILL = 24;                                                     // height of the Crown above the shore
 const STILE_X = 15;
@@ -19,16 +19,16 @@ function hRaw(x, z) {
   h += Math.max(0, z - 70) * 0.1;                                     // the hills of Galilee inland, to the north
   if (z < SHORE + 20) h = Math.min(h, h - (SHORE + 20 - z) * 0.1);
   if (z < SHORE) h = Math.min(h, (z - SHORE) * 0.2 - .3);              // the beach falls into the lake
-  if (x > 95 && x < 245 && z > -186 && z < -138) { const k = Math.min(1, (x - 95) / 10, (245 - x) / 10, (z + 186) / 4, (-138 - z) / 10); h = h * (1 - k) + Math.max(h, .7 + (z + 186) * .03) * k; }   // the village's strip of beach, kept above the water
-  { const wx = 154 - (z + 150) * .06, dw = Math.abs(x - wx); if (z < -122 && z > -190 && dw < 5) h -= 1.3 * (1 - dw / 5) * Math.min(1, (-122 - z) / 8); }   // the wadi: a dry stream bed down to the shore
+  if (x > 95 && x < 258 && z > -186 && z < -138) { const k = Math.min(1, (x - 95) / 10, (258 - x) / 10, (z + 186) / 4, (-138 - z) / 10); h = h * (1 - k) + Math.max(h, .7 + (z + 186) * .03) * k; }   // the village's strip of beach, kept above the water
+  { const wx = 158 - (z + 150) * .06, dw = Math.abs(x - wx); if (z < -106 && z > -190 && dw < 5) h -= 1.3 * (1 - dw / 5) * Math.min(1, (-106 - z) / 8); }   // the wadi: a dry stream bed down to the shore
   const dc = Math.hypot(x - CITY[0], z - CITY[1]); if (dc < 70) h = Math.max(h, 18 * Math.min(1, (70 - dc) / 30) - 2);   // Hippos' flat-topped hill
   return h;
 }
 // level pads under each room, kept in step with books/matthew.json. [cx, cz, halfW, halfD]
 const FLAT = [[-42, 0, 5.5, 5.5], [-24, 12, 5.5, 5.5], [-10, -12, 5.5, 5.5], [4, 12, 5.5, 5.5],
   [29, -12, 5.5, 5.5], [43, 12, 5.5, 5.5], [57, -12, 5.5, 5.5], [71, 12, 5.5, 5.5], [85, -12, 5.5, 5.5], [99, 12, 5.5, 5.5],
-  [120, -20, 5.5, 5.5], [162, -38, 5.5, 5.5], [120, -56, 5.5, 5.5], [162, -74, 5.5, 5.5], [120, -92, 5.5, 5.5], [162, -110, 5.5, 5.5], [120, -128, 5.5, 5.5],   // the farm (ch 6)
-  [166, -176, 5, 4.5], [190, -176, 5, 4.5], [214, -176, 5, 4.5], [204, -150, 5.5, 5.5], [176, -148, 5.5, 5.5], [154, -151, 5, 5]];                          // the village (ch 7)
+  [124, -16, 5, 5], [156, -29, 5, 5], [124, -42, 5, 5], [156, -55, 5, 5], [124, -69, 5, 5], [156, -82, 5, 5], [124, -95, 5, 5],   // the farm (ch 6)
+  [168, -176, 5, 4.5], [196, -176, 5, 4.5], [224, -176, 5, 4.5], [226, -148, 5.5, 5.5], [184, -146, 5.5, 5.5], [158, -149, 5, 5]];                          // the village (ch 7)
 const heightAt0 = (x, z) => hRaw(x, z);
 const heightAt = (x, z) => { let h = heightAt0(x, z);
   for (const [cx, cz, hw, hd] of FLAT) { const dx = Math.max(0, Math.abs(x - cx) - hw), dz = Math.max(0, Math.abs(z - cz) - hd), d = Math.hypot(dx, dz);
@@ -46,8 +46,8 @@ const heightAt = (x, z) => { let h = heightAt0(x, z);
     const c = cGrass.clone().lerp(cGrass2, (Math.sin(x * .13) * Math.cos(z * .11) + 1) / 2);
     const n2 = Math.sin(x * .041 + 2) * Math.sin(z * .047) + Math.sin(x * .09 - z * .07) * .5; if (n2 > .7) c.lerp(cFlower, .35); else if (n2 < -.6) c.lerp(new THREE.Color('#6f8c45'), .4);
     
-    if (TRAIL_D(x, z) < 1.6 || (Math.abs(z + 163) < 2.4 && x > 96 && x < 250)) c.lerp(cPath, .5);   // the trail, the lane and the lakeside highway
-    { const dw = Math.abs(x - 154 + (z + 150) * .06); if (z < -122 && dw < 4) c.lerp(cBank, .6); }   // the wadi's sandy bed                                                                  // the trodden way along the ridge
+    if (TRAIL_D(x, z) < 1.6 || (Math.abs(z + 163) < 2.4 && x > 96 && x < 256)) c.lerp(cPath, .5);   // the trail, the lane and the lakeside highway
+    { const dw = Math.abs(x - 158 + (z + 150) * .06); if (z < -106 && dw < 4) c.lerp(cBank, .6); }   // the wadi's sandy bed                                                                  // the trodden way along the ridge
     if (z < SHORE + 8) c.lerp(cBank, Math.min(1, (SHORE + 8 - z) / 6));
     col.push(c.r, c.g, c.b);
   }

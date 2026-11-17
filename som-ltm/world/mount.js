@@ -7,7 +7,7 @@
 //   The path down to chapter 6 leaves from the Watchtower (room 10) at the low west end.
 const GZ = -16, TZ = 0, HX = 0, HZ = 400;            // the player starts at (0, GZ + 16) = (0, 0), on the ridge path; HX/HZ unused
 const RAISED = [];
-const WALKWAYS = [[STILE_X - 1.5, -1.8, STILE_X + 1.5, 1.8], [131, -8, 137, -4], [137, -142, 143, -138], [138, -86, 144, -80]];   // the stile gap; the farm's upper, lower and terrace-wall gates
+const WALKWAYS = [[STILE_X - 1.5, -1.8, STILE_X + 1.5, 1.8], [131, -8, 137, -4], [137, -106, 143, -102], [138, -65, 144, -59]];   // the stile gap; the farm's upper, lower and terrace-wall gates
 const rockM = mat('somRock', '#9a9282'), rockDk = mat('somRockDk', '#7d776b'), paleM = mat('somPale', '#d9d0bb'), dryStone = mat('somWall', '#b3a58a'),
   brushM = mat('somBrush', '#8a7a52'), floorM = mat('somFloor', '#cdb88e'), strawM = mat('somStraw', '#d9c27a'), darkM = mat('somDark', '#2c2620'),
   ironM = mat('somIron', '#4a4744'), clayM = mat('somClay', '#b5653e'), hideM = mat('somHide', '#6b4a32'), tentM = mat('somTent', '#262220'),
@@ -20,19 +20,19 @@ function roomFrame(r) { const [x, z] = r.at, [vx, vz] = r.viewer; let fx = x - v
 const SQ = h => [[-h, -h], [h, -h], [h, h], [-h, h], [0, 0]];
 // a group standing at room coordinates (f, s), turned with the room (local +z = towards the viewer, local +x = the viewer's left)
 function atR(F, f, s, rot = 0) { const [x, z] = F.at(f, s), g = new THREE.Group(); g.position.set(x, heightAt(x, z), z); g.rotation.y = F.yaw + rot; scene.add(g); return g; }
-function libAt(id, x, z, rot = 0, s = 1) { const g = new THREE.Group(), y = heightAt(x, z); g.position.set(x, y, z); g.rotation.y = rot; g.scale.setScalar(s); scene.add(g);
-  const top = OBJECTS.get(id).fn(g, 0, 0, 0); return y + (top || 1) * s; }
+function libAt(id, x, z, rot = 0, s = 1, dy = 0) { const g = new THREE.Group(), y = heightAt(x, z) + dy; g.position.set(x, y, z); g.rotation.y = rot; g.scale.setScalar(s); scene.add(g);
+  const e = OBJECTS.get(id); if (!e) { console.warn('[som] missing library object ' + id); return y + 1; } const top = e.fn(g, 0, 0, 0); return y + (top || 1) * s; }
 function somRock(x, z, s, y) { const m = add(new THREE.DodecahedronGeometry(s, 0), rnd() > .4 ? rockM : rockDk, x, (y ?? heightAt(x, z)) + s * .3, z); m.rotation.set(R(0, 3), R(0, 3), R(0, 3)); m.scale.y = .65; return (y ?? heightAt(x, z)) + s * .95; }
 const ground = ([x, z], up = .12) => ({ x, z, y: heightAt(x, z) + up });
 // hand the room to the engine: spots [{ x, y, z }] in the fixed order, one per verse
 function finishRoom(ch, r, F, spots) {
   station(ch, r.room, r.name, F.x, F.z, [F.x + F.fx, 0, F.z + F.fz], spots.slice(0, r.objects.filter(o => !o.extra).length).map((p, i) => ({ ...p, what: r.objects[i].what })));
-  const st = STATIONS[STATIONS.length - 1]; st.back = r.back ?? 7; st.pitch = r.pitch ?? -.3;
+  const st = STATIONS[STATIONS.length - 1]; st.back = r.back ?? 7; st.pitch = r.pitch ?? -.17;   // tilted up so the room banner shows at the top (owner, 2026-11-17)
 }
 
 // ---- 5.1 THE SEAT (5:1–5): olive tree · limestone pavement · split boulder with a thornbush · water bag on a stake · the seat-rock ----
 defBuilder('som.seat', (r, { ch }) => { const F = roomFrame(r), h = 2.6, sp = SQ(h).map(([f, s]) => F.at(f, s)), out = [];
-  { const [x, z] = sp[0]; tree(x, z, 1.15); out.push(ground([x, z], .6)); }
+  { const [x, z] = sp[0]; libAt('olive-tree-gnarled', x, z, 0, 1); out.push(ground([x, z], .6)); }
   { const g = atR(F, h, -h, .4); box(2.2, .12, 1.6, paleM, 0, 0, 0, g); box(1.4, .1, 1.1, paleM, .5, .02, -.6, g); out.push(ground(sp[1], .2)); }
   { const [x, z] = sp[2]; const a = somRock(x - .5, z, .9), b = somRock(x + .55, z + .1, .8); shrub(x, z, 1.1); out.push({ x, z, y: Math.max(a, b) }); }
   { const g = atR(F, -h, h); cyl(.06, .07, 1.5, 6, 'wood', 0, 0, 0, g); const bag = add(new THREE.SphereGeometry(.32, 8, 6), hideM, 0, 1.15, .14, g); bag.scale.set(1, 1.3, .7); out.push(ground(sp[3], 1.55)); }
@@ -50,7 +50,7 @@ defBuilder('som.fold', (r, { ch }) => { const F = roomFrame(r), h = 3, W = .55, 
   { const [x, z] = F.at(h + 1.3, h + 1.2); tree(x, z, 1.2); out.push(ground(sp[2], H + .05)); }
   { const g = atR(F, -h, h - .9); const c = cyl(.03, .03, 1.6, 5, 'wood', 0, .2, -.32, g); c.rotation.x = .25; out.push(ground(sp[3], H + .05)); }
   { const [cx, cz] = sp[4]; out.push({ x: cx, z: cz, y: libAt('water-trough', cx, cz, F.yaw + Math.PI / 2, .9) }); }
-  for (const [f, s] of [[1.4, -1.4], [.5, 1.6], [-1.3, 1.1]]) { const [x, z] = F.at(f, s); sheep(x, z); }
+  for (const [f, s] of [[1.2, -1.2], [-.9, 1.3]]) { const [x, z] = F.at(f, s); libAt('ewe-and-lamb', x, z, R(0, 6), .9); }
   finishRoom(ch, r, F, out); });
 
 // ---- 5.3 THE LOOKOUT (5:11–15): a long flat rock under a great terebinth on the lake edge, the view open to Hippos ----
@@ -108,7 +108,7 @@ defBuilder('som.bees', (r, { ch }) => { const F = roomFrame(r), h = 2.5, sp = SQ
 
 // ---- 5.8 THE SHEPHERDS' CAMP (5:36–40): guy-rope peg · the tent's open front and pole · quern · ground loom · hearth stones ----
 defBuilder('som.camp', (r, { ch }) => { const F = roomFrame(r), h = 2.5, sp = SQ(h).map(([f, s]) => F.at(f, s)), out = [];
-  { const g = atR(F, h + 1.6, 0, Math.PI); box(2 * h + 2.4, 1.9, 3, tentM, 0, 0, .1, g); box(2 * h + 2.4, .08, .9, tentM, 0, 1.85, -1.6, g); cyl(.05, .05, 2.1, 5, 'wood', -h, 0, -1.9, g); cyl(.05, .05, 2.1, 5, 'wood', h, 0, -1.9, g); }   // the black tent, its front awning on poles
+  { const [x, z] = F.at(h + 2.2, 0); libAt('goat-hair-tent', x, z, F.yaw, 1); }   // the black goat-hair tent
   { const [x, z] = sp[0]; cyl(.03, .05, .35, 5, 'wood', x, heightAt(x, z), z); const [x2, z2] = F.at(h - .2, -h); const L = Math.hypot(x2 - x, z2 - z); const rope = box(L, .02, .02, mat('somRope', '#c8b48a'), (x + x2) / 2, heightAt(x, z) + 1, (z + z2) / 2); rope.rotation.set(0, -Math.atan2(z2 - z, x2 - x), .35); out.push(ground(sp[0], .4)); }
   out.push(ground(F.at(h - .3, -h), 1.2));                                                 // the front pole of the tent
   { const g = atR(F, h, h); cyl(.36, .38, .16, 12, rockM, 0, 0, 0, g); cyl(.34, .34, .12, 12, rockDk, 0, .16, 0, g); cyl(.02, .02, .25, 4, 'wood', .2, .28, 0, g); out.push(ground(sp[2], .4)); }
@@ -132,7 +132,7 @@ defBuilder('som.tower', (r, { ch }) => { const F = roomFrame(r), h = 2.3, sp = S
   const [tx, tz] = F.at(h + 1.4, -.6), ty = heightAt(tx, tz); cyl(2.3, 2.6, 5.5, 14, dryStone, tx, ty - .3, tz); cyl(2.45, 2.45, .3, 14, rockDk, tx, ty + 5.1, tz);
   { const g = atR(F, -h, -h, .3); for (const s of [-.25, .25]) { const p = cyl(.04, .04, 3, 5, 'wood', s, 0, 0, g); p.rotation.x = -.25; } for (let k = 0; k < 7; k++) box(.55, .04, .05, 'wood', 0, .3 + k * .4, -.08 - k * .1, g); out.push(ground(sp[0], .6)); }
   { const g = atR(F, h - .3, -h + .9); box(.9, .14, .5, rockM, 0, 1.25, 0, g); box(.7, .8, .1, darkM, 0, 1.4, -.26, g); out.push(ground(F.at(h - .3, -h + .9), 1.55)); }   // the window, its sill
-  { const g = atR(F, h, h); for (const s of [-.8, .8]) cyl(.05, .06, 2, 5, 'wood', s, 0, 0, g); box(1.9, .06, .1, 'wood', 0, 1.95, 0, g); for (let k = 0; k < 7; k++) add(new THREE.IcosahedronGeometry(R(.25, .35), 0), leafM, R(-.9, .9), R(1.3, 2.1), R(-.15, .15), g); out.push(ground(sp[2], .9)); }
+  { const [x, z] = sp[2]; libAt('grapevine-trellis', x, z, F.yaw, 1); out.push(ground(sp[2], .9)); { const [vx, vz] = F.at(h + 7, 6); libAt('vineyard-rows', vx, vz, F.yaw, 1); } }
   finishRoom(ch, r, F, out); });
 
 // ---------- the field wall and its stile, between the Crown and the Upper Meadow (outline break 5:20 / 5:21) ----------
@@ -165,7 +165,7 @@ defBuilder('som.tower', (r, { ch }) => { const F = roomFrame(r), h = 2.3, sp = S
     placed.push([x, z]); person(x, z, Math.atan2(sx - x, sz - z), ROBES[(rnd() * ROBES.length) | 0], { y: heightAt(x, z) - .55, veil: rnd() > .65 ? '#e8dcc4' : undefined, hair: (rnd() * 4) | 0 }); }
 }
 // ---------- olive trees and scrub on the slopes, clear of the ridge path, the rooms, the crowd and the path down ----------
-{ const clear = (x, z) => (Math.abs(z) < 21 && x > -52 && x < 112) || (x > 100 && x < 185 && z < 4 && z > -150) || (x > 90 && x < 250 && z < -132) || (x > -62 && x < -26 && z > 5 && z < 44) || (Math.abs(x - 110) < 5 && z < 0) || Math.hypot(x - CITY[0], z - CITY[1]) < 40;
+{ const clear = (x, z) => (Math.abs(z) < 21 && x > -52 && x < 112) || (x > 100 && x < 185 && z < 4 && z > -150) || (x > 90 && x < 262 && z < -100) || (x > -62 && x < -26 && z > 5 && z < 44) || (Math.abs(x - 110) < 5 && z < 0) || Math.hypot(x - CITY[0], z - CITY[1]) < 40;
   for (let i = 0; i < 340; i++) { const x = R(-180, 200), z = R(-90, 150); if (clear(x, z)) continue; const r = rnd(); if (r < .5) tree(x, z, R(.7, 1.1)); else if (r < .58) cypress(x, z, R(.8, 1.1)); else shrub(x, z, R(.9, 1.5)); }
   for (let i = 0; i < 14; i++) sheep(R(110, 150), R(30, 70));
 }
