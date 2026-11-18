@@ -460,7 +460,7 @@
         },
         {
           "room": 4,
-          "name": "The Cistern Court",
+          "name": "The Cistern",
           "verses": "6:16–20",
           "kind": "custom",
           "builder": "som.spring",

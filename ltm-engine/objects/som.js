@@ -16,7 +16,8 @@ const mLeather = MM('somLeather', '#7a5232', TEX.cloth), mLeatherDk = MM('somLea
   mRope = MM('somRopeM', '#c8ae7c', TEX.wicker), mSmoke = MM('somSmokeM', '#ece8e0', null, { transparent: true, opacity: .45, depthWrite: false }), mDark = MM('somDarkM', '#241c16'), mGrass = MM('somGrassM', '#7a8a3e');
 const G = () => new THREE.Group();
 const bx = (g, w, h, d, m, x, y, z, ry = 0, rx = 0, rz = 0) => { const o = box(w, h, d, m, x, y, z, g); o.rotation.set(rx, ry, rz); return o; };
-const cy = (g, rt, rb, h, s, m, x, y, z, rx = 0, ry = 0, rz = 0) => { const o = cyl(rt, rb, h, s, m, x, y, z, g); o.rotation.set(rx, ry, rz); return o; };
+// an upright cylinder stands on y; a tipped one (rx or rz set) is centred on y, so lying logs, pipes and hafts sit where they are put
+const cy = (g, rt, rb, h, s, m, x, y, z, rx = 0, ry = 0, rz = 0) => { const o = cyl(rt, rb, h, s, m, x, y, z, g); o.rotation.set(rx, ry, rz); if (rx || rz) o.position.y = y; return o; };
 const lathe = (g, pts, m, x, y, z, seg = 14) => add(new THREE.LatheGeometry(pts.map(([a, b]) => new THREE.Vector2(a, b)), seg), m, x, y, z, g);
 // an irregular flat stone: a low polygon prism with jittered corners
 function slab(g, r, h, m, x, y, z, sides = 6, ry = 0) { const sh = new THREE.Shape(); for (let i = 0; i < sides; i++) { const a = i / sides * 6.283, rr = r * R(.75, 1.15); i ? sh.lineTo(Math.cos(a) * rr, Math.sin(a) * rr) : sh.moveTo(Math.cos(a) * rr, Math.sin(a) * rr); }
@@ -90,13 +91,14 @@ def('som-mudbrick-wall', 'Low mud-brick wall of the yard', g => {
 
 // ---- the Ox Stall (6:21–25) ----
 def('som-yoke-on-peg', 'Yoke for two oxen, hung on its peg', g => {
-  dryWall(g, -1.2, -.3, 1.2, -.3, 1.3, .5);   // a low field-stone wall behind
-  cy(g, .05, .05, .45, 8, mWoodDk, 0, 1.15, -.1, Math.PI / 2);   // one stout peg driven into the wall
-  const beam = new THREE.Group(); beam.position.set(0, 1.18, .12); g.add(beam);
-  bx(beam, 1.9, .13, .13, mWood, 0, 0, 0); for (const s of [-1, 1]) bx(beam, .2, .17, .15, mWood, s * .95, -.02, 0);   // a thick beam with flared ends
-  for (const s of [-.55, .55]) { const bow = add(new THREE.TorusGeometry(.2, .03, 6, 16, Math.PI), mWoodLt, s, -.02, 0, beam); bow.rotation.z = Math.PI;   // the U-shaped bow under each neck
-    for (const t of [-1, 1]) cy(beam, .022, .022, .2, 5, mWoodDk, s + t * .2, .05, 0); }   // bow ends pinned through the beam
-  return 1.45; });
+  dryWall(g, -1.3, -.4, 1.3, -.4, 2.0, .45);   // the stall's coursed stone wall behind
+  cy(g, .06, .06, .55, 8, mWoodDk, 0, 1.55, -.1, Math.PI / 2);   // one stout peg sticking out of the wall face
+  add(new THREE.TorusGeometry(.09, .022, 5, 10), mRope, 0, 1.5, .12, g);   // the cord loop over the peg
+  cy(g, .015, .015, .22, 4, mRope, 0, 1.38, .14);
+  const sh = new THREE.Shape(); sh.moveTo(-1, -.06); [[-.85, -.08], [-.75, -.1], [-.55, .02], [-.35, -.1], [-.2, -.08], [.2, -.08], [.35, -.1], [.55, .02], [.75, -.1], [.85, -.08], [1, -.06], [1, .1], [-1, .1]].forEach(([a, b]) => sh.lineTo(a, b));
+  add(new THREE.ExtrudeGeometry(sh, { depth: .16, bevelEnabled: true, bevelThickness: .02, bevelSize: .02, bevelSegments: 1 }), MM('somYokeWood', '#8e6a42', TEX.wood), 0, 1.18, .02, g);   // the carved beam hanging against the wall face, two neck hollows
+  for (const s of [-.55, .55]) { const bow = add(new THREE.TorusGeometry(.24, .04, 6, 16, Math.PI), mWoodLt, s, 1.16, .1, g); bow.rotation.z = Math.PI; for (const t of [-1, 1]) cy(g, .022, .022, .26, 5, mWoodDk, s + t * .24, 1.12, .1); }   // a U-bow hanging under each hollow
+  return 2.0; });
 def('som-plough', 'Wooden plough (ard) with an iron share', g => {
   const sole = bx(g, .14, .12, 1.0, mWood, 0, .05, 0, 0, .15);   // the sole dragging along the ground
   const sh = new THREE.ConeGeometry(.09, .4, 4); sh.rotateX(Math.PI / 2); add(sh, mIron, 0, .02, .66, g).scale.x = 1.4;   // a big iron share on its point
@@ -189,5 +191,55 @@ def('som-resting-stone', 'Resting stone at the fork of the road', g => {
   const worn = add(new THREE.CircleGeometry(1.7, 10), MM('somTrack', '#b8a07a'), 0, .01, 0, g); worn.rotation.x = -Math.PI / 2;   // the worn ground where travellers stop
   for (let i = 0; i < 4; i++) boulder(g, R(.1, .18), mRockDk, R(-1.3, 1.3), 0, R(-1.2, 1.2), .6);
   return .65; });
+
+
+// ---- the Charcoal Burners' Clearing (5:26–30), rebuilt 2026-11-18 ----
+def('som-charcoal-mound', 'Charcoal burner\'s mound, smoking', g => {
+  const earthD = MM('somEarthDk', '#6a5640', TEX.plaster), turfG = MM('somTurfG', '#5d6a34'), soil = MM('somSoilClod', '#7a6244'), soot = MM('somSoot', '#1e1a16');
+  const geo = new THREE.SphereGeometry(1.55, 22, 12, 0, 6.3, 0, 1.57); const p = geo.attributes.position; for (let i = 0; i < p.count; i++) { const x = p.getX(i), y = p.getY(i), z = p.getZ(i), n = 1 + .07 * Math.sin(x * 5.1 + z * 3.3) + .05 * Math.sin(z * 6.7 - y * 4); p.setXYZ(i, x * n, y * .78 * n, z * n); } geo.computeVertexNormals();
+  add(geo, earthD, 0, 0, 0, g);   // a lumpy dome of earth over the stacked wood
+  for (let i = 0; i < 40; i++) { const a = R(0, 6.3), t = R(.1, 1.25), r = 1.55 * Math.cos(t), y = 1.2 * Math.sin(t); const c = add(new THREE.DodecahedronGeometry(R(.1, .2), 0), i % 3 ? soil : turfG, Math.cos(a) * r, y * .98, Math.sin(a) * r, g); c.scale.y = .5; c.lookAt(0, -3, 0); }   // clods and turves pressed over it
+  for (let k = 0; k < 8; k++) { const a = k / 8 * 6.28 + .2; add(new THREE.CircleGeometry(.08, 6), soot, Math.cos(a) * 1.56, .25, Math.sin(a) * 1.56, g).lookAt(Math.cos(a) * 9, .25, Math.sin(a) * 9); }   // vent holes round the foot
+  cy(g, .18, .22, .08, 10, soot, 0, 1.18, 0);
+  const smoke = new THREE.Group(); g.add(smoke); for (let k = 0; k < 6; k++) { const s = add(new THREE.SphereGeometry(.25 + k * .1, 8, 6), MM('somSmokeThin', '#e2ded6', null, { transparent: true, opacity: .2 - k * .02, depthWrite: false }), k * .32, 1.4 + k * .38, k * .08, smoke); s.scale.set(1.5, .7, 1.2); }   // a thin plume drifting off with the wind   // a soft drifting plume
+  const rk = new THREE.Group(); rk.position.set(1.75, 0, .5); rk.rotation.set(0, -.3, .5); g.add(rk); cy(rk, .03, .03, 2.0, 5, mWoodLt, 0, 0, 0); bx(rk, .5, .06, .08, mWoodDk, 0, 2.0, 0); for (let k = 0; k < 5; k++) cy(rk, .015, .015, .16, 4, mWoodDk, -.2 + k * .1, 2.0, 0);   // the rake leaning, its foot on the ground
+  return 1.35; });
+def('som-cut-stumps', 'Row of freshly cut stumps', g => {
+  const cut = MM('somCutFace2', '#ecd29c'), bark = MM('somBark2', '#7a6046', TEX.wood);
+  for (const [x, z, r, h, tilt] of [[-1.4, .2, .3, .45, .2], [0, -.25, .38, .35, -.18], [1.45, .25, .28, .55, .25]]) { lathe(g, [[0, 0], [r * 1.7, 0], [r * 1.3, .07], [r * 1.05, .18], [r, h], [0, h]], bark, x, -.02, z, 12);   // stumps flaring into the ground
+    cy(g, r * .97, r * .97, .03, 12, cut, x, h - .01, z, tilt); for (let k = 0; k < 3; k++) add(new THREE.TorusGeometry(r * (.25 + k * .24), .006, 3, 14), MM('somRing', '#c09a62'), x, h + .02, z, g).rotation.x = Math.PI / 2 + tilt; }
+  for (let i = 0; i < 60; i++) bx(g, R(.05, .14), .015, R(.03, .08), cut, R(-2, 2), .01, R(-.9, .9), R(0, 3));   // fresh pale chips all round
+  return .6; });
+def('som-axe-stump', 'Chopping stump with an axe in it', g => {
+  const cut = MM('somCutFace2', '#ecd29c'), bark = MM('somBark2', '#7a6046', TEX.wood);
+  lathe(g, [[0, 0], [.75, 0], [.6, .1], [.5, .25], [.48, .62], [0, .62]], bark, 0, -.02, 0, 14); cy(g, .47, .47, .02, 14, cut, 0, .6, 0); for (let k = 0; k < 3; k++) add(new THREE.TorusGeometry(.12 + k * .11, .006, 3, 16), MM('somRing', '#c09a62'), 0, .625, 0, g).rotation.x = Math.PI / 2;
+  bx(g, .32, .16, .05, mIron, -.02, .56, 0, 0, 0, -.25);   // the iron axe head sunk in the top
+  cy(g, .032, .038, .8, 7, MM('somHaft', '#c8a46a', TEX.wood), .3, .88, 0, 0, 0, -.85);   // its pale wooden haft slanting up and out
+  for (let i = 0; i < 7; i++) { const bil = new THREE.Group(); bil.position.set(1.0 + (i % 4) * .2 - .3, .09 + (i > 3 ? .16 : 0), -.1 + (i % 2) * .05); bil.rotation.set(0, .1, Math.PI / 2); g.add(bil); add(new THREE.CylinderGeometry(.1, .1, .65, 8, 1, false, 0, Math.PI), bark, 0, 0, 0, bil); const f = bx(bil, .2, .65, .006, cut, 0, -.325, 0); }   // split billets in a neat pile, pale split faces up
+  for (let i = 0; i < 25; i++) bx(g, R(.05, .12), .015, R(.03, .07), cut, R(-.9, .9), .01, R(-.8, .8), R(0, 3));
+  return 1.0; });
+def('som-charcoal-baskets', 'Rush baskets heaped with charcoal', g => {
+  const rush = MM('somRushW', '#c2ad72', TEX.wicker), coal = MM('somCoalG2', '#45413c', null, { roughness: .55 });
+  for (const [x, z, s] of [[-.45, 0, 1], [.45, .1, .85]]) { const bk = lathe(g, [[0, 0], [.3 * s, 0], [.4 * s, .14 * s], [.44 * s, .34 * s], [.46 * s, .4 * s], [.42 * s, .4 * s], [.39 * s, .2 * s], [0, .18 * s]], rush, x, 0, z, 18); bk.material.side = THREE.DoubleSide;
+    add(new THREE.TorusGeometry(.44 * s, .035, 5, 22), MM('somRushRim', '#a8925a', TEX.wicker), x, .4 * s, z, g).rotation.x = Math.PI / 2;   // a thick rolled rim
+    for (let i = 0; i < 34; i++) { const a = R(0, 6.3), d = Math.sqrt(R(0, 1)) * .36 * s; add(new THREE.DodecahedronGeometry(R(.05, .085), 0), coal, x + Math.cos(a) * d, .38 * s + (1 - d / (.36 * s)) * .2, z + Math.sin(a) * d, g).rotation.set(R(0, 3), R(0, 3), 0); } }   // a mounded heap of dark grey chunks
+  return .7; });
+def('som-ash-ring', 'Old burn floor of an earlier mound', g => {
+  const floor = MM('somBurnFloor', '#4a4540'), coal = MM('somCoalG2', '#2e2b28'), ash = MM('somAshL', '#9c9890');
+  const rg = add(new THREE.CircleGeometry(1.7, 26), floor, 0, .05, 0, g); rg.rotation.x = -Math.PI / 2;   // a grey-black burn floor
+  for (let i = 0; i < 12; i++) { const p = add(new THREE.CircleGeometry(R(.12, .3), 7), ash, R(-1.1, 1.1), .055, R(-1.1, 1.1), g); p.rotation.x = -Math.PI / 2; }   // flecks of ash
+  for (let i = 0; i < 40; i++) { const a = R(0, 6.3), d = Math.sqrt(R(0, 1)) * 1.6; const c = add(new THREE.DodecahedronGeometry(R(.03, .07), 0), coal, Math.cos(a) * d, .06, Math.sin(a) * d, g); c.scale.y = .5; }   // charcoal flecks all over it
+  return .1; });
+
+// ---- the Bee Bank (5:31–35), rebuilt 2026-11-18: one walled bank, the hive pipes set into its far end ----
+def('som-bee-wall', 'Bee wall: a mud-plastered stone bank with hive pipes set in it', g => {
+  const mud = MM('somBeeMud2', '#a99472', TEX.plaster), plug = MM('somPipePlug2', '#d9c7a2', TEX.plaster), rim = MM('somPipeRim', '#c9a27a', TEX.pot);
+  const L = 5.2;
+  bx(g, L - .4, .95, .9, mud, .2, 0, -.05); dryWall(g, -2.3, .42, 2.4, .42, .35, .12);   // the bank, plastered, its stone footing showing
+  for (let i = 0; i < 10; i++) { const p = add(new THREE.CircleGeometry(R(.08, .14), 6), mRock, R(-2.2, 2.3), R(.4, .85), .405, g); }   // stones showing through the plaster
+  lathe(g, [[0, 0], [.55, 0], [.52, .5], [.46, .85], [.3, 1.0], [0, 1.03]], mud, -L / 2 + .25, 0, -.05, 14);   // its near end rounded off in the same mud
+  for (let row = 0; row < 3; row++) for (let k = 0; k < 4 - row; k++) { const x = .55 + k * .44 + row * .22, y = .24 + row * .32; cy(g, .19, .19, .08, 14, rim, x, y, .42, Math.PI / 2); cy(g, .16, .16, .02, 12, plug, x, y, .465, Math.PI / 2); add(new THREE.CircleGeometry(.04, 8), mDark, x, y - .06, .478, g); }   // only the ends of the clay pipes show, set deep in the bank, each sealed with mud and a small entrance
+  for (let i = 0; i < 22; i++) { const b = add(new THREE.SphereGeometry(.022, 5, 4), MM('somBee', '#3a2a10'), R(.4, 2.2), R(.15, 1.0), R(.55, .9), g); b.scale.x = 1.7; }
+  return 1.05; });
 
 }

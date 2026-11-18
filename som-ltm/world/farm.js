@@ -53,12 +53,11 @@ defBuilder('som.court', (r, { ch }) => { const F = roomFrame(r), h = 2.6, sp = S
 // threshold · storage jars · dried herbs from a beam · plastered wall shelf · wooden chest
 defBuilder('som.store', (r, { ch }) => { const F = roomFrame(r), h = 2.3, sp = SQ(h).map(([f, s]) => F.at(f, s)), out = [];
   const g = atR(F, .4, 0, Math.PI);   // local +z = forward, +x = right
-  box(.4, 3, 2 * h + 2.2, plasterM, -h - 1, 0, 0, g); box(.4, 3, 2 * h + 2.2, plasterM, h + 1, 0, 0, g); box(2 * h + 2.4, 3, .4, plasterM, 0, 0, h + 1.2, g);   // walls
-  box(2 * h + 2.4, .3, 2 * h + 2.6, 'wood', 0, 3, .1, g);                                                                 // the roof
-  box(.12, 2.3, 1.2, 'wood', -h - .7, 0, -h + .1, g).rotation.y = .15;                                                    // the door, swung back against the left wall
-  out.push(ground(F.at(.4 - h + .7, -h - .7), 1.3));   // 1: the door, swung back against the wall left of the doorway
-  { const fl = atR(F, .4, 0); box(2 * h + 2, .05, 2 * h + 2.2, plasterM, 0, 0, 0, fl); }   // the plastered floor                        // the threshold
-  { const pts = [[0, 0], [.18, .05], [.3, .4], [.32, .8], [.24, 1.15], [.12, 1.25], [.14, 1.35]].map(([a, b]) => new THREE.Vector2(a, b)); for (let k = 0; k < 4; k++) { const [jx, jz] = F.at(h + .2, -h - .9 + k * .6); add(new THREE.LatheGeometry(pts, 12), clayM, jx, heightAt(jx, jz), jz); } out.push(ground(sp[1], 1.55)); }   // a row of four tall clay storage jars   // the row of tall storage jars
+  // the storeroom is the whole north-east room of the house (owner, 2026-11-18): no walls of its own, the house walls are its walls
+  box(.12, 2.3, 1.2, 'wood', 127.55, heightAt(127.55, -20.35), -20.35);   // the door, swung back against the wall left of the doorway
+  out.push(ground([127.3, -20.35], 1.3));   // 1: the door
+  { box(10, .06, 15.5, plasterM, 123, heightAt(123, -21.75) - .02, -21.75); }   // the plastered floor                        // the threshold
+  { const pts = [[0, 0], [.18, .05], [.3, .4], [.32, .8], [.24, 1.15], [.12, 1.25], [.14, 1.35]].map(([a, b]) => new THREE.Vector2(a, b)); for (let k = 0; k < 4; k++) { const [jx, jz] = F.at(h + .9, -h - .4 + k * .62); add(new THREE.LatheGeometry(pts, 12), clayM, jx, heightAt(jx, jz), jz); } out.push(ground(sp[1], 1.55)); }   // a row of four tall clay storage jars   // the row of tall storage jars
   { const [x, z] = sp[2]; out.push({ x, z, y: libAt('herb-rack', x, z, F.yaw, 1) }); }   // the rack of dried herbs
   { const s2 = atR(F, -h, h + .8); box(1.8, .12, .55, plasterM, 0, 1.1, 0, s2); for (const [a, b] of [[-.55, 0], [-.15, .05], [.35, 0]]) cyl(.1, .13, .26, 10, clayM, a, 1.22, b, s2); out.push(ground(F.at(-h, h + .6), 1.4)); }   // the plastered shelf on the wall, small pots on it                    // the plastered wall shelf
   { out.push({ x: F.x, z: F.z, y: libAt('big-chest', F.x, F.z, F.yaw + .1, 1) }); }   // the wooden chest
@@ -93,16 +92,16 @@ defBuilder('som.stall', (r, { ch }) => { const F = roomFrame(r), h = 2.5, sp = S
   box(.4, 2.6, 2 * h + 1.8, dryStone, -h - .9, 0, .2, g);   // the west (outside) wall left open box(2 * h + 2.2, 2.6, .4, dryStone, 0, 0, h + 1, g);   // three walls, open front
   for (let k = -2; k <= 2; k++) box(.2, .2, 2 * h + 2.4, 'wood', k * 1.4, 2.6, .2, g);   // open roof beams, so the stall is lit
   { const s2 = atR(F, -h, -h); box(.35, 2.6, .35, 'wood', 0, 0, 0, s2); out.push(ground(sp[0], 1.4)); }                     // the left stall post
-  { const s2 = atR(F, h + .7, -h); box(.12, .12, .4, 'wood', 0, 1.75, 0, s2); const ybm = add(new THREE.TorusGeometry(1.1, .1, 6, 16, Math.PI * .5), 'woodLt', 0, .95, -.25, s2); ybm.rotation.z = Math.PI * .75; for (const s3 of [-.6, .6]) { const u = add(new THREE.TorusGeometry(.22, .05, 5, 10, Math.PI), 'wood', s3, 1.5, -.22, s2); u.rotation.z = Math.PI; } box(.6, 1.3, .45, dryStone, 0, 0, -.2, s2); out.push(ground(F.at(h + .7, -h), 1.4)); }   // the yoke, made for two, on its peg
+  out.push(somAt(F, F.at(h + .55, -h + .2), 'som-yoke-on-peg', 0, .85)); out[out.length - 1].y -= .3;   // 2: the yoke on its peg (workshop model)
   { const s2 = atR(F, h, h, .3); const b = box(.16, .16, 2.3, 'woodLt', 0, .55, 0, s2); b.rotation.x = .3; const sh = box(.14, .55, .45, ironM, 0, .05, 1.05, s2); sh.rotation.x = -.5; const hn = box(.1, .9, .1, 'woodLt', 0, .55, -1.05, s2); hn.rotation.x = -.4; box(.5, .08, .08, 'woodLt', 0, 1.0, -1.2, s2); out.push(ground(sp[2], .85)); }   // the plough
   { const [x, z] = sp[3]; for (let k = 0; k < 10; k++) add(new THREE.IcosahedronGeometry(R(.3, .45), 0), strawM, x + R(-.5, .5), heightAt(x, z) + R(0, .3), z + R(-.5, .5)).scale.y = .5; out.push(ground(sp[3], .55)); }   // straw bedding
   { box(.7, 2.6, .7, dryStone, F.x, F.y, F.z); const [nx, nz] = F.at(-.36, 0); const nb = box(.75, .6, .12, darkM, nx - F.fx * .01, F.y + .8, nz - F.fz * .01); nb.rotation.y = F.yaw; const n = box(.6, .35, .16, strawM, nx - F.fx * .06, F.y + .75, nz - F.fz * .06); n.rotation.y = F.yaw; out.push({ x: F.x, z: F.z, y: F.y + 2.85 }); }   // the roof pillar, its feeding niche filled with fodder
-  { const [x, z] = F.at(1.6, 1.4); libAt('ox-grazing', x, z, F.yaw + .5, .85); }   // the ox
+  { const [x, z] = F.at(1.6, 1.4); libAt('ox-grazing', x, z, F.yaw - Math.PI / 2, .85); }   // the ox
   finishRoom(ch, r, F, out); });
 
 // ---- 6.6 THE GRANARY FIELD (6:26–30): terrace steps · lentils · scarecrow · granary door · hoe in the furrow ----
 defBuilder('som.granary', (r, { ch }) => { const F = roomFrame(r), h = 2.5, sp = SQ(h).map(([f, s]) => F.at(f, s)), out = [];
-  { const g = atR(F, -h, -h); for (let k = 0; k < 3; k++) box(1.2, .2 * (k + 1), .5, dryStone, 0, 0, -k * .5, g); out.push(ground(sp[0], .7)); }   // the terrace steps
+  { const g = atR(F, -h, -h, .3); const st = box(.45, 1.0, .3, rockM, 0, -.1, 0, g); st.rotation.z = .06; box(.47, .12, .32, paleM, 0, .86, 0, g); out.push(ground(sp[0], 1.0)); }   // 1: the boundary stone at the field's corner, its top whitened (the steps are gone, owner 2026-11-18)
   { const [x, z] = sp[1]; libAt('garden-plot', x, z, F.yaw, .8); out.push(ground(sp[1], .35)); }   // the patch of lentils
   { const g = atR(F, h, h); cyl(.05, .05, 2.2, 5, 'wood', 0, 0, 0, g); box(1.3, .06, .06, 'wood', 0, 1.6, 0, g); const rag = mat('somRag', '#9a6a4a'); rag.map = TEX.cloth; box(.7, .9, .22, rag, 0, 1.0, 0, g); for (const sd of [-1, 1]) box(.35, .5, .05, rag, sd * .55, 1.2, .1, g); add(new THREE.SphereGeometry(.2, 8, 6), strawM, 0, 2.05, 0, g); add(new THREE.ConeGeometry(.3, .25, 8), strawM, 0, 2.3, 0, g); out.push(ground(sp[2], .5)); }   // the scarecrow
   { const g = atR(F, -h + .9, h + 1.5, -Math.PI / 2); g.scale.setScalar(.8); box(2.6, 2.6, 2.6, dryStone, 0, 0, 0, g); add(new THREE.SphereGeometry(1.35, 10, 6, 0, 6.3, 0, 1.57), mudM, 0, 2.6, 0, g).scale.y = .7; box(.9, 1.6, .1, 'wood', 0, 0, 1.33, g); box(1.1, .12, .2, 'woodLt', 0, 1.6, 1.36, g); out.push(ground(F.at(-h + .9, h + .6), .15)); }   // the stone granary, its door facing the field
