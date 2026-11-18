@@ -57,6 +57,7 @@ Every correction the owner made during the Colossae build, quoted from their own
 | A visible path between every district | "is there a path from chapter 2 to chapter 3?" | T: routes clear |
 | The tutorial camera glides between steps without resetting | "something is resetting the camera view between every tutorial step" | R |
 | Check the walk path from first person; nothing blocks the way | "walk through the path... make sure nothing is blocking" | T |
+| Next walks the path: the camera follows the trail at a walking pace, looking ahead, then turns to face the room, so you always know where you are | "you kind of stay on the path… and you see kind of where you're at in relation to the room right before you" | R; som-ltm `world/after.js` builds the walk from `TRAIL` |
 
 ## Performance and workflow
 | Rule | Owner's words | Check |
@@ -68,3 +69,5 @@ Every correction the owner made during the Colossae build, quoted from their own
 | Use cheaper sub-agents where appropriate | "use subagents like sonnet 5.5 and haiku 5.5 to save credits" | R |
 | Walk-throughs only occasionally | "You don't have to walk through every single time" | R |
 | Keep a lessons file | "keep an md file... of the lessons you learned" | R |
+| **Library first.** Before making any object, search the shared library (`ltm-engine/objects/*.js`, or the library page) for one that fits; reuse it, or upgrade it in place, before building a new one | "check the library before making new things" | R |
+| **New objects go to the library.** Anything new worth reusing is written into the shared library (`ltm-engine/objects/<project>.js`, listed in `library/town.json`), not into a town's own world files. Only one-off scenery tied to a single place stays in the town | "anything new you create that's worth reusing is added to the library automatically" | R |

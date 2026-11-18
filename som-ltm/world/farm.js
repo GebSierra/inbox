@@ -17,18 +17,35 @@ const wallGaps = (x0, z0, x1, z1, H, gaps = []) => { const L = Math.hypot(x1 - x
 wallGaps(112, -6, 168, -6, 1.6, [[19, 25]]);          // north wall, the upper gate at x 131–137
 wallGaps(112, -104, 168, -104, 1.6, [[25, 31]]);      // south wall, the lower gate at x 137–143
 wallRun(112, -6, 112, -104, 1.6); wallRun(168, -6, 168, -104, 1.6);
-wallGaps(112, -62, 168, -62, 1.1, [[26, 32]]);        // the terrace wall between the house and the fields, its gate at x 138–144
+wallGaps(112, -62, 168, -62, 1.1, [[44, 50]]);        // the terrace wall between the house and the fields, its gate at the west end, x 156–162 (2026-11-18)
 for (const [x, z] of [[131, -6], [137, -6], [137, -104], [143, -104]]) box(.8, 2, .8, rockDk, x, heightAt(x, z) - .1, z);   // gate piers
-galHouse(115.5, -16, 8, 5, 3.2, Math.PI / 2, plasterM);   // the farmhouse behind the courtyard, its door towards the court
+// ---- the farmhouse (owner, 2026-11-18; PLAN §4): one house you walk through. Rooms on the east and west sides of an open central court,
+// a flat earth roof over the rooms (hidden from the bird's-eye view), a cistern court behind. The room builders below stand inside it.
+const HOUSE_ROOFS = [];
+{ const pw = (x0, z0, x1, z1, H, gaps = [], m = plasterM, W = .5) => { const L = Math.hypot(x1 - x0, z1 - z0); let t = 0;
+    for (const [g0, g1] of [...gaps, [L, L]]) { if (g0 > t + .2) { const a = t / L, b = g0 / L, xa = x0 + (x1 - x0) * a, za = z0 + (z1 - z0) * a, xb = x0 + (x1 - x0) * b, zb = z0 + (z1 - z0) * b, l = Math.hypot(xb - xa, zb - za), xc = (xa + xb) / 2, zc = (za + zb) / 2;
+      const w = box(l, H, W, m, xc, Math.min(heightAt(xa, za), heightAt(xb, zb)) - .2, zc); w.rotation.y = -Math.atan2(zb - za, xb - xa); } t = g1; } };
+  pw(118, -14, 150, -14, 3.2, [[12.4, 14.8]]);              // front wall, the front door at its east end (x 130.4–132.8)
+  pw(118, -41, 150, -41, 3.2, [[15, 17.2], [22.8, 31.4]]); // back wall: the back door from the central court, the stall's open front
+  pw(118, -14, 118, -41, 3.2);                              // east wall
+  pw(150, -14, 150, -41, 3.2, [[16.8, 27]]);                // west wall, open along the stall (an ox stall needs no closed wall)
+  pw(128, -14, 128, -41, 3.2, [[7, 13.4], [17.6, 24.4]]);   // the east rooms open onto the central court: storeroom and kitchen
+  pw(140, -14, 140, -41, 3.2, [[5.5, 7.5]]);                // the sleeping room's door; the stall is closed on the court side
+  pw(118, -29.5, 128, -29.5, 3.2); pw(140, -29.5, 150, -29.5, 3.2);
+  pw(118, -41, 118, -56, 1.9, [], dryStone, .6); pw(150, -41, 150, -56, 1.9, [], dryStone, .6); pw(118, -56, 150, -56, 1.9, [], dryStone, .6);   // the cistern court's walls
+  const earth = mat('somRoofEarth', '#b49a72'); earth.map = TEX.plaster;
+  for (const [x0, z0, x1, z1] of [[118, -14, 128, -29.5], [118, -29.5, 128, -41], [140, -14, 150, -29.5]]) { const y = heightAt((x0 + x1) / 2, (z0 + z1) / 2) + 3; const rf = box(x1 - x0 + .6, .3, z0 - z1 + .6, earth, (x0 + x1) / 2, y, (z0 + z1) / 2); rf.castShadow = false; HOUSE_ROOFS.push(rf); }
+  for (const [x, z] of [[123, -14], [145, -14]]) box(.9, .6, .1, darkM, x, heightAt(x, z) + 1.6, z + (z > -20 ? .26 : -.26));   // small windows
+}
 // ---- 6.1 THE COURTYARD (6:1–5): gate pier · curtained doorway · stair to the roof · roof-roller · cistern lid ----
 defBuilder('som.court', (r, { ch }) => { const F = roomFrame(r), h = 2.6, sp = SQ(h).map(([f, s]) => F.at(f, s)), out = [];
   { const g = atR(F, 0, 0); box(2 * h + 2, .08, 2 * h + 2, paleM, 0, 0, 0, g); }                                      // the paving
   { const g = atR(F, -h, -h); box(.8, 1.9, .8, dryStone, 0, 0, 0, g); box(1, .18, 1, paleM, 0, 1.9, 0, g); out.push(ground(sp[0], 2.2)); }   // the gate's left pier, squared, with its cap
   { for (const sd of [-1, 1]) { const g = atR(F, .4, sd * (h + 1.3)); box(.45, .9, 2 * h + 1.4, mudM, 0, 0, 0, g); } }   // low walls closing the court on either side
-  { const g = atR(F, h + .8, -h + .2); box(3.4, 2.7, .3, plasterM, 0, 0, -.2, g); box(1.2, 2.1, .32, darkM, 0, 0, -.18, g); for (let k = 0; k < 6; k++) box(.2, 2, .06 + (k % 2) * .05, mat('somCurtain', '#a8523a'), -.5 + k * .2, .05, k % 2 * .03, g); box(1.6, .22, .36, 'wood', 0, 2.1, -.15, g); out.push(ground(F.at(h + .45, -h + .2), .25)); }   // the doorway into the house, its curtain hanging
+  { const g = atR(F, h + .8, -h + .2); for (let k = 0; k < 6; k++) box(.2, 2, .06 + (k % 2) * .05, mat('somCurtain', '#a8523a'), (k < 3 ? -1.05 : .65) + (k % 3) * .2, .05, -.4 + k % 2 * .03, g); box(1.6, .22, .36, 'wood', 0, 2.1, -.15, g); out.push(ground(F.at(h + .45, -h + .2), .25)); }   // the doorway into the house, its curtain hanging
   { const g = atR(F, h + .2, h); for (let k = 0; k < 6; k++) box(1, .3 * (k + 1), .55, dryStone, 0, 0, .5 - k * .55, g); out.push(ground(F.at(h + .2, h), 1.15)); }   // the stair up to the roof
   { const g = atR(F, -h, h); const c = cyl(.28, .28, 1.2, 10, rockM, 0, .28, 0, g); c.rotation.z = Math.PI / 2; c.position.y = .28; out.push(ground(sp[3], .62)); }   // the roof-roller
-  { cyl(.85, .9, .4, 16, dryStone, F.x, F.y, F.z); cyl(.72, .72, .12, 16, paleM, F.x, F.y + .4, F.z); { const [bx, bz] = F.at(.3, .95); libAt('wooden-bucket', bx, bz, 0, 1); } out.push({ x: F.x, z: F.z, y: F.y + .555 }); }   // the cistern mouth and its lid
+  { const g = atR(F, 0, 0, Math.PI / 2); box(1.6, .7, .8, dryStone, 0, 0, 0, g); box(1.3, .1, .5, darkM, 0, .62, 0, g); for (let k = 0; k < 8; k++) box(R(.3, .6), .03, .04, strawM, R(-.5, .5), .7, R(-.2, .2), g).rotation.y = R(0, 3); out.push({ x: F.x, z: F.z, y: F.y + .85 }); }   // a stone manger for the donkey
   { const [x, z] = F.at(-h - 1.2, -h - 2.4); libAt('grey-donkey', x, z, F.yaw + 1.2); }   // the donkey by the gate
   finishRoom(ch, r, F, out); });
 
@@ -39,7 +56,7 @@ defBuilder('som.store', (r, { ch }) => { const F = roomFrame(r), h = 2.3, sp = S
   box(.4, 3, 2 * h + 2.2, plasterM, -h - 1, 0, 0, g); box(.4, 3, 2 * h + 2.2, plasterM, h + 1, 0, 0, g); box(2 * h + 2.4, 3, .4, plasterM, 0, 0, h + 1.2, g);   // walls
   box(2 * h + 2.4, .3, 2 * h + 2.6, 'wood', 0, 3, .1, g);                                                                 // the roof
   box(.12, 2.3, 1.2, 'wood', -h - .7, 0, -h + .1, g).rotation.y = .15;                                                    // the door, swung back against the left wall
-  { const s2 = atR(F, -h, -h); box(1.5, .14, .9, rockM, 0, 0, 0, s2); out.push(ground(sp[0], .24)); }   // the stone threshold
+  out.push(ground(F.at(.4 - h + .7, -h - .7), 1.3));   // 1: the door, swung back against the wall left of the doorway
   { const fl = atR(F, .4, 0); box(2 * h + 2, .05, 2 * h + 2.2, plasterM, 0, 0, 0, fl); }   // the plastered floor                        // the threshold
   { const pts = [[0, 0], [.18, .05], [.3, .4], [.32, .8], [.24, 1.15], [.12, 1.25], [.14, 1.35]].map(([a, b]) => new THREE.Vector2(a, b)); for (let k = 0; k < 4; k++) { const [jx, jz] = F.at(h + .2, -h - .9 + k * .6); add(new THREE.LatheGeometry(pts, 12), clayM, jx, heightAt(jx, jz), jz); } out.push(ground(sp[1], 1.55)); }   // a row of four tall clay storage jars   // the row of tall storage jars
   { const [x, z] = sp[2]; out.push({ x, z, y: libAt('herb-rack', x, z, F.yaw, 1) }); }   // the rack of dried herbs
@@ -60,27 +77,27 @@ defBuilder('som.bake', (r, { ch }) => { const F = roomFrame(r), h = 2.5, sp = SQ
 
 // ---- 6.4 THE SPRING (6:16–20): spout · oil flask on a ledge (v) · wash-line · willow · flat stones across the outflow ----
 defBuilder('som.spring', (r, { ch }) => { const F = roomFrame(r), h = 2.5, sp = SQ(h).map(([f, s]) => F.at(f, s)), out = [];
-  { const g = atR(F, h + 1.1, 0); box(2 * h + 4, 3.2, 1.4, rockM, 0, -.4, 0, g); }   // the rock face the spring comes out of
+  { const g = atR(F, h + 1.1, 0); box(2 * h + 4, 2.4, 1.0, plasterM, 0, -.2, 0, g); box(2 * h + 4, .14, 1.1, paleM, 0, 2.2, 0, g); }   // the plastered back of the cistern court, the cistern's spout set in it
   { const g = atR(F, -h, -h); box(1.1, 1.4, .7, rockM, 0, 0, -.3, g); const sp2 = box(.3, .16, .7, paleM, 0, 1.05, .2, g); add(new THREE.CircleGeometry(.08, 8), darkM, 0, 1.05, .56, g); const fallW = cyl(.06, .1, 1.05, 8, mat('somFall', '#9fd0e0', { transparent: true, opacity: .8 }), 0, 0, .58, g); add(new THREE.CircleGeometry(.4, 14), mat('somWater', '#6fb3c8'), 0, .03, .6, g).rotation.x = -Math.PI / 2; out.push(ground(sp[0], 1.4)); }   // the stone spout, water falling from it into a little pool
   { const g = atR(F, h, -h); box(1.2, 1, .7, rockM, 0, 0, 0, g); const fl = add(new THREE.SphereGeometry(.2, 10, 8), mat('somFlask', '#d9c27a'), 0, 1.2, 0, g); fl.scale.y = 1.45; cyl(.05, .07, .22, 8, mat('somFlask', '#d9c27a'), 0, 1.5, 0, g); cyl(.06, .06, .05, 8, 'wood', 0, 1.62, 0, g); out.push(ground(sp[1], 1.75)); }   // the flask of oil on its ledge of rock
   { const [x, z] = sp[2]; out.push({ x, z, y: libAt('laundry-rack', x, z, F.yaw, 1) }); }   // the wash-line with a tunic drying
-  { const [x, z] = F.at(-h + .2, h + .6); const y = heightAt(x, z); for (let k = 0; k < 14; k++) { const [rx, rz] = F.at(R(-1.5, 1.5), R(-.9, -.5)); const rd = cyl(.012, .02, R(.6, 1), 3, willowM, rx, heightAt(rx, rz), rz); rd.rotation.z = R(-.2, .2); } const tr = cyl(.14, .22, 1.8, 7, 'wood', x, y, z); tr.rotation.z = .12; for (let k = 0; k < 26; k++) { const a = k / 26 * 6.28, rr = R(.4, 1.2); const fr = add(new THREE.CylinderGeometry(.015, .05, R(1.2, 1.9), 3), willowM, x + Math.cos(a) * rr, y + R(1.3, 1.9), z + Math.sin(a) * rr); fr.rotation.set(Math.sin(a) * .15, 0, -Math.cos(a) * .15); } out.push(ground(sp[3], .6)); }   // the willow on the bank, its thin fronds hanging
-  { const m = add(new THREE.PlaneGeometry(1.3, 2 * h + 4), waterM, 0, 0, 0); m.rotation.x = -Math.PI / 2; m.rotation.z = -F.yaw + Math.PI / 2; m.position.set(F.x, F.y + .04, F.z);
-    for (let k = -1; k <= 1; k++) { const [x, z] = F.at(k * .85, k * .15); const st = cyl(.42, .48, .22, 9, paleM, x, F.y, z); st.rotation.y = k; } out.push({ x: F.x, z: F.z, y: F.y + .3 }); }   // the outflow and its flat stones
+  { const [fx, fz] = F.at(-h + .2, h + .9); libAt('fig-tree', fx, fz, 0, .9); out.push(ground(sp[3], .6)); }   // 4: a fig tree shading the court
+  if (0) { const [x, z] = F.at(-h + .2, h + .6); const y = heightAt(x, z); for (let k = 0; k < 14; k++) { const [rx, rz] = F.at(R(-1.5, 1.5), R(-.9, -.5)); const rd = cyl(.012, .02, R(.6, 1), 3, willowM, rx, heightAt(rx, rz), rz); rd.rotation.z = R(-.2, .2); } const tr = cyl(.14, .22, 1.8, 7, 'wood', x, y, z); tr.rotation.z = .12; for (let k = 0; k < 26; k++) { const a = k / 26 * 6.28, rr = R(.4, 1.2); const fr = add(new THREE.CylinderGeometry(.015, .05, R(1.2, 1.9), 3), willowM, x + Math.cos(a) * rr, y + R(1.3, 1.9), z + Math.sin(a) * rr); fr.rotation.set(Math.sin(a) * .15, 0, -Math.cos(a) * .15); } out.push(ground(sp[3], .6)); }   // the willow on the bank, its thin fronds hanging
+  { cyl(.85, .9, .4, 16, dryStone, F.x, F.y, F.z); cyl(.72, .72, .12, 16, paleM, F.x, F.y + .4, F.z); { const [bx, bz] = F.at(.3, .95); libAt('wooden-bucket', bx, bz, 0, 1); } out.push({ x: F.x, z: F.z, y: F.y + .555 }); }   // 5: the cistern mouth and its round stone lid
   { const [x, z] = F.at(-.8, -h + .6); box(.9, .03, .5, clothM, x, heightAt(x, z) + .02, z); }   // a linen towel spread on the rocks
   finishRoom(ch, r, F, out); });
 
 // ---- 6.5 THE OX STALL (6:21–25): left stall post · yoke on its peg · plough · straw bedding · the roof pillar with its feeding niche ----
 defBuilder('som.stall', (r, { ch }) => { const F = roomFrame(r), h = 2.5, sp = SQ(h).map(([f, s]) => F.at(f, s)), out = [];
   const g = atR(F, 0, 0, Math.PI);
-  box(.4, 2.6, 2 * h + 1.8, dryStone, -h - .9, 0, .2, g); box(.4, 2.6, 2 * h + 1.8, dryStone, h + .9, 0, .2, g); box(2 * h + 2.2, 2.6, .4, dryStone, 0, 0, h + 1, g);   // three walls, open front
+  box(.4, 2.6, 2 * h + 1.8, dryStone, -h - .9, 0, .2, g);   // the west (outside) wall left open box(2 * h + 2.2, 2.6, .4, dryStone, 0, 0, h + 1, g);   // three walls, open front
   for (let k = -2; k <= 2; k++) box(.2, .2, 2 * h + 2.4, 'wood', k * 1.4, 2.6, .2, g);   // open roof beams, so the stall is lit
   { const s2 = atR(F, -h, -h); box(.35, 2.6, .35, 'wood', 0, 0, 0, s2); out.push(ground(sp[0], 1.4)); }                     // the left stall post
   { const s2 = atR(F, h + .7, -h); box(.12, .12, .4, 'wood', 0, 1.75, 0, s2); const ybm = add(new THREE.TorusGeometry(1.1, .1, 6, 16, Math.PI * .5), 'woodLt', 0, .95, -.25, s2); ybm.rotation.z = Math.PI * .75; for (const s3 of [-.6, .6]) { const u = add(new THREE.TorusGeometry(.22, .05, 5, 10, Math.PI), 'wood', s3, 1.5, -.22, s2); u.rotation.z = Math.PI; } box(.6, 1.3, .45, dryStone, 0, 0, -.2, s2); out.push(ground(F.at(h + .7, -h), 1.4)); }   // the yoke, made for two, on its peg
   { const s2 = atR(F, h, h, .3); const b = box(.16, .16, 2.3, 'woodLt', 0, .55, 0, s2); b.rotation.x = .3; const sh = box(.14, .55, .45, ironM, 0, .05, 1.05, s2); sh.rotation.x = -.5; const hn = box(.1, .9, .1, 'woodLt', 0, .55, -1.05, s2); hn.rotation.x = -.4; box(.5, .08, .08, 'woodLt', 0, 1.0, -1.2, s2); out.push(ground(sp[2], .85)); }   // the plough
   { const [x, z] = sp[3]; for (let k = 0; k < 10; k++) add(new THREE.IcosahedronGeometry(R(.3, .45), 0), strawM, x + R(-.5, .5), heightAt(x, z) + R(0, .3), z + R(-.5, .5)).scale.y = .5; out.push(ground(sp[3], .55)); }   // straw bedding
   { box(.7, 2.6, .7, dryStone, F.x, F.y, F.z); const [nx, nz] = F.at(-.36, 0); const nb = box(.75, .6, .12, darkM, nx - F.fx * .01, F.y + .8, nz - F.fz * .01); nb.rotation.y = F.yaw; const n = box(.6, .35, .16, strawM, nx - F.fx * .06, F.y + .75, nz - F.fz * .06); n.rotation.y = F.yaw; out.push({ x: F.x, z: F.z, y: F.y + 2.85 }); }   // the roof pillar, its feeding niche filled with fodder
-  { const [x, z] = F.at(1.3, -1.5); libAt('ox-grazing', x, z, F.yaw + .5, .85); }   // the ox
+  { const [x, z] = F.at(1.6, 1.4); libAt('ox-grazing', x, z, F.yaw + .5, .85); }   // the ox
   finishRoom(ch, r, F, out); });
 
 // ---- 6.6 THE GRANARY FIELD (6:26–30): terrace steps · lentils · scarecrow · granary door · hoe in the furrow ----
@@ -103,6 +120,10 @@ defBuilder('som.press', (r, { ch }) => { const F = roomFrame(r), h = 2.4, sp = S
   finishRoom(ch, r, F, out); });
 
 buildRooms(2);
-VIA['2.1'] = [[110, 0], [134, -4], [134, -10]];   // from the Watchtower, through the farm's upper gate                       // from the Watchtower, through the farm's upper gate
-VIA['2.5'] = [[145, -58], [141, -62], [137, -66]];                    // through the terrace-wall gate
-zoneLabel(6, 'The Farm', 140, -55);
+VIA['2.1'] = [[104, 2], [110, 0], [122, -3], [130, -3]];             // from the Watchtower down to the farm's upper gate
+VIA['2.2'] = [[134, -8], [132, -12], [131.6, -15], [131.5, -19], [130, -23]];   // through the front door, then left into the storeroom
+VIA['2.3'] = [[131, -26], [131, -32], [129, -35]];                    // back out to the central court, along to the kitchen
+VIA['2.4'] = [[131, -37], [134, -39], [134, -41.5]];                  // out of the back door into the cistern court
+VIA['2.5'] = [[138, -44], [143, -44]];                                // across the cistern court to the stall
+VIA['2.6'] = [[145, -38.5], [146, -35], [149.5, -34.5], [154, -36], [160, -46], [160, -62], [154, -72]];   // through the stall, out of its open side, down through the terrace gate
+zoneLabel(6, 'The Farm', 134, -8);

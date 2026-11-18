@@ -63,17 +63,20 @@ defBuilder('som.seat', (r, { ch }) => { const F = roomFrame(r), h = 2.6, sp = SQ
   finishRoom(ch, r, F, out); });
 
 // ---- 5.2 THE SHEEPFOLD (5:6–10): gateway · slab-roofed corner · oak corner · crook on the wall · water trough ----
-defBuilder('som.fold', (r, { ch }) => { const F = roomFrame(r), h = 3, W = .55, H = .95, sp = SQ(h).map(([f, s]) => F.at(f, s)), out = [];
+defBuilder('som.fold', (r, { ch }) => { const F = roomFrame(r), h = 3, H = .95, out = [];
+  // the pen stands across the trail (owner, 2026-11-18): you come in by the gateway in the near wall and leave by a shepherd's gap in the far wall
   const seg = (a, b, hh = H) => { const [x0, z0] = F.at(...a), [x1, z1] = F.at(...b), L = Math.hypot(x1 - x0, z1 - z0);
-    const y0 = Math.min(heightAt(x0, z0), heightAt(x1, z1)) - .1; const n = Math.max(2, Math.round(L / .5)); for (let row = 0; row < Math.round(hh / .3); row++) for (let k = 0; k < n; k++) { const t = (k + (row % 2) * .5) / n; if (t > 1) continue; const st = add(new THREE.DodecahedronGeometry(R(.24, .32), 0), rnd() > .5 ? rockM : rockDk, x0 + (x1 - x0) * t, y0 + .15 + row * .28, z0 + (z1 - z0) * t); st.scale.set(1.2, .7, 1); st.rotation.y = R(0, 3); } };
-  seg([-h, -h + 1.5], [-h, h], .5);   // the near wall kept low so you can see into the fold seg([-h + 1.5, -h], [h, -h]); seg([h, -h], [h, h]); seg([h, h], [-h, h]);   // the gateway is the open near-left corner
-  for (const s of [-h + 1.5, -h + 1.6]) { const g = atR(F, -h, s); }
-  out.push(somAt(F, sp[0], 'som-fold-gateway', Math.PI / 4)); out[out.length - 1].y -= 1.2;   // the gateway, two big stones either side of the gap
-  out.push(somAt(F, sp[1], 'som-slab-corner', -Math.PI / 4));
-  { const [x, z] = F.at(h + 1.3, h + 1.2); tree(x, z, 1.2); out.push(ground(sp[2], H + .05)); }
-  out.push(somAt(F, sp[3], 'som-crook', 0)); out[out.length - 1].y -= .6;   // the shepherd's crook leaning on the low wall
-  { const [cx, cz] = sp[4]; out.push({ x: cx, z: cz, y: libAt('water-trough', cx, cz, F.yaw + Math.PI / 2, 1.25) }); }
-  for (const [f, s] of [[1.6, 1.4], [-.6, 1.9]]) { const [x, z] = F.at(f, s); libAt('ewe-and-lamb', x, z, R(0, 6), .9); }
+    const y0 = Math.min(heightAt(x0, z0), heightAt(x1, z1)) - .1; const n = Math.max(2, Math.round(L / .5)); for (let row = 0; row < Math.round(hh / .3); row++) for (let k = 0; k <= n; k++) { const t = (k + (row % 2) * .5) / n; if (t > 1) continue; const st = add(new THREE.DodecahedronGeometry(R(.24, .32), 0), rnd() > .5 ? rockM : rockDk, x0 + (x1 - x0) * t, y0 + .15 + row * .28, z0 + (z1 - z0) * t); st.scale.set(1.2, .7, 1); st.rotation.y = R(0, 3); } };
+  seg([-h, -h], [-h, -1.4], .5); seg([-h, 1.4], [-h, h], .5);    // near wall kept low either side of the gateway, so you can see in
+  seg([h, -h], [h, -.6]); seg([h, .6], [h, h]);                  // far wall, either side of the shepherd's gap
+  seg([-h, -h], [h, -h]); seg([-h, h], [h, h]);                  // the side walls
+  somAt(F, F.at(-h, 0), 'som-fold-gateway', 0, .72);                 // the gateway across the trail
+  out.push(ground(F.at(-h, -.75), 1.15));                      // 1: the gateway's big left upright
+  out.push(somAt(F, F.at(h - .9, -h + .9), 'som-slab-corner', Math.PI / 4));   // 2: the slab-roofed corner
+  { const [x, z] = F.at(h + 1.3, h + 1.2); tree(x, z, 1.2); out.push(ground(F.at(h - .4, h - .4), H + .05)); }   // 3: the corner shaded by the oak
+  out.push(somAt(F, F.at(-h + .5, h - .3), 'som-crook', Math.PI)); out[out.length - 1].y -= .6;   // 4: the crook hung on the wall
+  { const [cx, cz] = F.at(.3, -1.5); out.push({ x: cx, z: cz, y: libAt('water-trough', cx, cz, F.yaw, 1.25) }); }   // 5: the trough, beside the trail
+  for (const [f, s] of [[1.6, 1.6], [-.4, 2.0]]) { const [x, z] = F.at(f, s); libAt('ewe-and-lamb', x, z, R(0, 6), .9); }
   finishRoom(ch, r, F, out); });
 
 // ---- 5.3 THE LOOKOUT (5:11–15): a long flat rock under a great terebinth on the lake edge, the view open to Hippos ----
@@ -100,10 +103,12 @@ defBuilder('som.floor', (r, { ch }) => { const F = roomFrame(r), h = 2.5, sp = S
 
 // ---- 5.5 THE QUARRY (5:21–25): chisel-marked left face · spoil heap · wedges in a crack · shear-legs · squared block on rollers ----
 defBuilder('som.quarry', (r, { ch }) => { const F = roomFrame(r), h = 2.5, sp = SQ(h).map(([f, s]) => F.at(f, s)), out = [];
-  { const g = atR(F, 0, -h - 1.3); box(1.4, 3.2, 2 * h + 3, paleM, 0, -.3, 0, g); for (let k = 0; k < 9; k++) box(.02, 2.6, .05, rockDk, -.71, .2, -h - 1 + k * .75, g); }   // the left face, striped
-  { const g = atR(F, h + 1.6, 0); box(2 * h + 4, 3.6, 1.4, paleM, 0, -.3, 0, g); }                                                            // the back face
-  out.push(ground(sp[0], .15));
-  { const [x, z] = sp[1]; for (let k = 0; k < 34; k++) { const d = R(0, 1), a = R(0, 6.3); add(new THREE.DodecahedronGeometry(R(.14, .3), 0), paleM, x + Math.cos(a) * d * 1.1, heightAt(x, z) + (1 - d) * .8, z + Math.sin(a) * d * 1.1); } out.push(ground(sp[1], 1.05)); }   // the spoil heap of chippings
+  // the two cliff faces were removed (owner, 2026-11-18: "they just seem random"); kept here in case they are wanted later:
+  const quarryFaces = () => { { const g = atR(F, 0, -h - 1.3); box(1.4, 3.2, 2 * h + 3, paleM, 0, -.3, 0, g); for (let k = 0; k < 9; k++) box(.02, 2.6, .05, rockDk, -.71, .2, -h - 1 + k * .75, g); }
+    { const g = atR(F, h + 1.6, 0); box(2 * h + 4, 3.6, 1.4, paleM, 0, -.3, 0, g); } }; void quarryFaces;
+  { const g = atR(F, -h, -h, .2); box(2.2, .35, 1.6, paleM, 0, -.05, 0, g); for (let k = 0; k < 6; k++) box(.03, .02, 1.3, rockDk, -.8 + k * .3, .3, 0, g); box(.9, .45, .7, paleM, .45, .3, .2, g); box(.04, .45, .72, darkM, -.02, .3, .2, g); out.push(ground(sp[0], .7)); }   // 1: a low shelf of bedrock, chisel-marked, a half-cut block still attached
+  { const sg = atR(F, h, -h); box(2, .5, 1.8, paleM, 0, -.1, 0, sg); box(1.2, .3, 1.8, paleM, -.4, .4, 0, sg); }   // 2: a cut-back step in the bedrock
+  { const [x, z] = sp[1]; for (let k = 0; k < 18; k++) { const d = R(0, 1), a = R(0, 6.3); add(new THREE.DodecahedronGeometry(R(.14, .3), 0), paleM, x + Math.cos(a) * d * 1.1, heightAt(x, z) + (1 - d) * .8, z + Math.sin(a) * d * 1.1); } out.push(ground(sp[1], 1.05)); }   // the spoil heap of chippings
   { const g = atR(F, h + .4, h); box(1.8, 1.5, 1.2, paleM, 0, 0, 0, g); box(.12, 1.3, 1.22, darkM, 0, .15, 0, g); for (let k = 0; k < 3; k++) box(.16, .4, .2, ironM, 0, 1.35, -.4 + k * .4, g); out.push(ground(F.at(h + .4, h), 1.8)); }   // the crack, with iron wedges driven in
   { const g = atR(F, -h, h); for (let k = 0; k < 3; k++) { const a = k / 3 * 6.28, p = cyl(.09, .1, 2.6, 6, 'woodLt', Math.cos(a) * .55, 0, Math.sin(a) * .55, g); p.rotation.set(Math.sin(a) * -.21, 0, Math.cos(a) * .21); } add(new THREE.TorusGeometry(.12, .03, 4, 8), 'wood', 0, 2.6, 0, g); cyl(.01, .01, 2.3, 4, 'wood', 0, .25, 0, g); out.push(ground(sp[3], .6)); }
   { const g = atR(F, 0, 0, .2); for (const z of [-.6, .6]) { const c = cyl(.1, .1, 1.5, 7, 'wood', 0, 0, z, g); c.rotation.z = Math.PI / 2; c.position.y = .1; } box(1.2, .9, 1.6, paleM, 0, .2, 0, g); out.push({ x: F.x, z: F.z, y: F.y + 1.15 }); }
@@ -142,19 +147,20 @@ defBuilder('som.camp', (r, { ch }) => { const F = roomFrame(r), h = 2.5, sp = SQ
 
 // ---- 5.9 THE RIDGE ROAD (5:41–45): gully culvert stones · carob tree · half-buried amphora · broken cart · the resting stone at the fork ----
 defBuilder('som.road', (r, { ch }) => { const F = roomFrame(r), h = 2.6, sp = SQ(h).map(([f, s]) => F.at(f, s)), out = [];
-  { const [a, b] = F.at(0, 0), [c, d] = F.at(30, 6); drape(Math.min(a, c) - 1.5, Math.min(b, d), Math.max(a, c) + 1.5, Math.max(b, d), 'path', .02); }   // the track forking off north
+  { const [a, b] = F.at(-9, -1.2), [c, d] = F.at(9, 1.2); drape(Math.min(a, c), Math.min(b, d), Math.max(a, c), Math.max(b, d), 'path', .02); const [e, f2] = F.at(1, -1), [g2, k2] = F.at(4, -14); drape(Math.min(e, g2), Math.min(f2, k2), Math.max(e, g2), Math.max(f2, k2), 'path', .02); }   // the road runs along the trail; the village track forks off to the left, down towards the lake
   { const [x, z] = sp[0], y = heightAt(x, z); add(new THREE.BoxGeometry(2.2, .05, 1.2), darkM, x, y + .01, z).rotation.y = F.yaw; for (const sd of [-1, 1]) for (let k = 0; k < 4; k++) { const [rx, rz] = F.at(-h + (k - 1.5) * .35, -h + sd * .75); somRock(rx, rz, .3, y); } const g = atR(F, -h, -h); const arch = add(new THREE.TorusGeometry(.6, .22, 6, 10, Math.PI), rockM, 0, 0, 0, g); arch.rotation.y = Math.PI / 2; out.push(ground(sp[0], .85)); }   // culvert stones arching over the gully
   { const [x, z] = F.at(h + .6, -h - .6); tree(x, z, 1.3); out.push(ground(sp[1], .6)); }
   out.push(somAt(F, sp[2], 'som-amphora-buried', .4));   // the old amphora, half-buried by the road
   out.push(somAt(F, sp[3], 'som-broken-cart', .5, .7));   // the cart, one wheel off and lying in the grass
   { const g = atR(F, 0, 0, .5); box(1.8, .5, 1.1, paleM, 0, 0, 0, g); out.push({ x: F.x, z: F.z, y: F.y + .6 }); }   // the flat resting stone at the fork
-  { const [x, z] = F.at(5, 4); const g = new THREE.Group(); g.position.set(x, heightAt(x, z), z); scene.add(g); const b = add(new THREE.CapsuleGeometry(.45, 1.1, 3, 8), mat('somCamel', '#b8915c'), 0, .5, 0, g); b.rotation.z = Math.PI / 2; add(new THREE.SphereGeometry(.4, 8, 6), mat('somCamel', '#b8915c'), 0, 1, 0, g); }   // a camel resting beyond the fork
+  { const [x, z] = F.at(6, 5); const g = new THREE.Group(); g.position.set(x, heightAt(x, z), z); scene.add(g); const b = add(new THREE.CapsuleGeometry(.45, 1.1, 3, 8), mat('somCamel', '#b8915c'), 0, .5, 0, g); b.rotation.z = Math.PI / 2; add(new THREE.SphereGeometry(.4, 8, 6), mat('somCamel', '#b8915c'), 0, 1, 0, g); }   // a camel resting beyond the fork
   finishRoom(ch, r, F, out); });
 
 // ---- 5.10 THE WATCHTOWER (5:46–48): the tower's wooden ladder · its lookout window · the vine trellis ----
 defBuilder('som.tower', (r, { ch }) => { const F = roomFrame(r), h = 2.3, sp = SQ(h).map(([f, s]) => F.at(f, s)), out = [];
   const [tx, tz] = F.at(h + 2.6, -h + .4), ty = heightAt(tx, tz); cyl(2.2, 2.45, 4.2, 14, dryStone, tx, ty - .3, tz); cyl(2.35, 2.35, .3, 14, rockDk, tx, ty + 3.85, tz);
-  { const g = atR(F, -h, -h, .3); for (const s of [-.25, .25]) { const p = cyl(.04, .04, 3, 5, 'wood', s, 0, 0, g); p.rotation.x = -.25; } for (let k = 0; k < 7; k++) box(.55, .04, .05, 'wood', 0, .3 + k * .4, -.08 - k * .1, g); out.push(ground(sp[0], .6)); }
+  { const [bx, bz] = F.at(h - .6, -h - .9), g = new THREE.Group(); g.position.set(bx, heightAt(bx, bz), bz); g.rotation.y = Math.atan2(tx - bx, tz - bz) + Math.PI; scene.add(g); const lean = .3, L = 3.6;
+    for (const s of [-.25, .25]) { const p = cyl(.045, .045, L, 5, 'wood', s, 0, 0, g); p.rotation.x = -lean; p.position.set(s, Math.cos(lean) * L / 2, -Math.sin(lean) * L / 2); } for (let k = 0; k < 8; k++) { const t = (k + .6) / 9 * L; box(.55, .045, .06, 'wood', 0, Math.cos(lean) * t, -Math.sin(lean) * t, g); } out.push(ground([bx, bz], .7)); }   // the ladder leaning against the tower
   { const [wx, wz] = F.at(h + .45, -h + .4), g = atR(F, h + .45, -h + .4); box(1.3, .18, .65, paleM, 0, 1.35, .05, g); box(1.2, 1.3, .1, paleM, 0, 1.5, -.16, g); box(.8, 1, .12, darkM, 0, 1.65, -.12, g); out.push({ x: wx, z: wz, y: heightAt(wx, wz) + 1.7 }); }   // the lookout window, its sill
   { const [x, z] = sp[2]; libAt('grapevine-trellis', x, z, F.yaw, 1.15); for (let k = 0; k < 6; k++) add(new THREE.IcosahedronGeometry(.1, 0), mat('somGrape', '#5a2a5a'), x + R(-.6, .6), heightAt(x, z) + R(1.2, 1.7), z + R(-.3, .3)).scale.y = 1.4; out.push(ground(sp[2], .9)); { const [vx, vz] = F.at(h + 7, 6); libAt('vineyard-rows', vx, vz, F.yaw, 1); } }
   finishRoom(ch, r, F, out); });

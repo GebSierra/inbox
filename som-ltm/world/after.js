@@ -25,6 +25,18 @@ window.__outline = () => ({ on: outlineMode, signs: SIGNS.length });
   requestAnimationFrame(signs);
 })();
 
+// ---------- walking between rooms (owner, 2026-11-18): Next walks the camera along the trail at a walking pace, looking ahead,
+// then turns to face the room, instead of gliding straight across. Rooms with a hand-set VIA keep it.
+window.__walkSpeed = 6;
+{ const camAt = s => { const yaw = Math.atan2(-(s.look[0] - s.x), -(s.look[2] - s.z)), back = s.back || 6; return [s.x + Math.sin(yaw) * back, s.z + Math.cos(yaw) * back]; };
+  const segs = []; let acc = 0; for (let i = 0; i < TRAIL.length - 1; i++) { const [ax, az] = TRAIL[i], [bx, bz] = TRAIL[i + 1], L = Math.hypot(bx - ax, bz - az); segs.push({ ax, az, bx, bz, L, s0: acc }); acc += L; }
+  const proj = ([x, z]) => { let best = { d: 1e9 }; for (const g of segs) { const dx = g.bx - g.ax, dz = g.bz - g.az, t = Math.max(0, Math.min(1, ((x - g.ax) * dx + (z - g.az) * dz) / (g.L * g.L || 1))), px = g.ax + dx * t, pz = g.az + dz * t, d = Math.hypot(x - px, z - pz); if (d < best.d) best = { d, s: g.s0 + g.L * t, p: [px, pz] }; } return best; };
+  const at = s => { for (const g of segs) if (s <= g.s0 + g.L) { const t = (s - g.s0) / (g.L || 1); return [g.ax + (g.bx - g.ax) * t, g.az + (g.bz - g.az) * t]; } const g = segs[segs.length - 1]; return [g.bx, g.bz]; };
+  for (let i = 0; i < STATIONS.length - 1; i++) { const a = STATIONS[i], b = STATIONS[i + 1], key = `${b.ch}.${b.room}`; if (VIA[key]) continue;
+    const pa = proj(camAt(a)), pb = proj(camAt(b)); if (pa.d > 6 || pb.d > 6 || Math.abs(pb.s - pa.s) > 120) continue;
+    const pts = [], dir = Math.sign(pb.s - pa.s), n = Math.max(1, Math.ceil(Math.abs(pb.s - pa.s) / 2.5)); for (let k = 1; k < n; k++) pts.push(at(pa.s + (pb.s - pa.s) * k / n));
+    VIA[key] = pts; } }
+
 // ---------- start at the first room, the Seat (5:1–5), facing it: the owner's chosen opening view (2026-11-17) ----------
 if (STATIONS[0] && !overview) { const s = STATIONS[0], yaw = Math.atan2(-(s.look[0] - s.x), -(s.look[2] - s.z)), back = s.back || 6;
   idx = 0; tween = null; player.x = s.x + Math.sin(yaw) * back; player.z = s.z + Math.cos(yaw) * back; player.yaw = yaw; player.pitch = s.pitch ?? -.12; }
@@ -39,3 +51,6 @@ window.__h = (x, z) => heightAt(x, z);
     floor.visible = true; cur = new THREE.Group(); cur.position.set(SX, heightAt(SX, SZ) + .02, SZ); scene.add(cur); const top = e.fn(cur, 0, 0, 0) || 1;
     cur.updateMatrixWorld(true); const bb = new THREE.Box3().setFromObject(cur), c = bb.getCenter(new THREE.Vector3()), sz = bb.getSize(new THREE.Vector3()), d = dist || Math.max(1.6, Math.max(sz.x, sz.y, sz.z) * 1.25);
     window.__cam(c.x + Math.sin(angle) * d, c.y + d * .3, c.z + Math.cos(angle) * d, c.x, c.y, c.z); return 'ok'; }; }
+
+// the farmhouse roofs hide from the bird's-eye view so the rooms can be seen from above (PLAN §4)
+(function roofs() { for (const r of HOUSE_ROOFS) r.visible = !overview; requestAnimationFrame(roofs); })();

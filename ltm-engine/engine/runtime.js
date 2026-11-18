@@ -97,7 +97,7 @@ function frame() { window.__fc = (window.__fc || 0) + 1;
     if (!blocked(player.x + mx, player.z + mz)) { player.x += mx; player.z += mz; }
     else if (!blocked(player.x + mx, player.z)) player.x += mx;
     else if (!blocked(player.x, player.z + mz)) player.z += mz; }
-  if (tween && tween.path && tween.path.length) { const [wx, wz] = tween.path[0], ddx = wx - player.x, ddz = wz - player.z, dd = Math.hypot(ddx, ddz), st = Math.min(dd, 14 * dt);
+  if (tween && tween.path && tween.path.length) { const [wx, wz] = tween.path[0], ddx = wx - player.x, ddz = wz - player.z, dd = Math.hypot(ddx, ddz), st = Math.min(dd, (window.__walkSpeed || 14) * dt);
     if (dd < .6) tween.path.shift(); else { player.x += ddx / dd * st; player.z += ddz / dd * st; let dy = Math.atan2(-ddx, -ddz) - player.yaw; dy = Math.atan2(Math.sin(dy), Math.cos(dy)); player.yaw += dy * Math.min(1, dt * 5); player.pitch += (-.05 - player.pitch) * Math.min(1, dt * 4); } }
   else if (tween) { const k = 1 - Math.exp(-dt * 3); player.x += (tween.x - player.x) * k; player.z += (tween.z - player.z) * k;
     let dy = tween.yaw - player.yaw; dy = Math.atan2(Math.sin(dy), Math.cos(dy)); player.yaw += dy * k; player.pitch += (tween.pitch - player.pitch) * k;

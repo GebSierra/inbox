@@ -27,3 +27,10 @@ Chapter 6: make the farm a connected house you walk through. The rooms only need
 ## 15 — Chapter 6 plan approved; chapter 5 changes
 "I like this plan. For room 7, keep the objects that we can, and make this plan." New workshop models go in the shared library (ltm-engine/objects/som.js).
 Chapter 5: the Sheepfold sits on the path, and you walk in through its gate; the Lookout stays left and the Threshing Floor right. Remove the Quarry's walls (save the code) and keep the rocks. The Ridge Road goes on the path. Lean the Watchtower ladder against the tower.
+
+## 16 — Farmhouse details, library rules, walking camera
+- Cistern court: reuse or move the Spring's objects. → Done: the spout and pool, oil flask, wash-line and plastered back, with the cistern mouth moved in; a fig tree replaces the willow.
+- Ox stall: the walls facing outside can be open. → Its south front and west side are open.
+- Near-repeats are fine; there's no need to remove them.
+- Rules: check the library before making an object, and add anything new worth reusing to the library automatically. → ltm-engine/docs/RULES.md.
+- Camera: Next should walk along the path and turn to the room, as in the owner's GIF, instead of gliding across like a teleport. → after.js builds each walk from TRAIL; the walking pace is 6 m/s.

@@ -1,1006 +1,1011 @@
 {
- "book": "Matthew",
- "translation": "ESV",
- "chapters": [
-  {
-   "chapter": 1,
-   "verses": 48,
-   "district": "The Summit",
-   "rooms": [
+  "book": "Matthew",
+  "translation": "ESV",
+  "chapters": [
     {
-     "room": 1,
-     "name": "The Seat",
-     "verses": "5:1–5",
-     "kind": "custom",
-     "builder": "som.seat",
-     "at": [
-      -42,
-      0
-     ],
-     "viewer": [
-      -34,
-      0
-     ],
-     "objects": [
-      {
-       "what": "the old olive tree"
-      },
-      {
-       "place": true,
-       "what": "the patch of bare limestone pavement"
-      },
-      {
-       "place": true,
-       "what": "the split boulder with a thornbush in its crack"
-      },
-      {
-       "what": "the goatskin water bag on its stake"
-      },
-      {
-       "place": true,
-       "what": "the flat seat-rock where he sat"
-      }
-     ]
+      "chapter": 1,
+      "verses": 48,
+      "district": "The Summit",
+      "rooms": [
+        {
+          "room": 1,
+          "name": "The Seat",
+          "verses": "5:1–5",
+          "kind": "custom",
+          "builder": "som.seat",
+          "at": [
+            -42,
+            0
+          ],
+          "viewer": [
+            -34,
+            0
+          ],
+          "objects": [
+            {
+              "what": "the old olive tree"
+            },
+            {
+              "place": true,
+              "what": "the patch of bare limestone pavement"
+            },
+            {
+              "place": true,
+              "what": "the split boulder with a thornbush in its crack"
+            },
+            {
+              "what": "the goatskin water bag on its stake"
+            },
+            {
+              "place": true,
+              "what": "the flat seat-rock where he sat"
+            }
+          ]
+        },
+        {
+          "room": 2,
+          "name": "The Sheepfold",
+          "verses": "5:6–10",
+          "kind": "custom",
+          "builder": "som.fold",
+          "at": [
+            -20,
+            0
+          ],
+          "viewer": [
+            -27,
+            0
+          ],
+          "objects": [
+            {
+              "place": true,
+              "what": "the gateway"
+            },
+            {
+              "place": true,
+              "what": "the corner roofed with flat slabs"
+            },
+            {
+              "what": "the corner shaded by an oak"
+            },
+            {
+              "what": "the shepherd's crook hung on the wall"
+            },
+            {
+              "id": "water-trough",
+              "what": "the stone water trough"
+            }
+          ],
+          "back": 7,
+          "pitch": -0.24
+        },
+        {
+          "room": 3,
+          "name": "The Lookout",
+          "verses": "5:11–15",
+          "kind": "custom",
+          "builder": "som.lookout",
+          "at": [
+            -10,
+            -12
+          ],
+          "viewer": [
+            -10,
+            -4
+          ],
+          "objects": [
+            {
+              "place": true,
+              "what": "the near end of the long flat rock"
+            },
+            {
+              "what": "the great terebinth's trunk"
+            },
+            {
+              "what": "the heap of cucumbers"
+            },
+            {
+              "place": true,
+              "what": "the cliff-edge boulder over the lake"
+            },
+            {
+              "id": "candelabrum",
+              "what": "the lamp on its stand"
+            }
+          ]
+        },
+        {
+          "room": 4,
+          "name": "The Threshing Floor",
+          "verses": "5:16–20",
+          "kind": "custom",
+          "builder": "som.floor",
+          "at": [
+            4,
+            12
+          ],
+          "viewer": [
+            4,
+            4
+          ],
+          "objects": [
+            {
+              "what": "the stack of sheaves"
+            },
+            {
+              "what": "the lone thorn tree"
+            },
+            {
+              "what": "the winnowing fork"
+            },
+            {
+              "place": true,
+              "what": "the floor's worn stone edge"
+            },
+            {
+              "what": "the threshing sledge"
+            }
+          ]
+        },
+        {
+          "room": 5,
+          "name": "The Quarry",
+          "verses": "5:21–25",
+          "kind": "custom",
+          "builder": "som.quarry",
+          "at": [
+            29,
+            -12
+          ],
+          "viewer": [
+            29,
+            -4
+          ],
+          "objects": [
+            {
+              "place": true,
+              "what": "the left quarry face, striped with chisel marks"
+            },
+            {
+              "place": true,
+              "what": "the spoil heap of chippings"
+            },
+            {
+              "what": "the iron wedges in the crack"
+            },
+            {
+              "what": "the wooden shear-legs"
+            },
+            {
+              "what": "the squared block on its rollers"
+            }
+          ]
+        },
+        {
+          "room": 6,
+          "name": "The Charcoal Burners' Clearing",
+          "verses": "5:26–30",
+          "kind": "custom",
+          "builder": "som.charcoal",
+          "at": [
+            43,
+            12
+          ],
+          "viewer": [
+            43,
+            4
+          ],
+          "objects": [
+            {
+              "what": "the smoking charcoal mound"
+            },
+            {
+              "place": true,
+              "what": "the row of cut stumps"
+            },
+            {
+              "what": "the axe in its chopping block"
+            },
+            {
+              "what": "the rush baskets of charcoal"
+            },
+            {
+              "place": true,
+              "what": "the raked ring of ash"
+            }
+          ]
+        },
+        {
+          "room": 7,
+          "name": "The Bee Bank",
+          "verses": "5:31–35",
+          "kind": "custom",
+          "builder": "som.bees",
+          "at": [
+            57,
+            -12
+          ],
+          "viewer": [
+            57,
+            -4
+          ],
+          "objects": [
+            {
+              "place": true,
+              "what": "the bank's capped end"
+            },
+            {
+              "what": "the stacked hive pipes"
+            },
+            {
+              "what": "the smoker pot"
+            },
+            {
+              "what": "the bees' water dish"
+            },
+            {
+              "what": "the tray of comb"
+            }
+          ]
+        },
+        {
+          "room": 8,
+          "name": "The Shepherds' Camp",
+          "verses": "5:36–40",
+          "kind": "custom",
+          "builder": "som.camp",
+          "at": [
+            71,
+            12
+          ],
+          "viewer": [
+            71,
+            4
+          ],
+          "objects": [
+            {
+              "place": true,
+              "what": "the guy-rope peg"
+            },
+            {
+              "place": true,
+              "what": "the tent's open front and its pole"
+            },
+            {
+              "what": "the quern"
+            },
+            {
+              "what": "the ground loom"
+            },
+            {
+              "what": "the hearth stones"
+            },
+            {
+              "extra": true,
+              "what": "the black goat-hair tent"
+            }
+          ]
+        },
+        {
+          "room": 9,
+          "name": "The Ridge Road",
+          "verses": "5:41–45",
+          "kind": "custom",
+          "builder": "som.road",
+          "at": [
+            90,
+            0
+          ],
+          "viewer": [
+            83,
+            0
+          ],
+          "objects": [
+            {
+              "place": true,
+              "what": "the culvert stones over the gully"
+            },
+            {
+              "what": "the lone carob tree"
+            },
+            {
+              "what": "the half-buried amphora"
+            },
+            {
+              "what": "the cart with a broken wheel"
+            },
+            {
+              "place": true,
+              "what": "the resting stone at the fork"
+            }
+          ]
+        },
+        {
+          "room": 10,
+          "name": "The Watchtower",
+          "verses": "5:46–48",
+          "kind": "custom",
+          "builder": "som.tower",
+          "at": [
+            99,
+            12
+          ],
+          "viewer": [
+            99,
+            4
+          ],
+          "objects": [
+            {
+              "what": "the tower's wooden ladder"
+            },
+            {
+              "place": true,
+              "what": "the tower's lookout window"
+            },
+            {
+              "what": "the vine trellis"
+            }
+          ]
+        }
+      ]
     },
     {
-     "room": 2,
-     "name": "The Sheepfold",
-     "verses": "5:6–10",
-     "kind": "custom",
-     "builder": "som.fold",
-     "at": [
-      -24,
-      12
-     ],
-     "viewer": [
-      -24,
-      4
-     ],
-     "objects": [
-      {
-       "place": true,
-       "what": "the gateway"
-      },
-      {
-       "place": true,
-       "what": "the corner roofed with flat slabs"
-      },
-      {
-       "what": "the corner shaded by an oak"
-      },
-      {
-       "what": "the shepherd's crook hung on the wall"
-      },
-      {
-       "id": "water-trough",
-       "what": "the stone water trough"
-      }
-     ]
+      "chapter": 2,
+      "verses": 34,
+      "district": "The Farm",
+      "rooms": [
+        {
+          "room": 1,
+          "name": "The Entry Court",
+          "verses": "6:1–5",
+          "kind": "custom",
+          "builder": "som.court",
+          "at": [
+            134,
+            -10.6
+          ],
+          "viewer": [
+            134,
+            -3.6
+          ],
+          "objects": [
+            {
+              "place": true,
+              "what": "the gate's left pier"
+            },
+            {
+              "place": true,
+              "what": "the curtained doorway into the house"
+            },
+            {
+              "place": true,
+              "what": "the stone stair up to the roof"
+            },
+            {
+              "what": "the stone roof-roller"
+            },
+            {
+              "what": "the cistern mouth with its round stone lid"
+            }
+          ]
+        },
+        {
+          "room": 2,
+          "name": "The Inner Storeroom",
+          "verses": "6:6–10",
+          "kind": "custom",
+          "builder": "som.store",
+          "at": [
+            122,
+            -24
+          ],
+          "viewer": [
+            129,
+            -24
+          ],
+          "objects": [
+            {
+              "place": true,
+              "what": "the doorway's stone threshold"
+            },
+            {
+              "what": "the row of tall storage jars"
+            },
+            {
+              "what": "the bunches of dried herbs from a beam"
+            },
+            {
+              "place": true,
+              "what": "the plastered wall shelf"
+            },
+            {
+              "what": "the wooden chest"
+            }
+          ],
+          "back": 6.5
+        },
+        {
+          "room": 3,
+          "name": "The Kitchen",
+          "verses": "6:11–15",
+          "kind": "custom",
+          "builder": "som.bake",
+          "at": [
+            122,
+            -35
+          ],
+          "viewer": [
+            129,
+            -35
+          ],
+          "objects": [
+            {
+              "what": "the sieve on its post"
+            },
+            {
+              "what": "the woodpile"
+            },
+            {
+              "what": "the clay oven"
+            },
+            {
+              "place": true,
+              "what": "the yard's smoke-stained corner"
+            },
+            {
+              "what": "the kneading bowl with its cloth"
+            }
+          ],
+          "back": 6.5
+        },
+        {
+          "room": 4,
+          "name": "The Cistern Court",
+          "verses": "6:16–20",
+          "kind": "custom",
+          "builder": "som.spring",
+          "at": [
+            134,
+            -50
+          ],
+          "viewer": [
+            134,
+            -43
+          ],
+          "objects": [
+            {
+              "place": true,
+              "what": "the spout"
+            },
+            {
+              "what": "the flask of oil on a ledge of rock"
+            },
+            {
+              "what": "the wash-line with a tunic drying"
+            },
+            {
+              "what": "the willow shading the bank"
+            },
+            {
+              "place": true,
+              "what": "the flat stones across the outflow"
+            }
+          ],
+          "back": 6
+        },
+        {
+          "room": 5,
+          "name": "The Ox Stall",
+          "verses": "6:21–25",
+          "kind": "custom",
+          "builder": "som.stall",
+          "at": [
+            145,
+            -35
+          ],
+          "viewer": [
+            145,
+            -42
+          ],
+          "objects": [
+            {
+              "place": true,
+              "what": "the left stall post"
+            },
+            {
+              "what": "the yoke on its peg"
+            },
+            {
+              "what": "the plough"
+            },
+            {
+              "what": "the heap of straw bedding"
+            },
+            {
+              "place": true,
+              "what": "the roof pillar with its feeding niche"
+            }
+          ],
+          "back": 7
+        },
+        {
+          "room": 6,
+          "name": "The Granary Field",
+          "verses": "6:26–30",
+          "kind": "custom",
+          "builder": "som.granary",
+          "at": [
+            156,
+            -82
+          ],
+          "viewer": [
+            147,
+            -82
+          ],
+          "objects": [
+            {
+              "place": true,
+              "what": "the terrace steps"
+            },
+            {
+              "what": "the patch of lentils"
+            },
+            {
+              "what": "the scarecrow on its pole"
+            },
+            {
+              "place": true,
+              "what": "the granary door"
+            },
+            {
+              "what": "the hoe in the furrow"
+            },
+            {
+              "extra": true,
+              "what": "the stone granary"
+            }
+          ],
+          "back": 8.5
+        },
+        {
+          "room": 7,
+          "name": "The Olive Press",
+          "verses": "6:31–34",
+          "kind": "custom",
+          "builder": "som.press",
+          "at": [
+            124,
+            -95
+          ],
+          "viewer": [
+            133,
+            -95
+          ],
+          "objects": [
+            {
+              "what": "the crushing stone in its bed"
+            },
+            {
+              "what": "the press beam in its wall socket"
+            },
+            {
+              "what": "the stack of rope pulp-baskets"
+            },
+            {
+              "place": true,
+              "what": "the oil collecting pit"
+            }
+          ]
+        }
+      ]
     },
     {
-     "room": 3,
-     "name": "The Lookout",
-     "verses": "5:11–15",
-     "kind": "custom",
-     "builder": "som.lookout",
-     "at": [
-      -10,
-      -12
-     ],
-     "viewer": [
-      -10,
-      -4
-     ],
-     "objects": [
-      {
-       "place": true,
-       "what": "the near end of the long flat rock"
-      },
-      {
-       "what": "the great terebinth's trunk"
-      },
-      {
-       "what": "the heap of cucumbers"
-      },
-      {
-       "place": true,
-       "what": "the cliff-edge boulder over the lake"
-      },
-      {
-       "id": "candelabrum",
-       "what": "the lamp on its stand"
-      }
-     ]
-    },
-    {
-     "room": 4,
-     "name": "The Threshing Floor",
-     "verses": "5:16–20",
-     "kind": "custom",
-     "builder": "som.floor",
-     "at": [
-      4,
-      12
-     ],
-     "viewer": [
-      4,
-      4
-     ],
-     "objects": [
-      {
-       "what": "the stack of sheaves"
-      },
-      {
-       "what": "the lone thorn tree"
-      },
-      {
-       "what": "the winnowing fork"
-      },
-      {
-       "place": true,
-       "what": "the floor's worn stone edge"
-      },
-      {
-       "what": "the threshing sledge"
-      }
-     ]
-    },
-    {
-     "room": 5,
-     "name": "The Quarry",
-     "verses": "5:21–25",
-     "kind": "custom",
-     "builder": "som.quarry",
-     "at": [
-      29,
-      -12
-     ],
-     "viewer": [
-      29,
-      -4
-     ],
-     "objects": [
-      {
-       "place": true,
-       "what": "the left quarry face, striped with chisel marks"
-      },
-      {
-       "place": true,
-       "what": "the spoil heap of chippings"
-      },
-      {
-       "what": "the iron wedges in the crack"
-      },
-      {
-       "what": "the wooden shear-legs"
-      },
-      {
-       "what": "the squared block on its rollers"
-      }
-     ]
-    },
-    {
-     "room": 6,
-     "name": "The Charcoal Burners' Clearing",
-     "verses": "5:26–30",
-     "kind": "custom",
-     "builder": "som.charcoal",
-     "at": [
-      43,
-      12
-     ],
-     "viewer": [
-      43,
-      4
-     ],
-     "objects": [
-      {
-       "what": "the smoking charcoal mound"
-      },
-      {
-       "place": true,
-       "what": "the row of cut stumps"
-      },
-      {
-       "what": "the axe in its chopping block"
-      },
-      {
-       "what": "the rush baskets of charcoal"
-      },
-      {
-       "place": true,
-       "what": "the raked ring of ash"
-      }
-     ]
-    },
-    {
-     "room": 7,
-     "name": "The Bee Bank",
-     "verses": "5:31–35",
-     "kind": "custom",
-     "builder": "som.bees",
-     "at": [
-      57,
-      -12
-     ],
-     "viewer": [
-      57,
-      -4
-     ],
-     "objects": [
-      {
-       "place": true,
-       "what": "the bank's capped end"
-      },
-      {
-       "what": "the stacked hive pipes"
-      },
-      {
-       "what": "the smoker pot"
-      },
-      {
-       "what": "the bees' water dish"
-      },
-      {
-       "what": "the tray of comb"
-      }
-     ]
-    },
-    {
-     "room": 8,
-     "name": "The Shepherds' Camp",
-     "verses": "5:36–40",
-     "kind": "custom",
-     "builder": "som.camp",
-     "at": [
-      71,
-      12
-     ],
-     "viewer": [
-      71,
-      4
-     ],
-     "objects": [
-      {
-       "place": true,
-       "what": "the guy-rope peg"
-      },
-      {
-       "place": true,
-       "what": "the tent's open front and its pole"
-      },
-      {
-       "what": "the quern"
-      },
-      {
-       "what": "the ground loom"
-      },
-      {
-       "what": "the hearth stones"
-      },
-      {
-       "extra": true,
-       "what": "the black goat-hair tent"
-      }
-     ]
-    },
-    {
-     "room": 9,
-     "name": "The Ridge Road",
-     "verses": "5:41–45",
-     "kind": "custom",
-     "builder": "som.road",
-     "at": [
-      85,
-      -12
-     ],
-     "viewer": [
-      85,
-      -4
-     ],
-     "objects": [
-      {
-       "place": true,
-       "what": "the culvert stones over the gully"
-      },
-      {
-       "what": "the lone carob tree"
-      },
-      {
-       "what": "the half-buried amphora"
-      },
-      {
-       "what": "the cart with a broken wheel"
-      },
-      {
-       "place": true,
-       "what": "the resting stone at the fork"
-      }
-     ]
-    },
-    {
-     "room": 10,
-     "name": "The Watchtower",
-     "verses": "5:46–48",
-     "kind": "custom",
-     "builder": "som.tower",
-     "at": [
-      99,
-      12
-     ],
-     "viewer": [
-      99,
-      4
-     ],
-     "objects": [
-      {
-       "what": "the tower's wooden ladder"
-      },
-      {
-       "place": true,
-       "what": "the tower's lookout window"
-      },
-      {
-       "what": "the vine trellis"
-      }
-     ]
+      "chapter": 3,
+      "verses": 29,
+      "district": "The Shore Village",
+      "rooms": [
+        {
+          "room": 1,
+          "name": "The Boatwright's Yard",
+          "verses": "7:1–5",
+          "kind": "custom",
+          "builder": "som.boat",
+          "at": [
+            168,
+            -176
+          ],
+          "viewer": [
+            168,
+            -166
+          ],
+          "objects": [
+            {
+              "what": "the stack of planks"
+            },
+            {
+              "place": true,
+              "what": "the saw pit"
+            },
+            {
+              "what": "the pot of pitch"
+            },
+            {
+              "what": "the trestle with an adze"
+            },
+            {
+              "what": "the half-built hull on trestles"
+            }
+          ]
+        },
+        {
+          "room": 2,
+          "name": "The Fisherman's Court",
+          "verses": "7:6–10",
+          "kind": "custom",
+          "builder": "som.fisher",
+          "at": [
+            196,
+            -176
+          ],
+          "viewer": [
+            196,
+            -166
+          ],
+          "objects": [
+            {
+              "place": true,
+              "what": "the courtyard entrance"
+            },
+            {
+              "what": "the fish-salting vat"
+            },
+            {
+              "what": "the net drying on poles"
+            },
+            {
+              "what": "the basket of fish"
+            },
+            {
+              "what": "the mending stone with a coil of rope"
+            }
+          ]
+        },
+        {
+          "room": 3,
+          "name": "The Tax Table",
+          "verses": "7:11–15",
+          "kind": "custom",
+          "builder": "som.tax",
+          "at": [
+            224,
+            -176
+          ],
+          "viewer": [
+            224,
+            -166
+          ],
+          "objects": [
+            {
+              "what": "the tax collector's table and scales"
+            },
+            {
+              "what": "the stone mounting step"
+            },
+            {
+              "what": "the merchants' tethering rail"
+            },
+            {
+              "what": "the trade bales"
+            },
+            {
+              "place": true,
+              "what": "the narrow jetty out over the water"
+            }
+          ]
+        },
+        {
+          "room": 4,
+          "name": "The Orchard",
+          "verses": "7:16–20",
+          "kind": "custom",
+          "builder": "som.orchard",
+          "at": [
+            226,
+            -148
+          ],
+          "viewer": [
+            226,
+            -158
+          ],
+          "objects": [
+            {
+              "place": true,
+              "what": "the sluice of the irrigation channel"
+            },
+            {
+              "what": "the almond tree"
+            },
+            {
+              "place": true,
+              "what": "the gardener's stone seat in the wall"
+            },
+            {
+              "what": "the shallow well with rope and bucket"
+            },
+            {
+              "what": "the pile of pruned branches"
+            }
+          ]
+        },
+        {
+          "room": 5,
+          "name": "The House on the Rock",
+          "verses": "7:21–25",
+          "kind": "custom",
+          "builder": "som.rock",
+          "at": [
+            184,
+            -146
+          ],
+          "viewer": [
+            184,
+            -156
+          ],
+          "objects": [
+            {
+              "place": true,
+              "what": "the step hewn in the rock, up onto the shelf"
+            },
+            {
+              "what": "the stone bench against the house wall"
+            },
+            {
+              "place": true,
+              "what": "the shelf's edge over the wadi"
+            },
+            {
+              "what": "the stone mortar"
+            },
+            {
+              "what": "the bundle of roofing reeds"
+            }
+          ]
+        },
+        {
+          "room": 6,
+          "name": "The House on the Sand",
+          "verses": "7:26–29",
+          "kind": "custom",
+          "builder": "som.sand",
+          "at": [
+            158,
+            -149
+          ],
+          "viewer": [
+            158,
+            -158
+          ],
+          "objects": [
+            {
+              "what": "the date palm leaning over the house"
+            },
+            {
+              "what": "the reed fence round the yard"
+            },
+            {
+              "place": true,
+              "what": "the bank across the wadi"
+            },
+            {
+              "place": true,
+              "what": "the low mud-brick wall of the yard"
+            }
+          ],
+          "back": 9,
+          "pitch": -0.08
+        }
+      ]
     }
-   ]
-  },
-  {
-   "chapter": 2,
-   "verses": 34,
-   "district": "The Farm",
-   "rooms": [
+  ],
+  "outline": [
     {
-     "room": 1,
-     "name": "The Courtyard",
-     "verses": "6:1–5",
-     "kind": "custom",
-     "builder": "som.court",
-     "at": [
-      124,
-      -16
-     ],
-     "viewer": [
-      133,
-      -16
-     ],
-     "objects": [
-      {
-       "place": true,
-       "what": "the gate's left pier"
-      },
-      {
-       "place": true,
-       "what": "the curtained doorway into the house"
-      },
-      {
-       "place": true,
-       "what": "the stone stair up to the roof"
-      },
-      {
-       "what": "the stone roof-roller"
-      },
-      {
-       "what": "the cistern mouth with its round stone lid"
-      }
-     ]
+      "title": "Setting",
+      "ref": "5:1–2",
+      "from": 1,
+      "ch": 1
     },
     {
-     "room": 2,
-     "name": "The Inner Storeroom",
-     "verses": "6:6–10",
-     "kind": "custom",
-     "builder": "som.store",
-     "at": [
-      156,
-      -29
-     ],
-     "viewer": [
-      147,
-      -29
-     ],
-     "objects": [
-      {
-       "place": true,
-       "what": "the doorway's stone threshold"
-      },
-      {
-       "what": "the row of tall storage jars"
-      },
-      {
-       "what": "the bunches of dried herbs from a beam"
-      },
-      {
-       "place": true,
-       "what": "the plastered wall shelf"
-      },
-      {
-       "what": "the wooden chest"
-      }
-     ]
+      "title": "Beatitudes",
+      "ref": "5:3–12",
+      "from": 3,
+      "ch": 1
     },
     {
-     "room": 3,
-     "name": "The Bakehouse Yard",
-     "verses": "6:11–15",
-     "kind": "custom",
-     "builder": "som.bake",
-     "at": [
-      124,
-      -42
-     ],
-     "viewer": [
-      133,
-      -42
-     ],
-     "objects": [
-      {
-       "what": "the sieve on its post"
-      },
-      {
-       "what": "the woodpile"
-      },
-      {
-       "what": "the clay oven"
-      },
-      {
-       "place": true,
-       "what": "the yard's smoke-stained corner"
-      },
-      {
-       "what": "the kneading bowl with its cloth"
-      }
-     ],
-     "back": 6.2
+      "title": "Set Apart › Salt",
+      "ref": "5:13",
+      "from": 13,
+      "ch": 1
     },
     {
-     "room": 4,
-     "name": "The Spring",
-     "verses": "6:16–20",
-     "kind": "custom",
-     "builder": "som.spring",
-     "at": [
-      156,
-      -55
-     ],
-     "viewer": [
-      147,
-      -55
-     ],
-     "objects": [
-      {
-       "place": true,
-       "what": "the spout"
-      },
-      {
-       "what": "the flask of oil on a ledge of rock"
-      },
-      {
-       "what": "the wash-line with a tunic drying"
-      },
-      {
-       "what": "the willow shading the bank"
-      },
-      {
-       "place": true,
-       "what": "the flat stones across the outflow"
-      }
-     ]
+      "title": "Light",
+      "ref": "5:14–16",
+      "from": 14,
+      "ch": 1
     },
     {
-     "room": 5,
-     "name": "The Ox Stall",
-     "verses": "6:21–25",
-     "kind": "custom",
-     "builder": "som.stall",
-     "at": [
-      124,
-      -69
-     ],
-     "viewer": [
-      133,
-      -69
-     ],
-     "objects": [
-      {
-       "place": true,
-       "what": "the left stall post"
-      },
-      {
-       "what": "the yoke on its peg"
-      },
-      {
-       "what": "the plough"
-      },
-      {
-       "what": "the heap of straw bedding"
-      },
-      {
-       "place": true,
-       "what": "the roof pillar with its feeding niche"
-      }
-     ]
+      "title": "Righteousness",
+      "ref": "5:17–20",
+      "from": 17,
+      "ch": 1
     },
     {
-     "room": 6,
-     "name": "The Granary Field",
-     "verses": "6:26–30",
-     "kind": "custom",
-     "builder": "som.granary",
-     "at": [
-      156,
-      -82
-     ],
-     "viewer": [
-      147,
-      -82
-     ],
-     "objects": [
-      {
-       "place": true,
-       "what": "the terrace steps"
-      },
-      {
-       "what": "the patch of lentils"
-      },
-      {
-       "what": "the scarecrow on its pole"
-      },
-      {
-       "place": true,
-       "what": "the granary door"
-      },
-      {
-       "what": "the hoe in the furrow"
-      },
-      {
-       "extra": true,
-       "what": "the stone granary"
-      }
-     ],
-     "back": 8.5
+      "title": "But I Tell You › Murder and Anger",
+      "ref": "5:21–26",
+      "from": 21,
+      "ch": 1
     },
     {
-     "room": 7,
-     "name": "The Olive Press",
-     "verses": "6:31–34",
-     "kind": "custom",
-     "builder": "som.press",
-     "at": [
-      124,
-      -95
-     ],
-     "viewer": [
-      133,
-      -95
-     ],
-     "objects": [
-      {
-       "what": "the crushing stone in its bed"
-      },
-      {
-       "what": "the press beam in its wall socket"
-      },
-      {
-       "what": "the stack of rope pulp-baskets"
-      },
-      {
-       "place": true,
-       "what": "the oil collecting pit"
-      }
-     ]
+      "title": "Adultery and Lust",
+      "ref": "5:27–30",
+      "from": 27,
+      "ch": 1
+    },
+    {
+      "title": "Divorce",
+      "ref": "5:31–32",
+      "from": 31,
+      "ch": 1
+    },
+    {
+      "title": "Oaths",
+      "ref": "5:33–37",
+      "from": 33,
+      "ch": 1
+    },
+    {
+      "title": "Turn the Other Cheek",
+      "ref": "5:38–42",
+      "from": 38,
+      "ch": 1
+    },
+    {
+      "title": "Love Your Enemies",
+      "ref": "5:43–48",
+      "from": 43,
+      "ch": 1
+    },
+    {
+      "title": "Sanctified Focus › Focus Internally › Public Righteousness",
+      "ref": "6:1",
+      "from": 1,
+      "ch": 2
+    },
+    {
+      "title": "Giving",
+      "ref": "6:2–4",
+      "from": 2,
+      "ch": 2
+    },
+    {
+      "title": "Prayer › Prayer Room",
+      "ref": "6:5–6",
+      "from": 5,
+      "ch": 2
+    },
+    {
+      "title": "Meaningful Prayer",
+      "ref": "6:7–8",
+      "from": 7,
+      "ch": 2
+    },
+    {
+      "title": "Disciples' Prayer",
+      "ref": "6:9–13",
+      "from": 9,
+      "ch": 2
+    },
+    {
+      "title": "Forgiveness",
+      "ref": "6:14–15",
+      "from": 14,
+      "ch": 2
+    },
+    {
+      "title": "Fasting",
+      "ref": "6:16–18",
+      "from": 16,
+      "ch": 2
+    },
+    {
+      "title": "Focus Eternally › Store Up Treasures",
+      "ref": "6:19–21",
+      "from": 19,
+      "ch": 2
+    },
+    {
+      "title": "Lamp of the Body",
+      "ref": "6:22–23",
+      "from": 22,
+      "ch": 2
+    },
+    {
+      "title": "God or Money",
+      "ref": "6:24",
+      "from": 24,
+      "ch": 2
+    },
+    {
+      "title": "Do Not Worry",
+      "ref": "6:25",
+      "from": 25,
+      "ch": 2
+    },
+    {
+      "title": "God's Provision",
+      "ref": "6:26–30",
+      "from": 26,
+      "ch": 2
+    },
+    {
+      "title": "Trust God's Provision",
+      "ref": "6:31–34",
+      "from": 31,
+      "ch": 2
+    },
+    {
+      "title": "Exhortations › Judging Hypocritically",
+      "ref": "7:1–5",
+      "from": 1,
+      "ch": 3
+    },
+    {
+      "title": "Pearls Before Pigs",
+      "ref": "7:6",
+      "from": 6,
+      "ch": 3
+    },
+    {
+      "title": "Ask, Seek, Knock",
+      "ref": "7:7–11",
+      "from": 7,
+      "ch": 3
+    },
+    {
+      "title": "Golden Rule",
+      "ref": "7:12",
+      "from": 12,
+      "ch": 3
+    },
+    {
+      "title": "Two Choices › Two Gates and Ways",
+      "ref": "7:13–14",
+      "from": 13,
+      "ch": 3
+    },
+    {
+      "title": "Two Trees and Fruits",
+      "ref": "7:15–20",
+      "from": 15,
+      "ch": 3
+    },
+    {
+      "title": "False Professors",
+      "ref": "7:21–23",
+      "from": 21,
+      "ch": 3
+    },
+    {
+      "title": "Two Foundations",
+      "ref": "7:24–27",
+      "from": 24,
+      "ch": 3
+    },
+    {
+      "title": "Reaction",
+      "ref": "7:28–29",
+      "from": 28,
+      "ch": 3
     }
-   ]
-  },
-  {
-   "chapter": 3,
-   "verses": 29,
-   "district": "The Shore Village",
-   "rooms": [
-    {
-     "room": 1,
-     "name": "The Boatwright's Yard",
-     "verses": "7:1–5",
-     "kind": "custom",
-     "builder": "som.boat",
-     "at": [
-      168,
-      -176
-     ],
-     "viewer": [
-      168,
-      -166
-     ],
-     "objects": [
-      {
-       "what": "the stack of planks"
-      },
-      {
-       "place": true,
-       "what": "the saw pit"
-      },
-      {
-       "what": "the pot of pitch"
-      },
-      {
-       "what": "the trestle with an adze"
-      },
-      {
-       "what": "the half-built hull on trestles"
-      }
-     ]
-    },
-    {
-     "room": 2,
-     "name": "The Fisherman's Court",
-     "verses": "7:6–10",
-     "kind": "custom",
-     "builder": "som.fisher",
-     "at": [
-      196,
-      -176
-     ],
-     "viewer": [
-      196,
-      -166
-     ],
-     "objects": [
-      {
-       "place": true,
-       "what": "the courtyard entrance"
-      },
-      {
-       "what": "the fish-salting vat"
-      },
-      {
-       "what": "the net drying on poles"
-      },
-      {
-       "what": "the basket of fish"
-      },
-      {
-       "what": "the mending stone with a coil of rope"
-      }
-     ]
-    },
-    {
-     "room": 3,
-     "name": "The Tax Table",
-     "verses": "7:11–15",
-     "kind": "custom",
-     "builder": "som.tax",
-     "at": [
-      224,
-      -176
-     ],
-     "viewer": [
-      224,
-      -166
-     ],
-     "objects": [
-      {
-       "what": "the tax collector's table and scales"
-      },
-      {
-       "what": "the stone mounting step"
-      },
-      {
-       "what": "the merchants' tethering rail"
-      },
-      {
-       "what": "the trade bales"
-      },
-      {
-       "place": true,
-       "what": "the narrow jetty out over the water"
-      }
-     ]
-    },
-    {
-     "room": 4,
-     "name": "The Orchard",
-     "verses": "7:16–20",
-     "kind": "custom",
-     "builder": "som.orchard",
-     "at": [
-      226,
-      -148
-     ],
-     "viewer": [
-      226,
-      -158
-     ],
-     "objects": [
-      {
-       "place": true,
-       "what": "the sluice of the irrigation channel"
-      },
-      {
-       "what": "the almond tree"
-      },
-      {
-       "place": true,
-       "what": "the gardener's stone seat in the wall"
-      },
-      {
-       "what": "the shallow well with rope and bucket"
-      },
-      {
-       "what": "the pile of pruned branches"
-      }
-     ]
-    },
-    {
-     "room": 5,
-     "name": "The House on the Rock",
-     "verses": "7:21–25",
-     "kind": "custom",
-     "builder": "som.rock",
-     "at": [
-      184,
-      -146
-     ],
-     "viewer": [
-      184,
-      -156
-     ],
-     "objects": [
-      {
-       "place": true,
-       "what": "the step hewn in the rock, up onto the shelf"
-      },
-      {
-       "what": "the stone bench against the house wall"
-      },
-      {
-       "place": true,
-       "what": "the shelf's edge over the wadi"
-      },
-      {
-       "what": "the stone mortar"
-      },
-      {
-       "what": "the bundle of roofing reeds"
-      }
-     ]
-    },
-    {
-     "room": 6,
-     "name": "The House on the Sand",
-     "verses": "7:26–29",
-     "kind": "custom",
-     "builder": "som.sand",
-     "at": [
-      158,
-      -149
-     ],
-     "viewer": [
-      158,
-      -158
-     ],
-     "objects": [
-      {
-       "what": "the date palm leaning over the house"
-      },
-      {
-       "what": "the reed fence round the yard"
-      },
-      {
-       "place": true,
-       "what": "the bank across the wadi"
-      },
-      {
-       "place": true,
-       "what": "the low mud-brick wall of the yard"
-      }
-     ],
-     "back": 9,
-     "pitch": -0.08
-    }
-   ]
-  }
- ],
- "outline": [
-  {
-   "title": "Setting",
-   "ref": "5:1–2",
-   "from": 1,
-   "ch": 1
-  },
-  {
-   "title": "Beatitudes",
-   "ref": "5:3–12",
-   "from": 3,
-   "ch": 1
-  },
-  {
-   "title": "Set Apart › Salt",
-   "ref": "5:13",
-   "from": 13,
-   "ch": 1
-  },
-  {
-   "title": "Light",
-   "ref": "5:14–16",
-   "from": 14,
-   "ch": 1
-  },
-  {
-   "title": "Righteousness",
-   "ref": "5:17–20",
-   "from": 17,
-   "ch": 1
-  },
-  {
-   "title": "But I Tell You › Murder and Anger",
-   "ref": "5:21–26",
-   "from": 21,
-   "ch": 1
-  },
-  {
-   "title": "Adultery and Lust",
-   "ref": "5:27–30",
-   "from": 27,
-   "ch": 1
-  },
-  {
-   "title": "Divorce",
-   "ref": "5:31–32",
-   "from": 31,
-   "ch": 1
-  },
-  {
-   "title": "Oaths",
-   "ref": "5:33–37",
-   "from": 33,
-   "ch": 1
-  },
-  {
-   "title": "Turn the Other Cheek",
-   "ref": "5:38–42",
-   "from": 38,
-   "ch": 1
-  },
-  {
-   "title": "Love Your Enemies",
-   "ref": "5:43–48",
-   "from": 43,
-   "ch": 1
-  },
-  {
-   "title": "Sanctified Focus › Focus Internally › Public Righteousness",
-   "ref": "6:1",
-   "from": 1,
-   "ch": 2
-  },
-  {
-   "title": "Giving",
-   "ref": "6:2–4",
-   "from": 2,
-   "ch": 2
-  },
-  {
-   "title": "Prayer › Prayer Room",
-   "ref": "6:5–6",
-   "from": 5,
-   "ch": 2
-  },
-  {
-   "title": "Meaningful Prayer",
-   "ref": "6:7–8",
-   "from": 7,
-   "ch": 2
-  },
-  {
-   "title": "Disciples' Prayer",
-   "ref": "6:9–13",
-   "from": 9,
-   "ch": 2
-  },
-  {
-   "title": "Forgiveness",
-   "ref": "6:14–15",
-   "from": 14,
-   "ch": 2
-  },
-  {
-   "title": "Fasting",
-   "ref": "6:16–18",
-   "from": 16,
-   "ch": 2
-  },
-  {
-   "title": "Focus Eternally › Store Up Treasures",
-   "ref": "6:19–21",
-   "from": 19,
-   "ch": 2
-  },
-  {
-   "title": "Lamp of the Body",
-   "ref": "6:22–23",
-   "from": 22,
-   "ch": 2
-  },
-  {
-   "title": "God or Money",
-   "ref": "6:24",
-   "from": 24,
-   "ch": 2
-  },
-  {
-   "title": "Do Not Worry",
-   "ref": "6:25",
-   "from": 25,
-   "ch": 2
-  },
-  {
-   "title": "God's Provision",
-   "ref": "6:26–30",
-   "from": 26,
-   "ch": 2
-  },
-  {
-   "title": "Trust God's Provision",
-   "ref": "6:31–34",
-   "from": 31,
-   "ch": 2
-  },
-  {
-   "title": "Exhortations › Judging Hypocritically",
-   "ref": "7:1–5",
-   "from": 1,
-   "ch": 3
-  },
-  {
-   "title": "Pearls Before Pigs",
-   "ref": "7:6",
-   "from": 6,
-   "ch": 3
-  },
-  {
-   "title": "Ask, Seek, Knock",
-   "ref": "7:7–11",
-   "from": 7,
-   "ch": 3
-  },
-  {
-   "title": "Golden Rule",
-   "ref": "7:12",
-   "from": 12,
-   "ch": 3
-  },
-  {
-   "title": "Two Choices › Two Gates and Ways",
-   "ref": "7:13–14",
-   "from": 13,
-   "ch": 3
-  },
-  {
-   "title": "Two Trees and Fruits",
-   "ref": "7:15–20",
-   "from": 15,
-   "ch": 3
-  },
-  {
-   "title": "False Professors",
-   "ref": "7:21–23",
-   "from": 21,
-   "ch": 3
-  },
-  {
-   "title": "Two Foundations",
-   "ref": "7:24–27",
-   "from": 24,
-   "ch": 3
-  },
-  {
-   "title": "Reaction",
-   "ref": "7:28–29",
-   "from": 28,
-   "ch": 3
-  }
- ],
- "chOffset": 4
+  ],
+  "chOffset": 4
 }

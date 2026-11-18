@@ -5,8 +5,8 @@
 // Hippos, the town on its hill across the lake, lies to the south-east: "a city set on a hill" (5:14).
 const SHORE = -180;                                                  // moved south 2026-11-17: room on the lake side for the farm (ch 6) and the shore village (ch 7)
 // the switchback trail down the Crown: from the Seat at the top, turning at each room, down to the stile (kept in step with world/mount.js)
-const TRAIL = [[-34, 0], [-24, 4], [-10, -4], [4, 4], [15, 0], [29, -4], [43, 4], [57, -4], [71, 4], [85, -4], [99, 4], [110, 0], [134, -6],
-  [133, -16], [147, -29], [133, -42], [147, -55], [133, -69], [147, -82], [133, -95], [140, -104], [140, -163], [240, -163], [240, -160], [140, -160]];   // summit trail, farm lane, village street
+const TRAIL = [[-34, 0], [-28, 0], [-16, 0], [-10, -4], [4, 4], [15, 0], [29, -4], [43, 4], [57, -4], [71, 4], [83, 0], [97, 0], [99, 4], [110, 0], [134, -6],
+  [134, -3.6], [134, -24], [134, -43], [145, -43], [146, -35], [149.5, -34.5], [154, -36], [160, -45], [160, -62], [153, -72], [147, -82], [133, -95], [140, -104], [140, -163], [240, -163], [240, -160], [140, -160]];   // summit trail, farm lane, village street
 const TRAIL_D = (x, z) => { let d = 1e9; for (let i = 0; i < TRAIL.length - 1; i++) { const [ax, az] = TRAIL[i], [bx, bz] = TRAIL[i + 1], dx = bx - ax, dz = bz - az, t = Math.max(0, Math.min(1, ((x - ax) * dx + (z - az) * dz) / (dx * dx + dz * dz))); d = Math.min(d, Math.hypot(x - ax - dx * t, z - az - dz * t)); } return d; };
 const HILL = 24;                                                     // height of the Crown above the shore
 const STILE_X = 15;
@@ -25,9 +25,9 @@ function hRaw(x, z) {
   return h;
 }
 // level pads under each room, kept in step with books/matthew.json. [cx, cz, halfW, halfD]
-const FLAT = [[-42, 0, 5.5, 5.5], [-24, 12, 5.5, 5.5], [-10, -12, 5.5, 5.5], [4, 12, 5.5, 5.5],
-  [29, -12, 5.5, 5.5], [43, 12, 5.5, 5.5], [57, -12, 5.5, 5.5], [71, 12, 5.5, 5.5], [85, -12, 5.5, 5.5], [99, 12, 5.5, 5.5],
-  [124, -16, 5, 5], [156, -29, 5, 5], [124, -42, 5, 5], [156, -55, 5, 5], [124, -69, 5, 5], [156, -82, 5, 5], [124, -95, 5, 5],   // the farm (ch 6)
+const FLAT = [[-42, 0, 5.5, 5.5], [-20, 0, 5.5, 5.5], [-10, -12, 5.5, 5.5], [4, 12, 5.5, 5.5],
+  [29, -12, 5.5, 5.5], [43, 12, 5.5, 5.5], [57, -12, 5.5, 5.5], [71, 12, 5.5, 5.5], [90, 0, 6, 5.5], [99, 12, 5.5, 5.5],
+  [134, -32, 17, 25], [156, -82, 5, 5], [124, -95, 5, 5],   // the farm (ch 6)
   [168, -176, 5, 4.5], [196, -176, 5, 4.5], [224, -176, 5, 4.5], [226, -148, 5.5, 5.5], [184, -146, 5.5, 5.5], [158, -149, 5, 5]];                          // the village (ch 7)
 const heightAt0 = (x, z) => hRaw(x, z);
 const heightAt = (x, z) => { let h = heightAt0(x, z);
