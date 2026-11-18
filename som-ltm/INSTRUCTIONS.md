@@ -19,3 +19,7 @@ Every instruction from the owner, quoted, in the order it arrived. Re-read befor
 
 ## 13 — Hand-build the troublesome models
 "Keep grinding away at the specific models... focus on building the specific models that are giving you troubles by hand. So use the blind critics method on the worst models." → Workshop in world/models.js. Each model is shot alone (refs/models/) and scored by a blind critic (refs/models/MODEL_CRITIC.md) until it reaches 8, then placed in its room.
+
+## 14 — Place 7+ models; chapter 6 as one connected farmhouse
+"Place the models already at 7 or above in their rooms." → Done (seat, fold ×3, road ×2, fisher vat, sand mud-brick wall).
+Chapter 6: make the farm a connected house you walk through. The rooms only need to be seen once you're in them, not from outside. Use the current block structures and props without recreating them: entry → storeroom on the left (door open) → kitchen/bakehouse to its right → open middle living room (unused) → washbasin by the cistern → ox stall on the right-hand side of the house, whose door leads outside → the green field. 6:31–34 is about not being anxious ("what shall we eat, drink, wear", "seek first the kingdom"), not the oven. Redo the plan and map it on the terrain before the plan critic → refs/plan/ch6-house-plan.png.
