@@ -23,3 +23,7 @@ Every instruction from the owner, quoted, in the order it arrived. Re-read befor
 ## 14 — Place 7+ models; chapter 6 as one connected farmhouse
 "Place the models already at 7 or above in their rooms." → Done (seat, fold ×3, road ×2, fisher vat, sand mud-brick wall).
 Chapter 6: make the farm a connected house you walk through. The rooms only need to be seen once you're in them, not from outside. Use the current block structures and props without recreating them: entry → storeroom on the left (door open) → kitchen/bakehouse to its right → open middle living room (unused) → washbasin by the cistern → ox stall on the right-hand side of the house, whose door leads outside → the green field. 6:31–34 is about not being anxious ("what shall we eat, drink, wear", "seek first the kingdom"), not the oven. Redo the plan and map it on the terrain before the plan critic → refs/plan/ch6-house-plan.png.
+
+## 15 — Chapter 6 plan approved; chapter 5 changes
+"I like this plan. For room 7, keep the objects that we can, and make this plan." New workshop models go in the shared library (ltm-engine/objects/som.js).
+Chapter 5: the Sheepfold sits on the path, and you walk in through its gate; the Lookout stays left and the Threshing Floor right. Remove the Quarry's walls (save the code) and keep the rocks. The Ridge Road goes on the path. Lean the Watchtower ladder against the tower.

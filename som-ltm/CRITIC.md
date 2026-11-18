@@ -62,3 +62,9 @@ Judged with the site map. Each round used a fresh critic.
 | --- | --- | --- |
 | 1 | 8.1 (pass) | the terrace wall had been put at the 6:18/19 break; the lake was described as both near and far; repeats at the stile and elsewhere; loose things counted as objects; the wadi and highway were unclear on the map |
 | 2 | **8.2 (pass)** | clerical slips afterwards: the stale build list, the Crown's "no fields" line, a boat too big for its room, the wadi's course |
+
+## Rounds, farmhouse plan (2026-11-18)
+
+| Round | Score | Main points fixed after it |
+| --- | --- | --- |
+| 1 | 8.1 (pass) | stale ledger and map labels; "courtyard house" and "open-beam roofs" contradicted the flat roof; the storeroom was used as a passage; no viewer point inside rooms; near-repeats (water jar / storage jars, washbasin / trough); 6.6's second object; slope vs flat ground |
