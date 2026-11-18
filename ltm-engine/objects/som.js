@@ -91,14 +91,15 @@ def('som-mudbrick-wall', 'Low mud-brick wall of the yard', g => {
 
 // ---- the Ox Stall (6:21–25) ----
 def('som-yoke-on-peg', 'Yoke for two oxen, hung on its peg', g => {
-  dryWall(g, -1.3, -.4, 1.3, -.4, 2.0, .45);   // the stall's coursed stone wall behind
-  cy(g, .06, .06, .55, 8, mWoodDk, 0, 1.55, -.1, Math.PI / 2);   // one stout peg sticking out of the wall face
-  add(new THREE.TorusGeometry(.09, .022, 5, 10), mRope, 0, 1.5, .12, g);   // the cord loop over the peg
-  cy(g, .015, .015, .22, 4, mRope, 0, 1.38, .14);
-  const sh = new THREE.Shape(); sh.moveTo(-1, -.06); [[-.85, -.08], [-.75, -.1], [-.55, .02], [-.35, -.1], [-.2, -.08], [.2, -.08], [.35, -.1], [.55, .02], [.75, -.1], [.85, -.08], [1, -.06], [1, .1], [-1, .1]].forEach(([a, b]) => sh.lineTo(a, b));
-  add(new THREE.ExtrudeGeometry(sh, { depth: .16, bevelEnabled: true, bevelThickness: .02, bevelSize: .02, bevelSegments: 1 }), MM('somYokeWood', '#8e6a42', TEX.wood), 0, 1.18, .02, g);   // the carved beam hanging against the wall face, two neck hollows
-  for (const s of [-.55, .55]) { const bow = add(new THREE.TorusGeometry(.24, .04, 6, 16, Math.PI), mWoodLt, s, 1.16, .1, g); bow.rotation.z = Math.PI; for (const t of [-1, 1]) cy(g, .022, .022, .26, 5, mWoodDk, s + t * .24, 1.12, .1); }   // a U-bow hanging under each hollow
-  return 2.0; });
+  const fs = [mRock, mRockDk, MM('somFieldWarm', '#a8987c')]; for (let row = 0; row < 6; row++) for (let k = 0; k < 7; k++) { const b = boulder(g, R(.2, .26), fs[(row * 3 + k) % 3], -1.35 + k * .45 + (row % 2) * .22, row * .3 - .12, -.6, .9); if (b) b.scale.z = .5; }   // a rough fieldstone wall behind
+  cy(g, .05, .05, .45, 8, mWoodDk, 0, 1.62, -.15, Math.PI / 2);   // a stout peg in the wall
+  const wood = MM('somYokeWood', '#8e6a42', TEX.wood);
+  const pts = [[-1, -.06], [-.75, -.12], [-.55, -.02], [-.35, -.12], [0, -.04], [.35, -.12], [.55, -.02], [.75, -.12], [1, -.06]].map(([x, y]) => new THREE.Vector3(x, 1.25 + y, .22));
+  add(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 30, .11, 10), wood, 0, 0, 0, g);   // a thick beam, carved with two neck hollows, hanging clear of the wall
+  for (const e of [-1, 1]) add(new THREE.SphereGeometry(.09, 8, 6), wood, e, 1.19, .22, g);
+  for (const s of [-.55, .55]) { const bow = add(new THREE.TorusGeometry(.25, .045, 6, 18, Math.PI), MM('somBowWood', '#b48a5a', TEX.wood), s, 1.16, .22, g); bow.rotation.z = Math.PI; }   // a bent wooden bow hanging under each hollow
+  const L = .36; const rp = cy(g, .018, .018, L, 4, mRope, 0, 1.44, .05); rp.rotation.x = .6;   // a short cord from the peg to the middle of the beam
+  return 1.75; });
 def('som-plough', 'Wooden plough (ard) with an iron share', g => {
   const sole = bx(g, .14, .12, 1.0, mWood, 0, .05, 0, 0, .15);   // the sole dragging along the ground
   const sh = new THREE.ConeGeometry(.09, .4, 4); sh.rotateX(Math.PI / 2); add(sh, mIron, 0, .02, .66, g).scale.x = 1.4;   // a big iron share on its point
@@ -227,28 +228,28 @@ def('som-charcoal-baskets', 'Rush baskets heaped with charcoal', g => {
     for (let i = 0; i < 34; i++) { const a = R(0, 6.3), d = Math.sqrt(R(0, 1)) * .36 * s; add(new THREE.DodecahedronGeometry(R(.05, .085), 0), coal, x + Math.cos(a) * d, .38 * s + (1 - d / (.36 * s)) * .2, z + Math.sin(a) * d, g).rotation.set(R(0, 3), R(0, 3), 0); } }   // a mounded heap of dark grey chunks
   return .7; });
 def('som-ash-ring', 'Old burn floor of an earlier mound', g => {
-  const floor = MM('somBurnFloor', '#4a4540'), floor2 = MM('somBurnFloor2', '#5c544a', null, { transparent: true, opacity: .7 }), coal = MM('somCoalG2', '#2e2b28'), ash = MM('somAshL', '#9c9890');
-  const blot = (r, m, y, n = 14) => { const sh = new THREE.Shape(); for (let i = 0; i < n; i++) { const a = i / n * 6.283, rr = r * R(.6, 1.15); i ? sh.lineTo(Math.cos(a) * rr, Math.sin(a) * rr) : sh.moveTo(Math.cos(a) * rr, Math.sin(a) * rr); } const o = add(new THREE.ShapeGeometry(sh), m, 0, y, 0, g); o.rotation.x = -Math.PI / 2; return o; };
-  blot(1.5, floor, .05, 18);   // a ragged-edged patch of blackened earth
-  for (let i = 0; i < 9; i++) { const o = blot(R(.3, .7), i % 2 ? floor : floor2, .045 + i * .001, 9); o.position.x = R(-1.6, 1.6); o.position.z = R(-1.6, 1.6); }   // smudges spilling past the edge
-  for (let i = 0; i < 7; i++) { const o = blot(R(.15, .35), ash, .056, 8); o.position.x = R(-.9, .9); o.position.z = R(-.9, .9); }   // drifts of ash
-  for (let i = 0; i < 40; i++) { const a = R(0, 6.3), d = Math.sqrt(R(0, 1)) * 1.6; const c = add(new THREE.DodecahedronGeometry(R(.03, .07), 0), coal, Math.cos(a) * d, .06, Math.sin(a) * d, g); c.scale.y = .5; }
+  const rimC = MM('somBurnRim', '#2e2a26'), ashC = MM('somAshPale2', '#7c7872'), soot = MM('somSootFade', '#5a5248', null, { transparent: true, opacity: .45 }), coal = MM('somCoalG2', '#2e2b28');
+  const blot = (r, m, y, n = 16) => { const sh = new THREE.Shape(); for (let i = 0; i < n; i++) { const a = i / n * 6.283, rr = r * R(.8, 1.12); i ? sh.lineTo(Math.cos(a) * rr, Math.sin(a) * rr) : sh.moveTo(Math.cos(a) * rr, Math.sin(a) * rr); } const o = add(new THREE.ShapeGeometry(sh), m, 0, y, 0, g); o.rotation.x = -Math.PI / 2; return o; };
+  blot(2.0, soot, .04, 20); blot(1.6, rimC, .05, 20); blot(1.05, ashC, .06, 16);   // soot fading out, a dark charcoal ring, pale ash in the middle
+  for (let i = 0; i < 70; i++) { const a = R(0, 6.3), d = R(1.0, 1.65); const c = add(new THREE.DodecahedronGeometry(R(.04, .09), 0), coal, Math.cos(a) * d, .07, Math.sin(a) * d, g); c.scale.y = .6; }   // charcoal heaped in the rim
   return .1; });
 
 // ---- the Bee Bank (5:31–35), rebuilt 2026-11-18: one walled bank, the hive pipes set into its far end ----
-def('som-bee-wall', 'Freestanding stack of clay hive pipes on a stone base', g => {
-  const pipe = MM('somPipeLong', '#c9a27a', TEX.pot), plug = MM('somPipePlug2', '#d9c7a2', TEX.plaster), cap = MM('somCapSlab', '#b8ae9a', TEX.stone);
-  for (let i = 0; i < 9; i++) boulder(g, R(.22, .3), i % 2 ? mRock : mRockDk, -.75 + (i % 5) * .38 + R(-.05, .05), -.05, -.25 + Math.floor(i / 5) * .45, .55);   // a low base of field stones
-  const rows = [4, 3, 2]; rows.forEach((n, row) => { for (let k = 0; k < n; k++) { const x = (k - (n - 1) / 2) * .4, y = .45 + row * .34; cy(g, .17, .17, 1.1, 14, pipe, x, y, 0, Math.PI / 2); cy(g, .15, .15, .02, 12, plug, x, y, .56, Math.PI / 2); add(new THREE.CircleGeometry(.035, 8), mDark, x, y - .06, .575, g); } });   // long clay pipes stacked 4-3-2, mud-sealed ends with a small entrance
-  slab(g, .8, .1, cap, 0, 1.28, 0, 7); for (const sx of [-.62, .62]) bx(g, .14, .9, .5, mRock, sx, .42, 0);   // a flat stone laid on top, resting on two upright stones at the sides   // a flat stone laid on top to shade them
-  for (let i = 0; i < 16; i++) { const b = add(new THREE.SphereGeometry(.02, 5, 4), MM('somBee', '#3a2a10'), R(-.7, .7), R(.35, 1.2), R(.62, .9), g); b.scale.x = 1.7; }
-  return 1.45; });
+def('som-bee-wall', 'Freestanding stack of clay hive pipes on a low stone base', g => {
+  const pipe = MM('somPipeTerra', '#b56a42'), plug = MM('somPipePlugMud', '#8e7454', TEX.plaster), cap = MM('somCapSlab', '#b8ae9a', TEX.stone);
+  dryWall(g, -.95, -.35, .95, -.35, .3, .2); dryWall(g, -.95, .35, .95, .35, .3, .2); bx(g, 1.9, .3, .55, mRockDk, 0, 0, 0);   // a low coursed stone base
+  const rows = [4, 3, 2]; rows.forEach((n, row) => { for (let k = 0; k < n; k++) { const x = (k - (n - 1) / 2) * .38, y = .48 + row * .33; cy(g, .18, .18, 1.0, 14, pipe, x, y, 0, Math.PI / 2); cy(g, .16, .16, .02, 12, plug, x, y, .51, Math.PI / 2); add(new THREE.CircleGeometry(.04, 8), mDark, x, y - .07, .525, g); } });   // terracotta pipes stacked tight, mud-sealed ends, dark entrance holes
+  slab(g, .62, .1, cap, 0, 1.31, 0, 7);   // a flat stone resting on the top pipes
+  for (let i = 0; i < 16; i++) { const b = add(new THREE.SphereGeometry(.02, 5, 4), MM('somBee', '#3a2a10'), R(-.7, .7), R(.35, 1.2), R(.58, .85), g); b.scale.x = 1.7; }
+  return 1.42; });
 
 
 def('som-bank-end', 'Low end of a field bank, capped with a flat stone', g => {
-  for (let i = 0; i < 16; i++) boulder(g, R(.24, .34), i % 3 ? mRock : mRockDk, R(-.55, .55), 0, R(-.4, .4), .75);   // a rough heap of field stones
-  slab(g, .62, .14, MM('somCapStone2', '#cdc3ae', TEX.stone), 0, .36, 0, 7); thornBush(g, .7, 0, -.5, .6);
-  return .9; });
+  const earth = MM('somBankEarth2', '#857660');
+  const geo = new THREE.CylinderGeometry(.55, .75, 3.2, 8, 1); geo.rotateX(Math.PI / 2); const bk = add(geo, earth, 0, .28, -1.7, g); bk.scale.y = .5;   // the bank running off behind
+  for (let i = 0; i < 26; i++) boulder(g, R(.12, .24), i % 3 ? mRock : mRockDk, R(-.6, .6), i < 14 ? 0 : R(.15, .3), R(-2.9, .4), .7);   // smaller field stones heaped along it and at its end
+  slab(g, .5, .08, MM('somCapStone2', '#cdc3ae', TEX.stone), 0, .44, .1, 8); thornBush(g, .6, 0, -1.2, .6);
+  return .6; });
 def('som-scarecrow', 'Scarecrow in an old robe', g => {
   const robe = MM('somRagRobe', '#8a6a4a', TEX.cloth), sash = MM('somRagSash', '#a8523a', TEX.cloth);
   cy(g, .045, .05, 2.3, 6, mWood, 0, 0, 0); cy(g, .035, .035, 1.5, 6, mWood, 0, 1.65, 0, 0, 0, Math.PI / 2);   // pole and cross-stick
