@@ -6,18 +6,41 @@
   "zones": [],
   "built": 0,
   "books": [
-    { "name": "Colossians", "town": "colossae-ltm", "path": "../../colossae-ltm/books/colossians.json" },
-    { "name": "James", "town": "james-ltm", "path": "../../james-ltm/books/james.json" }
+    {
+      "name": "Colossians",
+      "town": "colossae-ltm",
+      "path": "../../colossae-ltm/books/colossians.json"
+    },
+    {
+      "name": "James",
+      "town": "james-ltm",
+      "path": "../../james-ltm/books/james.json"
+    }
   ],
   "theme": {
     "loadName": "the object library",
     "exposure": 1.0,
     "sky": "#efe6d6",
-    "fog": [220, 560],
+    "fog": [
+      220,
+      560
+    ],
     "skyTop": "#efe6d6",
     "skyBot": "#efe6d6",
-    "hemi": ["#fff1d8", "#8f8462", 1.25],
-    "sun": { "color": "#ffd3a0", "intensity": 3.1, "pos": [-90, 70, 50] },
+    "hemi": [
+      "#fff1d8",
+      "#8f8462",
+      1.25
+    ],
+    "sun": {
+      "color": "#ffd3a0",
+      "intensity": 3.1,
+      "pos": [
+        -90,
+        70,
+        50
+      ]
+    },
     "leaf": "#7c9450",
     "leafDk": "#5f7a3e",
     "cypress": "#4f6a38",
@@ -39,7 +62,24 @@
     "obj:up-b",
     "obj:up-a",
     "obj:up-d",
-    "obj:up-c", "obj:up-sheep", "obj:up-trees", "obj:up-g", "obj:up-h", "obj:up-i", "obj:up-j", "obj:up-k", "obj:up-quad", "obj:up-roles", "obj:up-plants", "obj:up-tent", "obj:up-tabernacle", "obj:up-effects", "obj:up-water", "obj:up-houses", "obj:up-tex", "obj:up-ground",
+    "obj:up-c",
+    "obj:up-sheep",
+    "obj:up-trees",
+    "obj:up-g",
+    "obj:up-h",
+    "obj:up-i",
+    "obj:up-j",
+    "obj:up-k",
+    "obj:up-quad",
+    "obj:up-roles",
+    "obj:up-plants",
+    "obj:up-tent",
+    "obj:up-tabernacle",
+    "obj:up-effects",
+    "obj:up-water",
+    "obj:up-houses",
+    "obj:up-tex",
+    "obj:up-ground",
     "obj:up-e",
     "obj:up-f",
     "obj:up-james-civic",
@@ -49,6 +89,7 @@
     "obj:nature",
     "obj:colossae-places",
     "obj:structures",
+    "obj:som",
     "library.js"
   ]
 }

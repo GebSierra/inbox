@@ -1,3 +1,6 @@
+// ---------- OBJECT LIBRARY: hand-built models from the Sermon on the Mount workshop (som-ltm, 2026-11) ----------
+// Each was scored alone by a blind model critic (som-ltm/refs/models/). Ids start 'som-'. Wrapped in a block so its helpers stay private.
+{
 // ---------- hand-built models for the Sermon on the Mount (model workshop, 2026-11-17) ----------
 // Each model is registered in the object library (defObject) as 'som-…', built around its own base at (0, 0, 0),
 // its front facing local +z (towards the viewer when placed with the room's yaw). Each one is judged on its own by a blind
@@ -186,3 +189,5 @@ def('som-resting-stone', 'Resting stone at the fork of the road', g => {
   const worn = add(new THREE.CircleGeometry(1.7, 10), MM('somTrack', '#b8a07a'), 0, .01, 0, g); worn.rotation.x = -Math.PI / 2;   // the worn ground where travellers stop
   for (let i = 0; i < 4; i++) boulder(g, R(.1, .18), mRockDk, R(-1.3, 1.3), 0, R(-1.2, 1.2), .6);
   return .65; });
+
+}

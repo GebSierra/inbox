@@ -4,7 +4,8 @@ The critic is a fresh agent. It has not seen the conversation with the owner. It
 - `ltm-engine/docs/METHOD.md` (the owner's method);
 - the outline system's sections (below);
 - `som-ltm/PLAN.md`;
-- `som-ltm/refs/plan/layout-map.png`, the site plan drawn on a bird's-eye view of the world.
+- `som-ltm/refs/plan/layout-map.png`, the site plan drawn on a bird's-eye view of the world;
+- `som-ltm/refs/plan/ch6-house-plan.png`, the chapter 6 farmhouse plan (redrawn 2026-11-18; it supersedes the farm drawn on layout-map.png).
 
 It judges the **plan**, in light of the rules and of what would look natural, not the build or the graphics. The map shows the current world: the summit (chapter 5) is built as plain blocks, and the farm and village are only drawn on.
 

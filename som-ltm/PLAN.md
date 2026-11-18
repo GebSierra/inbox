@@ -14,7 +14,7 @@ You **begin where he sat down** (5:1) and **walk down the mountain** (8:1):
 | Chapter | Verses | Rooms | District | Ground | Landmark (seen from its open rooms) |
 | --- | --- | --- | --- | --- | --- |
 | 5 | 48 | 10 | **The Summit**: the Crown and the Upper Meadow | open rock and grass on the Crown; worked land (quarry, hives, vines) in the Meadow | the stone watchtower |
-| 6 | 34 | 7 | **The Farm** | walled terraces on the lake-side slope below the ridge's west end | the farmhouse's flat roof and its smoke |
+| 6 | 34 | 7 | **The Farm** | one courtyard farmhouse on the upper terrace, its fields on the lower, inside a walled farmstead below the ridge's west end | the farmhouse's flat roof and its smoke |
 | 7 | 29 | 6 | **The Shore Village** | the beach, the lakeside highway, the wadi mouth | the boats on the beach |
 
 **Compass.** From this hill on the north-west shore the lake lies to the south, and **Hippos**, the town on its flat-topped hill across the lake to the south-east, is visible from the summit (5:14, "a city set on a hill").
@@ -26,7 +26,8 @@ You **begin where he sat down** (5:1) and **walk down the mountain** (8:1):
 - The lake shore has been moved well south of the summit, so that the slope between them holds the whole farm and the village has its own flat strip of beach. The walk goes downhill all the way: summit, farm, shore.
 
 **Routes (method rule 6).** The route takes the form that fits the ground:
-- **On the hillside, the summit and the farm:** a switchback trail from the top down. Rooms stand at its turns, alternating sides, and each is lower than the one before.
+- **On the hillside, the summit:** a switchback trail from the top down. Rooms stand at its turns, alternating sides, and each is lower than the one before.
+- **In the farmhouse (chapter 6):** the court form, clockwise through the house, then out and down to the fields on the lower terrace (§4).
 - **On the flat beach, the village:** a clockwise loop. You enter facing in, rooms run up your left side, cross at the far end, and come back down your right side.
 
 The way from one district to the next leaves from the last room:
@@ -47,7 +48,7 @@ The way from one district to the next leaves from the last room:
   - Animals and loose things never count towards the two objects.
   - The five spots in a room are all different kinds of thing.
 - **Rule 5:** spots run 1 near-left → 2 far-left → 3 far-right → 4 near-right → 5 centre, as seen standing in front of the room. A shorter room uses 1, 2, 3… in that order.
-- **Rule 6:** rooms follow one fixed route, in the form that fits the ground (§1): a switchback down the summit and the farm, and a clockwise loop in the village.
+- **Rule 6:** rooms follow one fixed route, in the form that fits the ground (§1): a switchback down the summit, a clockwise walk through the farmhouse, and a clockwise loop in the village.
 - **Size:** each room is about 6 × 6 m, its spots on a square of about 5 m. The viewer stands on the trail or street about 7 m from the centre.
 - **Facing:** every room's front faces the path. The viewer stands on the path, looking at the room on the side the route gives it. Spot 1 is the corner nearest the viewer on their left.
 - **Rule 7:** the place gives the spot, and the learner makes the picture. Places may suit the passage as a whole (an inner storeroom for "go into your room"), but objects aren't chosen to illustrate single verses.
@@ -103,25 +104,35 @@ The outline's first big break (5:20 / 5:21) is the stile itself.
 - *Turn the Other Cheek* (5:38–42): 5.8 spot 3.
 - *Love Your Enemies* (5:43–48): 5.9 spot 3.
 
-## 4. Chapter 6: the Farm (7 rooms)
+## 4. Chapter 6: the Farmhouse (7 rooms)
 
-**Layout.** A walled farmstead on the gentle ground below the ridge's west end. As built (2026-11-17) the ground here is nearly flat, which the owner allowed, so the terraces are shown by the walls rather than by big steps in the ground. A farm lane switchbacks down its terraces from the **upper gate** (north, reached from the Watchtower) to the **lower gate** (south, above the beach). This is rule 6's hillside form. The rooms stand at the lane's turns, alternating sides, each a terrace lower than the last:
-- 6.1 the Courtyard (east side), then 6.2 the Inner Storeroom (west side, an open-fronted storeroom cut into the terrace across the lane from the house);
-- 6.3 the Bakehouse Yard (east), then 6.4 the Spring (west), the lowest of the house terraces;
-- a **terrace wall** with a gate crosses the farm just below the Spring. Above it are the house terraces (6:1–20), and below it are the field terraces (6:21–34);
-- 6.5 the Ox Stall (east), 6.6 the Granary Field (west), then 6.7 the Olive Press (east), beside the lower gate.
+Redrawn 2026-11-18 at the owner's request: the farm becomes **one house you walk through**, not seven stations around a yard. Map: `refs/plan/ch6-house-plan.png` (north up).
 
-The outline's big break, Focus Internally (6:1–18) / Focus Eternally (6:19–34), falls inside room 6.4, the Spring: its signpost stands between the Spring's third and fourth spots. The terrace wall below the Spring is not that break. It is simply where the house ends and the fields begin, at 6:20 / 6:21. The house terraces hold the hidden life and the start of "treasures in heaven"; the field terraces hold the lamp of the eye, the two masters, the birds and the lilies.
+**Layout.** The walled farmstead keeps its place, its two gates and its two terraces on the near-flat ground below the ridge's west end. The **upper terrace** holds a single-storey courtyard farmhouse of fieldstone and plaster, about 36 m east–west by 26 m north–south, with an entry court before it and a small walled cistern court behind it. The **lower terrace** holds the fields and the olive press by the lower gate.
+
+**Rule 6, court form.** Inside the house the walk runs **clockwise** as seen from above. You come in by the front door on the north side, facing south. The rooms go left (east), back (south), then right (west). Then you go out of the house and down the terrace. The rooms are closed rooms with doorways. Each is seen only from inside, from its viewer point, so no walls need cutting away. Roofs are open beams, as in a real house under repair, so the rooms are lit and the bird's-eye view can see in.
+
+1. **6.1 the Entry Court**, outside the front door. You enter it through the upper gate.
+2. Through the front door into the open **living room** (centre of the house, not used for verses). The first doorway on your **left** is **6.2 the Inner Storeroom**, its door standing open.
+3. Through the storeroom's back doorway into the room behind it, the back-left (south-east) room, **6.3 the Kitchen**.
+4. From the kitchen back into the living room and out the back door into **6.4 the Cistern Court**, a small walled court behind the house.
+5. Back in by the court's west doorway to the back-right (south-west) room, **6.5 the Ox Stall**. Its own side door on the **right-hand (west) side of the house** leads outside. (The front-right room is the sleeping room, closed, not used.)
+6. Out of the stall's side door, along the west side, through the terrace gate (moved to the west end of the terrace wall) and down into **6.6 the Granary Field**.
+7. Across the field to **6.7 the Olive Press** in the lower field by the lower gate. From there the lane goes on to the village.
+
+The outline's big break, Focus Internally (6:1–18) / Focus Eternally (6:19–34), falls inside 6.4, the Cistern Court, between its third and fourth spots. The inside of the house holds the hidden life ("in secret"). The walk leaves the house at the stall's door, at 6:25 / 6:26, and the fields hold the birds of the air, the lilies of the field and "seek first the kingdom".
 
 | Room | Verses | Place | 1 near-left | 2 far-left | 3 far-right | 4 near-right | 5 centre | Objects in the room |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 6.1 | 6:1–5 | **The Courtyard**: the paved court of the farmhouse | the gate's left pier (P) | the curtained doorway into the house (P) | the stone stair up to the roof (P) | the stone roof-roller (O) | the cistern mouth with its round stone lid (O) | roof-roller; cistern lid; a donkey tethered by the gate |
-| 6.2 | 6:6–10 | **The Inner Storeroom**: an open-fronted storeroom cut into the terrace, its door swung back against the wall so the room can be seen | the doorway's stone threshold (P) | a row of tall storage jars (O) | bunches of dried herbs from a beam (O) | a plastered wall shelf (P) | a wooden chest (O) | jars; chest |
-| 6.3 | 6:11–15 | **The Bakehouse Yard**: the clay oven and kneading yard | the sieve on its hook (O) | the woodpile (O) | the clay oven (O) | the yard's smoke-stained corner (P) | the kneading bowl with its cloth (O) | sieve; woodpile; oven; kneading bowl; loaves cooling by the oven |
-| 6.4 | 6:16–20 | **The Spring**: where the spring runs out of the rock on the lowest house terrace | the spout (P) | flask of oil on a ledge of rock **(v)** (O) | a wash-line with a tunic drying (O) | a willow shading the bank (O) | the flat stones across the outflow (P) | oil flask; wash-line; willow; a linen towel spread on the rocks |
-| 6.5 | 6:21–25 | **The Ox Stall**: an open-fronted stall | the left stall post (P) | the yoke on its peg (O) | the plough (O) | a heap of straw bedding (O) | the feeding niche cut in the back wall (P) | yoke; plough; straw; the ox |
-| 6.6 | 6:26–30 | **The Granary Field**: a stone granary at the edge of a field | the terrace steps (P) | a patch of lentils (O) | the scarecrow on its pole (O) | the granary door (P) | a hoe left in the furrow (O) | the granary itself; scarecrow pole; (lentils and hoe are loose) |
-| 6.7 | 6:31–34 | **The Olive Press**: the press at the foot of the farm, beside the lower gate | the crushing stone: a round millstone in its stone bed (O) | the press beam in its wall socket (O) | a stack of rope pulp-baskets (O) | the rock-cut oil collecting pit (P) | — | crushing stone; press beam |
+| 6.1 | 6:1–5 | **The Entry Court**: the paved court before the front door | the gate's left pier (P) | the curtained front doorway (P) | the stone stair up to the roof (P) | the stone roof-roller (O) | a tall water jar by the door (O) | roof-roller; water jar; a donkey tethered by the gate |
+| 6.2 | 6:6–10 | **The Inner Storeroom**: the first room on the left, its door swung back against the wall | the doorway's stone threshold (P) | a row of tall storage jars (O) | bunches of dried herbs from a beam (O) | a plastered wall shelf (P) | a wooden chest (O) | jars; chest |
+| 6.3 | 6:11–15 | **The Kitchen**: the back-left room with the clay oven | the sieve on its hook (O) | the woodpile (O) | the clay oven (O) | the smoke-blackened corner (P) | the kneading bowl with its cloth (O) | sieve; woodpile; oven; kneading bowl; loaves cooling by the oven |
+| 6.4 | 6:16–20 | **The Cistern Court**: a small walled court behind the house | the stone washbasin under the cistern's spout (P) | flask of oil on a ledge **(v)** (O) | a wash-line with a tunic drying (O) | a fig tree shading the court (O) | the cistern mouth with its round stone lid (P) | oil flask; wash-line; fig tree; a linen towel on the basin's rim |
+| 6.5 | 6:21–25 | **The Ox Stall**: the back-right room; its side door opens outside | the left stall post (P) | the yoke on its peg (O) | the plough (O) | a heap of straw bedding (O) | the roof pillar with its feeding niche (P) | yoke; plough; straw; the ox |
+| 6.6 | 6:26–30 | **The Granary Field**: a stone granary at the edge of the field below the terrace gate | the terrace steps (P) | a patch of lentils (O) | the scarecrow on its pole (O) | the granary door (P) | a hoe left in the furrow (O) | the granary itself; scarecrow pole; (lentils and hoe are loose) |
+| 6.7 | 6:31–34 | **The Olive Press**: the press in the green lower field, by the lower gate | the crushing stone: a round millstone in its stone bed (O) | the press beam in its wall socket (O) | a stack of rope pulp-baskets (O) | the rock-cut oil collecting pit (P) | — | crushing stone; press beam; the green field and wild flowers around it are backdrop, not spots |
+
+The spots and objects are the ones already built. They move with their rooms. The Spring's spout and flat stones become the cistern court's washbasin and cistern mouth, and its willow becomes a fig tree. The courtyard's cistern lid becomes a water jar, so the cistern appears only once.
 
 **Outline signposts in chapter 6.**
 - *Sanctified Focus › Focus Internally › Public Righteousness* (6:1): 6.1 spot 1.
@@ -131,11 +142,11 @@ The outline's big break, Focus Internally (6:1–18) / Focus Eternally (6:19–3
 - *Disciples' Prayer* (6:9–13): 6.2 spot 4.
 - *Forgiveness* (6:14–15): 6.3 spot 4.
 - *Fasting* (6:16–18): 6.4 spot 1.
-- *Focus Eternally › Store Up Treasures* (6:19–21): 6.4 spot 4, just above the terrace-wall gate.
+- *Focus Eternally › Store Up Treasures* (6:19–21): 6.4 spot 4.
 - *Lamp of the Body* (6:22–23): 6.5 spot 2.
 - *God or Money* (6:24): 6.5 spot 4.
 - *Do Not Worry* (6:25): 6.5 spot 5.
-- *God's Provision* (6:26–30): 6.6 spot 1.
+- *God's Provision* (6:26–30): 6.6 spot 1, the first spot outside the house.
 - *Trust God's Provision* (6:31–34): 6.7 spot 1.
 
 ## 5. Chapter 7: the Shore Village (6 rooms)
