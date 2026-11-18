@@ -195,15 +195,17 @@ def('som-resting-stone', 'Resting stone at the fork of the road', g => {
 
 // ---- the Charcoal Burners' Clearing (5:26–30), rebuilt 2026-11-18 ----
 def('som-charcoal-mound', 'Charcoal burner\'s mound, smoking', g => {
-  const earthD = MM('somEarthDk', '#6a5640', TEX.plaster), turfG = MM('somTurfG', '#5d6a34'), soil = MM('somSoilClod', '#7a6244'), soot = MM('somSoot', '#1e1a16');
-  const geo = new THREE.SphereGeometry(1.55, 22, 12, 0, 6.3, 0, 1.57); const p = geo.attributes.position; for (let i = 0; i < p.count; i++) { const x = p.getX(i), y = p.getY(i), z = p.getZ(i), n = 1 + .07 * Math.sin(x * 5.1 + z * 3.3) + .05 * Math.sin(z * 6.7 - y * 4); p.setXYZ(i, x * n, y * .78 * n, z * n); } geo.computeVertexNormals();
-  add(geo, earthD, 0, 0, 0, g);   // a lumpy dome of earth over the stacked wood
-  for (let i = 0; i < 40; i++) { const a = R(0, 6.3), t = R(.1, 1.25), r = 1.55 * Math.cos(t), y = 1.2 * Math.sin(t); const c = add(new THREE.DodecahedronGeometry(R(.1, .2), 0), i % 3 ? soil : turfG, Math.cos(a) * r, y * .98, Math.sin(a) * r, g); c.scale.y = .5; c.lookAt(0, -3, 0); }   // clods and turves pressed over it
-  for (let k = 0; k < 8; k++) { const a = k / 8 * 6.28 + .2; add(new THREE.CircleGeometry(.08, 6), soot, Math.cos(a) * 1.56, .25, Math.sin(a) * 1.56, g).lookAt(Math.cos(a) * 9, .25, Math.sin(a) * 9); }   // vent holes round the foot
-  cy(g, .18, .22, .08, 10, soot, 0, 1.18, 0);
-  const smoke = new THREE.Group(); g.add(smoke); for (let k = 0; k < 6; k++) { const s = add(new THREE.SphereGeometry(.25 + k * .1, 8, 6), MM('somSmokeThin', '#e2ded6', null, { transparent: true, opacity: .2 - k * .02, depthWrite: false }), k * .32, 1.4 + k * .38, k * .08, smoke); s.scale.set(1.5, .7, 1.2); }   // a thin plume drifting off with the wind   // a soft drifting plume
-  const rk = new THREE.Group(); rk.position.set(1.75, 0, .5); rk.rotation.set(0, -.3, .5); g.add(rk); cy(rk, .03, .03, 2.0, 5, mWoodLt, 0, 0, 0); bx(rk, .5, .06, .08, mWoodDk, 0, 2.0, 0); for (let k = 0; k < 5; k++) cy(rk, .015, .015, .16, 4, mWoodDk, -.2 + k * .1, 2.0, 0);   // the rake leaning, its foot on the ground
-  return 1.35; });
+  const turf = MM('somTurfSq', '#55603a', TEX.stone), earth = MM('somEarthCov', '#6a5440', TEX.plaster), soot = MM('somSoot', '#1e1a16'), bark = MM('somBark2', '#7a6046', TEX.wood), cut = MM('somCutFace2', '#ecd29c');
+  // the stack: billets stood on end in rings round a central chimney, a cone
+  for (let ring = 0; ring < 4; ring++) { const r = .25 + ring * .38, n = 8 + ring * 6, hgt = 1.5 - ring * .3; for (let k = 0; k < n; k++) { const a = k / n * 6.283; const b = cy(g, .07, .08, hgt, 6, bark, Math.cos(a) * r, 0, Math.sin(a) * r); b.rotation.set(Math.sin(a) * .25, 0, -Math.cos(a) * .25); cy(g, .07, .07, .02, 6, cut, Math.cos(a) * (r - .1), hgt - .02, Math.sin(a) * (r - .1)); } }
+  // the earth cover, laid over most of it but not yet over the near side, so the stacked wood shows
+  const geo = new THREE.SphereGeometry(1.62, 22, 10, 2.41, 4.6, 0, 1.45); const p = geo.attributes.position; for (let i = 0; i < p.count; i++) { const x = p.getX(i), y = p.getY(i), z = p.getZ(i); p.setXYZ(i, x, y * .95, z); } geo.computeVertexNormals(); const cov = add(geo, earth, 0, 0, 0, g); cov.material.side = THREE.DoubleSide;
+  for (let i = 0; i < 46; i++) { const a = R(2.5, 6.9), t = R(.15, 1.25), r = 1.63 * Math.sin(Math.PI / 2 - t), y = 1.55 * Math.sin(t); const tf = add(new THREE.BoxGeometry(R(.3, .42), .06, R(.22, .3)), turf, -Math.cos(a) * r, y, Math.sin(a) * r, g); tf.lookAt(0, -2, 0); tf.rotateX(Math.PI / 2); }   // square turves pressed onto the earth
+  for (let k = 0; k < 6; k++) { const a = 2.7 + k * .75; add(new THREE.CircleGeometry(.08, 6), soot, -Math.cos(a) * 1.64, .25, Math.sin(a) * 1.64, g).lookAt(-Math.cos(a) * 9, .25, Math.sin(a) * 9); }
+  cy(g, .17, .2, .1, 10, soot, 0, 1.5, 0);
+  const smoke = new THREE.Group(); g.add(smoke); for (let k = 0; k < 6; k++) { const s = add(new THREE.SphereGeometry(.25 + k * .1, 8, 6), MM('somSmokeThin', '#e2ded6', null, { transparent: true, opacity: .2 - k * .02, depthWrite: false }), k * .32, 1.75 + k * .38, k * .08, smoke); s.scale.set(1.5, .7, 1.2); }
+  const rk = new THREE.Group(); rk.position.set(1.85, 0, -.6); rk.rotation.set(0, .3, .45); g.add(rk); cy(rk, .03, .03, 2.0, 5, mWoodLt, 0, 0, 0); bx(rk, .5, .06, .08, mWoodDk, 0, 2.0, 0); for (let k = 0; k < 5; k++) cy(rk, .015, .015, .16, 4, mWoodDk, -.2 + k * .1, 2.0, 0);
+  return 1.6; });
 def('som-cut-stumps', 'Row of freshly cut stumps', g => {
   const cut = MM('somCutFace2', '#ecd29c'), bark = MM('somBark2', '#7a6046', TEX.wood);
   for (const [x, z, r, h, tilt] of [[-1.4, .2, .3, .45, .2], [0, -.25, .38, .35, -.18], [1.45, .25, .28, .55, .25]]) { lathe(g, [[0, 0], [r * 1.7, 0], [r * 1.3, .07], [r * 1.05, .18], [r, h], [0, h]], bark, x, -.02, z, 12);   // stumps flaring into the ground
@@ -225,21 +227,36 @@ def('som-charcoal-baskets', 'Rush baskets heaped with charcoal', g => {
     for (let i = 0; i < 34; i++) { const a = R(0, 6.3), d = Math.sqrt(R(0, 1)) * .36 * s; add(new THREE.DodecahedronGeometry(R(.05, .085), 0), coal, x + Math.cos(a) * d, .38 * s + (1 - d / (.36 * s)) * .2, z + Math.sin(a) * d, g).rotation.set(R(0, 3), R(0, 3), 0); } }   // a mounded heap of dark grey chunks
   return .7; });
 def('som-ash-ring', 'Old burn floor of an earlier mound', g => {
-  const floor = MM('somBurnFloor', '#4a4540'), coal = MM('somCoalG2', '#2e2b28'), ash = MM('somAshL', '#9c9890');
-  const rg = add(new THREE.CircleGeometry(1.7, 26), floor, 0, .05, 0, g); rg.rotation.x = -Math.PI / 2;   // a grey-black burn floor
-  for (let i = 0; i < 12; i++) { const p = add(new THREE.CircleGeometry(R(.12, .3), 7), ash, R(-1.1, 1.1), .055, R(-1.1, 1.1), g); p.rotation.x = -Math.PI / 2; }   // flecks of ash
-  for (let i = 0; i < 40; i++) { const a = R(0, 6.3), d = Math.sqrt(R(0, 1)) * 1.6; const c = add(new THREE.DodecahedronGeometry(R(.03, .07), 0), coal, Math.cos(a) * d, .06, Math.sin(a) * d, g); c.scale.y = .5; }   // charcoal flecks all over it
+  const floor = MM('somBurnFloor', '#4a4540'), floor2 = MM('somBurnFloor2', '#5c544a', null, { transparent: true, opacity: .7 }), coal = MM('somCoalG2', '#2e2b28'), ash = MM('somAshL', '#9c9890');
+  const blot = (r, m, y, n = 14) => { const sh = new THREE.Shape(); for (let i = 0; i < n; i++) { const a = i / n * 6.283, rr = r * R(.6, 1.15); i ? sh.lineTo(Math.cos(a) * rr, Math.sin(a) * rr) : sh.moveTo(Math.cos(a) * rr, Math.sin(a) * rr); } const o = add(new THREE.ShapeGeometry(sh), m, 0, y, 0, g); o.rotation.x = -Math.PI / 2; return o; };
+  blot(1.5, floor, .05, 18);   // a ragged-edged patch of blackened earth
+  for (let i = 0; i < 9; i++) { const o = blot(R(.3, .7), i % 2 ? floor : floor2, .045 + i * .001, 9); o.position.x = R(-1.6, 1.6); o.position.z = R(-1.6, 1.6); }   // smudges spilling past the edge
+  for (let i = 0; i < 7; i++) { const o = blot(R(.15, .35), ash, .056, 8); o.position.x = R(-.9, .9); o.position.z = R(-.9, .9); }   // drifts of ash
+  for (let i = 0; i < 40; i++) { const a = R(0, 6.3), d = Math.sqrt(R(0, 1)) * 1.6; const c = add(new THREE.DodecahedronGeometry(R(.03, .07), 0), coal, Math.cos(a) * d, .06, Math.sin(a) * d, g); c.scale.y = .5; }
   return .1; });
 
 // ---- the Bee Bank (5:31–35), rebuilt 2026-11-18: one walled bank, the hive pipes set into its far end ----
-def('som-bee-wall', 'Bee wall: a mud-plastered stone bank with hive pipes set in it', g => {
-  const mud = MM('somBeeMud2', '#a99472', TEX.plaster), plug = MM('somPipePlug2', '#d9c7a2', TEX.plaster), rim = MM('somPipeRim', '#c9a27a', TEX.pot);
-  const L = 5.2;
-  bx(g, L - .4, .95, .9, mud, .2, 0, -.05); dryWall(g, -2.3, .42, 2.4, .42, .35, .12);   // the bank, plastered, its stone footing showing
-  for (let i = 0; i < 10; i++) { const p = add(new THREE.CircleGeometry(R(.08, .14), 6), mRock, R(-2.2, 2.3), R(.4, .85), .405, g); }   // stones showing through the plaster
-  lathe(g, [[0, 0], [.55, 0], [.52, .5], [.46, .85], [.3, 1.0], [0, 1.03]], mud, -L / 2 + .25, 0, -.05, 14);   // its near end rounded off in the same mud
-  for (let row = 0; row < 3; row++) for (let k = 0; k < 4 - row; k++) { const x = .55 + k * .44 + row * .22, y = .24 + row * .32; cy(g, .19, .19, .08, 14, rim, x, y, .42, Math.PI / 2); cy(g, .16, .16, .02, 12, plug, x, y, .465, Math.PI / 2); add(new THREE.CircleGeometry(.04, 8), mDark, x, y - .06, .478, g); }   // only the ends of the clay pipes show, set deep in the bank, each sealed with mud and a small entrance
-  for (let i = 0; i < 22; i++) { const b = add(new THREE.SphereGeometry(.022, 5, 4), MM('somBee', '#3a2a10'), R(.4, 2.2), R(.15, 1.0), R(.55, .9), g); b.scale.x = 1.7; }
-  return 1.05; });
+def('som-bee-wall', 'Freestanding stack of clay hive pipes on a stone base', g => {
+  const pipe = MM('somPipeLong', '#c9a27a', TEX.pot), plug = MM('somPipePlug2', '#d9c7a2', TEX.plaster), cap = MM('somCapSlab', '#b8ae9a', TEX.stone);
+  for (let i = 0; i < 9; i++) boulder(g, R(.22, .3), i % 2 ? mRock : mRockDk, -.75 + (i % 5) * .38 + R(-.05, .05), -.05, -.25 + Math.floor(i / 5) * .45, .55);   // a low base of field stones
+  const rows = [4, 3, 2]; rows.forEach((n, row) => { for (let k = 0; k < n; k++) { const x = (k - (n - 1) / 2) * .4, y = .45 + row * .34; cy(g, .17, .17, 1.1, 14, pipe, x, y, 0, Math.PI / 2); cy(g, .15, .15, .02, 12, plug, x, y, .56, Math.PI / 2); add(new THREE.CircleGeometry(.035, 8), mDark, x, y - .06, .575, g); } });   // long clay pipes stacked 4-3-2, mud-sealed ends with a small entrance
+  slab(g, .95, .1, cap, 0, 1.35, 0, 7);   // a flat stone laid on top to shade them
+  for (let i = 0; i < 16; i++) { const b = add(new THREE.SphereGeometry(.02, 5, 4), MM('somBee', '#3a2a10'), R(-.7, .7), R(.35, 1.2), R(.62, .9), g); b.scale.x = 1.7; }
+  return 1.45; });
+
+
+def('som-bank-end', 'Low end of a field bank, capped with a flat stone', g => {
+  for (let i = 0; i < 14; i++) boulder(g, R(.22, .32), i % 3 ? mRock : mRockDk, R(-.6, .6), i < 9 ? 0 : .22, R(-.4, .4), .75);   // a rough heap of field stones
+  slab(g, .7, .14, MM('somCapStone2', '#cdc3ae', TEX.stone), 0, .5, 0, 7); thornBush(g, .7, 0, -.5, .6);
+  return .9; });
+def('som-scarecrow', 'Scarecrow in an old robe', g => {
+  const robe = MM('somRagRobe', '#8a6a4a', TEX.cloth), sash = MM('somRagSash', '#a8523a', TEX.cloth);
+  cy(g, .045, .05, 2.3, 6, mWood, 0, 0, 0); cy(g, .035, .035, 1.5, 6, mWood, 0, 1.65, 0, 0, 0, Math.PI / 2);   // pole and cross-stick
+  const rb = lathe(g, [[0, 0], [.42, 0], [.36, .2], [.28, .6], [.22, .95], [.14, 1.05], [0, 1.08]], robe, 0, .75, 0, 12); rb.material.side = THREE.DoubleSide;   // a long robe hanging from the shoulders
+  for (const s of [-1, 1]) { const sl = cy(g, .1, .14, .62, 8, robe, s * .45, 1.62, 0, 0, 0, Math.PI / 2); for (let k = 0; k < 4; k++) cy(g, .012, .012, R(.15, .25), 3, MM('somStrawM2', '#e2c464'), s * .78, 1.62 + R(-.06, .06), R(-.06, .06), 0, 0, Math.PI / 2 + R(-.4, .4)); }   // sleeves, straw poking from the cuffs
+  add(new THREE.TorusGeometry(.2, .035, 5, 14), sash, 0, 1.35, 0, g).rotation.x = Math.PI / 2;   // a rag sash
+  const hd = add(new THREE.SphereGeometry(.17, 10, 8), MM('somBurlap', '#c8b07a', TEX.cloth), 0, 2.0, 0, g); hd.scale.y = 1.15;   // a sacking head
+  lathe(g, [[0, 0], [.32, 0], [.3, .03], [.14, .06], [.12, .2], [0, .22]], MM('somStrawHat', '#d8b860', TEX.wicker), 0, 2.13, 0, 12);   // a straw hat
+  return 2.4; });
 
 }

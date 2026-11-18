@@ -50,7 +50,11 @@ defBuilder('som.court', (r, { ch }) => { const F = roomFrame(r), h = 2.6, sp = S
   // the paved court in front of the farmhouse; the house front is the farmhouse's north wall (f = 3.4), its door at s = -3.6 … -1.2
   const stoneT = mat('somCourtStone', '#a39a8a'); stoneT.map = TEX.stone;
   { const g = atR(F, 0, 0); box(2 * h + 2, .08, 2 * h + 2, paleM, 0, 0, 0, g); }                                      // the paving
-  { const g = atR(F, -h, -h); box(.8, 1.9, .8, dryStone, 0, 0, 0, g); box(1, .18, 1, paleM, 0, 1.9, 0, g); out.push(ground(sp[0], 2.2)); }   // 1: the gate's left pier, squared, with its cap
+  { const g = atR(F, -h, -h); const tones = ['#a39a88', '#8f8676', '#b4aa96'].map((c, i) => { const m = mat('somPierStone' + i, c); m.map = TEX.stone; return m; });
+    box(.62, 1.9, .62, darkM, 0, 0, 0, g);   // the mortar core
+    for (let row = 0; row < 7; row++) { const y = row * .27, rot = row % 2; for (let k = 0; k < 2; k++) { const st = box(rot ? .42 : .82 * R(.92, 1.04), .25 * R(.9, 1.05), rot ? .82 * R(.92, 1.04) : .42, tones[(row + k) % 3], rot ? (k ? .21 : -.21) : R(-.03, .03), y, rot ? R(-.03, .03) : (k ? .21 : -.21), g); st.rotation.set(R(-.03, .03), R(-.06, .06), R(-.03, .03)); } }   // rough-dressed stones, laid in alternating courses
+    const cap = new THREE.Shape(); [[-.55, -.5], [.5, -.56], [.58, .45], [-.5, .55]].forEach(([a, b], i) => i ? cap.lineTo(a, b) : cap.moveTo(a, b)); const cg = new THREE.ExtrudeGeometry(cap, { depth: .16, bevelEnabled: true, bevelThickness: .03, bevelSize: .04, bevelSegments: 1 }); cg.rotateX(-Math.PI / 2); add(cg, tones[2], 0, 1.9, 0, g);
+    out.push(ground(sp[0], 2.25)); }   // 1: the gate's left pier of rough stones, a flat capstone on top
   { for (const sd of [-1, 1]) { const g = atR(F, .4, sd * (h + 1.3)); box(.45, .9, 2 * h + 1.4, mudM, 0, 0, 0, g); } }   // low walls closing the court on either side
   // the house front: a cornice and parapet along the flat roof line, a footing course, a roofed entry passage behind the door
   { const g = atR(F, 3.4, 0); box(32.6, .22, .8, paleM, 2, 3.15, 0, g); box(32.6, .5, .3, plasterM, 2, 3.37, .25, g); box(32.6, .35, .62, dryStone, 2, -.05, 0, g); }
@@ -114,6 +118,9 @@ defBuilder('som.stall', (r, { ch }) => { const F = roomFrame(r), h = 2.5, sp = S
   const g = atR(F, 0, 0, Math.PI);
   box(.4, 2.6, 2 * h + 1.8, dryStone, -h - .9, 0, .2, g);   // the west (outside) wall left open box(2 * h + 2.2, 2.6, .4, dryStone, 0, 0, h + 1, g);   // three walls, open front
   for (let k = -2; k <= 2; k++) box(.2, .2, 2 * h + 2.4, 'wood', k * 1.4, 2.6, .2, g);   // open roof beams, so the stall is lit
+  for (const z of [-h - .2, 0, h + .2]) box(2 * h + 2.6, .16, .18, 'wood', 0, 2.8, z, g);   // purlins laid across the beams
+  box(2 * h + 2.4, .2, .3, 'wood', h + .9, 2.55, .2, g).rotation.y = Math.PI / 2; box(2 * h + 2.4, .2, .3, 'wood', 0, 2.55, h + 1, g);   // wall plates the beams rest on
+  { const th = mat('somBrushRoof', '#a89060'); th.map = TEX.wicker; box(2 * h + 2.6, .1, h + 1.3, th, 0, 2.93, h / 2 + .75, g); }   // brush laid over the back half
   { const s2 = atR(F, -h, -h); box(.35, 2.6, .35, 'wood', 0, 0, 0, s2); out.push(ground(sp[0], 1.4)); }                     // the left stall post
   out.push(somAt(F, F.at(h + .55, -h + .2), 'som-yoke-on-peg', 0, .85)); out[out.length - 1].y -= .3;   // 2: the yoke on its peg (workshop model)
   { const s2 = atR(F, h, h, .3); const b = box(.16, .16, 2.3, 'woodLt', 0, .55, 0, s2); b.rotation.x = .3; const sh = box(.14, .55, .45, ironM, 0, .05, 1.05, s2); sh.rotation.x = -.5; const hn = box(.1, .9, .1, 'woodLt', 0, .55, -1.05, s2); hn.rotation.x = -.4; box(.5, .08, .08, 'woodLt', 0, 1.0, -1.2, s2); out.push(ground(sp[2], .85)); }   // the plough
@@ -124,9 +131,9 @@ defBuilder('som.stall', (r, { ch }) => { const F = roomFrame(r), h = 2.5, sp = S
 
 // ---- 6.6 THE GRANARY FIELD (6:26–30): terrace steps · lentils · scarecrow · granary door · hoe in the furrow ----
 defBuilder('som.granary', (r, { ch }) => { const F = roomFrame(r), h = 2.5, sp = SQ(h).map(([f, s]) => F.at(f, s)), out = [];
-  { const g = atR(F, -h, -h, .3); const st = box(.45, 1.0, .3, rockM, 0, -.1, 0, g); st.rotation.z = .06; box(.47, .12, .32, paleM, 0, .86, 0, g); out.push(ground(sp[0], 1.0)); }   // 1: the boundary stone at the field's corner, its top whitened (the steps are gone, owner 2026-11-18)
+  { const [x, z] = sp[0]; const top = somRock(x, z, .55); add(new THREE.SphereGeometry(.3, 8, 5, 0, 6.3, 0, 1.2), mat('somWhitewash', '#ece6d6'), x, top - .12, z).scale.y = .35; out.push({ x, z, y: top + .15 }); }   // 1: the boundary stone, a field rock with its top whitened
   { const [x, z] = sp[1]; libAt('garden-plot', x, z, F.yaw, .8); out.push(ground(sp[1], .35)); }   // the patch of lentils
-  { const g = atR(F, h, h); cyl(.05, .05, 2.2, 5, 'wood', 0, 0, 0, g); box(1.3, .06, .06, 'wood', 0, 1.6, 0, g); const rag = mat('somRag', '#9a6a4a'); rag.map = TEX.cloth; box(.7, .9, .22, rag, 0, 1.0, 0, g); for (const sd of [-1, 1]) box(.35, .5, .05, rag, sd * .55, 1.2, .1, g); add(new THREE.SphereGeometry(.2, 8, 6), strawM, 0, 2.05, 0, g); add(new THREE.ConeGeometry(.3, .25, 8), strawM, 0, 2.3, 0, g); out.push(ground(sp[2], .5)); }   // the scarecrow
+  out.push(somAt(F, sp[2], 'som-scarecrow', 0)); out[out.length - 1].y -= 1.0;   // 3: the scarecrow (library model)
   { const g = atR(F, -h + .9, h + 1.5, -Math.PI / 2); g.scale.setScalar(.8); box(2.6, 2.6, 2.6, dryStone, 0, 0, 0, g); add(new THREE.SphereGeometry(1.35, 10, 6, 0, 6.3, 0, 1.57), mudM, 0, 2.6, 0, g).scale.y = .7; box(.9, 1.6, .1, 'wood', 0, 0, 1.33, g); box(1.1, .12, .2, 'woodLt', 0, 1.6, 1.36, g); out.push(ground(F.at(-h + .9, h + .6), .15)); }   // the stone granary, its door facing the field
   { for (let k = -2; k <= 2; k++) { const [x, z] = F.at(k * .6, 0); const fr = box(.25, .1, 3.2, mudM, x, heightAt(x, z) - .02, z); fr.rotation.y = F.yaw; }
     const [x, z] = F.at(0, .3); const hd = cyl(.05, .05, 1.8, 6, 'woodLt', x, heightAt(x, z) + .14, z); hd.rotation.set(0, F.yaw, .9); hd.position.y += .6; const [bx2, bz2] = F.at(0, 1.2); const bl = box(.1, .4, .36, ironM, bx2, heightAt(bx2, bz2) + .02, bz2); bl.rotation.y = F.yaw; out.push({ x: F.x, z: F.z, y: F.y + .3 }); }   // furrows and the hoe

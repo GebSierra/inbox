@@ -34,3 +34,12 @@ Chapter 5: the Sheepfold sits on the path, and you walk in through its gate; the
 - Near-repeats are fine; there's no need to remove them.
 - Rules: check the library before making an object, and add anything new worth reusing to the library automatically. → ltm-engine/docs/RULES.md.
 - Camera: Next should walk along the path and turn to the room, as in the owner's GIF, instead of gliding across like a teleport. → after.js builds each walk from TRAIL; the walking pace is 6 m/s.
+
+## 17 — Owner critiques, 2026-11-18
+- Charcoal clearing: improve every object. Burn floor: splotchy, not a smooth circle. Make the mound more defined, not a "pile of peanut butter". The baskets are good. → Done: a ragged burn floor, and a mound of stacked billets half covered in earth and turves.
+- Bee bank: the long rectangle is too symmetrical and the hive is embedded in it. → A small capped bank end (spot 1) and a freestanding stack of hive pipes on a stone base (spot 2).
+- Entry court: run it through the room critic to phase 4 (8). The gate pier looked like Minecraft. → Now rough-dressed stones in alternating courses with a capstone. Critic: 5.2 → 6.0 → 6.9.
+- Storeroom: one room, with no room-within-a-room and no jars in the wall. → Done.
+- Rename the Cistern Court → "The Cistern".
+- Ox stall: the ox faces the viewer; roof beams shouldn't float. → Purlins, wall plates and brush added. Run the yoke through the model critic → 3.9 → 6.2.
+- Granary: remove the staircase → boundary stone, now a natural rock. Rebuild the blocky scarecrow → new library model.
