@@ -22,7 +22,7 @@ defBuilder('som.fisher', (r, { ch }) => { const F = roomFrame(r), h = 2.4, sp = 
   box(.5, .9, 2 * h + 2, basaltM, -h - .9, 0, 0, g); box(.5, .9, 2 * h + 2, basaltM, h + .9, 0, 0, g);                       // basalt side walls
   box(2 * h + 2.3, .9, .5, basaltM, 0, 0, h + 1.3, g); { const [hx, hz] = F.at(h + 4, 0); galHouse(hx, hz, 6, 3.6, 2.8, F.yaw, basaltM); }   // the back wall, the house behind it
   { const ge = atR(F, -h - 1, -h); for (const sd of [-1, 1]) box(.22, 1.9, .22, 'wood', sd * 1.05, 0, 0, ge); box(2.4, .2, .25, 'wood', 0, 1.9, 0, ge); } out.push(ground(F.at(-h - 1, -h), .15));   // the courtyard entrance between two low pale stones
-  { const s2 = atR(F, h, -h); cyl(.8, .85, .8, 18, plasterM, 0, 0, 0, s2); cyl(.7, .7, .06, 18, mat('somBrine', '#a8c4bc'), 0, .76, 0, s2); for (let k = 0; k < 10; k++) add(new THREE.DodecahedronGeometry(.05, 0), mat('somSalt', '#f4f0e8'), R(-.5, .5), .82, R(-.5, .5), s2); for (let k = 0; k < 4; k++) box(.25, .05, .08, mat('somFish', '#9fb0b8'), -.3 + k * .2, .86, R(-.2, .2), s2); out.push(ground(sp[1], 1.0)); }   // the fish-salting vat: stone rim, brine, fish
+  out.push(somAt(F, sp[1], 'som-salting-vat', 0));   // the fish-salting vat: stone rim, brine, fish
   { const [x, z] = sp[2]; libAt('fishing-net', x, z, F.yaw, 1.8); out.push(ground(sp[2], .6)); }   // the net drying on poles
   { const [x, z] = sp[3]; out.push({ x, z, y: libAt('basket-of-fish', x, z, F.yaw, 1) }); }   // the basket of fish
   { const g2 = atR(F, 0, 0); box(1, .5, .8, paleM, 0, 0, 0, g2); for (let k = 0; k < 3; k++) add(new THREE.TorusGeometry(.28 - k * .06, .06, 6, 14), mat('somRope', '#c8b48a'), .15, .55 + k * .07, 0, g2).rotation.x = Math.PI / 2; out.push({ x: F.x, z: F.z, y: F.y + .78 }); }   // the pale mending stone, a coil of rope on it
@@ -67,7 +67,7 @@ defBuilder('som.sand', (r, { ch }) => { const F = roomFrame(r), h = 2.4, sp = SQ
   { const [x, z] = sp[0]; libAt('date-palm', x, z, 0, 1); out.push(ground(sp[0], .6)); }   // the date palm leaning over the house
   { const g = atR(F, h, -h); for (let k = 0; k < 18; k++) cyl(.04, .04, 1.7, 4, reedM, -1.7 + k * .2, 0, 0, g); for (const yy of [.5, 1.3]) box(3.6, .06, .06, 'wood', 0, yy, 0, g); out.push(ground(sp[1], 1.5)); }   // the reed fence round the little yard
   { const [bx, bz] = F.at(h + 1.8, h); const [cx2, cz2] = F.at(h - .5, h + .6); const chn = box(6, .03, 1.6, mat('somGully', '#c8b07a'), cx2, heightAt(cx2, cz2) + .01, cz2); chn.rotation.y = F.yaw; for (let k = 0; k < 8; k++) { const [px, pz] = F.at(h - 3 + k * .8, h + .6 + R(-.5, .5)); somRock(px, pz, .15); } const bank = box(5, 1.3, 2.5, mat('somSand', '#e2cf9e'), bx, heightAt(bx, bz) - .3, bz); bank.rotation.y = F.yaw; bank.material.map = TEX.flag; out.push(ground(sp[2], .2)); }   // the bank across the wadi, the crowd on top of it
-  { const [x, z] = F.at(h + 2.2, h + 4.2); galHouse(x, z, 4.6, 3.6, 2.6, F.yaw - Math.PI / 2, mudM); const g = atR(F, -h, h); box(.45, .8, 2.2, mudM, 0, 0, -.6, g); out.push(ground(F.at(-h, h), .95)); }   // the house set back at the far right; spot 4 is the low mud-brick wall of its yard
+  { const [x, z] = F.at(h + 2.2, h + 4.2); galHouse(x, z, 4.6, 3.6, 2.6, F.yaw - Math.PI / 2, mudM); out.push(somAt(F, F.at(-h, h), 'som-mudbrick-wall', Math.PI / 2)); }   // the house set back at the far right; spot 4 is the low mud-brick wall of its yard
   finishRoom(ch, r, F, out); });
 
 // the crowd on the far bank of the wadi, facing the walk's end (7:28–29)

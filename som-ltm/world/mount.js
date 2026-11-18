@@ -25,6 +25,8 @@ function roomFrame(r) { const [x, z] = r.at, [vx, vz] = r.viewer; let fx = x - v
     at: (f, s) => [x + fx * f - fz * s, z + fz * f + fx * s] }; }   // f metres forward, s metres right
 const SQ = h => [[-h, -h], [h, -h], [h, h], [-h, h], [0, 0]];
 // a group standing at room coordinates (f, s), turned with the room (local +z = towards the viewer, local +x = the viewer's left)
+// place a hand-built workshop model (world/models.js) on a spot, its front toward the viewer; returns the spot
+function somAt(F, p, id, rot = 0, sc = 1) { const [x, z] = p, e = OBJECTS.get(id); if (!e) { console.warn('[som] missing model', id); return ground(p, .5); } const g = new THREE.Group(); g.position.set(x, heightAt(x, z), z); g.rotation.y = F.yaw + rot; g.scale.setScalar(sc); scene.add(g); const top = e.fn(g, 0, 0, 0) || 1; return { x, z, y: heightAt(x, z) + top * sc + .1 }; }
 function atR(F, f, s, rot = 0) { const [x, z] = F.at(f, s), g = new THREE.Group(); g.position.set(x, heightAt(x, z), z); g.rotation.y = F.yaw + rot; scene.add(g); return g; }
 function libAt(id, x, z, rot = 0, s = 1, dy = 0) { const g = new THREE.Group(), y = heightAt(x, z) + dy; g.position.set(x, y, z); g.rotation.y = rot; g.scale.setScalar(s); scene.add(g);
   const e = OBJECTS.get(id); if (!e) { console.warn('[som] missing library object ' + id); return y + 1; } e.fn(g, 0, 0, 0);
@@ -56,7 +58,7 @@ defBuilder('som.seat', (r, { ch }) => { const F = roomFrame(r), h = 2.6, sp = SQ
   { const [x, z] = sp[2]; const a = somRock(x - .8, z, .85), b = somRock(x + .8, z + .05, .8); for (let k = 0; k < 9; k++) { const t = add(new THREE.ConeGeometry(.05, .5, 4), mat('somThorn', '#7a9a3e'), x + R(-.2, .2), heightAt(x, z) + R(.2, .7), z + R(-.25, .25)); t.rotation.set(R(-.6, .6), 0, R(-.6, .6)); } out.push({ x, z, y: Math.max(a, b) + .1 }); }   // the split boulder, a thornbush in the gap
   { const g = atR(F, -h, h); const st = cyl(.06, .08, 1.6, 6, 'wood', 0, 0, 0, g); for (const k of [-1, 1]) { const fk = cyl(.03, .04, .35, 5, 'wood', k * .08, 1.55, 0, g); fk.rotation.z = -k * .5; }
     const sk = mat('somSkin2', '#8a6040'); sk.map = TEX.cloth; const bag = add(new THREE.CapsuleGeometry(.26, .42, 4, 10), sk, 0, 1.05, .2, g); bag.rotation.x = .25; for (const [lx, ly] of [[-.2, .82], [.2, .82], [-.18, 1.3], [.18, 1.3]]) { const lg = cyl(.04, .03, .2, 5, sk, lx, ly, .22, g); lg.rotation.z = lx < 0 ? .6 : -.6; } cyl(.05, .07, .16, 6, sk, 0, 1.45, .14, g); out.push(ground(sp[3], 1.75)); }   // the goatskin water bag, its tied legs and neck, hung on a forked stake
-  { const [cx, cz] = sp[4]; const seat = add(new THREE.DodecahedronGeometry(1.35, 0), rockM, cx, F.y + .15, cz); seat.scale.set(1.25, .38, 1); seat.rotation.y = .5; const top = add(new THREE.CylinderGeometry(.95, 1, .12, 7), paleM, cx, F.y + .58, cz); top.rotation.y = .2; for (let k = 0; k < 6; k++) { const a = k / 6 * 6.28; somRock(cx + Math.cos(a) * 1.7, cz + Math.sin(a) * 1.7, .22); } out.push({ x: cx, z: cz, y: F.y + .7 }); }   // the flat seat-rock where he sat
+  out.push(somAt(F, sp[4], 'som-seat-rock', 0, 1.3));   // the flat seat-rock where he sat
 
   finishRoom(ch, r, F, out); });
 
@@ -66,10 +68,10 @@ defBuilder('som.fold', (r, { ch }) => { const F = roomFrame(r), h = 3, W = .55, 
     const y0 = Math.min(heightAt(x0, z0), heightAt(x1, z1)) - .1; const n = Math.max(2, Math.round(L / .5)); for (let row = 0; row < Math.round(hh / .3); row++) for (let k = 0; k < n; k++) { const t = (k + (row % 2) * .5) / n; if (t > 1) continue; const st = add(new THREE.DodecahedronGeometry(R(.24, .32), 0), rnd() > .5 ? rockM : rockDk, x0 + (x1 - x0) * t, y0 + .15 + row * .28, z0 + (z1 - z0) * t); st.scale.set(1.2, .7, 1); st.rotation.y = R(0, 3); } };
   seg([-h, -h + 1.5], [-h, h], .5);   // the near wall kept low so you can see into the fold seg([-h + 1.5, -h], [h, -h]); seg([h, -h], [h, h]); seg([h, h], [-h, h]);   // the gateway is the open near-left corner
   for (const s of [-h + 1.5, -h + 1.6]) { const g = atR(F, -h, s); }
-  { for (const [f, s2] of [[-h, -h + 1.6], [-h + 1.6, -h]]) { const [x, z] = F.at(f, s2); box(.6, 1.3, .6, rockM, x, heightAt(x, z) - .1, z); } out.push(ground(sp[0], .12)); }   // the gateway, two big stones either side of the gap
-  { const g = atR(F, h - .7, -h + .7); box(.45, H + .4, 1.8, dryStone, .55, 0, 0, g); for (let k = 0; k < 3; k++) box(1.9, .24, .62, rockM, 0, H + .38, -.6 + k * .6, g); out.push(ground(sp[1], H + .2)); }
+  out.push(somAt(F, sp[0], 'som-fold-gateway', Math.PI / 4)); out[out.length - 1].y -= 1.2;   // the gateway, two big stones either side of the gap
+  out.push(somAt(F, sp[1], 'som-slab-corner', -Math.PI / 4));
   { const [x, z] = F.at(h + 1.3, h + 1.2); tree(x, z, 1.2); out.push(ground(sp[2], H + .05)); }
-  { const g = atR(F, -h - .1, h - .9); const c = cyl(.045, .045, 1.8, 6, 'wood', 0, .1, 0, g); c.rotation.x = .12; const hk = add(new THREE.TorusGeometry(.16, .045, 5, 10, Math.PI * 1.3), 'wood', 0, 1.95, -.12, g); hk.rotation.y = Math.PI / 2; out.push(ground(sp[3], .9)); }   // the shepherd's crook leaning on the low wall
+  out.push(somAt(F, sp[3], 'som-crook', 0)); out[out.length - 1].y -= .6;   // the shepherd's crook leaning on the low wall
   { const [cx, cz] = sp[4]; out.push({ x: cx, z: cz, y: libAt('water-trough', cx, cz, F.yaw + Math.PI / 2, 1.25) }); }
   for (const [f, s] of [[1.6, 1.4], [-.6, 1.9]]) { const [x, z] = F.at(f, s); libAt('ewe-and-lamb', x, z, R(0, 6), .9); }
   finishRoom(ch, r, F, out); });
@@ -143,8 +145,8 @@ defBuilder('som.road', (r, { ch }) => { const F = roomFrame(r), h = 2.6, sp = SQ
   { const [a, b] = F.at(0, 0), [c, d] = F.at(30, 6); drape(Math.min(a, c) - 1.5, Math.min(b, d), Math.max(a, c) + 1.5, Math.max(b, d), 'path', .02); }   // the track forking off north
   { const [x, z] = sp[0], y = heightAt(x, z); add(new THREE.BoxGeometry(2.2, .05, 1.2), darkM, x, y + .01, z).rotation.y = F.yaw; for (const sd of [-1, 1]) for (let k = 0; k < 4; k++) { const [rx, rz] = F.at(-h + (k - 1.5) * .35, -h + sd * .75); somRock(rx, rz, .3, y); } const g = atR(F, -h, -h); const arch = add(new THREE.TorusGeometry(.6, .22, 6, 10, Math.PI), rockM, 0, 0, 0, g); arch.rotation.y = Math.PI / 2; out.push(ground(sp[0], .85)); }   // culvert stones arching over the gully
   { const [x, z] = F.at(h + .6, -h - .6); tree(x, z, 1.3); out.push(ground(sp[1], .6)); }
-  { const g = atR(F, h, h, .8); const pts = [[0, 0], [.32, .1], [.42, .5], [.38, .9], [.14, 1.15], [.12, 1.4], [.18, 1.45]].map(([a, b]) => new THREE.Vector2(a, b)); const am = add(new THREE.LatheGeometry(pts, 12), clayM, 0, -.35, 0, g); am.scale.setScalar(1.4); am.rotation.z = .9; for (const sd of [-1, 1]) { const hd = add(new THREE.TorusGeometry(.12, .03, 5, 8, Math.PI), clayM, -.75, .45, sd * .14, g); hd.rotation.z = .9; } out.push(ground(sp[2], .7)); }   // the old amphora, half-buried by the road
-  { const [x, z] = sp[3]; libAt('hand-cart', x, z, F.yaw + .9, .8, -.15); const [wx, wz] = F.at(-h - .9, h + .9); const w = libAt('cart-wheel', wx, wz, 0, 1); out.push(ground(sp[3], 1.0)); }   // the cart, one wheel off and lying in the grass
+  out.push(somAt(F, sp[2], 'som-amphora-buried', .4));   // the old amphora, half-buried by the road
+  out.push(somAt(F, sp[3], 'som-broken-cart', .5, .7));   // the cart, one wheel off and lying in the grass
   { const g = atR(F, 0, 0, .5); box(1.8, .5, 1.1, paleM, 0, 0, 0, g); out.push({ x: F.x, z: F.z, y: F.y + .6 }); }   // the flat resting stone at the fork
   { const [x, z] = F.at(5, 4); const g = new THREE.Group(); g.position.set(x, heightAt(x, z), z); scene.add(g); const b = add(new THREE.CapsuleGeometry(.45, 1.1, 3, 8), mat('somCamel', '#b8915c'), 0, .5, 0, g); b.rotation.z = Math.PI / 2; add(new THREE.SphereGeometry(.4, 8, 6), mat('somCamel', '#b8915c'), 0, 1, 0, g); }   // a camel resting beyond the fork
   finishRoom(ch, r, F, out); });
