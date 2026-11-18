@@ -54,8 +54,8 @@ defBuilder('som.court', (r, { ch }) => { const F = roomFrame(r), h = 2.6, sp = S
 defBuilder('som.store', (r, { ch }) => { const F = roomFrame(r), h = 2.3, sp = SQ(h).map(([f, s]) => F.at(f, s)), out = [];
   const g = atR(F, .4, 0, Math.PI);   // local +z = forward, +x = right
   // the storeroom is the whole north-east room of the house (owner, 2026-11-18): no walls of its own, the house walls are its walls
-  box(.12, 2.3, 1.2, 'wood', 127.55, heightAt(127.55, -20.35), -20.35);   // the door, swung back against the wall left of the doorway
-  out.push(ground([127.3, -20.35], 1.3));   // 1: the door
+  box(.12, 2.3, 1.2, 'wood', 127.55, heightAt(127.55, -21.1), -21.1).rotation.y = .5;   // the door, swung back against the wall left of the doorway
+  out.push(ground([127.2, -21.5], 1.3));   // 1: the door
   { box(10, .06, 15.5, plasterM, 123, heightAt(123, -21.75) - .02, -21.75); }   // the plastered floor                        // the threshold
   { const pts = [[0, 0], [.18, .05], [.3, .4], [.32, .8], [.24, 1.15], [.12, 1.25], [.14, 1.35]].map(([a, b]) => new THREE.Vector2(a, b)); for (let k = 0; k < 4; k++) { const [jx, jz] = F.at(h + .9, -h - .4 + k * .62); add(new THREE.LatheGeometry(pts, 12), clayM, jx, heightAt(jx, jz), jz); } out.push(ground(sp[1], 1.55)); }   // a row of four tall clay storage jars   // the row of tall storage jars
   { const [x, z] = sp[2]; out.push({ x, z, y: libAt('herb-rack', x, z, F.yaw, 1) }); }   // the rack of dried herbs
