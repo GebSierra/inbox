@@ -39,14 +39,26 @@ const HOUSE_ROOFS = [];
 }
 // ---- 6.1 THE COURTYARD (6:1–5): gate pier · curtained doorway · stair to the roof · roof-roller · cistern lid ----
 defBuilder('som.court', (r, { ch }) => { const F = roomFrame(r), h = 2.6, sp = SQ(h).map(([f, s]) => F.at(f, s)), out = [];
+  // the paved court in front of the farmhouse; the house front is the farmhouse's north wall (f = 3.4), its door at s = -3.6 … -1.2
+  const stoneT = mat('somCourtStone', '#a39a8a'); stoneT.map = TEX.stone;
   { const g = atR(F, 0, 0); box(2 * h + 2, .08, 2 * h + 2, paleM, 0, 0, 0, g); }                                      // the paving
-  { const g = atR(F, -h, -h); box(.8, 1.9, .8, dryStone, 0, 0, 0, g); box(1, .18, 1, paleM, 0, 1.9, 0, g); out.push(ground(sp[0], 2.2)); }   // the gate's left pier, squared, with its cap
+  { const g = atR(F, -h, -h); box(.8, 1.9, .8, dryStone, 0, 0, 0, g); box(1, .18, 1, paleM, 0, 1.9, 0, g); out.push(ground(sp[0], 2.2)); }   // 1: the gate's left pier, squared, with its cap
   { for (const sd of [-1, 1]) { const g = atR(F, .4, sd * (h + 1.3)); box(.45, .9, 2 * h + 1.4, mudM, 0, 0, 0, g); } }   // low walls closing the court on either side
-  { const g = atR(F, h + .8, -h + .2); for (let k = 0; k < 6; k++) box(.2, 2, .06 + (k % 2) * .05, mat('somCurtain', '#a8523a'), (k < 3 ? -1.05 : .65) + (k % 3) * .2, .05, -.4 + k % 2 * .03, g); box(1.6, .22, .36, 'wood', 0, 2.1, -.15, g); out.push(ground(F.at(h + .45, -h + .2), .25)); }   // the doorway into the house, its curtain hanging
-  { const g = atR(F, h + .2, h); for (let k = 0; k < 6; k++) box(1, .3 * (k + 1), .55, dryStone, 0, 0, .5 - k * .55, g); out.push(ground(F.at(h + .2, h), 1.15)); }   // the stair up to the roof
-  { const g = atR(F, -h, h); const c = cyl(.28, .28, 1.2, 10, rockM, 0, .28, 0, g); c.rotation.z = Math.PI / 2; c.position.y = .28; out.push(ground(sp[3], .62)); }   // the roof-roller
-  { const g = atR(F, 0, 0, Math.PI / 2); box(1.6, .7, .8, dryStone, 0, 0, 0, g); box(1.3, .1, .5, darkM, 0, .62, 0, g); for (let k = 0; k < 8; k++) box(R(.3, .6), .03, .04, strawM, R(-.5, .5), .7, R(-.2, .2), g).rotation.y = R(0, 3); out.push({ x: F.x, z: F.z, y: F.y + .85 }); }   // a stone manger for the donkey
-  { const [x, z] = F.at(-h - 1.2, -h - 2.4); libAt('grey-donkey', x, z, F.yaw + 1.2); }   // the donkey by the gate
+  // the house front: a cornice and parapet along the flat roof line, a footing course, a roofed entry passage behind the door
+  { const g = atR(F, 3.4, 0); box(32.6, .22, .8, paleM, 2, 3.15, 0, g); box(32.6, .5, .3, plasterM, 2, 3.37, .25, g); box(32.6, .35, .62, dryStone, 2, -.05, 0, g); }
+  { const [px, pz] = F.at(5.4, -2.4), y = heightAt(px, pz); const pr = box(4.4, .3, 4.2, mat('somRoofEarth', '#b49a72'), px, y + 3, pz); pr.castShadow = true; HOUSE_ROOFS.push(pr);
+    for (const sd of [-3.7, -1.1]) { const [wx, wz] = F.at(5.4, sd); const w = box(.3, 3, 4, plasterM, wx, heightAt(wx, wz) - .1, wz); w.rotation.y = F.yaw; } }   // the dim entry passage you see through the door
+  { const g = atR(F, 3.25, -2.4); const cur = mat('somCurtain', '#a8523a'); cur.map = TEX.cloth; box(.55, 2.05, .05, cur, .9, .05, 0, g); for (let k = 0; k < 4; k++) box(.12, 2.05, .07, cur, -1.05 + k * .08, .05, .05, g).rotation.y = k * .2; cyl(.025, .025, 2.6, 5, 'wood', 0, 2.15, 0, g).rotation.z = Math.PI / 2; box(.12, .08, .1, mat('somCord', '#c8b48a'), -.9, 1.1, .02, g);
+    out.push(ground(F.at(3.0, -2.4), 1.2)); }   // 2: the doorway, its curtain half drawn and tied back on one side
+  { const n = 10; for (let k = 0; k < n; k++) { const [x, z] = F.at(2.95, 1.0 + k * .34); const st = box(.34, .3 * (k + 1), .85, stoneT, x, heightAt(x, z) - .02, z); st.rotation.y = F.yaw + Math.PI / 2; }
+    const [x2, z2] = F.at(2.95, 1.0 + n * .34 + .3); out.push(ground(F.at(2.95, 2.6), 1.7)); }   // 3: the stone stair rising along the house front to the flat roof
+  { const g = atR(F, -h, h, .2); const rm = mat('somRollerStone', '#8e877c'); rm.map = TEX.stone; const c = cyl(.3, .3, 1.15, 12, rm, 0, .3, 0, g); c.rotation.z = Math.PI / 2; c.position.y = .3;
+    for (const sd of [-1, 1]) { cyl(.04, .04, .14, 6, 'wood', sd * .64, .3, 0, g).rotation.z = Math.PI / 2; const arm = box(.06, .06, 1.1, 'wood', sd * .72, .32, .5, g); arm.rotation.x = -.25; } box(1.5, .07, .07, 'wood', 0, .52, 1.02, g); out.push(ground(sp[3], .68)); }   // 4: the stone roof-roller with its wooden handle frame
+  { const g = atR(F, 0, 0, Math.PI / 2); box(2.0, .75, 1.0, stoneT, 0, 0, 0, g); box(1.7, .12, .72, darkM, 0, .66, 0, g); box(2.04, .1, 1.04, paleM, 0, .72, 0, g).scale.set(1, 1, 1); for (let k = 0; k < 14; k++) box(R(.3, .6), .03, .04, strawM, R(-.75, .75), .74, R(-.25, .25), g).rotation.y = R(0, 3); out.push({ x: F.x, z: F.z, y: F.y + .95 }); }   // 5: a big carved stone manger with straw
+  { const [x, z] = F.at(.3, -h - .4); libAt('grey-donkey', x, z, F.yaw + Math.PI / 2, 1); const [tx, tz] = F.at(-.8, -h - .8); cyl(.06, .07, 1.1, 6, 'wood', tx, heightAt(tx, tz), tz); add(new THREE.TorusGeometry(.07, .015, 4, 8), ironM, tx, heightAt(tx, tz) + 1, tz); }   // the donkey tied to a post by the left wall
+  for (const [f, s, id, sc] of [[2.7, -.2, 'big-jar', 1], [2.6, .35, 'big-jar', .85], [1.4, 3.3, 'grain-sack', 1], [-.6, 3.4, 'bread-basket', 1], [2.4, 4.4, 'fig-tree', .8]]) { const [x, z] = F.at(f, s); libAt(id, x, z, R(0, 6), sc); }   // jars by the door, a sack, a basket, a fig tree in the corner
+  { const [x, z] = F.at(.5, 3.55); const b = box(1.8, .45, .45, stoneT, x, heightAt(x, z), z); b.rotation.y = F.yaw + Math.PI / 2; }   // a stone bench against the right wall
+  for (let k = 0; k < 12; k++) { const [x, z] = F.at(R(-.6, .6), R(-1.3, 1.3)); box(R(.2, .5), .02, .03, strawM, x, heightAt(x, z) + .09, z).rotation.y = R(0, 3); }   // straw scattered round the manger
   finishRoom(ch, r, F, out); });
 
 // ---- 6.2 THE INNER STOREROOM (6:6–10): open-fronted, cut into the terrace, its door swung back ----

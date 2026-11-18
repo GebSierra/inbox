@@ -70,15 +70,17 @@ Spots are listed in the fixed order. P = a feature of the place itself; O = an o
 - spot 2 far-left: the tower's lookout window (P)
 - spot 3 far-right: the vine trellis (O)
 
-## Room 11: 6.1 The Courtyard (6:1–5) — screenshot: room-11.png
+## Room 11: 6.1 The Entry Court (6:1–5) — screenshot: room-11.png
+A paved court in front of a first-century Galilean farmhouse, seen from the farm's gate.
 - spot 1 near-left: the gate's left pier (P)
-- spot 2 far-left: the curtained doorway into the house (P)
-- spot 3 far-right: the stone stair up to the roof (P)
+- spot 2 far-left: the curtained front doorway into the house (P)
+- spot 3 far-right: the stone stair up to the flat roof (P)
 - spot 4 near-right: the stone roof-roller (O)
-- spot 5 centre: the cistern mouth with its round stone lid (O)
+- spot 5 centre: a stone manger for the donkey (O)
+- other: a donkey tethered by the gate
 
 ## Room 12: 6.2 The Inner Storeroom (6:6–10) — screenshot: room-12.png
-- spot 1 near-left: the doorway's stone threshold (P)
+- spot 1 near-left: the door, swung open (O)
 - spot 2 far-left: the row of tall storage jars (O)
 - spot 3 far-right: the bunches of dried herbs from a beam (O)
 - spot 4 near-right: the plastered wall shelf with small pots (P)
