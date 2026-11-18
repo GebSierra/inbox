@@ -68,3 +68,4 @@ Judged with the site map. Each round used a fresh critic.
 | Round | Score | Main points fixed after it |
 | --- | --- | --- |
 | 1 | 8.1 (pass) | stale ledger and map labels; "courtyard house" and "open-beam roofs" contradicted the flat roof; the storeroom was used as a passage; no viewer point inside rooms; near-repeats (water jar / storage jars, washbasin / trough); 6.6's second object; slope vs flat ground |
+| 2 | 8.0 (pass) | spots in the walk-through rooms (Sheepfold, Ridge Road); indoor viewer and spot 1; §2 room sizes; the house drawn with rooms on two sides; 6.6 objects; quarry spot 2 and ledger slips |
