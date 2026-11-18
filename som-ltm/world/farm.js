@@ -119,6 +119,7 @@ defBuilder('som.stall', (r, { ch }) => { const F = roomFrame(r), h = 2.5, sp = S
   box(.4, 2.6, 2 * h + 1.8, dryStone, -h - .9, 0, .2, g);   // the west (outside) wall left open box(2 * h + 2.2, 2.6, .4, dryStone, 0, 0, h + 1, g);   // three walls, open front
   for (let k = -2; k <= 2; k++) box(.2, .2, 2 * h + 2.4, 'wood', k * 1.4, 2.6, .2, g);   // open roof beams, so the stall is lit
   for (const z of [-h - .2, 0, h + .2]) box(2 * h + 2.6, .16, .18, 'wood', 0, 2.8, z, g);   // purlins laid across the beams
+  for (const k of [-2, -1, 1, 2]) box(.16, 2.6, .16, 'wood', k * 1.4, 0, -h - .9, g); box(.16, 2.6, .16, 'wood', -h - .9, 0, h + .9, g); box(.16, 2.6, .16, 'wood', -h - .9, 0, -h - .9, g);   // posts under the beams' open ends, so every beam is held up
   box(2 * h + 2.4, .2, .3, 'wood', h + .9, 2.55, .2, g).rotation.y = Math.PI / 2; box(2 * h + 2.4, .2, .3, 'wood', 0, 2.55, h + 1, g);   // wall plates the beams rest on
   { const th = mat('somBrushRoof', '#a89060'); th.map = TEX.wicker; box(2 * h + 2.6, .1, h + 1.3, th, 0, 2.93, h / 2 + .75, g); }   // brush laid over the back half
   { const s2 = atR(F, -h, -h); box(.35, 2.6, .35, 'wood', 0, 0, 0, s2); out.push(ground(sp[0], 1.4)); }                     // the left stall post

@@ -240,14 +240,14 @@ def('som-bee-wall', 'Freestanding stack of clay hive pipes on a stone base', g =
   const pipe = MM('somPipeLong', '#c9a27a', TEX.pot), plug = MM('somPipePlug2', '#d9c7a2', TEX.plaster), cap = MM('somCapSlab', '#b8ae9a', TEX.stone);
   for (let i = 0; i < 9; i++) boulder(g, R(.22, .3), i % 2 ? mRock : mRockDk, -.75 + (i % 5) * .38 + R(-.05, .05), -.05, -.25 + Math.floor(i / 5) * .45, .55);   // a low base of field stones
   const rows = [4, 3, 2]; rows.forEach((n, row) => { for (let k = 0; k < n; k++) { const x = (k - (n - 1) / 2) * .4, y = .45 + row * .34; cy(g, .17, .17, 1.1, 14, pipe, x, y, 0, Math.PI / 2); cy(g, .15, .15, .02, 12, plug, x, y, .56, Math.PI / 2); add(new THREE.CircleGeometry(.035, 8), mDark, x, y - .06, .575, g); } });   // long clay pipes stacked 4-3-2, mud-sealed ends with a small entrance
-  slab(g, .95, .1, cap, 0, 1.35, 0, 7);   // a flat stone laid on top to shade them
+  slab(g, .8, .1, cap, 0, 1.28, 0, 7); for (const sx of [-.62, .62]) bx(g, .14, .9, .5, mRock, sx, .42, 0);   // a flat stone laid on top, resting on two upright stones at the sides   // a flat stone laid on top to shade them
   for (let i = 0; i < 16; i++) { const b = add(new THREE.SphereGeometry(.02, 5, 4), MM('somBee', '#3a2a10'), R(-.7, .7), R(.35, 1.2), R(.62, .9), g); b.scale.x = 1.7; }
   return 1.45; });
 
 
 def('som-bank-end', 'Low end of a field bank, capped with a flat stone', g => {
-  for (let i = 0; i < 14; i++) boulder(g, R(.22, .32), i % 3 ? mRock : mRockDk, R(-.6, .6), i < 9 ? 0 : .22, R(-.4, .4), .75);   // a rough heap of field stones
-  slab(g, .7, .14, MM('somCapStone2', '#cdc3ae', TEX.stone), 0, .5, 0, 7); thornBush(g, .7, 0, -.5, .6);
+  for (let i = 0; i < 16; i++) boulder(g, R(.24, .34), i % 3 ? mRock : mRockDk, R(-.55, .55), 0, R(-.4, .4), .75);   // a rough heap of field stones
+  slab(g, .62, .14, MM('somCapStone2', '#cdc3ae', TEX.stone), 0, .36, 0, 7); thornBush(g, .7, 0, -.5, .6);
   return .9; });
 def('som-scarecrow', 'Scarecrow in an old robe', g => {
   const robe = MM('somRagRobe', '#8a6a4a', TEX.cloth), sash = MM('somRagSash', '#a8523a', TEX.cloth);
@@ -256,7 +256,7 @@ def('som-scarecrow', 'Scarecrow in an old robe', g => {
   for (const s of [-1, 1]) { const sl = cy(g, .1, .14, .62, 8, robe, s * .45, 1.62, 0, 0, 0, Math.PI / 2); for (let k = 0; k < 4; k++) cy(g, .012, .012, R(.15, .25), 3, MM('somStrawM2', '#e2c464'), s * .78, 1.62 + R(-.06, .06), R(-.06, .06), 0, 0, Math.PI / 2 + R(-.4, .4)); }   // sleeves, straw poking from the cuffs
   add(new THREE.TorusGeometry(.2, .035, 5, 14), sash, 0, 1.35, 0, g).rotation.x = Math.PI / 2;   // a rag sash
   const hd = add(new THREE.SphereGeometry(.17, 10, 8), MM('somBurlap', '#c8b07a', TEX.cloth), 0, 2.0, 0, g); hd.scale.y = 1.15;   // a sacking head
-  lathe(g, [[0, 0], [.32, 0], [.3, .03], [.14, .06], [.12, .2], [0, .22]], MM('somStrawHat', '#d8b860', TEX.wicker), 0, 2.13, 0, 12);   // a straw hat
+  lathe(g, [[0, 0], [.48, 0], [.46, .04], [.2, .08], [.17, .27], [0, .3]], MM('somStrawHat', '#d8b860', TEX.wicker), 0, 2.12, 0, 14);   // a straw hat
   return 2.4; });
 
 }
