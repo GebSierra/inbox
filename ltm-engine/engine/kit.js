@@ -38,4 +38,4 @@ function room(ch, n, name, x, z, viewer, opts) {
   station(ch, n, name, x, z, [x - (viewer[0] - x), 0, z - (viewer[1] - z)], custom); STATIONS[STATIONS.length - 1].back = Math.min(ch === 2 ? 4.6 : 5.8, Math.max(4.6, Math.hypot(viewer[0] - x, viewer[1] - z) * 1.1));
 }
 const H_NEAR = 1.12, H_FAR = 1.7;
-const LOCAL = [[-1, 1], [-1, -1], [1, -1], [1, 1], [0, 0]];   // near-left, far-left, far-right, near-right, centre   // counter top, back shelf top
+const LOCAL = [[-1, 1], [-1, -1], [1, -1], [1, 1], [0, 0], [0, -1.7]];   // near-left, far-left, far-right, near-right, centre, exit (passage mode's 6th verse: beyond the far side)   // counter top, back shelf top

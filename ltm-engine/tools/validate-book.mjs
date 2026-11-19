@@ -8,6 +8,9 @@ import fs from 'fs'; import path from 'path';
 const f = process.argv[2], STRICT = process.argv.includes('--strict');
 if (!f) { console.error('usage: validate-book.mjs <book.json> [--strict]'); process.exit(2); }
 const b = JSON.parse(fs.readFileSync(f, 'utf8')); const errs = [], warns = [];
+// passage mode ("mode": "passages", verses100-ltm): a chapter is a section of a verse list, a room is one passage with its own "ref" and
+// "verses" (one label per spot, at most 6: the sixth on the doorway you leave by). Rule 3 (ceil(n/5) rooms) does not apply.
+const PASS = b.mode === 'passages'; const MAXSPOTS = PASS ? 6 : 5;
 const ENGINE = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const TOWN = path.resolve(path.dirname(f), '..');            // <town>/books/<book>.json -> <town>
 
@@ -20,6 +23,8 @@ for (const s of sources) { const t = fs.readFileSync(s, 'utf8');
   for (const m of t.matchAll(/^\s*T\(\s*[^,]+,\s*'([a-z0-9-]+)'/gm)) OBJ.add(m[1]);
   for (const m of t.matchAll(/\bT\(\s*'([a-z0-9-]+)',\s*'[^']*',\s*\[/g)) OBJ.add(m[1]);   // T(id, label, [tags], builder)
   for (const m of t.matchAll(/^[ \t]*T\([\s\S]*?,\s*'([a-z0-9-]+)',\s*'[^']*',\s*'(?:colossae|james|engine)[^']*',\s*'(?:object|person|plant|animal|structure|effect)'/gm)) OBJ.add(m[1]);   // library entries with a kind: T(builder, id, label, origin, kind, tags)
+  for (const m of t.matchAll(/^def\(\s*'([a-z0-9-]+)',\s*'/gm)) OBJ.add(m[1]);
+  for (const m of t.matchAll(/\}\s*,\s*'([a-z0-9-]+)',\s*'[A-Z][^']*',\s*'(?:james|colossae)/g)) OBJ.add(m[1]);   // T(() => { … }, 'id', 'Label', 'origin', …) (objects/up-james-civic.js)   // objects/som.js: def('som-…', label, builder)
   for (const m of t.matchAll(/\bdefBuilder\(\s*'([\w.-]+)'/g)) BUILD.add(m[1]);
   for (const m of t.matchAll(/\bdefAnchor\(\s*'([\w-]+)'/g)) ANCH.add(m[1]); }
 
@@ -45,7 +50,7 @@ function checkLayout(tag, lay) {
 function checkObjects(tag, list, { todoOk }) {
   if (!Array.isArray(list) || !list.length) { errs.push(`${tag}: no spots`); return 0; }
   const verse = list.filter(o => o && !o.extra);
-  if (verse.length > 5) errs.push(`${tag}: ${verse.length} verse spots (a room has at most 5)`);
+  if (verse.length > MAXSPOTS) errs.push(`${tag}: ${verse.length} verse spots (a room has at most ${MAXSPOTS})`);
   let seenExtra = false;
   list.forEach((o, i) => { const t = `${tag} spot ${i + 1}`;
     if (!o || typeof o !== 'object' || typeof o.what !== 'string' || !o.what) { errs.push(`${t}: needs a "what" label`); return; }
@@ -65,20 +70,24 @@ if (b.translation !== 'ESV') errs.push('translation must be ESV');
 const seenDistricts = new Set(), todo = [];
 let nCustom = 0, nVig = 0;
 for (const c of b.chapters) {
-  const want = Math.ceil(c.verses / 5);
+  const want = PASS ? c.rooms.length : Math.ceil(c.verses / 5);
+  if (PASS) { const n = c.rooms.reduce((a, r) => a + (Array.isArray(r.verses) ? r.verses.length : 0), 0); if (n !== c.verses) errs.push(`ch${c.chapter}: the rooms hold ${n} verses, the chapter says ${c.verses}`); }
   if (seenDistricts.has(c.district)) errs.push(`ch${c.chapter}: district "${c.district}" reused (one district per chapter)`); seenDistricts.add(c.district);
   if (c.rooms.length !== want) (c.partial && c.rooms.length < want ? warns : errs).push(`ch${c.chapter}: ${c.rooms.length} rooms, expected ceil(${c.verses}/5) = ${want}`);
   checkLayout(`ch${c.chapter} layout`, c.layout);
   c.rooms.forEach((r, i) => {
     const v0 = i * 5 + 1, v1 = Math.min(v0 + 4, c.verses), cn = c.chapter + (b.chOffset || 0), label = v0 === v1 ? `${cn}:${v0}` : `${cn}:${v0}–${v1}`, tag = `ch${c.chapter} room ${r.room}`;
     if (r.room !== i + 1) errs.push(`${tag}: rooms must be numbered 1..n in walking order`);
-    if (r.verses !== label) errs.push(`${tag}: verses "${r.verses}", expected "${label}"`);
+    if (PASS) { if (typeof r.ref !== 'string' || !/^[1-3]?\s?[A-Z][a-z]+(?: [a-z]+)* \d+:\d+[ab]?(-\d+[ab]?)?$/.test(r.ref)) errs.push(`${tag}: ref "${r.ref}" must look like "John 3:16-17"`);
+      if (!Array.isArray(r.verses) || !r.verses.length || r.verses.some(v => !/^\d+:\d+[ab]?$/.test(v))) errs.push(`${tag}: verses must be a list like ["3:16", "3:17"]`); }
+    else if (r.verses !== label) errs.push(`${tag}: verses "${r.verses}", expected "${label}"`);
     const unfinished = /TODO/.test(r.name + JSON.stringify(r.objects)); if (unfinished) todo.push(`${c.chapter}.${r.room}`);
     const kind = r.kind ?? 'vignette';
     if (kind !== 'vignette' && kind !== 'custom') errs.push(`${tag}: kind "${r.kind}" must be "vignette" or "custom"`);
     for (const k of ['back', 'pitch', 'bannerLift']) if (r[k] !== undefined && !isNum(r[k])) errs.push(`${tag}: ${k} must be a number`);
     const n = checkObjects(tag, r.objects, { todoOk: unfinished });
-    if (n !== v1 - v0 + 1) errs.push(`${tag}: ${n} verse spots for ${v1 - v0 + 1} verses`);
+    const nv = PASS ? (Array.isArray(r.verses) ? r.verses.length : 0) : v1 - v0 + 1;
+    if (n !== nv) errs.push(`${tag}: ${n} verse spots for ${nv} verses`);
     if (kind === 'custom') { nCustom++;
       if (typeof r.builder !== 'string') errs.push(`${tag}: a custom room needs a "builder"`); else if (!BUILD.has(r.builder)) errs.push(`${tag}: unknown room builder "${r.builder}" (no defBuilder('${r.builder}', ...) in ltm-engine or ${path.basename(TOWN)}/world)`);
       if (r.args !== undefined && (typeof r.args !== 'object' || Array.isArray(r.args))) errs.push(`${tag}: args must be an object`);

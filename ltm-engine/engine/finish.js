@@ -179,7 +179,7 @@ requestAnimationFrame(() => requestAnimationFrame(() => { document.getElementByI
       if (!st) { issues.push(`missing room ${c.chapter}.${r.room} ${r.name}`); continue; }
       if (!BUILT_ROOMS.has(`${c.chapter}.${r.room}`)) issues.push(`${c.chapter}.${r.room}: not built through the book`);
       if (st.name !== r.name) issues.push(`${c.chapter}.${r.room}: built "${st.name}", book says "${r.name}"`);
-      if (st.text !== `${BOOK} ${r.verses}`) issues.push(`${c.chapter}.${r.room}: built for ${st.text}, book says ${r.verses}`);
+      if (st.text !== (CFG.passages ? r.ref : `${BOOK} ${r.verses}`)) issues.push(`${c.chapter}.${r.room}: built for ${st.text}, book says ${CFG.passages ? r.ref : r.verses}`);
       const spots = r.objects.filter(o => !o.extra);   // "extra" objects are dressing without a verse (a room of 3 verses may stand 5 objects)
       if (st.loci.length !== spots.length) issues.push(`${c.chapter}.${r.room}: ${st.loci.length} spots built, ${spots.length} objects in book`);
       else spots.forEach((o, i) => { const w = st.loci[i].where.split(' · ').slice(1).join(' · ') || st.loci[i].where; if (w !== o.what) issues.push(`${c.chapter}.${r.room} spot ${i + 1}: built "${w}", book says "${o.what}"`); }); }

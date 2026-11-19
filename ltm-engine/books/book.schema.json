@@ -1,123 +1,437 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "LTM book",
-  "description": "A book file is the single source for a town's rooms: the engine (ltm-engine/engine/rooms.js) builds every room from it. tools/validate-book.mjs checks the rules this schema cannot (verse counts, library ids, builders, anchors).",
-  "type": "object",
-  "required": ["book", "translation", "chapters"],
-  "properties": {
-    "book": { "type": "string" },
-    "translation": { "const": "ESV" },
-    "chOffset": { "type": "integer", "description": "The book starts mid-way: chapter 1 of this file is shown as chapter 1 + chOffset (town.json has the same value)" },
-    "chapters": {
-      "type": "array", "minItems": 1,
-      "items": {
-        "type": "object",
-        "required": ["chapter", "verses", "district", "rooms"],
-        "properties": {
-          "chapter": { "type": "integer", "minimum": 1 },
-          "verses": { "type": "integer", "minimum": 1 },
-          "district": { "type": "string", "description": "One district per chapter" },
-          "partial": { "const": true, "description": "A prototype chapter: fewer rooms than the verses need is a warning, not an error" },
-          "layout": { "$ref": "#/$defs/layout", "description": "Defaults for every vignette in the chapter; a room's own layout overrides them key by key" },
-          "ideasOverview": { "type": "object", "description": "Big ideas mode: the bird's-eye view that opens the chapter's tour", "required": ["at"], "properties": { "at": { "$ref": "#/$defs/position" }, "dist": { "type": "number" }, "theta": { "type": "number" } }, "additionalProperties": false },
-          "ideas": { "type": "array", "description": "Big ideas mode (opt-in with town.json \"modes\"): the chapter's key ideas, in tour order, each placed on a landmark of the district that is NOT one of the verse objects", "items": { "$ref": "#/$defs/idea" } },
-          "rooms": {
-            "type": "array",
-            "description": "ceil(verses/5) rooms, in clockwise order starting nearest the district entrance on the left. The book lists every room of the town, in order; nothing is placed that the book does not list.",
-            "items": { "$ref": "#/$defs/room" }
-          }
-        }
-      }
-    }
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "title": "LTM book",
+ "description": "A book file is the single source for a town's rooms: the engine (ltm-engine/engine/rooms.js) builds every room from it. tools/validate-book.mjs checks the rules this schema cannot (verse counts, library ids, builders, anchors).",
+ "type": "object",
+ "required": [
+  "book",
+  "translation",
+  "chapters"
+ ],
+ "properties": {
+  "book": {
+   "type": "string"
   },
-  "$defs": {
-    "position": {
-      "description": "[x, z] in world units, or relative to a named anchor that the town registers with defAnchor(): the anchor's position plus dx, dz",
-      "oneOf": [
-        { "type": "array", "items": { "type": "number" }, "minItems": 2, "maxItems": 2 },
-        { "type": "object", "required": ["from"], "properties": { "from": { "type": "string" }, "dx": { "type": "number" }, "dz": { "type": "number" } }, "additionalProperties": false }
-      ]
-    },
-    "height": {
-      "description": "A height in world units: a number, or the terrain height at a position plus an offset",
-      "oneOf": [
-        { "type": "number" },
-        { "type": "object", "required": ["ground"], "properties": { "ground": { "$ref": "#/$defs/position" }, "plus": { "type": "number" } }, "additionalProperties": false }
-      ]
-    },
-    "idea": {
+  "translation": {
+   "const": "ESV"
+  },
+  "chOffset": {
+   "type": "integer",
+   "description": "The book starts mid-way: chapter 1 of this file is shown as chapter 1 + chOffset (town.json has the same value)"
+  },
+  "chapters": {
+   "type": "array",
+   "minItems": 1,
+   "items": {
+    "type": "object",
+    "required": [
+     "chapter",
+     "verses",
+     "district",
+     "rooms"
+    ],
+    "properties": {
+     "chapter": {
+      "type": "integer",
+      "minimum": 1
+     },
+     "verses": {
+      "type": "integer",
+      "minimum": 1
+     },
+     "district": {
+      "type": "string",
+      "description": "One district per chapter"
+     },
+     "partial": {
+      "const": true,
+      "description": "A prototype chapter: fewer rooms than the verses need is a warning, not an error"
+     },
+     "layout": {
+      "$ref": "#/$defs/layout",
+      "description": "Defaults for every vignette in the chapter; a room's own layout overrides them key by key"
+     },
+     "ideasOverview": {
       "type": "object",
-      "required": ["id", "title", "verses", "summary", "anchor", "example"],
+      "description": "Big ideas mode: the bird's-eye view that opens the chapter's tour",
+      "required": [
+       "at"
+      ],
       "properties": {
-        "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
-        "title": { "type": "string", "description": "at most 8 words" },
-        "verses": { "type": "string", "pattern": "^\\d+:\\d+(–\\d+)?(, \\d+(–\\d+)?)*$", "description": "the verses behind the idea, e.g. \"1:15–20\" or \"1:13–14, 21–22\"" },
-        "summary": { "type": "string", "description": "at most 18 words" },
-        "anchor": {
-          "type": "object", "required": ["label", "where", "view"],
-          "properties": {
-            "label": { "type": "string", "description": "the landmark, as the learner sees it named" },
-            "where": { "type": "object", "required": ["at"], "properties": { "at": { "$ref": "#/$defs/position" }, "top": { "type": "number", "description": "height of the marker above the ground there" } }, "additionalProperties": false },
-            "view": { "type": "object", "required": ["stand"], "properties": { "stand": { "$ref": "#/$defs/position", "description": "where the camera stands (it looks at the landmark)" }, "via": { "type": "array", "items": { "$ref": "#/$defs/position" }, "description": "waypoints walked from the previous stop (the first idea: from the district entrance); they must pass through doorways, not walls" }, "pitch": { "type": "number" }, "aim": { "type": "number", "description": "which fraction of the marker height the camera aims at (default 0.5)" } }, "additionalProperties": false }
-          },
-          "additionalProperties": false
-        },
-        "example": { "type": "string", "description": "one vivid suggested image, starting \"For example, picture\"" }
+       "at": {
+        "$ref": "#/$defs/position"
+       },
+       "dist": {
+        "type": "number"
+       },
+       "theta": {
+        "type": "number"
+       }
       },
       "additionalProperties": false
+     },
+     "ideas": {
+      "type": "array",
+      "description": "Big ideas mode (opt-in with town.json \"modes\"): the chapter's key ideas, in tour order, each placed on a landmark of the district that is NOT one of the verse objects",
+      "items": {
+       "$ref": "#/$defs/idea"
+      }
+     },
+     "rooms": {
+      "type": "array",
+      "description": "ceil(verses/5) rooms, in clockwise order starting nearest the district entrance on the left. The book lists every room of the town, in order; nothing is placed that the book does not list.",
+      "items": {
+       "$ref": "#/$defs/room"
+      }
+     }
+    }
+   }
+  },
+  "mode": {
+   "const": "passages",
+   "description": "Passage mode (verses100-ltm): each chapter is a section of a verse list and each room is one passage with its own \"ref\" and \"verses\" list; up to 6 spots, the sixth on the doorway you leave by. Rule 3 (ceil(n/5) rooms) does not apply. town.json sets \"passages\": true."
+  }
+ },
+ "$defs": {
+  "position": {
+   "description": "[x, z] in world units, or relative to a named anchor that the town registers with defAnchor(): the anchor's position plus dx, dz",
+   "oneOf": [
+    {
+     "type": "array",
+     "items": {
+      "type": "number"
+     },
+     "minItems": 2,
+     "maxItems": 2
+    },
+    {
+     "type": "object",
+     "required": [
+      "from"
+     ],
+     "properties": {
+      "from": {
+       "type": "string"
+      },
+      "dx": {
+       "type": "number"
+      },
+      "dz": {
+       "type": "number"
+      }
+     },
+     "additionalProperties": false
+    }
+   ]
+  },
+  "height": {
+   "description": "A height in world units: a number, or the terrain height at a position plus an offset",
+   "oneOf": [
+    {
+     "type": "number"
+    },
+    {
+     "type": "object",
+     "required": [
+      "ground"
+     ],
+     "properties": {
+      "ground": {
+       "$ref": "#/$defs/position"
+      },
+      "plus": {
+       "type": "number"
+      }
+     },
+     "additionalProperties": false
+    }
+   ]
+  },
+  "idea": {
+   "type": "object",
+   "required": [
+    "id",
+    "title",
+    "verses",
+    "summary",
+    "anchor",
+    "example"
+   ],
+   "properties": {
+    "id": {
+     "type": "string",
+     "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+    },
+    "title": {
+     "type": "string",
+     "description": "at most 8 words"
+    },
+    "verses": {
+     "type": "string",
+     "pattern": "^\\d+:\\d+(–\\d+)?(, \\d+(–\\d+)?)*$",
+     "description": "the verses behind the idea, e.g. \"1:15–20\" or \"1:13–14, 21–22\""
+    },
+    "summary": {
+     "type": "string",
+     "description": "at most 18 words"
+    },
+    "anchor": {
+     "type": "object",
+     "required": [
+      "label",
+      "where",
+      "view"
+     ],
+     "properties": {
+      "label": {
+       "type": "string",
+       "description": "the landmark, as the learner sees it named"
+      },
+      "where": {
+       "type": "object",
+       "required": [
+        "at"
+       ],
+       "properties": {
+        "at": {
+         "$ref": "#/$defs/position"
+        },
+        "top": {
+         "type": "number",
+         "description": "height of the marker above the ground there"
+        }
+       },
+       "additionalProperties": false
+      },
+      "view": {
+       "type": "object",
+       "required": [
+        "stand"
+       ],
+       "properties": {
+        "stand": {
+         "$ref": "#/$defs/position",
+         "description": "where the camera stands (it looks at the landmark)"
+        },
+        "via": {
+         "type": "array",
+         "items": {
+          "$ref": "#/$defs/position"
+         },
+         "description": "waypoints walked from the previous stop (the first idea: from the district entrance); they must pass through doorways, not walls"
+        },
+        "pitch": {
+         "type": "number"
+        },
+        "aim": {
+         "type": "number",
+         "description": "which fraction of the marker height the camera aims at (default 0.5)"
+        }
+       },
+       "additionalProperties": false
+      }
+     },
+     "additionalProperties": false
+    },
+    "example": {
+     "type": "string",
+     "description": "one vivid suggested image, starting \"For example, picture\""
+    }
+   },
+   "additionalProperties": false
+  },
+  "layout": {
+   "type": "object",
+   "properties": {
+    "dais": {
+     "enum": [
+      "stone",
+      "low",
+      "planks",
+      "pier",
+      "stones",
+      "rug",
+      "none"
+     ]
+    },
+    "spread": {
+     "type": "array",
+     "items": {
+      "type": "number"
+     },
+     "minItems": 2,
+     "maxItems": 2,
+     "description": "half-width and half-depth of the square of five objects"
+    },
+    "big": {
+     "type": "number",
+     "description": "scale of the objects"
+    },
+    "rug": {
+     "type": "string",
+     "description": "rug colour, for dais \"rug\""
+    },
+    "minY": {
+     "$ref": "#/$defs/height",
+     "description": "lowest height the room's floor may sit at"
+    }
+   },
+   "additionalProperties": false
+  },
+  "object": {
+   "type": "object",
+   "required": [
+    "what"
+   ],
+   "description": "One object, in order: near-left, far-left, far-right, near-right, centre. Vignette objects name a library object by id; the objects of a custom room only carry labels (its builder places them).",
+   "properties": {
+    "id": {
+     "type": "string",
+     "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+     "description": "Object library id (ltm-engine/objects, listed on ltm-engine/library/). \"TODO\" marks an unfinished room."
+    },
+    "what": {
+     "type": "string",
+     "description": "The label shown at the spot in the town"
+    },
+    "desc": {
+     "type": "string",
+     "description": "Fuller description of the object, as approved by the owner"
+    },
+    "args": {
+     "type": "array",
+     "description": "Extra arguments for the library builder (colours, counts); the library gives defaults"
+    },
+    "centre": {
+     "$ref": "#/$defs/height",
+     "description": "The 5th object is a centrepiece the town places itself (a statue, an altar fire): the marker rests at this height"
+    },
+    "extra": {
+     "const": true,
+     "description": "Stands in the room but has no verse: a natural furnishing of the place. Comes after the verse spots"
+    },
+    "place": {
+     "const": true,
+     "description": "A spot that is a feature of the place itself (a corner of a wall, a rock, a doorway), not an object; has no id (method rule 4)"
+    }
+   },
+   "additionalProperties": false
+  },
+  "room": {
+   "type": "object",
+   "required": [
+    "room",
+    "name",
+    "verses",
+    "objects"
+   ],
+   "properties": {
+    "room": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "name": {
+     "type": "string"
+    },
+    "verses": {
+     "oneOf": [
+      {
+       "type": "string",
+       "pattern": "^\\d+:\\d+(–\\d+)?$"
+      },
+      {
+       "type": "array",
+       "items": {
+        "type": "string"
+       },
+       "minItems": 1,
+       "maxItems": 6,
+       "description": "Passage mode: one verse label per spot, e.g. [\"3:16\", \"3:17\"]"
+      }
+     ]
+    },
+    "kind": {
+     "enum": [
+      "vignette",
+      "custom"
+     ],
+     "description": "\"vignette\" (default): five library objects on a square, built by the engine. \"custom\": the town's own builder places the room"
+    },
+    "builder": {
+     "type": "string",
+     "description": "custom rooms: a builder registered with defBuilder(), e.g. \"colossae.marketStall\""
+    },
+    "args": {
+     "type": "object",
+     "description": "custom rooms: arguments for the builder"
+    },
+    "at": {
+     "$ref": "#/$defs/position",
+     "description": "where the room stands"
+    },
+    "viewer": {
+     "$ref": "#/$defs/position",
+     "description": "where you stand to look at it"
     },
     "layout": {
-      "type": "object",
-      "properties": {
-        "dais": { "enum": ["stone", "low", "planks", "pier", "stones", "rug", "none"] },
-        "spread": { "type": "array", "items": { "type": "number" }, "minItems": 2, "maxItems": 2, "description": "half-width and half-depth of the square of five objects" },
-        "big": { "type": "number", "description": "scale of the objects" },
-        "rug": { "type": "string", "description": "rug colour, for dais \"rug\"" },
-        "minY": { "$ref": "#/$defs/height", "description": "lowest height the room's floor may sit at" }
-      },
-      "additionalProperties": false
+     "$ref": "#/$defs/layout"
     },
-    "object": {
-      "type": "object",
-      "required": ["what"],
-      "description": "One object, in order: near-left, far-left, far-right, near-right, centre. Vignette objects name a library object by id; the objects of a custom room only carry labels (its builder places them).",
-      "properties": {
-        "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "description": "Object library id (ltm-engine/objects, listed on ltm-engine/library/). \"TODO\" marks an unfinished room." },
-        "what": { "type": "string", "description": "The label shown at the spot in the town" },
-        "desc": { "type": "string", "description": "Fuller description of the object, as approved by the owner" },
-        "args": { "type": "array", "description": "Extra arguments for the library builder (colours, counts); the library gives defaults" },
-        "centre": { "$ref": "#/$defs/height", "description": "The 5th object is a centrepiece the town places itself (a statue, an altar fire): the marker rests at this height" },
-        "extra": { "const": true, "description": "Stands in the room but has no verse: a natural furnishing of the place. Comes after the verse spots" },
-        "place": { "const": true, "description": "A spot that is a feature of the place itself (a corner of a wall, a rock, a doorway), not an object; has no id (method rule 4)" }
-      },
-      "additionalProperties": false
+    "back": {
+     "type": "number",
+     "description": "camera distance override"
     },
-    "room": {
-      "type": "object",
-      "required": ["room", "name", "verses", "objects"],
-      "properties": {
-        "room": { "type": "integer", "minimum": 1 },
-        "name": { "type": "string" },
-        "verses": { "type": "string", "pattern": "^\\d+:\\d+(–\\d+)?$" },
-        "kind": { "enum": ["vignette", "custom"], "description": "\"vignette\" (default): five library objects on a square, built by the engine. \"custom\": the town's own builder places the room" },
-        "builder": { "type": "string", "description": "custom rooms: a builder registered with defBuilder(), e.g. \"colossae.marketStall\"" },
-        "args": { "type": "object", "description": "custom rooms: arguments for the builder" },
-        "at": { "$ref": "#/$defs/position", "description": "where the room stands" },
-        "viewer": { "$ref": "#/$defs/position", "description": "where you stand to look at it" },
-        "layout": { "$ref": "#/$defs/layout" },
-        "back": { "type": "number", "description": "camera distance override" },
-        "pitch": { "type": "number", "description": "camera pitch override" },
-        "bannerLift": { "type": "number", "description": "raise the room-name banner by this much" },
-        "objects": { "type": "array", "minItems": 1, "maxItems": 5, "items": { "$ref": "#/$defs/object" } },
-        "fallback": {
-          "type": "object",
-          "description": "custom rooms: a plain vignette the builder falls back to when its special assets are missing",
-          "required": ["viewer", "objects"],
-          "properties": { "at": { "$ref": "#/$defs/position" }, "viewer": { "$ref": "#/$defs/position" }, "layout": { "$ref": "#/$defs/layout" }, "objects": { "type": "array", "minItems": 1, "maxItems": 5, "items": { "$ref": "#/$defs/object" } } },
-          "additionalProperties": false
-        },
-        "referenceImage": { "type": "string" }
+    "pitch": {
+     "type": "number",
+     "description": "camera pitch override"
+    },
+    "bannerLift": {
+     "type": "number",
+     "description": "raise the room-name banner by this much"
+    },
+    "objects": {
+     "type": "array",
+     "minItems": 1,
+     "maxItems": 5,
+     "items": {
+      "$ref": "#/$defs/object"
+     }
+    },
+    "fallback": {
+     "type": "object",
+     "description": "custom rooms: a plain vignette the builder falls back to when its special assets are missing",
+     "required": [
+      "viewer",
+      "objects"
+     ],
+     "properties": {
+      "at": {
+       "$ref": "#/$defs/position"
+      },
+      "viewer": {
+       "$ref": "#/$defs/position"
+      },
+      "layout": {
+       "$ref": "#/$defs/layout"
+      },
+      "objects": {
+       "type": "array",
+       "minItems": 1,
+       "maxItems": 5,
+       "items": {
+        "$ref": "#/$defs/object"
+       }
       }
+     },
+     "additionalProperties": false
+    },
+    "referenceImage": {
+     "type": "string"
+    },
+    "ref": {
+     "type": "string",
+     "description": "Passage mode: the passage reference, e.g. \"John 3:16-17\"; shown as the room banner's main line"
     }
+   }
   }
+ }
 }

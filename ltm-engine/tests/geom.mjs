@@ -12,7 +12,7 @@ export function roomChecks(m) {
     const [a, c, d, e] = P;
     const cw = a.sx < e.sx && c.sx < d.sx && a.sx < d.sx && c.sx < e.sx && a.sy > c.sy && e.sy > d.sy;
     add('clockwise order on screen', cw, cw ? '' : P.slice(0, 4).map((q, k) => `${k + 1}(${q.sx.toFixed(2)},${q.sy.toFixed(2)})`).join(' '));
-    if (P.length === 5) add('centre inside the square', inside(P[4], [a, c, d, e]));
+    if (P.length >= 5) add('centre inside the square', inside(P[4], [a, c, d, e]));
   }
   const floating = P.map((q, k) => q.support === null || q.support > T.maxSupport ? k + 1 : 0).filter(Boolean);
   add('markers rest on objects', floating.length === 0, floating.length ? `spot(s) ${floating} have nothing beneath within ${T.maxSupport} m` : '');
