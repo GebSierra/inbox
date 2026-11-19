@@ -7,8 +7,9 @@ const keepRooms = []; for (let ch = 1; ch <= Math.min(BUILT, 5); ch++) { const c
 // ===== 1. THE DAWN GARDEN (Beginnings): the summit where the road starts =====
 {
   // olive trees, cypresses and flowers on the crown; nothing on the road or in a room
-  scatter(-238, -34, -168, 34, 34, keepRooms, (x, z) => rnd() < .3 ? cypress(x, z, R(.8, 1.2)) : tree(x, z, R(.8, 1.15)));
-  scatter(-236, -30, -168, 30, 26, keepRooms, (x, z) => shrub(x, z, R(.8, 1.3)));
+  const keepGlory = [...keepRooms, [-199, 8, -185, 34], [-229, 8, -211, 30]];   // open sky behind the tent and the lookout, so their light has a clean backdrop
+  scatter(-238, -34, -168, 34, 34, keepGlory, (x, z) => rnd() < .3 ? cypress(x, z, R(.8, 1.2)) : tree(x, z, R(.8, 1.15)));
+  scatter(-236, -30, -168, 30, 26, keepGlory, (x, z) => shrub(x, z, R(.8, 1.3)));
   // 1.1 The Lookout: a broad flat-topped rock at the summit's edge (Genesis 1:1's spot)
   { const r = roomOf(1, 1); if (r) { const F = roomFrame(r), y = heightAt(r.at[0], r.at[1]); const g = atRoom(F, 0, 0, y);
     const b = add(new THREE.DodecahedronGeometry(1.25, 0), stoneM, 0, .05, 0, g); b.scale.set(1.25, .42, 1); box(2.1, .1, 1.6, stoneDkM, 0, .52, 0, g); rock(...F.at(.9, -1.3), .45, y); rock(...F.at(-.4, 1.4), .35, y); } }

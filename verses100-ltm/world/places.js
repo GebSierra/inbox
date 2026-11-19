@@ -13,9 +13,10 @@
 function roomFrame(r) { const [x, z] = r.at, [vx, vz] = r.viewer; let fx = x - vx, fz = z - vz; const l = Math.hypot(fx, fz); fx /= l; fz /= l;
   return { x, z, fx, fz, yaw: Math.atan2(vx - x, vz - z), y: heightAt(x, z), at: (f, s) => [x + fx * f - fz * s, z + fz * f + fx * s] }; }
 // put a library object down at (x, y, z), its front (local +z) turned by rot; returns the height of its top
-function v100Put(id, x, z, rot = 0, s = 1, y = heightAt(x, z)) {
+function v100Put(id, x, z, rot = 0, s = 1, y = heightAt(x, z), args) {
   const g = new THREE.Group(); g.position.set(x, y, z); g.rotation.y = rot; g.scale.setScalar(s); scene.add(g);
-  const e = OBJECTS.get(id); if (!e) { console.warn('[v100] missing library object ' + id); return y + 1; } e.fn(g, 0, 0, 0, ...(e.args || []));
+  const e = OBJECTS.get(id); if (!e) { console.warn('[v100] missing library object ' + id); return y + 1; } e.fn(g, 0, 0, 0, ...(args || e.args || []));
+  if (e.kind === 'effect') return y + 1;   // light, smoke and glow are centred on their source: leave them where they are
   g.updateMatrixWorld(true); const bb = new THREE.Box3().setFromObject(g); if (bb.isEmpty()) return y + 1;
   // some library pieces are built at the world origin: set every piece down on its own spot
   const c = bb.getCenter(new THREE.Vector3()); if (Math.hypot(c.x - x, c.z - z) > 2.5) { g.position.x -= c.x - x; g.position.z -= c.z - z; }
@@ -35,7 +36,7 @@ defBuilder('v100.room', (r, { ch }) => {
     const [f, s] = o.at || (o.extra ? [0, 0] : DEF[vi]), [x, z] = F.at(f, s), y0 = baseY(x, z);
     let top;
     if (o.place) top = y0 + (o.lift ?? .12);
-    else top = v100Put(o.id, x, z, F.yaw + (o.rot || 0), o.scale ?? a.scale ?? 1.15, y0 + (o.lift || 0));
+    else top = v100Put(o.id, x, z, F.yaw + (o.rot || 0), o.scale ?? a.scale ?? 1.15, y0 + (o.lift || 0), o.args);
     if (!o.extra) { out.push({ x, z, y: o.mark !== undefined ? y0 + o.mark : top, what: o.what }); vi++; }
   }
   station(ch, r.room, r.name, F.x, F.z, [F.x + F.fx, 0, F.z + F.fz], out);

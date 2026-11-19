@@ -5,17 +5,25 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>100 Bible Verses</title>
 <link rel="stylesheet" href="../ltm-engine/engine/app.css">
-<style>#credits{max-height:calc(100vh - 150px);overflow-y:auto}</style>
+<style>#credits{max-height:calc(100vh - 150px);overflow-y:auto}
+#passage{position:fixed;left:50%;bottom:76px;transform:translateX(-50%);width:min(560px,calc(100vw - 24px));z-index:25}
+#passage .pc{background:rgba(244,234,214,.97);border:2px solid #b8583a;border-radius:14px;padding:14px 18px 12px;font-family:Georgia,serif;color:#3b2a1c;box-shadow:0 6px 24px rgba(0,0,0,.25);max-height:calc(100vh - 140px);overflow-y:auto;position:relative}
+#passage .px{position:absolute;right:8px;top:6px;border:0;background:none;font-size:26px;line-height:1;color:#7a5a40;cursor:pointer}
+#passage .pr{font-weight:bold;font-size:22px}#passage .pn{color:#b8583a;font-size:14px;margin:2px 0 8px}
+#passage .pt{display:flex;gap:6px;margin-bottom:8px}#passage .pt button{font:600 13px Georgia,serif;padding:4px 12px;border-radius:14px;border:1.5px solid #b8583a;background:#fff8ec;color:#7a3a24;cursor:pointer}
+#passage .pt button[aria-pressed=true]{background:#b8583a;color:#fff}
+#passage .pb p{margin:0 0 6px;font-size:17px;line-height:1.45}#passage sup{color:#b8583a;font-weight:bold;margin-right:2px}#passage .pnone{font-style:italic}
+#passage .pcr{font-size:11px;color:#7a6a58;margin-top:6px}#hud{cursor:pointer}</style>
 </head>
 <body>
-<div id="loader"><div class="lc"><div class="lt">100 Bible Verses</div><div class="ls">A memory palace on one road, Genesis to Revelation</div><div class="lb"><i id="lbar"></i></div><div class="lp" id="lpct">Preparing the road…</div></div></div>
+<div id="loader"><div class="lc"><div class="lt">100 Bible Verses</div><div class="ls">A memory palace for Robert J. Morgan’s <i>100 Bible Verses Everyone Should Know by Heart</i></div><div class="lb"><i id="lbar"></i></div><div class="lp" id="lpct">Preparing the road…</div></div></div>
 <div id="hud" class="gone"><div class="z">Beginnings</div><div class="s">The Dawn Garden</div></div>
 <div id="help">WASD / arrows to walk · drag to look · double-click to go there · N / P jump stations</div>
 <button id="mapbtn">Bird’s-eye</button>
 <button id="howbtn" aria-label="How it works">How it works</button>
 <button id="fsbtn" aria-label="Full screen">⛶</button>
 <button id="infobtn" aria-label="Settings and credits">i</button>
-<div id="credits" hidden><div class="tg"><button id="gembtn" aria-pressed="false">Markers: off</button><button id="numbtn" aria-pressed="false">Verse numbers: off</button></div><b>About this palace</b><br>One road through Bible lands, one district per topic and one room per passage, following the list in Robert J. Morgan’s <i>100 Bible Verses Everyone Should Know by Heart</i>. Some passages run a few verses longer than the book’s reference so each thought is complete.<br>The places are simplified or imagined so each room is easy to remember. The synagogue follows the one in the James palace; the tabernacle’s proportions follow Exodus 26–27.<br><br><b>Credits</b><br>Medieval Village MegaKit by Quaternius (CC0).<br><a href="https://sketchfab.com/3d-models/low-poly-bird-animated-82ada91f0ac64ab595fbc3dc994a3590" target="_blank" rel="noopener">Low Poly Bird (Animated)</a> by Charlie Tinley, CC BY 4.0.<br><a href="https://sketchfab.com/3d-models/low-poly-market-stall-game-ready-asset-20660479b5c24f55b7873adf4bca4073" target="_blank" rel="noopener">Low Poly Market Stall — Game-Ready Asset</a> by BlackMike, CC BY 4.0.<br><a href="https://sketchfab.com/3d-models/low-poly-traditional-market-stall-83f6b14a28094a5ab5f8396ea6f4c1e9" target="_blank" rel="noopener">Low Poly Traditional Market Stall</a> by Nisa Nurul Azizah, CC BY 4.0.<br><a href="https://sketchfab.com/3d-models/modular-medieval-table-08dd395a346a440ba85e8b3b46ab3672" target="_blank" rel="noopener">Modular Medieval Table</a> by GameWorldStudio, CC BY 4.0.<br>Scripture quotations from the ESV® Bible, © Crossway.</div>
+<div id="credits" hidden><div class="tg"><button id="gembtn" aria-pressed="false">Markers: off</button><button id="numbtn" aria-pressed="false">Verse numbers: off</button></div><b>About this palace</b><br>The verses, their topics and their order come from Robert J. Morgan’s book <i>100 Bible Verses Everyone Should Know by Heart</i> (B&amp;H Publishing, 2010). The book explains why memorizing Scripture matters, gives tips for learning by heart, and has notes on every verse. If this palace helps you, <a href="https://www.bhpublishinggroup.com/product/100-bible-verses-everyone-should-know-by-heart-2/" target="_blank" rel="noopener">get the book</a> to learn more.<br>This palace is a companion to the book: one road through Bible lands, one district per topic and one room per passage. Some passages run a few verses longer than the book’s reference so each thought is complete. The places are simplified or imagined so each room is easy to remember.<br>Tap a room’s sign to read the passage in the BSB or the ESV.<br><br><b>Credits</b><br>Medieval Village MegaKit by Quaternius (CC0).<br><a href="https://sketchfab.com/3d-models/low-poly-bird-animated-82ada91f0ac64ab595fbc3dc994a3590" target="_blank" rel="noopener">Low Poly Bird (Animated)</a> by Charlie Tinley, CC BY 4.0.<br><a href="https://sketchfab.com/3d-models/low-poly-market-stall-game-ready-asset-20660479b5c24f55b7873adf4bca4073" target="_blank" rel="noopener">Low Poly Market Stall — Game-Ready Asset</a> by BlackMike, CC BY 4.0.<br><a href="https://sketchfab.com/3d-models/low-poly-traditional-market-stall-83f6b14a28094a5ab5f8396ea6f4c1e9" target="_blank" rel="noopener">Low Poly Traditional Market Stall</a> by Nisa Nurul Azizah, CC BY 4.0.<br><a href="https://sketchfab.com/3d-models/modular-medieval-table-08dd395a346a440ba85e8b3b46ab3672" target="_blank" rel="noopener">Modular Medieval Table</a> by GameWorldStudio, CC BY 4.0.<br>Scripture quotations from the ESV® Bible, © Crossway. Berean Standard Bible (BSB), public domain (berean.bible).</div>
 <div id="tut" hidden>
   <div class="card">
     <div class="step" id="tutStep"></div>
@@ -24,6 +32,7 @@
     <div class="row"><button id="tutSkip" class="ghost">Skip tutorial</button><span class="sp"></span><button id="tutBack" class="ghost">Back</button><button id="tutNext">Next</button><span id="tutChoice" hidden><button id="tutGo" class="ghost">Start exploring</button> <button id="tutMore">More tips</button></span></div>
   </div>
 </div>
+<div id="passage" hidden></div>
 <div id="nav"><button id="prev">◀ Prev</button><button id="next">Next ▶</button></div>
 <div id="joy"><div id="knob"></div></div>
 <script type="importmap">{"imports":{"three":"../ltm-engine/three.module.min.js","three/addons/":"../ltm-engine/addons/","ltm-engine/":"../ltm-engine/","ltm-town/":"./","ltm-james/":"../james-ltm/"}}</script>
