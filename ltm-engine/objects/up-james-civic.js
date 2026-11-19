@@ -428,18 +428,18 @@ function jcWatchtower(g, x, y, z) {
 function jcSheepskin(g0, x0, y0, z0) { const g = new THREE.Group(); g.position.set(x0, y0, z0); g.scale.setScalar(1.3); g0.add(g); const x = 0, y = 0, z = 0;   // a creamy fleece spread over a low stone to dry, wool tufts all over, legs splayed
   box(1.2, .25, .8, jcPlasterMat('#9a8a6e'), x, y, z, g); const hide = new THREE.Shape(); hide.moveTo(-.6, -.3); for (const [a, b] of [[-.75, -.5], [-.4, -.35], [.4, -.38], [.78, -.52], [.62, 0], [.8, .5], [.4, .38], [-.4, .4], [-.78, .52], [-.62, 0]]) hide.lineTo(a, b); hide.lineTo(-.6, -.3);
   const w = mat('jcFleece', '#d8c090', { emissive: '#2a2010', emissiveIntensity: .25, roughness: 1 }), h = add(new THREE.ShapeGeometry(hide), w, x, y + .27, z, g); h.rotation.x = -Math.PI / 2; h.userData.nocol = 1; const e = add(new THREE.ShapeGeometry(hide), mat('jcHide', '#8a6440'), x, y + .26, z, g); e.rotation.x = -Math.PI / 2; e.scale.set(1.12, 1.12, 1); e.userData.nocol = 1; h.scale.set(.92, .92, 1);
-  for (let k = 0; k < 110; k++) { const a = k * 2.4, r = .03 + (k % 12) * .04; add(new THREE.IcosahedronGeometry(.085 + (k % 3) * .02, 1), w, x + Math.cos(a) * r * 1.2, y + .3 + (k % 2) * .03, z + Math.sin(a) * r * .72, g).scale.y = .7; }
+  for (let k = 0; k < 70; k++) { const a = k * 2.4, r = .05 + (k % 10) * .046; add(new THREE.IcosahedronGeometry(.07 + (k % 3) * .015, 0), w, x + Math.cos(a) * r * 1.15, y + .29, z + Math.sin(a) * r * .75, g).scale.y = .55; }
   return y0 + .5; }
 function jcFigTree(g, x, y, z) {   // a broad, low fig tree: a grey forked trunk, a wide dome of big leaves, purple figs
   const bark = mat('jcFigBark', '#8a8070'); cyl(.2, .32, 1.5, 8, bark, x, y, z, g); cyl(.4, .45, .12, 8, bark, x, y, z, g); for (const a of [0, 2.1, 4.2]) { const b = new THREE.Group(); b.position.set(x, y + 1.4, z); b.rotation.y = -a; g.add(b); const l = cyl(.09, .15, .9, 6, bark, 0, 0, 0, b); l.rotation.z = -.7; l.position.set(.3, .35, 0); }
   const lf = [mat('jcFigLeaf', '#4e7a2e', { roughness: .8 }), mat('jcFigLeaf2', '#6a9a3a', { roughness: .8 })];
   for (let k = 0; k < 14; k++) { const a = k * 2.4, r = k < 6 ? .9 : .45; const c = add(new THREE.IcosahedronGeometry(.62 - (k % 3) * .08, 0), lf[k % 2], x + Math.cos(a) * r, y + 2.0 + (k % 4) * .18 + (k < 6 ? 0 : .35), z + Math.sin(a) * r, g); c.scale.y = .7; }
-  for (let k = 0; k < 12; k++) { const a = k * 1.9; add(new THREE.SphereGeometry(.07, 6, 4), mat('jcFig', '#6a2a5a'), x + Math.cos(a) * 1.3, y + 1.75 + (k % 3) * .2, z + Math.sin(a) * 1.3, g); }
+  for (let k = 0; k < 12; k++) { const a = k * 1.9; add(new THREE.SphereGeometry(.07, 6, 4), mat(k % 2 ? 'jcFigG' : 'jcFigP', k % 2 ? '#8a9a4a' : '#5a3a5a'), x + Math.cos(a) * 1.3, y + 1.75 + (k % 3) * .2, z + Math.sin(a) * 1.3, g); }
   return y + 2.9; }
 function jcReaper(g, x, y, z) {   // a labourer standing with a big iron sickle held out, a sheaf at his feet
   viaScene(g, x, y, z, () => { person(0, 0, -.4, '#b89a6a', { skin: 2, hair: 1, y: 0 }); });
-  const iron = mat('jcSickleDk', '#5a5e66', { metalness: .6, roughness: .3, emissive: '#2a2c30', emissiveIntensity: .4 });
-  const sk = new THREE.Group(); sk.position.set(x + .3, y + .95, z - .5); sk.rotation.set(-.2, .9, -.5); g.add(sk); box(.05, .32, .05, jcM.beam(), 0, -.3, 0, sk);
+  const iron = mat('jcSickle', '#d8dce2', { metalness: .5, roughness: .25, emissive: '#6a6e76', emissiveIntensity: .6 });
+  const sk = new THREE.Group(); sk.position.set(x - .42, y + .85, z + .55); sk.rotation.set(0, Math.PI + .3, -.2); g.add(sk); box(.05, .32, .05, jcM.beam(), 0, -.3, 0, sk);
   const bl = add(new THREE.TorusGeometry(.38, .035, 4, 16, Math.PI * 1.2), iron, .3, .08, 0, sk); bl.rotation.z = Math.PI * .1;
   for (let k = 0; k < 16; k++) { const st = box(.035, .9, .035, mat('jcStraw', '#d8c078'), x - .55 + (k % 4) * .06, y, z - .35 + Math.floor(k / 4) * .06, g); st.rotation.z = (k % 4 - 1.5) * .08; } box(.3, .07, .3, mat('jcRope', '#c8b48a'), x - .46, y + .35, z - .26, g);
   return y + 1.9; }
