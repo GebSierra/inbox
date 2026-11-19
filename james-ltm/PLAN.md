@@ -122,3 +122,17 @@ No reference images exist for the shops, so each room is judged against its writ
 | 11 | 7.7 | 7.6 | 7.8 | 7.9 | splayed three-leg tripod, brighter water, white bolts, slimmer censer, one-disc wheel |
 
 Status: plateaued just under 8. Single runs on the same image vary by up to about 0.9 (best single runs: Smithy 8.2, Fuller 8.1, Merchant 8.1, Potter 8.0). The remaining complaints are mostly taste and the low-poly style itself (thin townsfolk limbs, "flat" water and dye, wanting more clutter), and they are inconsistent between critics.
+
+## K. Chapter 5 blind critic test (owner, 2026-11-19: "Run chapter 5 through blind critic test")
+Same method as §J: 3 blind Sonnet critics per round see only the four screenshots and score each room against its written object list (object 25, layout 15, material 15, lighting 15, density 10, framing 10, craft 10). Bar used: a 3-run average of 8.0.
+
+| Round | Rich Man's House | Field | Winepress | Watchtower | Main change before the round |
+|---|---|---|---|---|---|
+| 1 | 6.9 | 6.5 | 6.9 | 7.2 | as built |
+| 2 | 7.4 | 6.8 | 6.7 | 7.4 | smaller pool, standing reaper, broad fig tree, fleece, smaller ox, olive and cypress line with a dry-stone wall hiding the sea |
+| 3 | 7.6 | 6.6 | 7.7 | 7.7 | pool moved aside, grain bin, fig trunk, vine pergola, dry stone trough, furrowed soil, stones and tufts |
+| 4 | 7.6 | 7.4 | 7.7 | 7.9 | smaller standing ox, wider wheat, closer field camera, grain bin behind the jars |
+| 5 | 7.6 | 6.6 | 7.2 | 7.2 | woollier fleece and a new flour sack (both backfired), deeper field square; Watchtower unchanged yet fell 0.7 (critic noise) |
+| 6 | 7.6 | 7.0 | 7.9 | 7.5 | round-5 changes reverted, sickle held in front, green and purple figs |
+
+Status: plateaued at 7.0–7.9, the same pattern as chapter 4. Best single runs: House 8.1, Field 7.7, Winepress 8.2, Watchtower 8.1. The Field is the weakest: from the road, the ox at near-left sits in front of the wheat at far-left, and critics also find the library ox's legs and the flour sack crude. Other repeated complaints: library figures (kneeling woman, grazing ox), the foreground paving of the road, and wanting more clutter.
