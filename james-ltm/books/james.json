@@ -1013,8 +1013,8 @@
      ],
      "layout": {
       "spread": [
-       3.0,
-       2.0
+        2.7,
+        2.0
       ],
       "minY": {
        "ground": [
@@ -1054,8 +1054,8 @@
      "verses": "5:6–10",
      "kind": "vignette",
      "name": "The Field",
-     "back": 7.4,
-     "pitch": -0.1,
+     "back": 6.6,
+     "pitch": -0.12,
      "bannerLift": -1.4,
      "at": [
       -101,
@@ -1125,7 +1125,7 @@
        "lift": 0.6
       },
       {
-       "id": "grapevine-trellis",
+       "id": "vine-arbour-grapes",
        "what": "grapevine on a trellis"
       },
       {
@@ -1163,7 +1163,7 @@
        "what": "woman kneeling in prayer"
       },
       {
-       "id": "water-trough",
+       "id": "dry-stone-trough",
        "what": "empty water trough"
       },
       {

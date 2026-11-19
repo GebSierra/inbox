@@ -69,8 +69,17 @@
   // with the winepress (room 3, far) and the watchtower (room 4, near) in it: you look over the wall from the road. Coming back east, the west gate is close.
   drape(-118, -30.5, -92, -27.5, 'path', .03);
   { const g = new THREE.Group(); scene.add(g); jcWinepress(g, -114.4, heightAt(-114.4, -40.3), -40.3); jcWatchtower(g, -98, heightAt(-98, -44), -44); }
-  drape(-121, -45.6, -87, -34.6, mat('jcSoil', '#8e7048', { roughness: 1 }), .02);   // the vineyard's tilled soil, inside its wall
-  upWheat(-97.3, -18.6, 7.5, 5, 0);                                                                 // the standing wheat in the field: room 2
+  const soilT = (() => { const c = document.createElement('canvas'); c.width = c.height = 128; const k = c.getContext('2d'); k.fillStyle = '#fff'; k.fillRect(0, 0, 128, 128);
+    for (let i = 0; i < 900; i++) { const v = 120 + jcRand() * 110 | 0; k.fillStyle = `rgba(${v},${v * .85 | 0},${v * .7 | 0},.5)`; k.fillRect(jcRand() * 128, jcRand() * 128, 1 + jcRand() * 3, 1 + jcRand() * 2); }
+    for (let i = 0; i < 8; i++) { k.fillStyle = 'rgba(90,60,35,.25)'; k.fillRect(0, i * 16 + 6, 128, 4); }
+    const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.wrapS = t.wrapT = THREE.RepeatWrapping; return t; })();
+  { const t2 = soilT.clone(); t2.needsUpdate = true; t2.repeat.set(17, 5.5); drape(-121, -45.6, -87, -34.6, mat('jcSoilT', '#9a7a52', { roughness: 1, map: t2 }), .02); }   // the vineyard's tilled soil, inside its wall
+  { const g = new THREE.Group(); scene.add(g); const spots = [[-112, -38.5], [-98, -38.5], [-101, -22]]; const stone = jcPlasterMat('#b8a888'), tuft = mat('jcTuft', '#8a9a4a');   // stones and grass tufts in the vineyard and the field, clear of the rooms' squares
+    for (let i = 0; i < 260; i++) { const inV = i < 150, x = inV ? -120 + jcRand() * 32 : -108 + jcRand() * 16, z = inV ? -45 + jcRand() * 10 : -27 + jcRand() * 10;
+      if (spots.some(([sx, sz]) => Math.abs(x - sx) < 3.4 && Math.abs(z - sz) < 2.6)) continue; const y = heightAt(x, z);
+      if (i % 3) { const st = add(new THREE.DodecahedronGeometry(.06 + jcRand() * .1, 0), stone, x, y + .03, z, g); st.scale.y = .6; st.userData.nocol = 1; }
+      else { for (let k = 0; k < 4; k++) { const c = add(new THREE.ConeGeometry(.03, .25 + jcRand() * .15, 3), tuft, x + (k % 2) * .06, y + .12, z + (k > 1 ? .06 : 0), g); c.rotation.z = (k - 1.5) * .25; c.userData.nocol = 1; } } } }   // the vineyard's tilled soil, inside its wall
+  upWheat(-97.0, -17.6, 7.5, 5.5, 0);                                                                 // the standing wheat in the field: room 2
   { const tr = OBJECTS.get('grapevine-trellis'); const g = new THREE.Group(); scene.add(g);      // rows of vines behind the winepress and the watchtower
     for (const zr of [-43.2, -44.8]) for (let x = -120; x <= -88; x += 3.2) { if (Math.abs(x + 98) < 2.4 && zr > -46) continue; tr.fn(g, x, heightAt(x, zr), zr, ...tr.args); } }
   { const g = new THREE.Group(); scene.add(g); const leaf = mat('jcCypress', '#3a5a2a', { roughness: .9 }), olive = mat('jcOliveLf', '#7a8a5a', { roughness: .9 });   // a dry-stone wall and a line of cypress and olive along the vineyard's far side
