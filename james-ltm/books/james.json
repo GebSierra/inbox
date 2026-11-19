@@ -804,8 +804,8 @@
      ],
      "layout": {
       "spread": [
-       2.2,
-       1.6
+       1.7,
+       1.7
       ],
       "minY": {
        "ground": [
@@ -854,8 +854,8 @@
      ],
      "layout": {
       "spread": [
-       2.0,
-       1.6
+       1.7,
+       1.7
       ],
       "minY": {
        "ground": [
@@ -904,8 +904,8 @@
      ],
      "layout": {
       "spread": [
-       2.0,
-       1.6
+       1.8,
+       1.9
       ],
       "minY": {
        "ground": [
@@ -933,7 +933,7 @@
        "what": "incense burner with smoke"
       },
       {
-       "id": "merchant-blue-tunic",
+       "id": "merchant-lapis-tunic",
        "what": "merchant in a blue tunic"
       }
      ],
@@ -954,8 +954,8 @@
      ],
      "layout": {
       "spread": [
-       2.0,
-       1.6
+       1.7,
+       1.7
       ],
       "minY": {
        "ground": [

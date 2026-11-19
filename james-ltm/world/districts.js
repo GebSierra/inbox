@@ -69,6 +69,7 @@
   // with the winepress (room 3, far) and the watchtower (room 4, near) in it: you look over the wall from the road. Coming back east, the west gate is close.
   drape(-118, -30.5, -92, -27.5, 'path', .03);
   { const g = new THREE.Group(); scene.add(g); jcWinepress(g, -114.4, heightAt(-114.4, -40.3), -40.3); jcWatchtower(g, -98, heightAt(-98, -44), -44); }
+  drape(-121, -45.6, -87, -34.6, mat('jcSoil', '#8e7048', { roughness: 1 }), .02);   // the vineyard's tilled soil, inside its wall
   upWheat(-98.4, -18.4, 7, 4, 0);                                                                 // the standing wheat in the field: room 2
   { const tr = OBJECTS.get('grapevine-trellis'); const g = new THREE.Group(); scene.add(g);      // rows of vines behind the winepress and the watchtower
     for (const zr of [-43.2, -44.8]) for (let x = -120; x <= -88; x += 3.2) { if (Math.abs(x + 98) < 2.4 && zr > -46) continue; tr.fn(g, x, heightAt(x, zr), zr, ...tr.args); } }
