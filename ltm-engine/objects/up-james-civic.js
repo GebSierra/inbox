@@ -438,9 +438,15 @@ function jcFigTree(g, x, y, z) {   // a broad, low fig tree: a grey forked trunk
   return y + 2.9; }
 function jcReaper(g, x, y, z) {   // a labourer standing with a big iron sickle held out, a sheaf at his feet
   viaScene(g, x, y, z, () => { person(0, 0, -.4, '#b89a6a', { skin: 2, hair: 1, y: 0 }); });
-  const iron = mat('jcSickleIron', '#7a7e86', { metalness: .6, roughness: .35, emissive: '#2a2c30', emissiveIntensity: .3 }); iron.name = 'jcSickleIron';
-  const sk = new THREE.Group(); sk.position.set(x - .34, y + .78, z + .18); sk.rotation.set(0, Math.PI / 2, 0); g.add(sk); box(.045, .26, .045, jcM.beam(), 0, -.06, 0, sk);   // a short wooden grip in his hand
-  const bl = add(new THREE.TorusGeometry(.17, .02, 4, 14, Math.PI * 1.1), iron, .14, .2, 0, sk); bl.rotation.z = -.3;   // a small iron crescent blade above the grip
+  const iron = mat('jcSickleSteel', '#b4bac4', { metalness: .55, roughness: .3, emissive: '#4a4e56', emissiveIntensity: .45, side: THREE.DoubleSide }); iron.name = 'jcSickleIron';
+  const sk = new THREE.Group(); sk.position.set(x - .36, y + .8, z + .22); sk.rotation.set(0, 0, .55); g.add(sk);   // held out from his side, tilted forward and away from the body
+  box(.09, .1, .1, mat('jcFist', '#a8704a'), 0, -.02, 0, sk);                                                    // his fist round the grip
+  cyl(.028, .032, .32, 8, mat('jcSickleGrip', '#d0a46c', { emissive: '#4a3018', emissiveIntensity: .3 }), 0, -.14, 0, sk); add(new THREE.SphereGeometry(.035, 8, 6), mat('jcSickleGrip', '#d0a46c'), 0, -.15, 0, sk);   // pale wooden handle with a knob
+  const R = .25, cy = .18 + R, sh = new THREE.Shape(), N = 18, a0 = -Math.PI / 2, a1 = Math.PI * .85;   // a tapering crescent: thick at the handle, a sharp point at the tip; the spine towards the body, the point away
+  for (let k = 0; k <= N; k++) { const a = a0 + (a1 - a0) * k / N, p = [Math.cos(a) * R, cy + Math.sin(a) * R]; k ? sh.lineTo(...p) : sh.moveTo(...p); }
+  for (let k = N; k >= 0; k--) { const a = a0 + (a1 - a0) * k / N, w = .075 * (1 - k / N) + .004, r = R - w; sh.lineTo(Math.cos(a) * r, cy + Math.sin(a) * r); }
+  const bl = add(new THREE.ExtrudeGeometry(sh, { depth: .016, bevelEnabled: false }), iron, 0, 0, -.008, sk); bl.material = iron; bl.scale.x = -1;
+  box(.05, .06, .05, mat('jcSickleIronDk', '#4a4e56'), 0, .17, 0, sk);                                           // the iron ferrule where blade meets handle
   for (let k = 0; k < 16; k++) { const st = box(.035, .9, .035, mat('jcStraw', '#d8c078'), x - .55 + (k % 4) * .06, y, z - .35 + Math.floor(k / 4) * .06, g); st.rotation.z = (k % 4 - 1.5) * .08; } box(.3, .07, .3, mat('jcRope', '#c8b48a'), x - .46, y + .35, z - .26, g);
   return y + 1.9; }
 function jcVineArbour(g0, x0, y0, z0) { const g = new THREE.Group(); g.position.set(x0, y0, z0); g.scale.setScalar(1.25); g0.add(g); const x = 0, y = 0, z = 0;   // one big old vine on a pergola: a twisted trunk, a roof of leaves and heavy purple bunches hanging under it
