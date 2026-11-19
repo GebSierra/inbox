@@ -17,11 +17,21 @@ const keepRooms = []; for (let ch = 1; ch <= Math.min(BUILT, 5); ch++) { const c
   { const r = roomOf(1, 2); if (r) { const [x, z] = r.at, y = heightAt(x, z);
     const pool = add(new THREE.CircleGeometry(1.25, 28), waterM, x, y + .05, z); pool.rotation.x = -Math.PI / 2; pool.receiveShadow = true;
     for (let k = 0; k < 14; k++) { const a = k / 14 * Math.PI * 2; rock(x + Math.cos(a) * 1.55, z + Math.sin(a) * 1.55, R(.25, .45), y); }
-    for (const [dx, dz, s] of [[0, -2.3, .8], [-.9, -2.0, .6], [.9, -2.1, .55]]) rock(x + dx, z + dz, s, y); } }
+    for (const [dx, dz, s] of [[-1.5, -2.1, .6], [1.6, -2.0, .55]]) rock(x + dx, z + dz, s, y);
+    // a standing stone behind the spring with ΛΟΓΟΣ ("the Word", John 1:1) cut into its face, like an old inscription (owner, 2026-11-19)
+    { const F = roomFrame(r), g = atRoom(F, 2.55, 0, y - .25); box(2.5, 1.55, .55, stoneM, 0, 0, 0, g).rotation.x = -.05;
+      const tex = (() => { const c = document.createElement('canvas'); c.width = 512; c.height = 160; const k = c.getContext('2d'); k.clearRect(0, 0, 512, 160);
+        k.font = 'bold 116px Georgia, "Times New Roman", serif'; k.textAlign = 'center'; k.textBaseline = 'middle';
+        k.fillStyle = 'rgba(255,246,226,.55)'; k.fillText('ΛΟΓΟΣ', 259, 87);    // the lit lower edge of each cut
+        k.fillStyle = 'rgba(62,46,30,.92)'; k.fillText('ΛΟΓΟΣ', 256, 82);      // the shadowed groove
+        k.fillStyle = 'rgba(105,82,58,.85)'; k.fillText('ΛΟΓΟΣ', 257, 84);     // the floor of the groove
+        const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t; })();
+      const pl = add(new THREE.PlaneGeometry(2.1, .66), new THREE.MeshStandardMaterial({ map: tex, transparent: true, depthWrite: false, roughness: 1, polygonOffset: true, polygonOffsetFactor: -2 }), 0, .98, .285, g);
+      pl.rotation.x = -.05; pl.castShadow = false; pl.userData.dyn = 1; } } }
   // 1.4 The Lamp-lit Rooftop: a flat-roofed house with a stone stair climbing its front to the roof (built like som-ltm 6.1's courtyard stair);
   // 3:17 sits at the stair head
   { const r = roomOf(1, 4); if (r) { const F = roomFrame(r);
-    flatHouse(...F.at(3.4, .6), 8, 4, 3.0, F.yaw, mudM);
+    flatHouse(...F.at(3.4, .6), 8, 4, 3.0, F.yaw, mudM, { door: 2.6, win: -.6 });   // the doorway at the far end from the stair (owner, 2026-11-19)
     for (let k = 0; k < 10; k++) { const [x, z] = F.at(.97, -.5 - k * .34); const st = box(.34, .3 * (k + 1), .85, stoneM, x, heightAt(x, z) - .02, z); st.rotation.y = F.yaw + Math.PI / 2; }
     { const [x, z] = F.at(1.35, -3.4); const c = box(.3, .55, .3, mudM, x, heightAt(x, z) + 3.0, z); c.rotation.y = F.yaw; } } }   // a parapet post where the stair reaches the roof
   zoneLabel(1, 'The Dawn Garden', -198, 0);

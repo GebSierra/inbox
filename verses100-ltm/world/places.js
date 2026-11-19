@@ -91,11 +91,13 @@ for (const m of [stoneM, stoneDkM, plasterM, mudM, reedM, linenM]) m.needsUpdate
 function wallSeg(x0, z0, x1, z1, h, th = .6, m = stoneM, y) { const L = Math.hypot(x1 - x0, z1 - z0), y0 = y ?? Math.min(heightAt(x0, z0), heightAt(x1, z1)) - .15;
   const w = box(L, h + .15, th, m, (x0 + x1) / 2, y0, (z0 + z1) / 2); w.rotation.y = -Math.atan2(z1 - z0, x1 - x0); return w; }
 // a first-century house: thick walls, flat roof of beams and reeds, a dark doorway on its front (local +z)
-function flatHouse(x, z, w, d, hgt, rot, m = mudM) { const g = new THREE.Group(); g.position.set(x, heightAt(x, z) - .1, z); g.rotation.y = rot; scene.add(g);
+// o.door, o.win: local x of the doorway and the window (default -w*.2, w*.25)
+function flatHouse(x, z, w, d, hgt, rot, m = mudM, o = {}) { const g = new THREE.Group(); g.position.set(x, heightAt(x, z) - .1, z); g.rotation.y = rot; scene.add(g);
   box(w, hgt, d, m, 0, 0, 0, g); for (let k = 0; k < Math.floor(w / .6); k++) box(.14, .14, d + .3, 'wood', -w / 2 + .3 + k * .6, hgt - .1, 0, g);
   box(w + .1, .14, d + .1, reedM, 0, hgt, 0, g); for (const e of [d / 2, -d / 2]) box(w + .1, .3, .14, m, 0, hgt + .1, e, g);
-  box(.95, 1.8, .06, darkM, -w * .2, 0, d / 2 + .02, g); box(1.15, .16, .12, 'wood', -w * .2, 1.8, d / 2 + .04, g);
-  box(.45, .4, .06, darkM, w * .25, 1.35, d / 2 + .02, g); return g; }
+  const dx = o.door ?? -w * .2, wx = o.win ?? w * .25;
+  box(.95, 1.8, .06, darkM, dx, 0, d / 2 + .02, g); box(1.15, .16, .12, 'wood', dx, 1.8, d / 2 + .04, g);
+  box(.45, .4, .06, darkM, wx, 1.35, d / 2 + .02, g); return g; }
 function rock(x, z, s, y) { const m = add(new THREE.DodecahedronGeometry(s, 0), rnd() > .4 ? stoneM : stoneDkM, x, (y ?? heightAt(x, z)) + s * .3, z); m.rotation.set(R(0, 3), R(0, 3), R(0, 3)); m.scale.y = .65; return m; }
 // scatter: trees and shrubs outside a list of keep-clear boxes [x0, z0, x1, z1]
 function scatter(x0, z0, x1, z1, n, keep, fn) { let k = 0, tries = 0; while (k < n && tries++ < n * 20) { const x = R(x0, x1), z = R(z0, z1);
