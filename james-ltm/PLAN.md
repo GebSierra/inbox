@@ -136,3 +136,14 @@ Same method as §J: 3 blind Sonnet critics per round see only the four screensho
 | 6 | 7.6 | 7.0 | 7.9 | 7.5 | round-5 changes reverted, sickle held in front, green and purple figs |
 
 Status: plateaued at 7.0–7.9, the same pattern as chapter 4. Best single runs: House 8.1, Field 7.7, Winepress 8.2, Watchtower 8.1. The Field is the weakest: from the road, the ox at near-left sits in front of the wheat at far-left, and critics also find the library ox's legs and the flour sack crude. Other repeated complaints: library figures (kneeling woman, grazing ox), the foreground paving of the road, and wanting more clutter.
+
+## L. The reaper's sickle, blind critic test (owner, 2026-11-19: "pass the sickle through a blind critic test until it gets 7 out of 10")
+3 blind Sonnet critics per round see the room view plus a 2x crop of the reaper and score only the sickle: recognisable at a glance 35, held in the hand 20, scale 15, material 15, craft 15.
+
+| Round | Runs | Average | Change before the round |
+|---|---|---|---|
+| 1 | 5.3, 5.2, 5.2 | 5.2 | the small dark torus hook from the owner's fix (read as a bag handle or hook) |
+| 2 | 6.7, 7.1, 7.1 | 7.0 | rebuilt: a tapering crescent blade with a point, a pale wooden grip, a fist, held out and tilted from the body |
+| 3 | 7.4, 7.4, 7.5 | **7.4: passed** | blade about 30% smaller, dark iron with a bright cutting edge, a skin-tone fist |
+
+Remaining critic suggestions (not done): a slightly smaller blade or longer handle, and a forearm tilted forward as if mid-cut.
