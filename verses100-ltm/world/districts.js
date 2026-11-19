@@ -18,13 +18,13 @@ const keepRooms = []; for (let ch = 1; ch <= Math.min(BUILT, 5); ch++) { const c
     const pool = add(new THREE.CircleGeometry(1.25, 28), waterM, x, y + .05, z); pool.rotation.x = -Math.PI / 2; pool.receiveShadow = true;
     for (let k = 0; k < 14; k++) { const a = k / 14 * Math.PI * 2; rock(x + Math.cos(a) * 1.55, z + Math.sin(a) * 1.55, R(.25, .45), y); }
     for (const [dx, dz, s] of [[-1.5, -2.1, .6], [1.6, -2.0, .55]]) rock(x + dx, z + dz, s, y);
-    // a standing stone behind the spring with ΛΟΓΟΣ ("the Word", John 1:1) cut into its face, like an old inscription (owner, 2026-11-19)
+    // a standing stone behind the spring with λόγος ("the Word", John 1:1) cut into its face, like an old inscription (owner, 2026-11-19)
     { const F = roomFrame(r), g = atRoom(F, 2.55, 0, y - .25); box(2.5, 1.55, .55, stoneM, 0, 0, 0, g).rotation.x = -.05;
       const tex = (() => { const c = document.createElement('canvas'); c.width = 512; c.height = 160; const k = c.getContext('2d'); k.clearRect(0, 0, 512, 160);
-        k.font = 'bold 116px Georgia, "Times New Roman", serif'; k.textAlign = 'center'; k.textBaseline = 'middle';
-        k.fillStyle = 'rgba(255,246,226,.55)'; k.fillText('ΛΟΓΟΣ', 259, 87);    // the lit lower edge of each cut
-        k.fillStyle = 'rgba(62,46,30,.92)'; k.fillText('ΛΟΓΟΣ', 256, 82);      // the shadowed groove
-        k.fillStyle = 'rgba(105,82,58,.85)'; k.fillText('ΛΟΓΟΣ', 257, 84);     // the floor of the groove
+        k.font = 'bold 128px Georgia, "Times New Roman", serif'; k.textAlign = 'center'; k.textBaseline = 'middle';
+        k.fillStyle = 'rgba(255,246,226,.55)'; k.fillText('λόγος', 259, 87);    // the lit lower edge of each cut
+        k.fillStyle = 'rgba(62,46,30,.92)'; k.fillText('λόγος', 256, 82);      // the shadowed groove
+        k.fillStyle = 'rgba(105,82,58,.85)'; k.fillText('λόγος', 257, 84);     // the floor of the groove
         const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t; })();
       const pl = add(new THREE.PlaneGeometry(2.1, .66), new THREE.MeshStandardMaterial({ map: tex, transparent: true, depthWrite: false, roughness: 1, polygonOffset: true, polygonOffsetFactor: -2 }), 0, .98, .285, g);
       pl.rotation.x = -.05; pl.castShadow = false; pl.userData.dyn = 1; } } }
@@ -67,11 +67,11 @@ const keepRooms = []; for (let ch = 1; ch <= Math.min(BUILT, 5); ch++) { const c
   for (const [x, z, w, d, rot] of [[-95, 15, 6, 5, Math.PI], [-95, -15, 6, 5, 0], [-93, 25, 5, 4.5, Math.PI], [-52, 26, 6, 5, 0], [-52, -22, 7, 5, Math.PI], [-60, -24, 5, 4, Math.PI]]) flatHouse(x, z, w, d, 3, rot);
   zoneLabel(3, 'The Synagogue', SO[0], SO[1]);
   // walking routes into each room (world x, z): James's tested routes, moved
-  VIA['3.1'] = [[-100, 0], [-89, 0], [-84, .2], [-76.5, -3], [-72.8, -3], [-71, .25], [-63.9, -1.2]];
-  VIA['3.2'] = [[-63.9, -1.2]];                                                                                       // back into the hall, clear of the lectern                          // in at the gate, up the steps, through the hall to the scroll room
-  VIA['3.3'] = [[-67.4, 2.8], [-67.6, 5.5], [-67.6, 6.9]];                                                                         // out of the hall by the side door onto the porch
-  VIA['3.4'] = [[-67.6, 6.9], [-67.6, 5.5], [-67.4, 2.8], [-72.8, -3], [-76.5, -3], [-84, .2], [-89, 0]];                         // back through the hall, out of the main door, down the front steps
-  VIA['3.5'] = [[-89, 0], [-84, .2]];                                                                                // up onto the courtyard to the pools
+  VIA['3.1'] = [[-104, 0], [-100, 0]];                                                                                 // in at the west gate to the front steps
+  VIA['3.2'] = [[-89, 0], [-84, .2]];                                                                                  // up the steps onto the courtyard, to the pools
+  VIA['3.3'] = [[-76.5, -3], [-72.8, -3]];                                                                             // through the main door into the hall
+  VIA['3.4'] = [[-63.9, -1.2]];                                                                                        // across the hall to the scroll room doorway
+  VIA['3.5'] = [[-63.9, -1.2], [-65.6, 2.4], [-67.4, 2.8], [-67.6, 5.5], [-67.6, 6.9], [-64.1, 6.8], [-60.3, 8], [-60.3, 12.4]];   // out by the side door onto the porch, between the columns, down the side steps
 }
 
 // ===== 4. THE TABERNACLE (Listening, part 2: Prayer): its court outside the town, the gate facing the road =====
@@ -97,7 +97,7 @@ const keepRooms = []; for (let ch = 1; ch <= Math.min(BUILT, 5); ch++) { const c
   { const lt = new THREE.PointLight('#ffd9a0', 9, 14, 1.6); lt.position.set((XF + XV) / 2, y0 + 3.6, 0); lt.userData.dyn = 1; scene.add(lt); }
   v100Put('ark-of-the-covenant', (XV + XB) / 2, 0, -Math.PI / 2, 1.1, y0);
   zoneLabel(4, 'The Tabernacle', 23, 0);
-  VIA['4.1'] = [[-84.5, -1], [-84.5, 12], [-63, 12], [-63, 16], [-48, 16], [-48, 0], [-40, 0], [-2, 0], [2, 0], [3, 7], [20, 7], [21.5, 0]];   // out by the back steps, through the town, in at the court gate, past the altar and laver to the door
+  VIA['4.1'] = [[-48, 16.4], [-48, 0], [-40, 0], [-2, 0], [2, 0], [3, 7], [20, 7], [21.5, 0]];   // along the lane, out of the east gate, in at the court gate, past the altar and laver to the door
 }
 
 // ===== 5. THE FATHER'S HOUSE (Assurance): "In my Father's house are many rooms" =====

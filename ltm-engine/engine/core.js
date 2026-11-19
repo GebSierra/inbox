@@ -94,7 +94,11 @@ let useAO = !MOBILE && !new URLSearchParams(location.search).has('fast');
         if(clouds>0.&&h>0.){vec2 p=d.xz/(h+.12)*1.6+vec2(t*.006,t*.002);float n=fbm(p);float cov=smoothstep(.62-clouds*.3,.9,n)*smoothstep(0.,.18,h);
           vec3 cc=mix(vec3(1.,.98,.95),bot*1.05,.35)*(.86+.14*fbm(p*2.+3.));c=mix(c,cc,cov*.85);}
         gl_FragColor=vec4(c,1.);}` });
-  scene.add(new THREE.Mesh(g, m));
+  // the dome follows the camera (it only depends on view direction), so it is never beyond the far plane: a palace far from the origin
+  // (verses100-ltm starts 220 m west) otherwise shows black where the dome's far side passes 900 m
+  const dome = new THREE.Mesh(g, m); dome.frustumCulled = false; dome.userData.dyn = 1;
+  dome.onBeforeRender = (r, s, cam) => { if (!dome.position.equals(cam.position)) { dome.position.copy(cam.position); dome.updateMatrixWorld(); dome.modelViewMatrix.multiplyMatrices(cam.matrixWorldInverse, dome.matrixWorld); } };
+  scene.add(dome);
 }
 scene.add(new THREE.HemisphereLight(THEME.hemi[0], THEME.hemi[1], THEME.hemi[2]));
 const sun = new THREE.DirectionalLight(THEME.sun.color, THEME.sun.intensity);
