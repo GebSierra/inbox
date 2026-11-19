@@ -1067,8 +1067,8 @@
      ],
      "layout": {
       "spread": [
-        2.3,
-        2.0
+        2.1,
+        2.4
       ]
      },
      "objects": [
@@ -1086,7 +1086,7 @@
        "what": "fig tree"
       },
       {
-       "id": "flour-sack",
+       "id": "flour-sack-open",
        "what": "sack of flour"
       },
       {
