@@ -110,3 +110,15 @@ Rooms: four shops grouped in the middle of the street. Walking west from the ave
 Hooks: blades and fire for quarrels and wars (4:1–2); washing for "cleanse your hands" (4:8); the merchant planning trade "today or tomorrow" (4:13) and the smoke for "a mist" (4:14); the potter's work for knowing the right thing to do (4:17).
 
 **Status 2026-11-18:** §I built as chapter 4. Chapter 3 renamed: The Fisherman's Fire, The Fishing Net, The Lighthouse, The Pier. Porch spot 5 is now "the window with the scarlet cord". Next: chapter 5 (the rich man's house and the farm), plan first.
+
+## J. Chapter 4 blind critic loop (owner, 2026-11-18: "until each room passes at an 8 out of 10")
+No reference images exist for the shops, so each room is judged against its written object list. Per round, 3 blind Sonnet critics see only the four screenshots and score 7 weighted criteria (object 25, layout 15, material 15, lighting 15, density 10, framing 10, craft 10). Pass = a 3-run average of 8.0 or more.
+
+| Round | Smithy | Fuller | Merchant | Potter | Main change before the round |
+|---|---|---|---|---|---|
+| 8 | 7.5 | 7.4 | 7.6 | 7.6 | purpose-built objects, pooled point lights, back-wall workbenches |
+| 9 | 6.8 | 7.5 | 7.5 | 7.3 | denser props (several backfired: coal heap read as a stray wedge, heavy smoke, clipping crates) |
+| 10 | 7.6 | 7.9 | 8.0 | 7.8 | backfires removed; Field camera fixed in ch.5 |
+| 11 | 7.7 | 7.6 | 7.8 | 7.9 | splayed three-leg tripod, brighter water, white bolts, slimmer censer, one-disc wheel |
+
+Status: plateaued just under 8. Single runs on the same image vary by up to about 0.9 (best single runs: Smithy 8.2, Fuller 8.1, Merchant 8.1, Potter 8.0). The remaining complaints are mostly taste and the low-poly style itself (thin townsfolk limbs, "flat" water and dye, wanting more clutter), and they are inconsistent between critics.

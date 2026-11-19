@@ -1054,6 +1054,9 @@
      "verses": "5:6–10",
      "kind": "vignette",
      "name": "The Field",
+     "back": 7.4,
+     "pitch": -0.1,
+     "bannerLift": -1.4,
      "at": [
       -101,
       -22
