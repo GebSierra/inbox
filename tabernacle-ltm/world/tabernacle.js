@@ -131,7 +131,7 @@ function gathered(x, z, h, m, r = .14) { const g = add(new THREE.CylinderGeometr
 }
 // ---------- THE BRONZE LAVER, made from the women's mirrors (Ex 30:17–21, 38:8) ----------
 {
-  const g = new THREE.Group(); g.position.set(0, 0, LAVER_Z); scene.add(g);
+  const g = new THREE.Group(); g.position.set(0, 0, LAVER_Z); g.scale.set(1.35, 1, 1.35); scene.add(g);   // Exodus gives no size; drawn wide enough for Hebrews 4’s float, and low enough to look into
   cyl(.5, .58, .12, 16, bronzeM, 0, 0, 0, g);
   cyl(.14, .22, .45, 12, bronzeM, 0, .12, 0, g);
   const pr = [[0, 0], [.18, 0], [.42, .05], [.62, .22], [.68, .32], [.66, .34]].map(([r, y]) => new THREE.Vector2(r, y));
@@ -163,8 +163,17 @@ const T = TENT;
   const VX = [-1.5, -.5, .5, 1.5].map(k => k * T.w / 2);
   for (const x of VX) { box(.3, .2, .3, silverM, x, 0, T.zV); cyl(.1, .11, H, 8, goldM, x, .2, T.zV); cyl(.15, .12, .18, 8, goldM, x, H + .1, T.zV); }
   const VE = [-T.w, ...VX, T.w];
+  // one half of the torn middle bay: a jagged edge from near the middle at the top to well apart at the bottom, frayed threads along it
+  function tornHalf(xo, sd) { const r = upRng(sd > 0 ? 71 : 37), sh = new THREE.Shape(), edge = [];
+    for (let k = 0; k <= 30; k++) { const y = H - k * H / 30, t = y / H; edge.push([sd * (.03 + (1 - t) * .36 + (r() - .5) * .07), y]); }
+    sh.moveTo(xo, H); for (const [ex, ey] of edge) sh.lineTo(ex, ey); sh.lineTo(xo, 0); sh.closePath();
+    const geo = new THREE.ShapeGeometry(sh), uv = geo.attributes.uv, ps = geo.attributes.position, wdt = Math.abs(xo);
+    for (let i = 0; i < uv.count; i++) uv.setXY(i, (ps.getX(i) * sd + wdt) / (2 * wdt), ps.getY(i) / H);
+    const m = add(geo, new THREE.MeshStandardMaterial({ map: veilM.map, roughness: .9, side: THREE.DoubleSide }), 0, .02, T.zV + .14); m.castShadow = true;
+    const thread = mat('tThread', '#d8c8a8');
+    for (let k = 1; k < edge.length; k += 2) { const [ex, ey] = edge[k]; rod([ex, ey + .02, T.zV + .15], [ex + sd * (.04 + r() * .05), ey - (.04 + r() * .08), T.zV + .16], .004, thread); } }
   for (let k = 0; k < VE.length - 1; k++) { const x0 = VE[k], x1 = VE[k + 1];
-    if (k === 2) { gathered(x0 + .14, T.zV + .14, H - .05, veilM, .12); gathered(x1 - .14, T.zV + .14, H - .05, veilM, .12); continue; }   // parted in the middle, so you can walk through
+    if (k === 2) { tornHalf(x0 + .1, -1, 0); tornHalf(x1 - .1, 1, 0); continue; }   // torn in two from top to bottom (Hebrews 9 in The Chapter Code), so you can walk through
     hanging(x0 + (k ? .1 : 0), T.zV + .14, x1 - (k === VE.length - 2 ? 0 : .1), T.zV + .14, .02, H, veilM, .05); }
   WALKWAYS.push([-.3, T.zV - .7, .3, T.zV + .7]);
 }
@@ -198,8 +207,8 @@ const HP_Z = (T.zF + T.zV) / 2 - .4;
   for (const [a, b] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) box(.05, Ht - .05, .05, goldM, a * (Wd / 2 - .04), 0, b * (L / 2 - .04), g);
   box(Wd - .06, .07, L - .06, goldM, 0, Ht * .45, 0, g);                                // the rim between the legs
   for (const sd of [-1, 1]) rod([sd * (Wd / 2 + .06), Ht * .45, -L / 2 - .35], [sd * (Wd / 2 + .06), Ht * .45, L / 2 + .35], .02, goldM, g);
-  for (const pz of [-.2, .2]) for (let i = 0; i < 6; i++) { const lf = add(new THREE.CylinderGeometry(.15, .16, .045, 14), breadM, 0, Ht + .045 + i * .05, pz, g); lf.scale.set(.9, 1, 1.15); }
-  for (const pz of [-.2, .2]) cyl(.035, .025, .05, 8, goldM, 0, Ht + .045 + 6 * .05 + .02, pz, g);   // frankincense on each pile (Lev 24:7)
+  // Hebrews 7 (The Chapter Code): of the twelve loaves, seven lie here for Melchizedek and Abraham holds the other five
+  for (let i = 0; i < 7; i++) { const lf = add(new THREE.SphereGeometry(.1, 12, 8), breadM, (i % 2 ? .1 : -.1), Ht + .05, -.36 + i * .12, g); lf.scale.set(1, .42, .9); }
   for (const pz of [-.38, .38]) cyl(.05, .03, .08, 8, goldM, .14, Ht + .04, pz, g);                    // dishes and cups (Ex 25:29)
 }
 // the golden lampstand, on the south side (Ex 25:31–40, 37:17–24): six branches from the shaft, almond-blossom cups, seven lamps
@@ -209,13 +218,21 @@ const HP_Z = (T.zF + T.zV) / 2 - .4;
   cyl(.2, .26, .08, 10, goldM, 0, 0, 0, g); for (let i = 0; i < 3; i++) { const ft = cyl(.04, .05, .18, 6, goldM, Math.cos(i * 2.1) * .2, 0, Math.sin(i * 2.1) * .2, g); }
   cyl(.035, .05, top, 8, goldM, 0, .08, 0, g);
   for (const yy of [.55, .95, 1.2, 1.4]) cyl(.06, .03, .07, 8, goldM, 0, yy, 0, g);              // knops and flowers on the shaft
+  // Hebrews 6 (The Chapter Code): the six branches fall away. Only the shaft and its middle lamp still stand.
+  // Each branch is built at its joint on the shaft, then placed: one just snapping off, two falling, three on the floor.
+  const FALL = { '1,-1': { d: [0, -.05, -.1], r: [-.5, 0, 0], lit: 1 }, '3,1': { d: [.1, -.55, .45], r: [1.0, .4, .2] },
+    '2,-1': { y: .07, d: [.45, 0, -.55], r: [0, -.9, 1.57] }, '1,1': { y: .07, d: [.62, 0, .3], r: [0, 1.1, 1.57] }, '2,1': { y: .07, d: [.15, 0, .75], r: [0, .3, 1.57] }, '3,-1': { y: .07, d: [.05, 0, -.95], r: [0, -.3, -1.57] } };   // turned onto their sides (about z) so they lie flat
   for (let i = 1; i <= 3; i++) { const r = .16 * i; for (const sd of [-1, 1]) {
-    const pts = []; for (let k = 0; k <= 12; k++) { const th = k / 12 * Math.PI / 2; pts.push(new THREE.Vector3(0, top - r * Math.cos(th), sd * r * Math.sin(th))); }   // a quarter circle: out from the shaft and up to the lamp line
-    add(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 14, s, 6), goldM, 0, 0, 0, g);
-    for (const k of [4, 8]) { const p = pts[k]; add(new THREE.SphereGeometry(.03, 6, 5), goldM, p.x, p.y, p.z, g); } } }
-  for (let i = -3; i <= 3; i++) { const z = i * .16; cyl(.05, .03, .06, 8, goldM, 0, top + .08, z, g);
-    const lamp = add(new THREE.SphereGeometry(.05, 8, 5), goldM, 0, top + .16, z, g); lamp.scale.set(.8, .5, 1.3);
-    flame(g, 0, top + .17, z + .045, .7); }
+    const f = FALL[i + ',' + sd], B = new THREE.Group(); g.add(B);
+    const pts = []; for (let k = 0; k <= 12; k++) { const th = k / 12 * Math.PI / 2; pts.push(new THREE.Vector3(0, r - r * Math.cos(th), sd * r * Math.sin(th))); }   // a quarter circle from the joint, out and up
+    add(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 14, s, 6), goldM, 0, 0, 0, B);
+    for (const k of [4, 8]) { const p = pts[k]; add(new THREE.SphereGeometry(.03, 6, 5), goldM, p.x, p.y, p.z, B); }
+    cyl(.05, .03, .06, 8, goldM, 0, r + .08, sd * r, B); const lamp = add(new THREE.SphereGeometry(.05, 8, 5), goldM, 0, r + .16, sd * r, B); lamp.scale.set(.8, .5, 1.3);
+    if (f.lit) flame(B, 0, r + .17, sd * r + .045, .7);
+        B.position.set(f.d[0], (f.y ?? top - r) + f.d[1], f.d[2]); B.rotation.set(...f.r);
+    { const sc = add(new THREE.CylinderGeometry(.022, .03, .07, 6), mat('tBreak', '#6a4410'), 0, top - r, sd * .045, g); sc.rotation.x = sd * Math.PI / 2; } } }   // the jagged stub left on the shaft
+  cyl(.05, .03, .06, 8, goldM, 0, top + .08, 0, g);
+  { const lamp = add(new THREE.SphereGeometry(.05, 8, 5), goldM, 0, top + .16, 0, g); lamp.scale.set(.8, .5, 1.3); flame(g, 0, top + .17, .045, .7); }
   const pl = new THREE.PointLight('#ffc070', 7, 9, 1.4); pl.position.set(-T.w + 1.3, top + .3, HP_Z); scene.add(pl); ROOM_LIGHTS.push(pl); pl.userData.base = 7;
 }
 // the altar of incense, before the veil (Ex 30:1–10, 37:25–28): 1 × 1 × 2 cubits, overlaid with gold, horns and a crown
@@ -253,5 +270,5 @@ const INCENSE_Z = T.zV + 1.0;
 }
 
 // ---------- priests at their work (linen tunics, Ex 28:39–42) ----------
-{ const P = [[-1.8, ALTAR.z - .4, -1.4, '#f1ece0'], [-1.3, LAVER_Z + .2, Math.PI / 2, '#f1ece0'], [3.9, ALTAR.z + 1.4, -1.2, '#efe8d8'], [-2.6, LAVER_Z - 1.6, .8, '#f1ece0']];
+{ const P = [[-1.8, ALTAR.z - .4, -1.4, '#f1ece0'], [-3.3, LAVER_Z - 2.3, Math.PI / 2, '#f1ece0'], [3.9, ALTAR.z + 1.4, -1.2, '#efe8d8'], [-2.6, LAVER_Z - 1.6, .8, '#f1ece0']];
   for (const [x, z, r, c] of P) person(x, z, r, c, { hair: 1, cloak: '#ece4d2' }); }

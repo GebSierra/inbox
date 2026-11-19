@@ -12,7 +12,7 @@ function puff(color, opacity) { const s = new THREE.Sprite(new THREE.SpriteMater
 const CLOUD = []; for (let i = 0; i < 60; i++) { const s = puff('#fdfbf6', .7); s.userData = { dyn: 1, h: R(0, 1), a: R(0, 6.3), r: R(.4, 2.6), sz: R(5, 9), sp: R(.08, .2), rs: R(-.15, .15) }; CLOUD.push(s); }
 // smoke from the altar fire (pale grey, thinning and spreading as it rises) and a thread of incense
 const SMOKE = []; for (let i = 0; i < 24; i++) { const s = puff(i % 3 ? '#e6e1da' : '#cfc8be', .5); s.userData = { dyn: 1, ph: i / 24, rs: R(-.4, .4), w: R(-.4, .4) }; SMOKE.push(s); }
-const INC = []; for (let i = 0; i < 8; i++) { const s = puff('#f1ece4', .3); s.userData = { dyn: 1, ph: i / 8, rs: R(-.5, .5) }; INC.push(s); }
+const INC = []; for (let i = 0; i < 8; i++) { const s = puff('#f1ece4', .15); s.userData = { dyn: 1, ph: i / 8, rs: R(-.5, .5) }; INC.push(s); }
 // The engine's ambient-occlusion pass (desktop only) draws every mesh and sprite as a solid shape to find corners to shade.
 // Smoke sprites and the fire's flame cards would come out as dark squares, so they are hidden for that pass in this town.
 // (GTAOPass restores every object's visibility from its own cache straight after, so nothing else changes.)
@@ -20,15 +20,24 @@ const INC = []; for (let i = 0; i < 8; i++) { const s = puff('#f1ece4', .3); s.u
   const ov = ao.overrideVisibility.bind(ao); ao.overrideVisibility = () => { ov(); for (const o of SOFT) o.visible = false; }; }
 // the hud says "Chapter n" for the engine's book towns; here the areas are named on their own
 { const hz = document.querySelector('#hud .z'); new MutationObserver(() => { const t = hz.textContent, m = t.match(/^Chapter \d+(?: · )?(.*)$/); if (m) hz.textContent = m[1] || CFG.name; }).observe(hz, { childList: true, characterData: true, subtree: true }); }
+// the caption card: the chapter, place, picture and theme of the stop you are at (or nearest, when you roam), and the book link
+const hbCard = document.getElementById('hbcard'), hbN = hbCard.querySelector('.hn'), hbP = hbCard.querySelector('.hp'), hbT = hbCard.querySelector('.ht');
+let hbShown = null;
+const hbStand = s => [s.x - (s.look[0] - s.x) * BACK, s.z - (s.look[2] - s.z) * BACK];
+function hbUpdate() { let st = STATIONS[Math.max(idx, 0)], [cx, cz] = hbStand(st);                // the stop Prev/Next last took you to, while you are on your way or still near it
+  if (!tween && Math.hypot(player.x - cx, player.z - cz) > 1.5) { let bd = 1e9; for (const s of STATIONS) { const [x, z] = hbStand(s), d = Math.hypot(player.x - x, player.z - z); if (d < bd) { bd = d; st = s; } } }
+  if (!st || !st.hb || st === hbShown) return; hbShown = st; const h = st.hb;
+  hbN.textContent = `Hebrews ${h.n} · ${h.place}`; hbP.textContent = h.pic; hbT.textContent = h.theme; }
 const tclock = new THREE.Clock();
 (function anim() {
   const t = tclock.getElapsedTime();
   for (const p of ROOF) p.visible = !overview;                                   // the cutaway
+  if (window.__fc > 2) hbUpdate();
   for (const s of CLOUD) { const u = s.userData, h = (u.h + t * .01) % 1, a = u.a + t * u.sp;
     s.position.set(Math.cos(a) * u.r * (1 + h), TENT.H + 3 + h * 46, ARK_Z + Math.sin(a) * u.r * (1 + h) * .8); s.scale.setScalar(u.sz * (1 + h * .8)); s.material.rotation += u.rs * .01; s.material.opacity = .62 * Math.min(1, h * 8) * (h > .85 ? (1 - h) / .15 : 1); }
   for (const s of SMOKE) { const u = s.userData, ph = (t * .09 + u.ph) % 1, drift = ph * ph;
     s.position.set(Math.sin(ph * 4 + u.ph * 9) * (.25 + ph * .6) + drift * 3 + u.w * ph, ALTAR.h + .9 + ph * 11, ALTAR.z - drift * 2);
     s.scale.setScalar(.7 + ph * 5.5); s.material.rotation += u.rs * .01; s.material.opacity = .55 * Math.pow(1 - ph, 1.4) * Math.min(1, ph * 7); }
-  for (const s of INC) { const u = s.userData, ph = (t * .08 + u.ph) % 1; s.position.set(Math.sin(ph * 7 + u.ph * 5) * (.06 + ph * .2), 1.0 + ph * 2.8, INCENSE_Z); s.scale.setScalar(.15 + ph * 1.1); s.material.rotation += u.rs * .01; s.material.opacity = .3 * (1 - ph) * Math.min(1, ph * 5); }
+  for (const s of INC) { const u = s.userData, ph = (t * .08 + u.ph) % 1; s.position.set(Math.sin(ph * 7 + u.ph * 5) * (.06 + ph * .2), 1.0 + ph * 2.8, INCENSE_Z); s.scale.setScalar(.15 + ph * 1.1); s.material.rotation += u.rs * .01; s.material.opacity = .14 * (1 - ph) * Math.min(1, ph * 5); }
   requestAnimationFrame(anim);
 })();

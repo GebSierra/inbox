@@ -3,19 +3,29 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>The Tabernacle</title>
+<title>Hebrews in the Tabernacle</title>
 <link rel="stylesheet" href="../ltm-engine/engine/app.css">
-<style>#credits{max-height:calc(100vh - 150px);overflow-y:auto}</style>
+<style>#credits{max-height:calc(100vh - 150px);overflow-y:auto}
+#hbcard{position:fixed;z-index:6;left:calc(16px + env(safe-area-inset-left,0px));top:calc(16px + env(safe-area-inset-top,0px));width:min(360px,34vw);background:rgba(250,244,230,.94);border:1px solid #d8c4a0;border-radius:14px;padding:11px 14px 10px;box-shadow:0 4px 18px rgba(60,40,20,.18);color:#3b2a1c;font-size:14px;line-height:1.35}
+#hbcard .hn{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#b8583a}
+#hbcard .hp{font-size:16px;font-weight:bold;margin:3px 0 4px}
+#hbcard .ht{font-style:italic}
+#hbcard a{display:block;margin-top:8px;padding-top:7px;border-top:1px solid #e2d2b4;color:#8a3a1e;font-size:13px;text-decoration:none}
+#hbcard a b{text-decoration:underline}
+#hbcard.min .hp,#hbcard.min .ht{display:none}
+@media (max-width:600px){#hbcard{left:12px;right:12px;width:auto;top:calc(112px + env(safe-area-inset-top,0px));padding:8px 11px;font-size:13px}#hbcard .hp{font-size:14.5px}}
+</style>
 </head>
 <body>
-<div id="loader"><div class="lc"><div class="lt">The Tabernacle</div><div class="ls">The tent of meeting in the wilderness</div><div class="lb"><i id="lbar"></i></div><div class="lp" id="lpct">Pitching the tent…</div></div></div>
+<div id="loader"><div class="lc"><div class="lt">The Tabernacle</div><div class="ls">A memory palace for the outline of Hebrews · a companion to <i>The Chapter Code</i></div><div class="lb"><i id="lbar"></i></div><div class="lp" id="lpct">Pitching the tent…</div></div></div>
 <div id="hud" class="gone"><div class="z">The Tabernacle</div><div class="s">Enter by the gate on the east</div></div>
+<div id="hbcard"><div class="hn">Hebrews in the Tabernacle</div><div class="hp">Thirteen chapters, thirteen places</div><div class="ht">Press Next to walk Hebrews 1 to 13.</div><a href="https://a.co/d/04W9GCw3" target="_blank" rel="noopener">This is a companion to <b>The Chapter Code</b>. For the full outline of Hebrews, get the book →</a></div>
 <div id="help">WASD / arrows to walk · drag to look · double-click to go there · N / P jump stops</div>
 <button id="mapbtn">Bird’s-eye</button>
 <button id="howbtn" aria-label="How it works">How it works</button>
 <button id="fsbtn" aria-label="Full screen">⛶</button>
 <button id="infobtn" aria-label="Settings and credits">i</button>
-<div id="credits" hidden><div class="tg" hidden><button id="gembtn" aria-pressed="false">Markers: off</button><button id="numbtn" aria-pressed="false">Verse numbers: off</button></div><b>Based on history</b><br>Built to the measurements in <a href="https://www.esv.org/Exodus+25-27/" target="_blank" rel="noopener">Exodus 25–27</a>, <a href="https://www.esv.org/Exodus+30/" target="_blank" rel="noopener">30</a> and <a href="https://www.esv.org/Exodus+36-38/" target="_blank" rel="noopener">36–38</a>, with a cubit of 18 inches: a courtyard of 100 × 50 cubits, a tent of 30 × 10 × 10, the most holy place a 10-cubit cube in the middle of the western half, the altar in the middle of the eastern half.<br>The camp round it follows <a href="https://www.esv.org/Numbers+2-3/" target="_blank" rel="noopener">Numbers 2–3</a>: the Levites close in, Moses and Aaron at the door, the four camps under their standards.<br>Exodus does not say everything: the shape of the cherubim, the colours of the tachash skins, a ridge on the roof, the colour of each tribe’s standard and the figures woven into the curtains are imagined. The middle of the gate, the door and the veil are drawn back so you can walk through.<br><br><b>Credits</b><br>Low Poly Bird (Animated) by Charlie Tinley, CC BY 4.0, is the bird you fly as in bird’s-eye view.<br>Scripture references to the ESV® Bible, © Crossway.</div>
+<div id="credits" hidden><div class="tg" hidden><button id="gembtn" aria-pressed="false">Markers: off</button><button id="numbtn" aria-pressed="false">Verse numbers: off</button></div><b>A companion to <i>The Chapter Code</i></b><br>The thirteen pictures here, one for each chapter of Hebrews at its place in the tabernacle, come from the book <a href="https://a.co/d/04W9GCw3" target="_blank" rel="noopener"><i>The Chapter Code</i></a>, which teaches the outline of Hebrews with a tabernacle memory palace. This walk-through only supplements it: to understand and remember the full outline of Hebrews, <a href="https://a.co/d/04W9GCw3" target="_blank" rel="noopener">get the book</a>.<br>The most holy place (Hebrews 10–12) is left as it is: picture those three yourself.<br><br><b>Based on history</b><br>Built to the measurements in <a href="https://www.esv.org/Exodus+25-27/" target="_blank" rel="noopener">Exodus 25–27</a>, <a href="https://www.esv.org/Exodus+30/" target="_blank" rel="noopener">30</a> and <a href="https://www.esv.org/Exodus+36-38/" target="_blank" rel="noopener">36–38</a>, with a cubit of 18 inches: a courtyard of 100 × 50 cubits, a tent of 30 × 10 × 10, the most holy place a 10-cubit cube in the middle of the western half, the altar in the middle of the eastern half.<br>The camp round it follows <a href="https://www.esv.org/Numbers+2-3/" target="_blank" rel="noopener">Numbers 2–3</a>: the Levites close in, Moses and Aaron at the door, the four camps under their standards.<br>Exodus does not say everything: the shape of the cherubim, the colours of the tachash skins, a ridge on the roof, the colour of each tribe’s standard and the figures woven into the curtains are imagined. The middle of the gate and the door are drawn back so you can walk through; the veil is torn in two (Hebrews 9). The laver is drawn large enough for Hebrews 4.<br><br><b>Credits</b><br>Low Poly Bird (Animated) by Charlie Tinley, CC BY 4.0, is the bird you fly as in bird’s-eye view.<br>Scripture references to the ESV® Bible, © Crossway.</div>
 <div id="tut" hidden>
   <div class="card">
     <div class="step" id="tutStep"></div>

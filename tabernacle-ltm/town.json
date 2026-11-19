@@ -3,7 +3,7 @@
   "book": "The Tabernacle",
   "store": "tabernacle",
   "verses": [],
-  "zones": ["The Courtyard", "The Holy Place", "The Most Holy Place"],
+  "zones": ["The Courtyard", "The Holy Place", "The Most Holy Place", "Beside the Tent"],
   "built": 0,
   "freeRoam": true,
   "theme": {
@@ -44,6 +44,7 @@
     "ltm:zones",
     "world/tabernacle.js",
     "world/camp.js",
+    "world/hebrews.js",
     "world/tour.js",
     "ltm:runtime",
     "world/tutorial.js",
