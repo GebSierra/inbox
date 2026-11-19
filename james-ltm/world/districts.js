@@ -55,11 +55,26 @@
   const tints = ['#e2cfaa', '#d8b98c', '#e8dcc0', '#cfa77a', '#e6d2b0', '#d9c09a'];
   for (const [zf, zb] of [[-25, -19], [-33, -39]]) units.forEach(([xa, xb, open], i) => {
     const joined = i > 0 && units[i - 1][1] === xa;
-    jcShopUnit(xa, xb, zf, zb, { open: !!open, left: !joined, col: tints[(i + (zf > -30 ? 0 : 3)) % tints.length] }); });
+    jcShopUnit(xa, xb, zf, zb, { open: !!open, left: !joined, col: open ? '#ecdcbe' : tints[(i + (zf > -30 ? 0 : 3)) % tints.length] }); });
+  jcDressShop('smith', -26, -22, 1); jcDressShop('fuller', -38, -22, 1); jcDressShop('merchant', -38, -36, -1); jcDressShop('potter', -26, -36, -1);   // each trade's clutter, clear of the spots
   zoneLabel(4, "The Craftsmen's Street", -36, -29);
   VIA['4.1'] = [[30.6, -50], [29, -44.2], [10, -43.5], [0, -42.5], [0, -38], [-.8, -29.5], [-20, -29], [-26, -28.6]];   // back along the pier and quay, in at the harbour gate, west along the street
   VIA['4.2'] = [[-26, -28.8], [-38, -28.8]];
   VIA['4.3'] = [[-38, -29]];                                                     // across the street
   VIA['4.4'] = [[-38, -29.6], [-26, -29.6]];
   buildRooms(4);
+}
+{ // chapter 5: the rich man's house and the farm and vineyard, outside the west gate (owner 2026-11-18: "build chapter 5").
+  // The road runs on west past the rich man's walled house (room 1) to his field (room 2, north of the road); across the road a low wall closes his vineyard,
+  // with the winepress (room 3, far) and the watchtower (room 4, near) in it: you look over the wall from the road. Coming back east, the west gate is close.
+  drape(-118, -30.5, -92, -27.5, 'path', .03);
+  { const g = new THREE.Group(); scene.add(g); jcWinepress(g, -114.4, heightAt(-114.4, -40.3), -40.3); jcWatchtower(g, -98, heightAt(-98, -44), -44); }
+  upWheat(-98.4, -18.4, 7, 4, 0);                                                                 // the standing wheat in the field: room 2
+  { const tr = OBJECTS.get('grapevine-trellis'); const g = new THREE.Group(); scene.add(g);      // rows of vines behind the winepress and the watchtower
+    for (const zr of [-43.2, -44.8]) for (let x = -120; x <= -88; x += 3.2) { if (Math.abs(x + 98) < 2.4 && zr > -46) continue; tr.fn(g, x, heightAt(x, zr), zr, ...tr.args); } }
+  zoneLabel(5, 'The Farm & Vineyard', -100, -30);
+  VIA['5.1'] = [[-26, -29.4], [-66, -29], [-72, -29], [-82, -28.5], [-82, -22.8]];   // west along the street, out of the west gate, in at the rich man's gate
+  VIA['5.2'] = [[-82, -23], [-82, -28.8], [-101, -28.8]];                              // back out of his gate and west along the road to his field
+  VIA['5.3'] = [[-101, -29], [-112, -29]];                                             // on west, then turn to look over the vineyard wall
+  buildRooms(5);
 }

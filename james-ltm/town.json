@@ -5,7 +5,7 @@
   "store": "james",
   "verses": [27, 26, 18, 17, 20],
   "zones": ["The Agora", "The Synagogue", "The Harbour", "The Craftsmen’s Street", "The Farm & Vineyard"],
-  "built": 4,
+  "built": 5,
   "theme": {
     "ground": true,
     "houses": "dressed",

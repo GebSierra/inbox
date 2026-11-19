@@ -22,8 +22,8 @@ function jcFlagMat() {
   return jcFlagT = new THREE.MeshStandardMaterial({ map: t, roughness: .95 });
 }
 function jcWorldUV(mesh, k = .5) {
-  mesh.updateMatrixWorld(true); const geo = mesh.geometry, p = geo.attributes.position, n = geo.attributes.normal, uv = geo.attributes.uv, v = new THREE.Vector3();
-  for (let i = 0; i < p.count; i++) { v.fromBufferAttribute(p, i).applyMatrix4(mesh.matrixWorld); const ay = Math.abs(n.getY(i)), ax = Math.abs(n.getX(i));
+  mesh.updateMatrixWorld(true); const geo = mesh.geometry, p = geo.attributes.position, n = geo.attributes.normal, uv = geo.attributes.uv, v = new THREE.Vector3(), w = new THREE.Vector3(), nm = new THREE.Matrix3().getNormalMatrix(mesh.matrixWorld);
+  for (let i = 0; i < p.count; i++) { v.fromBufferAttribute(p, i).applyMatrix4(mesh.matrixWorld); w.fromBufferAttribute(n, i).applyMatrix3(nm).normalize(); const ay = Math.abs(w.y), ax = Math.abs(w.x);   // world-space normal, so turned walls map correctly
     uv.setXY(i, (ay > .5 ? v.x : ax > .5 ? v.z : v.x) * k, (ay > .5 ? v.z : v.y) * k); }
   uv.needsUpdate = true; return mesh;
 }
@@ -200,16 +200,137 @@ function jcRahabWindow(g, x, y, z) {
 // across it; otherwise a front wall with a doorway. o.left / o.right: build that party wall (neighbours share one). o.col: wall colour. Flat roof at 3.4 m.
 function jcShopUnit(xa, xb, zf, zb, o = {}) {
   const cx = (xa + xb) / 2, cz = (zf + zb) / 2, y = heightAt(cx, cz), g = new THREE.Group(); g.position.set(0, y, 0); scene.add(g); g.updateMatrixWorld(true);
-  const H = 3.4, wm = mat('jcShop' + (o.col || '#e2cfaa'), o.col || '#e2cfaa'), s = Math.sign(zb - zf);
+  const H = 3.4, wm = jcPlasterMat(o.col || '#e2cfaa', o.open ? .42 : 0), s = Math.sign(zb - zf), U = m => jcWorldUV(m, .5);
   jcWorldUV(box(Math.abs(xb - xa), .1, Math.abs(zb - zf), jcFlagMat(), cx, 0, cz, g));
-  if (o.left !== false) jcWall(g, xa, zf, xa, zb, 0, H, .3, wm); if (o.right !== false) jcWall(g, xb, zf, xb, zb, 0, H, .3, wm);
-  jcWall(g, xa, zb, xb, zb, 0, H, .3, wm);
+  if (o.left !== false) U(jcWall(g, xa, zf, xa, zb, 0, H, .3, wm)); if (o.right !== false) U(jcWall(g, xb, zf, xb, zb, 0, H, .3, wm));
+  U(jcWall(g, xa, zb, xb, zb, 0, H, .3, wm));
+  if (o.open) for (const [a0, a1] of [[xa + .15, xb - .15]]) { const d = box(a1 - a0, .9, .04, jcPlasterMat('#c06a48', .3), (a0 + a1) / 2, .05, zb - s * .17, g); d.userData.nocol = 1; }   // a painted dado inside
   if (o.open) { const b = box(Math.abs(xb - xa), .5, .35, jcM.beam(), cx, H - .5, zf, g); b.userData.nocol = 1; }
-  else { const d = o.door ?? cx; jcWall(g, xa, zf, d - .65, zf, 0, H, .3, wm); jcWall(g, d + .65, zf, xb, zf, 0, H, .3, wm); const l = box(1.3, H - 2.3, .3, wm, d, 2.3, zf, g); l.userData.nocol = 1;
+  else { const d = o.door ?? cx; U(jcWall(g, xa, zf, d - .65, zf, 0, H, .3, wm)); U(jcWall(g, d + .65, zf, xb, zf, 0, H, .3, wm)); const l = box(1.3, H - 2.3, .3, wm, d, 2.3, zf, g); l.userData.nocol = 1;
     box(1.2, 2.25, .05, 'dark', d, 0, zf + s * .1, g).userData.nocol = 1; }
   box(Math.abs(xb - xa) + .2, .25, Math.abs(zb - zf) + .2, mat('neRoof', '#d2b48a'), cx, H, cz, g).userData.nocol = 1;
+  if (o.open) { const c = box(Math.abs(xb - xa) - .3, .04, Math.abs(zb - zf) - .3, jcPlasterMat('#f2e8d4', .55), cx, H - .05, cz, g); c.userData.nocol = 1; }
+  if (o.open) for (const lx of [Math.min(xa, xb) + .17, Math.max(xa, xb) - .17]) { const l = jcWorldUV(box(.04, H - .1, Math.abs(zb - zf) - .32, wm, lx, 0, cz, g), .5); l.userData.nocol = 1; }   // the shop's own plaster lining on both side walls (a neighbour's wall may be another colour)   // a light lime-washed ceiling inside an open shop
   return g;
 }
+// ---- objects made for the craftsmen's street after the first blind-critic round (2026-11-18): each reads clearly from its outline ----
+const jcWoodLt = () => mat('jcWoodLt', '#a8794a', { emissive: '#3a2410', emissiveIntensity: .35 });
+const jcBronzeM = () => mat('jcBronze', '#b8873a', { metalness: .5, roughness: .35, emissive: '#3a2410', emissiveIntensity: .4 });
+const jcGlowM = () => mat('jcGlow', '#ffb35a', { emissive: '#ff7a1a', emissiveIntensity: 1.6 });
+// a soft warm pool of light on the floor (firelight without a real light): additive radial gradient
+let jcPoolT = null;
+function jcLightPool(g, x, y, z, r = 1.6, a = .5) { if (!jcPoolT) { const c = document.createElement('canvas'); c.width = c.height = 128; const k = c.getContext('2d'); const gr = k.createRadialGradient(64, 64, 0, 64, 64, 64); gr.addColorStop(0, 'rgba(255,170,80,1)'); gr.addColorStop(1, 'rgba(255,140,60,0)'); k.fillStyle = gr; k.fillRect(0, 0, 128, 128); jcPoolT = new THREE.CanvasTexture(c); }
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(r * 2, r * 2), new THREE.MeshBasicMaterial({ map: jcPoolT, transparent: true, opacity: a, blending: THREE.AdditiveBlending, depthWrite: false })); m.rotation.x = -Math.PI / 2; m.position.set(x, y + .03, z); m.userData.dyn = 1; g.add(m); return m; }
+function jcWhiteCloth(g, x, y, z) {   // a stack of undyed white wool bolts on a low bench
+  box(1.2, .3, .7, jcWoodLt(), x, y, z, g); const w = mat('jcLinen', '#fbf8f0', { emissive: '#5a5448', emissiveIntensity: .5 }), w2 = mat('jcLinen2', '#efe6d2', { emissive: '#4a4438', emissiveIntensity: .5 });
+  for (const [k, yy, oz] of [[0, .3, -.17], [1, .3, .17], [2, .58, 0]]) { const b = cyl(.15, .15, 1.0, 12, k % 2 ? w2 : w, x, 0, z + oz, g); b.rotation.z = Math.PI / 2; b.position.y = y + yy + .15; }
+  for (const [yy, oz] of [[.45, -.17], [.45, .17], [.73, 0]]) for (const e of [-1, 1]) { const band = cyl(.155, .155, .05, 12, mat('jcBand', '#c43a2e'), x + e * .4, y + yy, z + oz, g); band.rotation.z = Math.PI / 2; }
+  for (let k = 0; k < 3; k++) box(.5 - k * .04, .05, .32, k % 2 ? w2 : w, x, y + .88 + k * .05, z, g); return y + 1.0; }
+function jcLedgerDesk(g, x, y, z) {   // a writing table at desk height with an open ledger, an inkpot and a stylus
+  const wood = jcWoodLt(); box(1.2, .06, .7, wood, x, y + .72, z, g); for (const [a, b] of [[-.52, -.28], [.52, -.28], [-.52, .28], [.52, .28]]) box(.06, .72, .06, wood, x + a, y, z + b, g);
+  for (const s2 of [-1, 1]) { const pg = box(.36, .03, .46, mat('papyrus', '#f2e6c4'), x + s2 * .19, y + .78, z, g); pg.rotation.z = -s2 * .08; }
+  for (let k = 0; k < 5; k++) box(.28, .005, .01, mat('jcInk', '#2a2420'), x - .19, y + .8, z - .15 + k * .08, g);
+  cyl(.05, .06, .1, 8, mat('jcInkpot', '#2a3a5a'), x + .48, y + .78, z - .2, g); const st = box(.01, .01, .3, mat('jcStylus', '#c8b48a'), x + .45, y + .82, z + .05, g); st.rotation.y = .5;
+  return y + .85; }
+function jcIncenseStand(g, x, y, z) {   // a bronze bowl of glowing coals on a tall stand, with a thin wisp of smoke rising from it
+  const b = mat('jcBronzeBright', '#d8a048'); cyl(.3, .36, .12, 10, b, x, y, z, g); cyl(.07, .1, .9, 8, b, x, y + .12, z, g); cyl(.14, .1, .1, 8, b, x, y + 1.0, z, g);
+  const bowl = add(new THREE.SphereGeometry(.2, 12, 6, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), b, x, y + 1.18, z, g); bowl.material = b;
+  const coal = cyl(.16, .16, .03, 10, jcGlowM(), x, y + 1.13, z, g);
+  const sm = new THREE.MeshBasicMaterial({ color: '#efe8dc', transparent: true, opacity: .16, depthWrite: false });
+  for (let k = 0; k < 4; k++) { const p = add(new THREE.SphereGeometry(.06 + k * .02, 8, 6), sm, x + Math.sin(k * 1.3) * .05, y + 1.28 + k * .15, z + Math.cos(k * 1.1) * .04, g); p.userData.dyn = 1; }
+  jcLightPool(g, x, y, z, 1.0, .35); return y + 1.2; }
+function jcCoinChest(g, x, y, z) {   // a banded wooden chest with its lid thrown back, heaped with gold coins, a few spilled on the floor
+  const wood = mat('jcChestWood', '#b07a46', { emissive: '#3a2410', emissiveIntensity: .35 }), gold = mat('jcCoin', '#ffd25a', { metalness: .4, roughness: .25, emissive: '#a8740c', emissiveIntensity: .9 });
+  box(1.0, .55, .6, wood, x, y, z, g); for (const s2 of [-1, 1]) box(.05, .57, .62, mat('jcIron', '#6e737c'), x + s2 * .35, y, z, g);
+  const lid = box(1.0, .08, .6, wood, x, y + .55, z - .3, g); lid.geometry.translate(0, 0, -.3); lid.position.z = z - .3; lid.rotation.x = -1.9;
+  const heap = add(new THREE.SphereGeometry(.42, 12, 6, 0, Math.PI * 2, 0, Math.PI / 2), gold, x, y + .5, z, g); heap.scale.set(1.1, .45, .65);
+  for (let k = 0; k < 7; k++) { const c = cyl(.05, .05, .015, 10, gold, x - .5 + (k % 4) * .2 + (k > 3 ? .1 : 0), y, z + .42 + (k > 3 ? .12 : 0), g); c.rotation.x = .1 * k; }
+  jcLightPool(g, x, y, z, .9, .35); return y + .75; }
+function jcKickWheel(g, x, y, z) {   // a potter's kick wheel: a low flywheel, a shaft, a flat wheel-head with a pot taking shape, and the potter's stool
+  const wood = jcWoodLt(), clay = mat('wetclay', '#9a5a3a');
+  cyl(.5, .55, .14, 16, jcPlasterMat('#9a8a78'), x, y, z, g); cyl(.45, .45, .12, 16, wood, x, y + .16, z, g); cyl(.08, .1, .45, 8, wood, x, y + .28, z, g); cyl(.36, .34, .08, 16, wood, x, y + .72, z, g);
+  const pot = add(new THREE.LatheGeometry([0, .12, .17, .19, .15, .12, .13].map((r, k) => new THREE.Vector2(r, k * .05)), 14), clay, x, y + .8, z, g); pot.material = clay;
+  return y + 1.12; }
+function jcDomedKiln(g, x, y, z) {   // a domed kiln with a glowing arched mouth and a short chimney, firelight on the floor
+  const clay = jcPlasterMat('#c98a5e', .15), dk = jcPlasterMat('#8a5a3a');
+  const d = add(new THREE.SphereGeometry(.8, 14, 8, 0, Math.PI * 2, 0, Math.PI / 2), clay, x, y + .25, z, g); d.scale.y = 1.2; cyl(.82, .86, .25, 14, dk, x, y, z, g);
+  const mouth = new THREE.Shape(); mouth.moveTo(-.22, 0); mouth.lineTo(-.22, .22); mouth.absarc(0, .22, .22, Math.PI, 0, true); mouth.lineTo(.22, 0); mouth.lineTo(-.22, 0);
+  const m = add(new THREE.ShapeGeometry(mouth), jcGlowM(), x, y + .05, z + .79, g); m.userData.nocol = 1;
+  const rim = add(new THREE.TorusGeometry(.25, .05, 6, 12, Math.PI), dk, x, y + .27, z + .8, g); rim.userData.nocol = 1;
+  cyl(.14, .17, .6, 8, dk, x + .25, y + .95, z - .25, g); flame(g, x, y + .1, z + .7, 1.4);
+  jcLightPool(g, x, y, z + 1.0, 1.6, .55); return y + 1.25; }
+function jcBowlStack(g, x, y, z) {   // a bench with stacks of light terracotta bowls
+  box(1.1, .45, .5, jcWoodLt(), x, y, z, g); const lt = mat('jcClayLt', '#d89a68');
+  for (const [bx, n] of [[-.3, 5], [.05, 4], [.35, 3]]) for (let k = 0; k < n; k++) { const b = add(new THREE.SphereGeometry(.16, 10, 5, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), lt, bx, y + .45 + .2 + k * .07, z, g); b.rotation.x = Math.PI; b.material = lt; }
+  return y + .45 + .2 + 5 * .07; }
+function jcQuenchTrough(g, x, y, z) {   // a stone quenching trough brimming with bright water, a pair of tongs resting across it
+  const st = jcPlasterMat('#b8a488'); box(1.3, .4, .6, st, x, y, z, g); for (const [rx, rz, rw, rd] of [[0, .27, 1.3, .08], [0, -.27, 1.3, .08], [.61, 0, .08, .6], [-.61, 0, .08, .6]]) box(rw, .22, rd, st, x + rx, y + .4, z + rz, g);
+  box(1.14, .03, .46, mat('jcWaterBright', '#6ac8d8', { roughness: .05, emissive: '#2a6a74', emissiveIntensity: .7 }), x, y + .52, z, g);
+  const t = box(.9, .04, .04, mat('jcIron', '#8e949e'), x + .1, y + .58, z, g); t.rotation.y = .3; return y + .6; }
+function jcWashtub(g, x, y, z) {   // a big wooden washtub of soapy water with a paddle
+  const w = jcWoodLt(); cyl(.85, .75, .6, 14, w, x, y, z, g); for (const yy of [.12, .46]) cyl(.87, .87, .05, 14, mat('jcIron', '#8e949e'), x, y + yy, z, g);
+  cyl(.8, .8, .03, 14, mat('jcSuds', '#eef4f2', { emissive: '#4a5250', emissiveIntensity: .6 }), x, y + .55, z, g);
+  for (let k = 0; k < 7; k++) add(new THREE.SphereGeometry(.1, 6, 4), mat('jcSuds', '#eef4f2'), x - .45 + k * .15, y + .58, z + (k % 2 ? .18 : -.15), g);
+  const p = box(.06, 1.1, .12, w, x + .3, y + .3, z - .1, g); p.rotation.z = .5; return y + .6; }
+function jcBucket(g, x, y, z) {   // a big light-wood bucket of water with a rope handle
+  const w = jcWoodLt(); cyl(.34, .28, .55, 12, w, x, y, z, g); for (const yy of [.1, .42]) cyl(.35, .35, .04, 12, mat('jcIron', '#8e949e'), x, y + yy, z, g);
+  cyl(.31, .31, .02, 12, mat('jcWaterBright', '#6ac8d8'), x, y + .5, z, g); const h = add(new THREE.TorusGeometry(.3, .02, 5, 14, Math.PI), mat('jcRope', '#c8b48a'), x, y + .55, z, g); h.userData.nocol = 1; return y + .85; }
+function jcDyeVat(g, x, y, z) {   // a stone dye vat brimming with glossy crimson dye, a stained stirring pole, drips on the floor
+  const st = jcPlasterMat('#b8a488'); cyl(.62, .66, .7, 12, st, x, y, z, g); cyl(.66, .66, .08, 12, mat('jcDyeRim', '#8a2a2a'), x, y + .68, z, g);
+  cyl(.56, .56, .03, 12, mat('jcDye', '#b0182a', { roughness: .1, emissive: '#4a0810', emissiveIntensity: .6 }), x, y + .7, z, g);
+  const pl = box(.06, 1.4, .06, jcWoodLt(), x + .2, y + .5, z, g); pl.rotation.z = -.5; for (const [dx, dz] of [[.7, .2], [.8, -.3]]) { const d = cyl(.14, .14, .01, 10, mat('jcDye', '#b0182a'), x + dx, y, z + dz, g); d.userData.nocol = 1; }
+  return y + .8; }
+function jcJarRack(g, x, y, z) {   // a big two-tier rack of shipping amphorae packed in straw
+  const w = jcWoodLt(); for (const s2 of [-1, 1]) box(.08, 1.4, .5, w, x + s2 * .8, y, z, g); for (const yy of [.05, .7]) box(1.7, .06, .5, w, x, y + yy, z, g);
+  box(1.6, .1, .44, mat('jcStraw', '#d8c078'), x, y + .76, z, g);
+  for (const [yy, n] of [[.11, 4], [.82, 4]]) for (let k = 0; k < n; k++) { const ax = x - .6 + k * .4, c = k % 2 ? mat('jcClayLt', '#d89a68') : mat('jcClay', '#b0623e');
+    const a = add(new THREE.LatheGeometry([0, .1, .15, .16, .13, .06, .05, .07].map((r, j) => new THREE.Vector2(r, j * .075)), 10), c, ax, y + yy, z, g); a.material = c; }
+  return y + 1.4; }
+function jcJarPyramid(g, x, y, z) {   // jars stacked 3-2-1 on a board, in three clay colours
+  const cs = [mat('jcClay', '#b0623e'), mat('jcClayLt', '#d89a68'), mat('jcClayBuff', '#d8b48a')]; box(1.2, .06, .5, jcWoodLt(), x, y, z, g);
+  [[3, .06], [2, .44], [1, .82]].forEach(([n, yy], row) => { for (let k = 0; k < n; k++) { const jx = x + (k - (n - 1) / 2) * .38, j = add(new THREE.SphereGeometry(.18, 10, 7), cs[(k + row) % 3], jx, y + yy + .2, z, g); j.scale.y = 1.1; } });
+  return y + 1.2; }
+function jcTripodBrazier(g, x, y, z) {   // a bronze tripod holding a bowl of glowing coals
+  const b = mat('jcBronzeBright', '#d8a048', { metalness: .4, roughness: .3, emissive: '#6a4010', emissiveIntensity: .6 }); for (let k = 0; k < 3; k++) { const a = k / 3 * Math.PI * 2, l = box(.1, 1.0, .1, b, x + Math.cos(a) * .22, y, z + Math.sin(a) * .22, g); l.rotation.z = Math.cos(a) * -.12; l.rotation.x = Math.sin(a) * .12; }
+  const bowl = add(new THREE.SphereGeometry(.42, 12, 6, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), b, x, y + 1.15, z, g); bowl.material = b; const cm = add(new THREE.SphereGeometry(.36, 10, 5, 0, Math.PI * 2, 0, Math.PI / 2), jcGlowM(), x, y + 1.08, z, g); cm.scale.y = .45;
+  for (const [fx, fz, fs] of [[0, 0, 2.2], [.15, .1, 1.6], [-.15, -.05, 1.7]]) flame(g, x + fx, y + 1.15, z + fz, fs); jcLightPool(g, x, y, z, 1.4, .5); return y + 1.3; }
+
+// speckled lime plaster (world-mapped), one material per colour; glow > 0 adds a faint warm emissive for shop interiors (lamplight, no real light)
+let jcPlT = null; const jcPlM = {};
+function jcPlasterMat(col, glow = 0) { const k = col + '|' + glow; if (jcPlM[k]) return jcPlM[k];
+  if (!jcPlT) { const c = document.createElement('canvas'); c.width = c.height = 256; const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, 256, 256);
+    for (let i = 0; i < 40; i++) { const v = 215 + jcRand() * 40 | 0; x.fillStyle = `rgba(${v},${v * .97 | 0},${v * .9 | 0},.35)`; x.beginPath(); x.ellipse(jcRand() * 256, jcRand() * 256, 20 + jcRand() * 50, 12 + jcRand() * 30, jcRand() * 3, 0, 7); x.fill(); }
+    for (let i = 0; i < 3000; i++) { const v = 150 + jcRand() * 80 | 0; x.fillStyle = `rgba(${v},${v * .92 | 0},${v * .82 | 0},${.1 + jcRand() * .25})`; x.fillRect(jcRand() * 256, jcRand() * 256, 1 + jcRand() * 2, 1 + jcRand() * 2); }
+    for (let i = 0; i < 25; i++) { x.strokeStyle = `rgba(110,90,70,${.15 + jcRand() * .2})`; x.lineWidth = 1; x.beginPath(); let px = jcRand() * 256, py = jcRand() * 256; x.moveTo(px, py); for (let k = 0; k < 4; k++) { px += (jcRand() - .5) * 30; py += jcRand() * 20; x.lineTo(px, py); } x.stroke(); }
+    jcPlT = new THREE.CanvasTexture(c); jcPlT.colorSpace = THREE.SRGBColorSpace; jcPlT.wrapS = jcPlT.wrapT = THREE.RepeatWrapping; }
+  return jcPlM[k] = new THREE.MeshStandardMaterial({ color: col, map: jcPlT, roughness: .95, emissive: glow ? new THREE.Color(col).multiplyScalar(.85) : 0x000000, emissiveIntensity: glow }); }
+// dressing for an open shop: a trade's clutter along its back and side walls, clear of the five spots (spots: centre cx,cz, +-2.4 across, +-1.6 deep).
+// f = +1 when the shop runs from its front towards +z, -1 towards -z. kind: 'smith' | 'fuller' | 'merchant' | 'potter'
+function jcDressShop(kind, cx, cz, f) {
+  const y = heightAt(cx, cz) + .1, g = new THREE.Group(); g.position.set(cx, y, cz); if (f < 0) g.rotation.y = Math.PI; scene.add(g);   // local +z = towards the back wall
+  const back = 2.55, iron = mat('jcIron', '#8e949e', { metalness: .45, roughness: .35, emissive: '#3a3630', emissiveIntensity: .7 }), clay = mat('jcClay', '#b0623e'), clayLt = mat('jcClayLt', '#c98a5a');
+  const jar = (x, z, s = 1, m = clay) => { const j = add(new THREE.SphereGeometry(.22 * s, 10, 7), m, x, .22 * s * 1.25, z, g); j.scale.y = 1.25; cyl(.08 * s, .11 * s, .14 * s, 8, m, x, .5 * s, z, g); };
+  const shelf = (x, n, m) => { for (const s2 of [-1, 1]) box(.06, 1.7, .32, jcM.beam(), x + s2 * .75, 0, back, g); for (const yy of [.4, .95, 1.5]) { box(1.56, .05, .34, jcM.beam(), x, yy, back, g);
+      for (let k = 0; k < n; k++) { const j = add(new THREE.SphereGeometry(.11, 8, 6), k % 2 ? m : clayLt, x - .55 + k * (1.1 / (n - 1)), yy + .13, back, g); j.scale.y = 1.2; } } };
+  if (kind === 'smith') {
+    box(2.2, .06, .06, jcM.beam(), 0, 2.2, back + .1, g);   // a rail of tools on the back wall
+    for (let k = 0; k < 6; k++) { const tx = -.9 + k * .36; box(.04, .55, .04, iron, tx, 1.6, back + .08, g); box(k % 2 ? .16 : .1, .1, .06, iron, tx, 1.55, back + .08, g); }
+    { add(new THREE.ConeGeometry(.5, .4, 9), mat('jcCoal', '#5a524a'), -3.3, .2, -.6, g); }   // a heap of charcoal, a few embers
+    for (let k = 0; k < 4; k++) { const lg = cyl(.1, .1, 1.0, 7, jcWoodLt(), 2.9, .1 + (k % 2) * .18, 1.5 + k * .22 - (k > 1 ? .3 : 0), g); lg.rotation.x = Math.PI / 2; }   // split logs
+    box(.5, .7, .5, mat('jcBarrel', '#a8794a'), 3.2, 0, .2, g); box(.08, .9, .08, iron, 3.0, 0, -.4, g).rotation.z = .3;   // a water barrel and tongs leaning on the wall
+    for (const [sx, sz] of [[3.2, 2.2], [3.3, 1.5]]) { const sk = add(new THREE.SphereGeometry(.3, 8, 6), mat('sack', '#7a6a50'), sx, .28, sz, g); sk.scale.set(1, .9, .8); }   // sacks of charcoal
+  } else if (kind === 'fuller') {
+    jar(3.3, 2.2, 1.0, clayLt); for (let k = 0; k < 4; k++) box(.6, .06, .45, mat(k % 2 ? 'jcLinen2' : 'jcLinen', k % 2 ? '#efe6d2' : '#fbf8f0'), -3.1, k * .07, 1.2, g);   // a pile of folded cloth
+  } else if (kind === 'merchant') {
+    box(1.6, .02, 1.1, mat('rug#9a4a3a', '#9a4a3a'), 0, 0, -.2, g);   // a rug in the middle
+  } else if (kind === 'potter') {
+    shelf(-2.9, 5, mat('jcClayBuff', '#d8b48a')); jar(3.2, back, .8, mat('jcClayBuff', '#d8b48a'));
+    jar(-3.3, -.2, 1.0, mat('jcClayBuff', '#d8b48a'));
+  }
+  jcLightPool(g, 0, 0, .3, 3.2, .28);   // the lamp's warm pool on the floor
+  // a clay lamp hanging from the beam, glowing
+  box(.02, .6, .02, mat('jcRope', '#c8b48a'), 0, 2.75, 1.2, g); add(new THREE.SphereGeometry(.1, 8, 5), mat('jcGlow', '#ffb35a', { emissive: '#ff7a1a', emissiveIntensity: 1.6 }), 0, 2.7, 1.2, g);
+  return g; }
 // a colonnade along a street: columns at the given x positions on the line zc, an architrave, and a lean-to roof from the columns back to the shop fronts at zs
 function jcColonnade(xs, zc, zs, x0, x1) {
   const cx = (x0 + x1) / 2, y = heightAt(cx, zc), g = new THREE.Group(); g.position.set(0, y, 0); scene.add(g);
@@ -219,22 +340,53 @@ function jcColonnade(xs, zc, zs, x0, x1) {
   return g;
 }
 function jcAnvil(g, x, y, z) {   // a smith's anvil on a stump
-  const iron = mat('jcIron', '#3a3a3e', { metalness: .6, roughness: .45 });
-  cyl(.3, .34, .5, 10, jcM.beam(), x, y, z, g); box(.6, .14, .26, iron, x, y + .5, z, g); box(.36, .16, .2, iron, x, y + .64, z, g); box(.7, .12, .3, iron, x, y + .8, z, g);
+  const iron = mat('jcIron', '#8e949e', { metalness: .45, roughness: .35, emissive: '#3a3630', emissiveIntensity: .7 });
+  cyl(.3, .34, .5, 10, jcWoodLt(), x, y, z, g); box(.6, .14, .26, iron, x, y + .5, z, g); box(.36, .16, .2, iron, x, y + .64, z, g); box(.7, .12, .3, iron, x, y + .8, z, g);
   const horn = add(new THREE.ConeGeometry(.12, .4, 8), iron, x - .52, y + .86, z, g); horn.rotation.z = Math.PI / 2;
   box(.1, .06, .32, jcM.beam(), x + .15, y + .92, z + .05, g); box(.12, .1, .1, iron, x + .15, y + .92, z + .22, g);   // a hammer lying on it
   return y + .95; }
 function jcForge(g, x, y, z) {   // a stone forge with glowing coals, flames and a hood
-  box(1.3, .85, 1.0, 'stoneDk', x, y, z, g); box(1.1, .06, .8, mat('ember', '#ff8a3a', { emissive: '#ff5a1a', emissiveIntensity: .9 }), x, y + .85, z, g);
-  for (const [fx, fz, fs] of [[0, 0, 2.2], [.2, .1, 1.6], [-.22, -.08, 1.7]]) flame(g, x + fx, y + .9, z + fz, fs);
-  box(1.3, .5, .3, 'stoneDk', x, y + .85, z + .35, g); box(.9, 1.2, .6, 'stone', x, y + 1.9, z + .2, g); box(.5, 1.0, .5, 'stone', x, y + 3.1, z + .2, g);   // back, hood and flue
+  const fs = jcPlasterMat('#a89478'), fsd = jcPlasterMat('#8a7860');
+  box(1.3, .85, 1.0, fs, x, y, z, g); box(1.1, .06, .8, mat('ember', '#ff8a3a', { emissive: '#ff5a1a', emissiveIntensity: .9 }), x, y + .85, z, g);
+  for (const [fx, fz, fs] of [[0, .05, 3.2], [.25, .15, 2.4], [-.25, 0, 2.6], [.05, .25, 2]]) flame(g, x + fx, y + .9, z + fz, fs);
+  add(new THREE.SphereGeometry(.2, 8, 6), mat('jcGlow', '#ffb35a', { emissive: '#ff7a1a', emissiveIntensity: 1.6 }), x, y + .95, z + .1, g).scale.y = .4;
+  box(1.3, .5, .3, fsd, x, y + .85, z - .35, g); const hood = add(new THREE.CylinderGeometry(.25, .62, .9, 4), fs, x, y + 1.8, z - .25, g); hood.rotation.y = Math.PI / 4; box(.38, .6, .38, fsd, x, y + 2.25, z - .25, g); box(.6, .35, .05, mat('jcGlow', '#ffb35a', { emissive: '#ff7a1a', emissiveIntensity: 1.6 }), x, y + .3, z + .51, g).userData.nocol = 1;   // back, hood and flue behind the fire   // back, hood and flue
   box(.5, .4, .4, mat('jcBellows', '#6a4426'), x + .9, y + .5, z, g);
+  jcLightPool(g, x, y, z + .9, 1.8, .55);
   return y + 1.0; }
 function jcBladeRack(g, x, y, z) {   // a wooden rack of new sword blades
-  const steel = mat('jcSteel', '#b8bcc4', { metalness: .8, roughness: .3 });
+  const steel = mat('jcSteel', '#dfe4ea', { metalness: .5, roughness: .25, emissive: '#5a5e66', emissiveIntensity: .6 });
   for (const s of [-1, 1]) box(.08, 1.3, .08, jcM.beam(), x + s * .55, y, z, g); box(1.2, .08, .1, jcM.beam(), x, y + 1.2, z, g); box(1.2, .08, .25, jcM.beam(), x, y + .1, z, g);
-  for (let k = 0; k < 5; k++) { const bx = x - .4 + k * .2; box(.06, .9, .02, steel, bx, y + .2, z, g); box(.18, .04, .05, jcM.beam(), bx, y + 1.1, z, g); box(.04, .14, .04, jcM.beam(), bx, y + 1.14, z, g); }
+  for (let k = 0; k < 5; k++) { const bx = x - .44 + k * .22, bl = new THREE.Group(); bl.position.set(bx, y + .15, z + .12); bl.rotation.z = (k - 2) * .06; bl.rotation.x = -.18; g.add(bl);   // blades leaning out of the rack, points down
+    box(.09, 1.05, .025, steel, 0, 0, 0, bl); add(new THREE.ConeGeometry(.045, .14, 4), steel, 0, -.06, 0, bl).rotation.x = Math.PI;
+    box(.26, .05, .07, mat('jcBronze', '#b8873a', { metalness: .5, roughness: .35 }), 0, 1.05, 0, bl); box(.05, .2, .05, mat('leather', '#7a4a2a'), 0, 1.1, 0, bl); add(new THREE.SphereGeometry(.04, 6, 4), mat('jcBronze', '#b8873a'), 0, 1.33, 0, bl); }
   return y + 1.3; }
+
+// ---- the farm and vineyard (James 5) ----
+// a rock-cut winepress: a treading floor cut into a low outcrop, a channel, and a lower collecting vat stained with juice (Isaiah 5:2). Centred on the treading floor; the vat lies to -z.
+function jcWinepress(g, x, y, z) {
+  const rock = mat('jcRock', '#b8a07a'), rockDk = mat('jcRockDk', '#8f7a5a'), juice = mat('juice', '#6a1a2a', { roughness: .3 });
+  const f = new THREE.Group(); f.position.set(x, y, z); g.add(f);
+  for (let k = 0; k < 7; k++) { const a = k / 7 * Math.PI * 2, r = add(new THREE.DodecahedronGeometry(.55, 0), k % 2 ? rock : rockDk, Math.cos(a) * 1.25, .12, Math.sin(a) * 1.25, f); r.scale.set(1, .55, 1); }   // the outcrop round it
+  for (const [bx, bz, bw, bd] of [[0, 1.05, 2.3, .2], [0, -1.05, 2.3, .2], [1.05, 0, .2, 1.9], [-1.05, 0, .2, 1.9]]) box(bw, .5, bd, rock, bx, 0, bz, f);   // the floor's rim
+  box(1.9, .3, 1.9, rockDk, 0, 0, 0, f); box(1.8, .03, 1.8, juice, 0, .3, 0, f).userData.nocol = 1;                       // the treading floor, stained
+  for (let k = 0; k < 9; k++) { const gp = add(new THREE.SphereGeometry(.07, 6, 4), mat('jcGrape', '#4a2a5a'), -.6 + (k % 3) * .55, .36, -.5 + Math.floor(k / 3) * .5, f); gp.scale.y = .8; }   // a few crushed grapes
+  box(.3, .2, .9, rockDk, 0, 0, -1.45, f); box(.14, .03, .9, juice, 0, .2, -1.45, f).userData.nocol = 1;                  // the channel
+  cyl(.75, .7, .45, 14, rock, 0, 0, -2.4, f); cyl(.62, .62, .03, 14, juice, 0, .3, -2.4, f).userData.nocol = 1;          // the vat
+  return y + .5; }
+// a two-storey stone field watchtower: a cool store below, a lookout above with a parapet and a shade of branches, a door, a window and an outside ladder
+function jcWatchtower(g, x, y, z) {
+  const st = mat('jcFieldStone', '#a8946e'), stDk = mat('jcFieldStoneDk', '#8a7656'), f = new THREE.Group(); f.position.set(x, y, z); g.add(f);
+  box(3.6, .4, 3.6, stDk, 0, 0, 0, f);
+  for (let k = 0; k < 9; k++) box(3.3 - (k % 2) * .06, .6, 3.3 - (k % 2) * .06, k % 2 ? stDk : st, 0, .4 + k * .6, 0, f);   // coursed fieldstone, 5.4 m
+  box(1.0, 1.9, .1, 'dark', 0, .4, 1.66, f).userData.nocol = 1; box(1.3, .25, .3, stDk, 0, 2.3, 1.62, f);                 // door and lintel (facing +z)
+  box(.5, .6, .1, 'dark', .8, 3.4, 1.66, f).userData.nocol = 1;                                                          // window of the upper floor
+  for (const [px, pz, pw, pd] of [[0, 1.6, 3.3, .2], [0, -1.6, 3.3, .2], [1.6, 0, .2, 3.3], [-1.6, 0, .2, 3.3]]) box(pw, .7, pd, st, px, 5.8, pz, f);   // parapet
+  for (const [a, b] of [[-1.2, -1.2], [1.2, -1.2], [-1.2, 1.2], [1.2, 1.2]]) box(.1, 1.5, .1, jcM.beam(), a, 5.8, b, f);
+  box(2.8, .08, 2.8, mat('jcBranches', '#7a7a3a'), 0, 7.3, 0, f);                                                        // a shade of branches on poles
+  const lad = new THREE.Group(); lad.position.set(-1.9, 0, .6); lad.rotation.z = -.2; f.add(lad);                         // a ladder up the side
+  for (const s2 of [-1, 1]) box(.06, 6.2, .06, jcM.beam(), 0, 0, s2 * .25, lad); for (let k = 0; k < 14; k++) box(.05, .05, .5, jcM.beam(), 0, .4 + k * .42, 0, lad);
+  return y + 6.5; }
 
 // ---- library entries ----
 { const T = (fn, id, label, origin, tags) => defObject(id, (g, x, y, z) => viaScene(g, x, y, z, fn), { label, origin, tags, kind: 'structure' });
@@ -243,6 +395,22 @@ function jcBladeRack(g, x, y, z) {   // a wooden rack of new sword blades
   T(() => { jcWallGate([-4, 0], [4, 0]); }, 'wall-gate-small', 'Small gate in the city wall: two towers and a lintel', 'james 3', ['gate', 'wall', 'stone']);
   T(() => { jcShopUnit(-4, 4, 3, -3, { open: true }); jcColonnade([-4, 0, 4], 4.4, 3, -4.5, 4.5); }, 'open-shop-with-colonnade', 'Open-fronted shop behind a colonnade (Sardis street)', 'james 4', ['shop', 'street', 'columns']); }
 // the smith's furnishings and the window with the scarlet cord, usable as room objects (g, x, y, z) => top
+defObject('white-cloth-bolts', jcWhiteCloth, { label: 'Bolts of undyed white cloth on a bench', origin: 'james 4', tags: ['craft', 'street'], kind: 'object' });
+defObject('ledger-desk', jcLedgerDesk, { label: 'Writing table with an open ledger, inkpot and stylus', origin: 'james 4', tags: ['craft', 'street'], kind: 'object' });
+defObject('incense-stand', jcIncenseStand, { label: 'Bronze incense stand with glowing coals and smoke', origin: 'james 4', tags: ['craft', 'street'], kind: 'object' });
+defObject('open-coin-chest', jcCoinChest, { label: 'Open chest heaped with gold coins', origin: 'james 4', tags: ['craft', 'street'], kind: 'object' });
+defObject('kick-wheel', jcKickWheel, { label: 'Potter\u2019s kick wheel with a pot taking shape', origin: 'james 4', tags: ['craft', 'street'], kind: 'object' });
+defObject('domed-kiln', jcDomedKiln, { label: 'Domed kiln with a glowing arched mouth', origin: 'james 4', tags: ['craft', 'street'], kind: 'object' });
+defObject('bowl-stack-bench', jcBowlStack, { label: 'Bench with stacks of terracotta bowls', origin: 'james 4', tags: ['craft', 'street'], kind: 'object' });
+defObject('tripod-brazier', jcTripodBrazier, { label: 'Bronze tripod with a bowl of glowing coals', origin: 'james 4', tags: ['craft', 'street'], kind: 'object' });
+defObject('rock-cut-winepress', jcWinepress, { label: 'Rock-cut winepress: treading floor, channel and vat', origin: 'james 5', tags: ['farm', 'vineyard', 'wine', 'stone'], kind: 'structure' });
+defObject('field-watchtower', jcWatchtower, { label: 'Two-storey stone field watchtower with a ladder', origin: 'james 5', tags: ['farm', 'vineyard', 'tower', 'stone'], kind: 'structure' });
+defObject('quench-trough', jcQuenchTrough, { label: 'Stone quenching trough of bright water', origin: 'james 4', tags: ['smith', 'water', 'stone'], kind: 'object' });
+defObject('big-washtub', jcWashtub, { label: 'Big wooden washtub of soapy water with a paddle', origin: 'james 4', tags: ['fuller', 'water', 'wood'], kind: 'object' });
+defObject('big-bucket', jcBucket, { label: 'Big light-wood bucket of water with a rope handle', origin: 'james 4', tags: ['fuller', 'water'], kind: 'object' });
+defObject('stone-dye-vat', jcDyeVat, { label: 'Stone dye vat of crimson dye with a stirring pole', origin: 'james 4', tags: ['fuller', 'dye'], kind: 'object' });
+defObject('amphora-rack', jcJarRack, { label: 'Two-tier rack of shipping amphorae in straw', origin: 'james 4', tags: ['merchant', 'pottery'], kind: 'object' });
+defObject('jar-pyramid-321', jcJarPyramid, { label: 'Jars stacked 3-2-1 on a board', origin: 'james 4', tags: ['potter', 'pottery'], kind: 'object' });
 defObject('anvil', jcAnvil, { label: 'Anvil on a stump, with a hammer', origin: 'james 4', tags: ['smith', 'iron', 'tools'], kind: 'object' });
 defObject('smith-forge', jcForge, { label: 'Smith\u2019s forge with glowing coals and a hood', origin: 'james 4', tags: ['smith', 'fire', 'stone'], kind: 'object' });
 defObject('blade-rack', jcBladeRack, { label: 'Rack of new sword blades', origin: 'james 4', tags: ['smith', 'weapons', 'iron'], kind: 'object' });

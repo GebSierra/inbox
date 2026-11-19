@@ -804,7 +804,7 @@
      ],
      "layout": {
       "spread": [
-       2.4,
+       2.2,
        1.6
       ],
       "minY": {
@@ -829,12 +829,12 @@
        "what": "rack of new blades"
       },
       {
-       "id": "water-trough",
-       "what": "water trough"
+       "id": "quench-trough",
+       "what": "quenching trough"
       },
       {
-       "id": "bronze-tripod",
-       "what": "bronze tripod"
+       "id": "tripod-brazier",
+       "what": "bronze tripod with glowing coals"
       }
      ],
      "bannerLift": -1.0
@@ -854,7 +854,7 @@
      ],
      "layout": {
       "spread": [
-       2.4,
+       2.0,
        1.6
       ],
       "minY": {
@@ -867,7 +867,7 @@
      },
      "objects": [
       {
-       "id": "dye-vat",
+       "id": "stone-dye-vat",
        "what": "dye vat"
       },
       {
@@ -875,15 +875,15 @@
        "what": "rack of drying cloth"
       },
       {
-       "id": "washtub",
+       "id": "big-washtub",
        "what": "washtub"
       },
       {
-       "id": "cloth-bolts",
+       "id": "white-cloth-bolts",
        "what": "bolts of white cloth"
       },
       {
-       "id": "wooden-bucket",
+       "id": "big-bucket",
        "what": "wooden bucket"
       }
      ],
@@ -904,7 +904,7 @@
      ],
      "layout": {
       "spread": [
-       2.4,
+       2.0,
        1.6
       ],
       "minY": {
@@ -917,20 +917,20 @@
      },
      "objects": [
       {
-       "id": "writing-desk",
+       "id": "ledger-desk",
        "what": "writing desk with a ledger"
       },
       {
-       "id": "jar-rack",
+       "id": "amphora-rack",
        "what": "rack of jars for shipping"
       },
       {
-       "id": "coin-chest",
-       "what": "coin chest"
+       "id": "open-coin-chest",
+       "what": "chest of gold coins"
       },
       {
-       "id": "incense-burner",
-       "what": "incense burner"
+       "id": "incense-stand",
+       "what": "incense burner with smoke"
       },
       {
        "id": "merchant-blue-tunic",
@@ -954,7 +954,7 @@
      ],
      "layout": {
       "spread": [
-       2.4,
+       2.0,
        1.6
       ],
       "minY": {
@@ -967,16 +967,21 @@
      },
      "objects": [
       {
-       "id": "potters-wheel",
+       "id": "kick-wheel",
        "what": "potter's wheel"
       },
       {
-       "id": "pottery-kiln",
+       "id": "domed-kiln",
        "what": "glowing kiln"
       },
       {
-       "id": "stack-of-bowls",
-       "what": "stack of bowls",
+       "id": "bowl-stack-bench",
+       "what": "stacks of bowls",
+       "extra": true
+      },
+      {
+       "id": "jar-pyramid-321",
+       "what": "pyramid of jars",
        "extra": true
       }
      ],
@@ -995,117 +1000,188 @@
    "rooms": [
     {
      "room": 1,
-     "name": "TODO room 1",
      "verses": "5:1–5",
      "kind": "vignette",
+     "name": "The Rich Man's House",
+     "at": [
+      -82,
+      -15.2
+     ],
+     "viewer": [
+      -82,
+      -21.5
+     ],
+     "layout": {
+      "spread": [
+       3.0,
+       2.0
+      ],
+      "minY": {
+       "ground": [
+        -82,
+        -13
+       ],
+       "plus": 0.08
+      }
+     },
      "objects": [
       {
-       "id": "TODO",
-       "what": "TODO 5:1 near-left object"
+       "place": true,
+       "what": "the storage jars by the granary",
+       "lift": 0.6
       },
       {
-       "id": "TODO",
-       "what": "TODO 5:2 far-left object"
+       "id": "clothes-rack",
+       "what": "rack of fine clothes"
       },
       {
-       "id": "TODO",
-       "what": "TODO 5:3 far-right object"
+       "id": "padlocked-chest",
+       "what": "chest with a gold padlock"
       },
       {
-       "id": "TODO",
-       "what": "TODO 5:4 near-right object"
+       "id": "reaper",
+       "what": "reaper with a sickle"
       },
       {
-       "id": "TODO",
-       "what": "TODO 5:5 centre object"
+       "id": "dining-couch",
+       "what": "dining couch"
       }
-     ]
+     ],
+     "bannerLift": -1.2
     },
     {
      "room": 2,
-     "name": "TODO room 2",
      "verses": "5:6–10",
      "kind": "vignette",
+     "name": "The Field",
+     "at": [
+      -101,
+      -22
+     ],
+     "viewer": [
+      -101,
+      -28.5
+     ],
+     "layout": {
+      "spread": [
+       2.6,
+       2.0
+      ]
+     },
      "objects": [
       {
-       "id": "TODO",
-       "what": "TODO 5:6 near-left object"
+       "id": "ox",
+       "what": "ox"
       },
       {
-       "id": "TODO",
-       "what": "TODO 5:7 far-left object"
+       "place": true,
+       "what": "the standing wheat",
+       "lift": 0.6
       },
       {
-       "id": "TODO",
-       "what": "TODO 5:8 far-right object"
+       "id": "fig-tree",
+       "what": "fig tree"
       },
       {
-       "id": "TODO",
-       "what": "TODO 5:9 near-right object"
+       "id": "flour-sack",
+       "what": "sack of flour"
       },
       {
-       "id": "TODO",
-       "what": "TODO 5:10 centre object"
+       "id": "big-jar",
+       "what": "big storage jar"
       }
      ]
     },
     {
      "room": 3,
-     "name": "TODO room 3",
      "verses": "5:11–15",
      "kind": "vignette",
+     "name": "The Winepress",
+     "at": [
+      -112,
+      -38.5
+     ],
+     "viewer": [
+      -112,
+      -30.5
+     ],
+     "layout": {
+      "spread": [
+       2.4,
+       1.8
+      ]
+     },
      "objects": [
       {
-       "id": "TODO",
-       "what": "TODO 5:11 near-left object"
+       "id": "sheepskin",
+       "what": "sheepskin"
       },
       {
-       "id": "TODO",
-       "what": "TODO 5:12 far-left object"
+       "place": true,
+       "what": "the treading floor",
+       "lift": 0.6
       },
       {
-       "id": "TODO",
-       "what": "TODO 5:13 far-right object"
+       "id": "grapevine-trellis",
+       "what": "grapevine on a trellis"
       },
       {
-       "id": "TODO",
-       "what": "TODO 5:14 near-right object"
+       "id": "elder",
+       "what": "elder with a staff"
       },
       {
-       "id": "TODO",
-       "what": "TODO 5:15 centre object"
+       "id": "wine-jugs",
+       "what": "wine jugs"
       }
      ]
     },
     {
      "room": 4,
-     "name": "TODO room 4",
      "verses": "5:16–20",
      "kind": "vignette",
+     "name": "The Watchtower",
+     "at": [
+      -98,
+      -38.5
+     ],
+     "viewer": [
+      -98,
+      -30.5
+     ],
+     "layout": {
+      "spread": [
+       2.4,
+       1.8
+      ]
+     },
      "objects": [
       {
-       "id": "TODO",
-       "what": "TODO 5:16 near-left object"
+       "id": "woman-praying",
+       "what": "woman kneeling in prayer"
       },
       {
-       "id": "TODO",
-       "what": "TODO 5:17 far-left object"
+       "id": "water-trough",
+       "what": "empty water trough"
       },
       {
-       "id": "TODO",
-       "what": "TODO 5:18 far-right object"
+       "id": "fruit-basket",
+       "what": "basket of fruit"
       },
       {
-       "id": "TODO",
-       "what": "TODO 5:19 near-right object"
+       "id": "ox-grazing",
+       "what": "ox grazing"
       },
       {
-       "id": "TODO",
-       "what": "TODO 5:20 centre object"
+       "id": "grain-sack",
+       "what": "sack of grain"
       }
      ]
     }
-   ]
+   ],
+   "layout": {
+    "dais": "none",
+    "big": 1
+   }
   }
  ]
 }
