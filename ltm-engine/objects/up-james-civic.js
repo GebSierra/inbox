@@ -438,7 +438,7 @@ function jcFigTree(g, x, y, z) {   // a broad, low fig tree: a grey forked trunk
   return y + 2.9; }
 function jcReaper(g, x, y, z) {   // a labourer standing with a big iron sickle held out, a sheaf at his feet
   viaScene(g, x, y, z, () => { person(0, 0, -.4, '#b89a6a', { skin: 2, hair: 1, y: 0 }); });
-  const iron = mat('jcSickleIron', '#7a7e86', { metalness: .6, roughness: .35, emissive: '#2a2c30', emissiveIntensity: .3 });
+  const iron = mat('jcSickleIron', '#7a7e86', { metalness: .6, roughness: .35, emissive: '#2a2c30', emissiveIntensity: .3 }); iron.name = 'jcSickleIron';
   const sk = new THREE.Group(); sk.position.set(x - .34, y + .78, z + .18); sk.rotation.set(0, Math.PI / 2, 0); g.add(sk); box(.045, .26, .045, jcM.beam(), 0, -.06, 0, sk);   // a short wooden grip in his hand
   const bl = add(new THREE.TorusGeometry(.17, .02, 4, 14, Math.PI * 1.1), iron, .14, .2, 0, sk); bl.rotation.z = -.3;   // a small iron crescent blade above the grip
   for (let k = 0; k < 16; k++) { const st = box(.035, .9, .035, mat('jcStraw', '#d8c078'), x - .55 + (k % 4) * .06, y, z - .35 + Math.floor(k / 4) * .06, g); st.rotation.z = (k % 4 - 1.5) * .08; } box(.3, .07, .3, mat('jcRope', '#c8b48a'), x - .46, y + .35, z - .26, g);
