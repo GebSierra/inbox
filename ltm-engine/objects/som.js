@@ -260,4 +260,14 @@ def('som-scarecrow', 'Scarecrow in an old robe', g => {
   lathe(g, [[0, 0], [.48, 0], [.46, .04], [.2, .08], [.17, .27], [0, .3]], MM('somStrawHat', '#d8b860', TEX.wicker), 0, 2.12, 0, 14);   // a straw hat
   return 2.4; });
 
+
+def('som-log-stack', 'Stack of cut logs', g => {
+  const bark = MM('somBark2', '#7a6046', TEX.wood), cut = MM('somCutFace2', '#ecd29c'), ring = MM('somRing', '#c09a62');
+  const L = 2.2, rows = [6, 5, 4, 3];
+  rows.forEach((n, row) => { for (let k = 0; k < n; k++) { const r = R(.13, .16), x = (k - (n - 1) / 2) * .31 + R(-.02, .02), y = .15 + row * .27, z = R(-.06, .06);
+    cy(g, r, r, L + R(-.12, .12), 9, bark, x, y, z, Math.PI / 2);   // a log lying on the pile
+    for (const e of [-1, 1]) { const ez = z + e * (L / 2 + .005); cy(g, r * .96, r * .96, .01, 9, cut, x, y, ez, Math.PI / 2); add(new THREE.TorusGeometry(r * .5, .005, 3, 10), ring, x, y, ez + e * .006, g); } } });   // pale cut ends with growth rings
+  for (const s of [-1, 1]) cy(g, .045, .05, 1.4, 6, mWoodDk, s * 1.0, 0, 0);   // a stake at each end holding the pile
+  return 1.15; });
+
 }

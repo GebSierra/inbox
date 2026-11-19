@@ -118,7 +118,7 @@ defBuilder('som.quarry', (r, { ch }) => { const F = roomFrame(r), h = 2.5, sp = 
 // ---- 5.6 THE CHARCOAL BURNERS' CLEARING (5:26–30): smoking mound · row of stumps · axe in a block · rush baskets of charcoal · ash ring ----
 defBuilder('som.charcoal', (r, { ch }) => { const F = roomFrame(r), h = 2.6, sp = SQ(h).map(([f, s]) => F.at(f, s)), out = [];
   // models from the shared library (ltm-engine/objects/som.js), rebuilt 2026-11-18
-  out.push(somAt(F, F.at(-h + .9, -h - 1.4), 'som-charcoal-mound', .6, .8));                 // 1: the smoking charcoal mound
+  out.push(somAt(F, F.at(-h, -h - .2), 'som-log-stack', Math.PI / 2 + .3));   // 1: a stack of cut logs (owner, 2026-11-18)                 // 1: the smoking charcoal mound
   out.push(somAt(F, F.at(h, -h), 'som-cut-stumps', .3));                                   // 2: the row of cut stumps
   out.push(somAt(F, sp[2], 'som-axe-stump', -.4));                                         // 3: the chopping stump, the axe in it
   out.push(somAt(F, sp[3], 'som-charcoal-baskets', .2));                                   // 4: rush baskets of charcoal
