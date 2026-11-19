@@ -13,6 +13,11 @@
 #hbcard a{display:block;margin-top:8px;padding-top:7px;border-top:1px solid #e2d2b4;color:#8a3a1e;font-size:13px;text-decoration:none}
 #hbcard a b{text-decoration:underline}
 #hbcard.min .hp,#hbcard.min .ht{display:none}
+/* the tutorial's last step: one obvious way on (the engine shows #tutChoice there; after.js hides Skip) */
+#tutChoice:not([hidden]){display:flex;flex-direction:column;align-items:stretch;gap:8px;flex:1 0 100%}
+#tut #tutGo{font-size:18px;padding:14px 22px;font-weight:bold;box-shadow:0 3px 10px rgba(140,60,30,.3)}
+#tut #tutMore{font-size:14px;padding:8px 14px}
+#tut .row:has(#tutChoice:not([hidden])){flex-wrap:wrap}
 @media (max-width:600px){#hbcard{left:12px;right:12px;width:auto;top:calc(112px + env(safe-area-inset-top,0px));padding:8px 11px;font-size:13px}#hbcard .hp{font-size:14.5px}}
 </style>
 </head>
@@ -31,7 +36,7 @@
     <div class="step" id="tutStep"></div>
     <h2 id="tutTitle"></h2>
     <div id="tutBody"></div>
-    <div class="row"><button id="tutSkip" class="ghost">Skip tutorial</button><span class="sp"></span><button id="tutBack" class="ghost">Back</button><button id="tutNext">Next</button><span id="tutChoice" hidden><button id="tutGo" class="ghost">Start exploring</button> <button id="tutMore">More tips</button></span></div>
+    <div class="row"><button id="tutSkip" class="ghost">Skip tutorial</button><span class="sp"></span><button id="tutBack" class="ghost">Back</button><button id="tutNext">Next</button><span id="tutChoice" hidden><button id="tutGo">Start exploring ▶</button> <button id="tutMore" class="ghost">More tips</button></span></div>
   </div>
 </div>
 <div id="nav"><button id="prev">◀ Prev</button><button id="next">Next ▶</button></div>

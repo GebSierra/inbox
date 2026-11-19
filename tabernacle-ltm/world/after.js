@@ -23,6 +23,10 @@ const INC = []; for (let i = 0; i < 8; i++) { const s = puff('#f1ece4', .15); s.
 // the caption card: the chapter, place, picture and theme of the stop you are at (or nearest, when you roam), and the book link
 const hbCard = document.getElementById('hbcard'), hbN = hbCard.querySelector('.hn'), hbP = hbCard.querySelector('.hp'), hbT = hbCard.querySelector('.ht');
 let hbShown = null;
+// the card waits until the tutorial is over (it would otherwise show Hebrews 1 during the flyover)
+const hbTut = document.getElementById('tut');
+// the tutorial's last step offers Start exploring / More tips: Skip would be a third way out, so it hides there
+{ const ch = document.getElementById('tutChoice'), sk = document.getElementById('tutSkip'); new MutationObserver(() => { sk.hidden = !ch.hidden; }).observe(ch, { attributes: true, attributeFilter: ['hidden'] }); }
 const hbStand = s => [s.x - (s.look[0] - s.x) * BACK, s.z - (s.look[2] - s.z) * BACK];
 function hbUpdate() { let st = STATIONS[Math.max(idx, 0)], [cx, cz] = hbStand(st);                // the stop Prev/Next last took you to, while you are on your way or still near it
   if (!tween && Math.hypot(player.x - cx, player.z - cz) > 1.5) { let bd = 1e9; for (const s of STATIONS) { const [x, z] = hbStand(s), d = Math.hypot(player.x - x, player.z - z); if (d < bd) { bd = d; st = s; } } }
@@ -32,7 +36,7 @@ const tclock = new THREE.Clock();
 (function anim() {
   const t = tclock.getElapsedTime();
   for (const p of ROOF) p.visible = !overview;                                   // the cutaway
-  if (window.__fc > 2) hbUpdate();
+  hbCard.hidden = !hbTut.hidden; if (window.__fc > 2 && hbTut.hidden) hbUpdate();
   for (const s of CLOUD) { const u = s.userData, h = (u.h + t * .01) % 1, a = u.a + t * u.sp;
     s.position.set(Math.cos(a) * u.r * (1 + h), TENT.H + 3 + h * 46, ARK_Z + Math.sin(a) * u.r * (1 + h) * .8); s.scale.setScalar(u.sz * (1 + h * .8)); s.material.rotation += u.rs * .01; s.material.opacity = .62 * Math.min(1, h * 8) * (h > .85 ? (1 - h) / .15 : 1); }
   for (const s of SMOKE) { const u = s.userData, ph = (t * .09 + u.ph) % 1, drift = ph * ph;
