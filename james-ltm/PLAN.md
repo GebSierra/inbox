@@ -95,3 +95,16 @@ Enter through the harbour gate onto the quay. Rooms clockwise from the left: two
 | 3 The Lighthouse | 3:11–15 | basin of fresh water | olive press | the foot of the lighthouse (built) | the bollard on the mole's edge (built) | painted jar |
 | 4 The Mole | 3:16–18 | grey donkey | bowl of figs | dove cages | | |
 Quay: shore levelled (terrain FLAT), deck flush with the harbour gate road, walkable deck and mole (RAISED), landing steps to the water.
+
+## I. Chapter 4: The Craftsmen's Street (proposed 2026-11-18, waiting for the owner)
+Picture: `refs/plan/plan-ch4.png` (bird's-eye; sea at the top, so walking west is leftwards and your left hand is the bottom of the picture).
+Layout (Sardis shops, `ltm-engine/docs/LAYOUT_RESEARCH.md`): the existing paved street from the avenue to the west gate becomes a colonnaded street: a 3 m roadway, a 2.5 m portico of columns on each side, and a continuous row of open-fronted shops (6 m deep) behind each portico; the south row backs onto the city wall. The scattered houses touching the street make way for the shop rows.
+Rooms: four shops grouped in the middle of the street. Walking west from the avenue: 1 and 2 on the left (north) side, then cross and come back: 3 (far) and 4 (near) on the right (south) side; then on west through the west gate to the rich man's house and the farm. In each room you stand in the portico and look into the shop.
+
+| Room | Verses | 1 near-left | 2 far-left | 3 far-right | 4 near-right | 5 centre |
+|---|---|---|---|---|---|---|
+| 1 The Smithy | 4:1–5 | the anvil (built) | the forge with its fire (built) | the rack of new blades (built) | water trough for quenching | bronze tripod |
+| 2 The Fuller | 4:6–10 | dye vat | laundry rack of drying cloth | washtub | bolts of white cloth | wooden bucket |
+| 3 The Merchant | 4:11–15 | writing desk with a ledger | rack of jars for shipping | coin chest | incense burner with rising smoke (the mist, 4:14) | merchant in a blue tunic |
+| 4 The Potter | 4:16–17 | potter's wheel | glowing kiln | (extra) stack of bowls | | |
+Hooks: blades and fire for quarrels and wars (4:1–2); washing for "cleanse your hands" (4:8); the merchant planning trade "today or tomorrow" (4:13) and the smoke for "a mist" (4:14); the potter's work for knowing the right thing to do (4:17).
