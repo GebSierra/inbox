@@ -108,3 +108,5 @@ Rooms: four shops grouped in the middle of the street. Walking west from the ave
 | 3 The Merchant | 4:11–15 | writing desk with a ledger | rack of jars for shipping | coin chest | incense burner with rising smoke (the mist, 4:14) | merchant in a blue tunic |
 | 4 The Potter | 4:16–17 | potter's wheel | glowing kiln | (extra) stack of bowls | | |
 Hooks: blades and fire for quarrels and wars (4:1–2); washing for "cleanse your hands" (4:8); the merchant planning trade "today or tomorrow" (4:13) and the smoke for "a mist" (4:14); the potter's work for knowing the right thing to do (4:17).
+
+**Status 2026-11-18:** §I built as chapter 4. Chapter 3 renamed: The Fisherman's Fire, The Fishing Net, The Lighthouse, The Pier. Porch spot 5 is now "the window with the scarlet cord". Next: chapter 5 (the rich man's house and the farm), plan first.

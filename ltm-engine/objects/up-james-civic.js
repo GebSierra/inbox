@@ -139,10 +139,7 @@ function jcSynagogue(x, z) {
   for (let k = 0; k <= 6; k++) box(.18, .22, 3.8, jcM.beam(), X0 + .2 + (X1 - X0 - .4) * k / 6, F + 3.85, Z1 + 1.8, g).userData.nocol = 1;
   box(X1 - X0 + .8, .3, 4.1, jcM.roof(), (X0 + X1) / 2, F + 4.05, Z1 + 1.8, g).userData.nocol = 1;
   for (const [b0, b1] of [[X0 + .5, 1.6], [3.2, X1 - .5]]) { box(b1 - b0, .45, .55, jcM.ash(), (b0 + b1) / 2, F, Z1 + .62, g); box(b1 - b0, .1, .62, jcM.ashDk(), (b0 + b1) / 2, F + .45, Z1 + .62, g); }   // the elders' bench, open at the side door
-  { const cx = 5.9, cz = 10.1;   // (owner 2026-11-15, looking out from the porch) a post in the courtyard with a scarlet cord tied to it and hanging down (James 2:25)
-    const red = mat('jcScarlet', '#c01a1a'); box(.22, 1.7, .22, jcM.beam(), cx, P, cz, g); box(.34, .12, .34, jcM.ash(), cx, P, cz, g);
-    const t = add(new THREE.TorusGeometry(.17, .045, 6, 14), red, cx, P + 1.45, cz, g); t.rotation.x = Math.PI / 2; t.userData.nocol = 1;
-    const c = cyl(.03, .03, 1.1, 5, red, cx + .15, P + .3, cz + .1, g); c.rotation.z = .1; c.userData.nocol = 1; }
+  jcRahabWindow(g, 5.9, P, 10.1);   // (owner 2026-11-18: make the scarlet cord read clearly) a stretch of house wall with a window, the scarlet cord let down from it (James 2:25, Joshua 2:15-21)
   for (const [px, pz] of [[X0 - .1, Z1 + 1.8]]) box(.6, .5, 3.6, flag, px, P, pz, g);   // a step at the portico's open front end
   // walking: platform, steps (half height), floors
   const raised = [[z, 13, x + (FX + 13) / 2, (13 - FX) / 2, y0 + P], [z + 13.9, .75, x + 7, 2, y0 + P * .5], [z, 3.5, x + FX - .9, .9, y0 + P * .5], [z + (SZ0 + Z1) / 2, (Z1 - SZ0) / 2 + .3, x + (X0 + X1) / 2, (X1 - X0) / 2 + .3, y0 + F], [z + Z1 + 2.1, 1.8, x + (X0 + X1) / 2, (X1 - X0) / 2 + .3, y0 + F]];
@@ -177,8 +174,76 @@ function jcRichHouse(x, z) {
   return g;
 }
 
+// ---- a stretch of plastered house wall with a window, and a scarlet cord let down from the window to the ground (Rahab, Joshua 2:15-21; James 2:25) ----
+// In group g's frame, centred on (x, z) on the floor y, the window's face towards -z. 1.8 m wide, 2.7 m high; the window sill is 1.3 m up. Returns the sill's height.
+function jcRahabWindow(g, x, y, z) {
+  const red = mat('jcScarlet', '#c4161c'), W = 1.8, H = 2.7, T = .38, w0 = 1.3, w1 = 2.05, ww = .7, f = new THREE.Group(); f.position.set(x, y, z); g.add(f);
+  box(W, w0, T, jcM.plaster(), 0, 0, 0, f); box(W, H - w1, T, jcM.plaster(), 0, w1, 0, f);                       // below and above the window
+  for (const s of [-1, 1]) box((W - ww) / 2, w1 - w0, T, jcM.plaster(), s * (ww / 2 + (W - ww) / 4), w0, 0, f);     // either side of it
+  box(W + .02, .5, T + .04, jcM.red(), 0, .05, 0, f).userData.nocol = 1;                                           // red dado band
+  box(ww + .3, .12, T + .16, jcM.ash(), 0, w0 - .1, -.04, f); box(ww + .3, .14, T + .1, jcM.ash(), 0, w1, 0, f); // dressed sill and lintel
+  for (const s of [-1, 1]) box(.12, w1 - w0, T + .08, jcM.ash(), s * (ww / 2 + .06), w0, 0, f);
+  box(ww, w1 - w0, .04, mat('jcShutterDk', '#2a1a10'), 0, w0, T / 2 - .02, f).userData.nocol = 1;                  // the dark room beyond
+  const sh = box(.36, w1 - w0 - .06, .05, mat('jcShutter', '#6a4426'), -ww / 2 - .2, w0 + .03, -T / 2 - .18, f); sh.rotation.y = .9; sh.userData.nocol = 1;   // a shutter swung open
+  box(W + .2, .18, T + .3, jcM.ash(), 0, H, 0, f).userData.nocol = 1;                                              // coping
+  // the cord: knotted round a peg in the sill, hanging down the wall in a gentle curve, a coil on the ground
+  cyl(.04, .04, .22, 6, jcM.beam(), .18, w0 + .02, -T / 2 - .12, f).rotation.x = Math.PI / 2;
+  add(new THREE.TorusGeometry(.07, .028, 6, 10), red, .18, w0 + .06, -T / 2 - .14, f).userData.nocol = 1;
+  const pts = []; for (let k = 0; k <= 10; k++) { const t = k / 10; pts.push(new THREE.Vector3(.18 + Math.sin(t * 3) * .05, w0 - t * (w0 - .05), -T / 2 - .16 - Math.sin(t * Math.PI) * .08)); }
+  const cord = add(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 24, .032, 6, false), red, 0, 0, 0, f); cord.userData.nocol = 1;
+  const coil = add(new THREE.TorusGeometry(.16, .032, 6, 14), red, .3, .03, -T / 2 - .32, f); coil.rotation.x = Math.PI / 2; coil.userData.nocol = 1;
+  return y + w0;
+}
+
+// ---- the craftsmen's street (James 4): shop units, a colonnade, and the smith's furnishings ----
+// One shop unit in world coordinates: x from xa to xb, its front (onto the portico) at zf and its back at zb. o.open: an open front (a room shop) with only a beam
+// across it; otherwise a front wall with a doorway. o.left / o.right: build that party wall (neighbours share one). o.col: wall colour. Flat roof at 3.4 m.
+function jcShopUnit(xa, xb, zf, zb, o = {}) {
+  const cx = (xa + xb) / 2, cz = (zf + zb) / 2, y = heightAt(cx, cz), g = new THREE.Group(); g.position.set(0, y, 0); scene.add(g); g.updateMatrixWorld(true);
+  const H = 3.4, wm = mat('jcShop' + (o.col || '#e2cfaa'), o.col || '#e2cfaa'), s = Math.sign(zb - zf);
+  jcWorldUV(box(Math.abs(xb - xa), .1, Math.abs(zb - zf), jcFlagMat(), cx, 0, cz, g));
+  if (o.left !== false) jcWall(g, xa, zf, xa, zb, 0, H, .3, wm); if (o.right !== false) jcWall(g, xb, zf, xb, zb, 0, H, .3, wm);
+  jcWall(g, xa, zb, xb, zb, 0, H, .3, wm);
+  if (o.open) { const b = box(Math.abs(xb - xa), .5, .35, jcM.beam(), cx, H - .5, zf, g); b.userData.nocol = 1; }
+  else { const d = o.door ?? cx; jcWall(g, xa, zf, d - .65, zf, 0, H, .3, wm); jcWall(g, d + .65, zf, xb, zf, 0, H, .3, wm); const l = box(1.3, H - 2.3, .3, wm, d, 2.3, zf, g); l.userData.nocol = 1;
+    box(1.2, 2.25, .05, 'dark', d, 0, zf + s * .1, g).userData.nocol = 1; }
+  box(Math.abs(xb - xa) + .2, .25, Math.abs(zb - zf) + .2, mat('neRoof', '#d2b48a'), cx, H, cz, g).userData.nocol = 1;
+  return g;
+}
+// a colonnade along a street: columns at the given x positions on the line zc, an architrave, and a lean-to roof from the columns back to the shop fronts at zs
+function jcColonnade(xs, zc, zs, x0, x1) {
+  const cx = (x0 + x1) / 2, y = heightAt(cx, zc), g = new THREE.Group(); g.position.set(0, y, 0); scene.add(g);
+  for (const x of xs) jcDoric(g, x, 0, zc, 3.1, .22);
+  box(x1 - x0, .3, .45, jcM.ash(), cx, 3.1, zc, g).userData.nocol = 1;
+  box(x1 - x0, .18, Math.abs(zs - zc) + .5, mat('neRoof', '#d2b48a'), cx, 3.35, (zc + zs) / 2, g).userData.nocol = 1;
+  return g;
+}
+function jcAnvil(g, x, y, z) {   // a smith's anvil on a stump
+  const iron = mat('jcIron', '#3a3a3e', { metalness: .6, roughness: .45 });
+  cyl(.3, .34, .5, 10, jcM.beam(), x, y, z, g); box(.6, .14, .26, iron, x, y + .5, z, g); box(.36, .16, .2, iron, x, y + .64, z, g); box(.7, .12, .3, iron, x, y + .8, z, g);
+  const horn = add(new THREE.ConeGeometry(.12, .4, 8), iron, x - .52, y + .86, z, g); horn.rotation.z = Math.PI / 2;
+  box(.1, .06, .32, jcM.beam(), x + .15, y + .92, z + .05, g); box(.12, .1, .1, iron, x + .15, y + .92, z + .22, g);   // a hammer lying on it
+  return y + .95; }
+function jcForge(g, x, y, z) {   // a stone forge with glowing coals, flames and a hood
+  box(1.3, .85, 1.0, 'stoneDk', x, y, z, g); box(1.1, .06, .8, mat('ember', '#ff8a3a', { emissive: '#ff5a1a', emissiveIntensity: .9 }), x, y + .85, z, g);
+  for (const [fx, fz, fs] of [[0, 0, 2.2], [.2, .1, 1.6], [-.22, -.08, 1.7]]) flame(g, x + fx, y + .9, z + fz, fs);
+  box(1.3, .5, .3, 'stoneDk', x, y + .85, z + .35, g); box(.9, 1.2, .6, 'stone', x, y + 1.9, z + .2, g); box(.5, 1.0, .5, 'stone', x, y + 3.1, z + .2, g);   // back, hood and flue
+  box(.5, .4, .4, mat('jcBellows', '#6a4426'), x + .9, y + .5, z, g);
+  return y + 1.0; }
+function jcBladeRack(g, x, y, z) {   // a wooden rack of new sword blades
+  const steel = mat('jcSteel', '#b8bcc4', { metalness: .8, roughness: .3 });
+  for (const s of [-1, 1]) box(.08, 1.3, .08, jcM.beam(), x + s * .55, y, z, g); box(1.2, .08, .1, jcM.beam(), x, y + 1.2, z, g); box(1.2, .08, .25, jcM.beam(), x, y + .1, z, g);
+  for (let k = 0; k < 5; k++) { const bx = x - .4 + k * .2; box(.06, .9, .02, steel, bx, y + .2, z, g); box(.18, .04, .05, jcM.beam(), bx, y + 1.1, z, g); box(.04, .14, .04, jcM.beam(), bx, y + 1.14, z, g); }
+  return y + 1.3; }
+
 // ---- library entries ----
 { const T = (fn, id, label, origin, tags) => defObject(id, (g, x, y, z) => viaScene(g, x, y, z, fn), { label, origin, tags, kind: 'structure' });
   T(() => { jcSynagogue(0, 0); }, 'synagogue-galilean', 'Synagogue: inward-facing benches, lecterns, scroll room, portico and mikva’ot', 'james 2', ['synagogue', 'benches', 'columns', 'water']);
   T(() => { jcRichHouse(0, 0); }, 'rich-mans-house', 'Rich man’s walled estate house with a granary', 'james 5', ['house', 'estate', 'wall']);
-  T(() => { jcWallGate([-4, 0], [4, 0]); }, 'wall-gate-small', 'Small gate in the city wall: two towers and a lintel', 'james 3', ['gate', 'wall', 'stone']); }
+  T(() => { jcWallGate([-4, 0], [4, 0]); }, 'wall-gate-small', 'Small gate in the city wall: two towers and a lintel', 'james 3', ['gate', 'wall', 'stone']);
+  T(() => { jcShopUnit(-4, 4, 3, -3, { open: true }); jcColonnade([-4, 0, 4], 4.4, 3, -4.5, 4.5); }, 'open-shop-with-colonnade', 'Open-fronted shop behind a colonnade (Sardis street)', 'james 4', ['shop', 'street', 'columns']); }
+// the smith's furnishings and the window with the scarlet cord, usable as room objects (g, x, y, z) => top
+defObject('anvil', jcAnvil, { label: 'Anvil on a stump, with a hammer', origin: 'james 4', tags: ['smith', 'iron', 'tools'], kind: 'object' });
+defObject('smith-forge', jcForge, { label: 'Smith\u2019s forge with glowing coals and a hood', origin: 'james 4', tags: ['smith', 'fire', 'stone'], kind: 'object' });
+defObject('blade-rack', jcBladeRack, { label: 'Rack of new sword blades', origin: 'james 4', tags: ['smith', 'weapons', 'iron'], kind: 'object' });
+defObject('window-scarlet-cord', (g, x, y, z) => jcRahabWindow(g, x, y, z), { label: 'House wall with a window and a scarlet cord let down from it', origin: 'james 2', tags: ['rahab', 'window', 'cord', 'wall'], kind: 'structure' });

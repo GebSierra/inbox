@@ -9,12 +9,12 @@ const WALKWAYS = [[-2.6, GZ - 4, 2.6, GZ + 4], [-3.6, TZ + 13.5, 3.6, TZ + 16.5]
   for (const [x, z, r, c, o] of P0) person(x, z, r, c, { ...o, y: groundY(x, z) });
 }
 // garden plots between houses
-for (const [gx, gz] of [[-58, 8], [-30, -26], [-58, 60], [8, -30]]) { for (let r = 0; r < 5; r++) for (let c2 = 0; c2 < 8; c2++) { const x = gx + c2 * .9, z = gz + r * 1.1; add(new THREE.IcosahedronGeometry(R(.22, .32), 0), r % 2 ? 'green' : 'leaf', x, heightAt(x, z) + .15, z).scale.y = .7; } stoneWall(gx - 1, gz - 1, gx + 7.5, gz - 1, .6); }
+for (const [gx, gz] of [[-58, 8], [-30, -26], [-58, 60], [8, -30]]) { const n0 = scene.children.length; for (let r = 0; r < 5; r++) for (let c2 = 0; c2 < 8; c2++) { const x = gx + c2 * .9, z = gz + r * 1.1; add(new THREE.IcosahedronGeometry(R(.22, .32), 0), r % 2 ? 'green' : 'leaf', x, heightAt(x, z) + .15, z).scale.y = .7; } stoneWall(gx - 1, gz - 1, gx + 7.5, gz - 1, .6); if (gx === -30) scene.children.splice(n0).forEach(o => { o.parent = null; }); }   // the plot at (-30,-26) stood where the Smithy is now: drawn (same random stream) and taken away
 // ---------- landmarks ----------
 { // three-storey insula block
   const ix = -36, iz = 28; const g = house(ix, iz, 12, 9, 3, Math.PI / 2); }
 // ---------- town filler: more houses, trees, walls, sheep ----------
-const occupied = (x, z) => (Math.abs(x) < 33 && z > 28 && z < 82) || (x > 2 && x < 35 && z > -2 && z < 29) || (x > -93 && x < -71 && z > -24 && z < -2) || (x > -72 && x < 3 && z > -33 && z < -25) || (Math.abs(x) < 5 && z > 76) || z < SHORE + 8 || (x > 24 && x < 38 && z < SHORE + 14) || (Math.abs(x) < 5 && z < 30 && z > SHORE);
+const occupied = (x, z) => (Math.abs(x) < 33 && z > 28 && z < 82) || (x > 2 && x < 35 && z > -2 && z < 29) || (x > -93 && x < -71 && z > -24 && z < -2) || (x > -72 && x < 3 && z > -40 && z < -17) || (Math.abs(x) < 5 && z > 76) || z < SHORE + 8 || (x > 24 && x < 38 && z < SHORE + 14) || (Math.abs(x) < 5 && z < 30 && z > SHORE);
 const placed = []; for (let i = 0; i < 160; i++) { const x = R(-64, 40), z = R(-34, 70); if (placed.some(([a, b]) => Math.hypot(a - x, b - z) < 9.5)) continue; if (occupied(x, z) || Math.hypot(x, z - 60) < 18) continue; placed.push([x, z]); house(x, z, R(6, 9), R(6, 8), rnd() > .6 ? 2 : 1, Math.round(R(0, 3)) * Math.PI / 2 + R(-.08, .08)); if (rnd() > .55) TN.palm(x + R(5, 6) * (rnd() > .5 ? 1 : -1), z + R(-3, 3), R(.8, 1.1)); else if (rnd() > .5) tree(x + 5.5, z + R(-3, 3), .8); }
 for (let i = 0; i < 400; i++) { const x = R(-66, 44), z = R(-36, 74); if (occupied(x, z) || Math.abs(x) < 6 && z > 20) continue;
   if (placed.some(([a, b]) => Math.hypot(a - x, b - z) < 5.5)) continue; const r = rnd(); if (r < .25) tree(x, z, R(.7, 1)); else if (r < .35) cypress(x, z, R(.7, 1)); else if (r < .8) shrub(x, z, R(.9, 1.6)); }

@@ -23,7 +23,7 @@
   VIA['2.3'] = [[13.5, 11], [17.2, 11]];                                                // through the main door into the hall
   VIA['2.4'] = [[26.1, 12.8]];                                                          // across the hall to the storeroom doorway
   VIA['2.5'] = [[27, 15], [24.4, 16.4], [22.6, 16.8], [22.4, 19.5], [22.4, 20.9]];   // round the hall, out by the side door onto the porch (you stand with your back to the building)
-  VIA['2.6'] = [[26.7, 23.6], [26, 26.4]];                                                            // out between the columns, round the scarlet-cord post, down the back steps
+  VIA['2.6'] = [[29.7, 22], [29.7, 26.4]];                                                            // out between the columns, round the window wall, down the back steps
   buildRooms(2);
 }
 { // chapter 5: the rich man's walled house, just outside the west gate among his fields
@@ -45,4 +45,21 @@
   VIA['3.2'] = [[-5.5, -43.5], [-16, -43.5]];                                                    // west along the quay, round the fire
   VIA['3.3'] = [[-16, -43.5], [-5.5, -43.5], [10, -43.5], [29, -44.2], [30.6, -50]];             // back east along the quay and out along the mole
   buildRooms(3);
+}
+{ // chapter 4: the craftsmen's street (owner approved the plan 2026-11-18, refs/plan/plan-ch4.png). A colonnaded street of open-fronted shops (Sardis), from the avenue
+  // to the west gate: roadway z -30.5..-27.5 (paved above), porticoes on both sides, shop rows behind them (the south row backs onto the city wall).
+  drape(-66, -33, -6, -30.5, 'path', .04); drape(-66, -27.5, -6, -25, 'path', .04);
+  const cols = []; for (let x = -64; x <= -8; x += 4) cols.push(x);
+  jcColonnade(cols, -27.3, -25, -66, -6); jcColonnade(cols, -30.7, -33, -66, -6);
+  const units = [[-66, -60], [-60, -54], [-54, -48], [-48, -42], [-42, -34, 1], [-30, -22, 1], [-18, -12], [-12, -6]];
+  const tints = ['#e2cfaa', '#d8b98c', '#e8dcc0', '#cfa77a', '#e6d2b0', '#d9c09a'];
+  for (const [zf, zb] of [[-25, -19], [-33, -39]]) units.forEach(([xa, xb, open], i) => {
+    const joined = i > 0 && units[i - 1][1] === xa;
+    jcShopUnit(xa, xb, zf, zb, { open: !!open, left: !joined, col: tints[(i + (zf > -30 ? 0 : 3)) % tints.length] }); });
+  zoneLabel(4, "The Craftsmen's Street", -36, -29);
+  VIA['4.1'] = [[30.6, -50], [29, -44.2], [10, -43.5], [0, -42.5], [0, -38], [-.8, -29.5], [-20, -29], [-26, -28.6]];   // back along the pier and quay, in at the harbour gate, west along the street
+  VIA['4.2'] = [[-26, -28.8], [-38, -28.8]];
+  VIA['4.3'] = [[-38, -29]];                                                     // across the street
+  VIA['4.4'] = [[-38, -29.6], [-26, -29.6]];
+  buildRooms(4);
 }

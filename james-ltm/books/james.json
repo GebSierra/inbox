@@ -521,8 +521,8 @@
       },
       {
        "place": true,
-       "what": "the post with the scarlet cord",
-       "lift": 1.0
+       "what": "the window with the scarlet cord",
+       "lift": 1.6
       }
      ]
     },
@@ -589,7 +589,7 @@
      "room": 1,
      "verses": "3:1–5",
      "kind": "vignette",
-     "name": "The Moorings",
+     "name": "The Fisherman's Fire",
      "at": [
       -10,
       -44.65
@@ -640,7 +640,7 @@
      "room": 2,
      "verses": "3:6–10",
      "kind": "vignette",
-     "name": "The Landing Steps",
+     "name": "The Fishing Net",
      "at": [
       -26,
       -44.65
@@ -741,7 +741,7 @@
      "room": 4,
      "verses": "3:16–18",
      "kind": "vignette",
-     "name": "The Mole",
+     "name": "The Pier",
      "at": [
       31,
       -51
@@ -791,105 +791,202 @@
    "rooms": [
     {
      "room": 1,
-     "name": "TODO room 1",
      "verses": "4:1–5",
      "kind": "vignette",
+     "name": "The Smithy",
+     "at": [
+      -26,
+      -22
+     ],
+     "viewer": [
+      -26,
+      -26.5
+     ],
+     "layout": {
+      "spread": [
+       2.4,
+       1.6
+      ],
+      "minY": {
+       "ground": [
+        -36,
+        -29
+       ],
+       "plus": 0.1
+      }
+     },
      "objects": [
       {
-       "id": "TODO",
-       "what": "TODO 4:1 near-left object"
+       "id": "anvil",
+       "what": "anvil"
       },
       {
-       "id": "TODO",
-       "what": "TODO 4:2 far-left object"
+       "id": "smith-forge",
+       "what": "forge with its fire"
       },
       {
-       "id": "TODO",
-       "what": "TODO 4:3 far-right object"
+       "id": "blade-rack",
+       "what": "rack of new blades"
       },
       {
-       "id": "TODO",
-       "what": "TODO 4:4 near-right object"
+       "id": "water-trough",
+       "what": "water trough"
       },
       {
-       "id": "TODO",
-       "what": "TODO 4:5 centre object"
+       "id": "bronze-tripod",
+       "what": "bronze tripod"
       }
-     ]
+     ],
+     "bannerLift": -1.0
     },
     {
      "room": 2,
-     "name": "TODO room 2",
      "verses": "4:6–10",
      "kind": "vignette",
+     "name": "The Fuller",
+     "at": [
+      -38,
+      -22
+     ],
+     "viewer": [
+      -38,
+      -26.5
+     ],
+     "layout": {
+      "spread": [
+       2.4,
+       1.6
+      ],
+      "minY": {
+       "ground": [
+        -36,
+        -29
+       ],
+       "plus": 0.1
+      }
+     },
      "objects": [
       {
-       "id": "TODO",
-       "what": "TODO 4:6 near-left object"
+       "id": "dye-vat",
+       "what": "dye vat"
       },
       {
-       "id": "TODO",
-       "what": "TODO 4:7 far-left object"
+       "id": "laundry-rack",
+       "what": "rack of drying cloth"
       },
       {
-       "id": "TODO",
-       "what": "TODO 4:8 far-right object"
+       "id": "washtub",
+       "what": "washtub"
       },
       {
-       "id": "TODO",
-       "what": "TODO 4:9 near-right object"
+       "id": "cloth-bolts",
+       "what": "bolts of white cloth"
       },
       {
-       "id": "TODO",
-       "what": "TODO 4:10 centre object"
+       "id": "wooden-bucket",
+       "what": "wooden bucket"
       }
-     ]
+     ],
+     "bannerLift": -1.0
     },
     {
      "room": 3,
-     "name": "TODO room 3",
      "verses": "4:11–15",
      "kind": "vignette",
+     "name": "The Merchant",
+     "at": [
+      -38,
+      -36
+     ],
+     "viewer": [
+      -38,
+      -31.5
+     ],
+     "layout": {
+      "spread": [
+       2.4,
+       1.6
+      ],
+      "minY": {
+       "ground": [
+        -36,
+        -29
+       ],
+       "plus": 0.1
+      }
+     },
      "objects": [
       {
-       "id": "TODO",
-       "what": "TODO 4:11 near-left object"
+       "id": "writing-desk",
+       "what": "writing desk with a ledger"
       },
       {
-       "id": "TODO",
-       "what": "TODO 4:12 far-left object"
+       "id": "jar-rack",
+       "what": "rack of jars for shipping"
       },
       {
-       "id": "TODO",
-       "what": "TODO 4:13 far-right object"
+       "id": "coin-chest",
+       "what": "coin chest"
       },
       {
-       "id": "TODO",
-       "what": "TODO 4:14 near-right object"
+       "id": "incense-burner",
+       "what": "incense burner"
       },
       {
-       "id": "TODO",
-       "what": "TODO 4:15 centre object"
+       "id": "merchant-blue-tunic",
+       "what": "merchant in a blue tunic"
       }
-     ]
+     ],
+     "bannerLift": -1.0
     },
     {
      "room": 4,
-     "name": "TODO room 4",
      "verses": "4:16–17",
      "kind": "vignette",
+     "name": "The Potter",
+     "at": [
+      -26,
+      -36
+     ],
+     "viewer": [
+      -26,
+      -31.5
+     ],
+     "layout": {
+      "spread": [
+       2.4,
+       1.6
+      ],
+      "minY": {
+       "ground": [
+        -36,
+        -29
+       ],
+       "plus": 0.1
+      }
+     },
      "objects": [
       {
-       "id": "TODO",
-       "what": "TODO 4:16 near-left object"
+       "id": "potters-wheel",
+       "what": "potter's wheel"
       },
       {
-       "id": "TODO",
-       "what": "TODO 4:17 far-left object"
+       "id": "pottery-kiln",
+       "what": "glowing kiln"
+      },
+      {
+       "id": "stack-of-bowls",
+       "what": "stack of bowls",
+       "extra": true
       }
-     ]
+     ],
+     "bannerLift": -1.0
     }
-   ]
+   ],
+   "layout": {
+    "dais": "none",
+    "big": 1
+   }
   },
   {
    "chapter": 5,
