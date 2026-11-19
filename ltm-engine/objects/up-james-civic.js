@@ -439,9 +439,8 @@ function jcFigTree(g, x, y, z) {   // a broad, low fig tree: a grey forked trunk
 function jcReaper(g, x, y, z) {   // a labourer standing with a big iron sickle held out, a sheaf at his feet
   viaScene(g, x, y, z, () => { person(0, 0, -.4, '#b89a6a', { skin: 2, hair: 1, y: 0 }); });
   const iron = mat('jcSickleIronDark', '#4e535c', { metalness: .5, roughness: .45, emissive: '#16181c', emissiveIntensity: .3, side: THREE.DoubleSide }); iron.name = 'jcSickleIron';
-  const sk = new THREE.Group(); sk.position.set(x - .36, y + .8, z + .22); sk.rotation.set(0, 0, .55); g.add(sk);   // held out from his side, tilted forward and away from the body
-  const fist = add(new THREE.SphereGeometry(.05, 8, 6), mat('jcFistSkin', '#b07a52'), 0, -.03, 0, sk); fist.scale.set(1, 1.2, 1);   // his fist round the grip
-  cyl(.028, .032, .32, 8, mat('jcSickleGrip', '#d0a46c', { emissive: '#4a3018', emissiveIntensity: .3 }), 0, -.14, 0, sk); add(new THREE.SphereGeometry(.035, 8, 6), mat('jcSickleGrip', '#d0a46c'), 0, -.15, 0, sk);   // pale wooden handle with a knob
+  const sk = new THREE.Group(); sk.position.set(x - .313, y + .822, z - .05); sk.rotation.set(0, 0, .55); g.add(sk);   // the grip passes through his own right hand (rest-pose wrist, upPerson), the blade tilted out away from his arm
+    cyl(.028, .032, .32, 8, mat('jcSickleGrip', '#d0a46c', { emissive: '#4a3018', emissiveIntensity: .3 }), 0, -.14, 0, sk); add(new THREE.SphereGeometry(.035, 8, 6), mat('jcSickleGrip', '#d0a46c'), 0, -.15, 0, sk);   // pale wooden handle with a knob
   const R = .17, cy = .16 + R, sh = new THREE.Shape(), N = 18, a0 = -Math.PI / 2, a1 = Math.PI * .85;   // a tapering crescent: thick at the handle, a sharp point at the tip; the spine towards the body, the point away
   for (let k = 0; k <= N; k++) { const a = a0 + (a1 - a0) * k / N, p = [Math.cos(a) * R, cy + Math.sin(a) * R]; k ? sh.lineTo(...p) : sh.moveTo(...p); }
   for (let k = N; k >= 0; k--) { const a = a0 + (a1 - a0) * k / N, w = .06 * (1 - k / N) + .005, r = R - w; sh.lineTo(Math.cos(a) * r, cy + Math.sin(a) * r); }
