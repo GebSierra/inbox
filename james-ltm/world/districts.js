@@ -70,9 +70,13 @@
   drape(-118, -30.5, -92, -27.5, 'path', .03);
   { const g = new THREE.Group(); scene.add(g); jcWinepress(g, -114.4, heightAt(-114.4, -40.3), -40.3); jcWatchtower(g, -98, heightAt(-98, -44), -44); }
   drape(-121, -45.6, -87, -34.6, mat('jcSoil', '#8e7048', { roughness: 1 }), .02);   // the vineyard's tilled soil, inside its wall
-  upWheat(-98.4, -18.4, 7, 4, 0);                                                                 // the standing wheat in the field: room 2
+  upWheat(-97.3, -18.6, 7.5, 5, 0);                                                                 // the standing wheat in the field: room 2
   { const tr = OBJECTS.get('grapevine-trellis'); const g = new THREE.Group(); scene.add(g);      // rows of vines behind the winepress and the watchtower
     for (const zr of [-43.2, -44.8]) for (let x = -120; x <= -88; x += 3.2) { if (Math.abs(x + 98) < 2.4 && zr > -46) continue; tr.fn(g, x, heightAt(x, zr), zr, ...tr.args); } }
+  { const g = new THREE.Group(); scene.add(g); const leaf = mat('jcCypress', '#3a5a2a', { roughness: .9 }), olive = mat('jcOliveLf', '#7a8a5a', { roughness: .9 });   // a dry-stone wall and a line of cypress and olive along the vineyard's far side
+    for (let x = -121; x <= -87; x += 2.2) { const z = -46.6 + Math.sin(x) * .2, y = heightAt(x, z); box(2.3, .9, .6, jcPlasterMat('#a8987a'), x, y, -46.0, g);
+      if ((Math.round(x * 10) % 3) === 0) { const c = add(new THREE.ConeGeometry(.9, 6.4, 7), leaf, x, y + 3.6, z, g); cyl(.12, .14, .5, 6, jcM.beam(), x, y, z, g); }
+      else { cyl(.15, .2, 1.4, 6, mat('jcFigBark', '#8a8070'), x, y, z, g); const o = add(new THREE.IcosahedronGeometry(1.9, 0), olive, x, y + 2.9, z, g); o.scale.y = .8; const o2 = add(new THREE.IcosahedronGeometry(1.5, 0), olive, x + 1.1, y + 2.5, z - 1.2, g); o2.scale.y = .8; } } }
   zoneLabel(5, 'The Farm & Vineyard', -100, -30);
   VIA['5.1'] = [[-26, -29.4], [-66, -29], [-72, -29], [-82, -28.5], [-82, -22.8]];   // west along the street, out of the west gate, in at the rich man's gate
   VIA['5.2'] = [[-82, -23], [-82, -28.8], [-101, -28.8]];                              // back out of his gate and west along the road to his field

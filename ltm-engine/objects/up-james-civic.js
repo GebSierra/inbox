@@ -156,7 +156,7 @@ function jcRichHouse(x, z) {
   for (const s of [-1, 1]) { box(1, 3.8, 1, jcM.ash(), s * 2.3, 0, -9, g); box(.12, 3, 1.7, mat('jcGateDoor', '#5a3a22'), s * 1.75, 0, -8.1, g).userData.nocol = 1; }
   box(5.6, .5, 1.2, jcM.ash(), 0, 3.8, -9, g).userData.nocol = 1;
   // a paved garden court with a pool
-  jcWorldUV(box(17, .08, 6, flag, 0, 0, -5.6, g)); box(4, .35, 2.4, jcM.ash(), 0, 0, -5.6, g); box(3.6, .1, 2, jcM.water(), 0, .28, -5.6, g).userData.nocol = 1;
+  jcWorldUV(box(17, .08, 6, flag, 0, 0, -5.6, g)); box(2.6, .3, 1.6, jcM.ash(), 0, 0, -5.6, g); box(2.2, .1, 1.2, mat('jcPoolWater', '#5ab0c0', { roughness: .1, emissive: '#1a4a54', emissiveIntensity: .5 }), 0, .24, -5.6, g).userData.nocol = 1;
   // the house: two storeys, a columned porch below and an open loggia above, a flat roof with a parapet
   box(16, .4, 7.5, jcM.ash(), 0, 0, 4.6, g);
   box(16, 3.4, 6.5, jcM.plaster(), 0, .4, 5.4, g); box(16, 3.2, 6.5, jcM.ochre(), 0, 3.8, 5.4, g);
@@ -171,6 +171,7 @@ function jcRichHouse(x, z) {
   // a granary block on the east side of the court: his stored-up wealth (5:2-3), jars at the door
   box(4, 3, 5, jcM.plaster(), 6.4, 0, -4.4, g); box(4.3, .3, 5.3, jcM.roof(), 6.4, 3, -4.4, g).userData.nocol = 1; box(.1, 2.2, 1.2, 'dark', 4.38, 0, -4.4, g);
   for (const [jx, jz] of [[3.6, -6.6], [3.6, -2.4], [3.2, -3.0]]) { const j = add(new THREE.SphereGeometry(.4, 10, 7), mat('jcJar', '#b0623e'), jx, .4, jz, g); j.scale.y = 1.3; cyl(.15, .2, .25, 8, mat('jcJar', '#b0623e'), jx, .85, jz, g); }
+  for (const [sx, sz] of [[5.3, -7.7], [7.1, -7.7]]) { cyl(.75, .8, 1.3, 12, jcPlasterMat('#d8c4a0'), sx, 0, sz, g); const d = add(new THREE.SphereGeometry(.76, 12, 6, 0, Math.PI * 2, 0, Math.PI / 2), jcPlasterMat('#c8b08a'), sx, 1.3, sz, g); d.scale.y = .8; box(.4, .4, .06, 'dark', sx - .3, .9, sz - .75, g).userData.nocol = 1; }   // domed grain bins (the granary's store)
   return g;
 }
 
@@ -412,10 +413,10 @@ function jcWinepress(g, x, y, z) {
   return y + .5; }
 // a two-storey stone field watchtower: a cool store below, a lookout above with a parapet and a shade of branches, a door, a window and an outside ladder
 function jcWatchtower(g, x, y, z) {
-  const st = mat('jcFieldStone', '#a8946e'), stDk = mat('jcFieldStoneDk', '#8a7656'), f = new THREE.Group(); f.position.set(x, y, z); g.add(f);
+  const st = jcPlasterMat('#c0aa82'), stDk = jcPlasterMat('#a08a64'), f = new THREE.Group(); f.position.set(x, y, z); g.add(f);
   box(3.6, .4, 3.6, stDk, 0, 0, 0, f);
   for (let k = 0; k < 9; k++) box(3.3 - (k % 2) * .06, .6, 3.3 - (k % 2) * .06, k % 2 ? stDk : st, 0, .4 + k * .6, 0, f);   // coursed fieldstone, 5.4 m
-  box(1.0, 1.9, .1, 'dark', 0, .4, 1.66, f).userData.nocol = 1; box(1.3, .25, .3, stDk, 0, 2.3, 1.62, f);                 // door and lintel (facing +z)
+  box(1.0, 1.9, .1, mat('jcDoorWarm', '#6a4a2a', { emissive: '#5a3010', emissiveIntensity: .6 }), 0, .4, 1.66, f).userData.nocol = 1; box(.04, 1.9, .08, jcM.beam(), -.5, .4, 1.7, f); box(.04, 1.9, .08, jcM.beam(), .5, .4, 1.7, f); box(1.3, .25, .3, stDk, 0, 2.3, 1.62, f);                 // door and lintel (facing +z)
   box(.5, .6, .1, 'dark', .8, 3.4, 1.66, f).userData.nocol = 1;                                                          // window of the upper floor
   for (const [px, pz, pw, pd] of [[0, 1.6, 3.3, .2], [0, -1.6, 3.3, .2], [1.6, 0, .2, 3.3], [-1.6, 0, .2, 3.3]]) box(pw, .7, pd, st, px, 5.8, pz, f);   // parapet
   for (const [a, b] of [[-1.2, -1.2], [1.2, -1.2], [-1.2, 1.2], [1.2, 1.2]]) box(.1, 1.5, .1, jcM.beam(), a, 5.8, b, f);
@@ -424,6 +425,24 @@ function jcWatchtower(g, x, y, z) {
   for (const s2 of [-1, 1]) box(.06, 6.2, .06, jcM.beam(), 0, 0, s2 * .25, lad); for (let k = 0; k < 14; k++) box(.05, .05, .5, jcM.beam(), 0, .4 + k * .42, 0, lad);
   return y + 6.5; }
 
+function jcSheepskin(g, x, y, z) {   // a creamy fleece spread over a low stone to dry, wool tufts all over, legs splayed
+  box(1.2, .25, .8, jcPlasterMat('#9a8a6e'), x, y, z, g); const hide = new THREE.Shape(); hide.moveTo(-.6, -.3); for (const [a, b] of [[-.75, -.5], [-.4, -.35], [.4, -.38], [.78, -.52], [.62, 0], [.8, .5], [.4, .38], [-.4, .4], [-.78, .52], [-.62, 0]]) hide.lineTo(a, b); hide.lineTo(-.6, -.3);
+  const w = mat('jcFleece', '#e2d2ae', { emissive: '#3a3020', emissiveIntensity: .3, roughness: 1 }), h = add(new THREE.ShapeGeometry(hide), w, x, y + .27, z, g); h.rotation.x = -Math.PI / 2; h.userData.nocol = 1;
+  for (let k = 0; k < 70; k++) { const a = k * 2.4, r = .05 + (k % 10) * .052; add(new THREE.IcosahedronGeometry(.07 + (k % 3) * .015, 0), w, x + Math.cos(a) * r * 1.15, y + .29, z + Math.sin(a) * r * .75, g).scale.y = .55; }
+  return y + .4; }
+function jcFigTree(g, x, y, z) {   // a broad, low fig tree: a grey forked trunk, a wide dome of big leaves, purple figs
+  const bark = mat('jcFigBark', '#8a8070'); cyl(.14, .2, 1.2, 8, bark, x, y, z, g); for (const a of [0, 2.1, 4.2]) { const b = cyl(.08, .11, 1.1, 6, bark, x, y + 1.0, z, g); b.rotation.set(Math.sin(a) * .7, 0, Math.cos(a) * .7); b.position.set(x + Math.cos(a) * .3, y + 1.45, z + Math.sin(a) * .3); }
+  const lf = [mat('jcFigLeaf', '#4e7a2e', { roughness: .8 }), mat('jcFigLeaf2', '#6a9a3a', { roughness: .8 })];
+  for (let k = 0; k < 14; k++) { const a = k * 2.4, r = k < 6 ? .9 : .45; const c = add(new THREE.IcosahedronGeometry(.62 - (k % 3) * .08, 0), lf[k % 2], x + Math.cos(a) * r, y + 2.0 + (k % 4) * .18 + (k < 6 ? 0 : .35), z + Math.sin(a) * r, g); c.scale.y = .7; }
+  for (let k = 0; k < 12; k++) { const a = k * 1.9; add(new THREE.SphereGeometry(.07, 6, 4), mat('jcFig', '#6a2a5a'), x + Math.cos(a) * 1.3, y + 1.75 + (k % 3) * .2, z + Math.sin(a) * 1.3, g); }
+  return y + 2.9; }
+function jcReaper(g, x, y, z) {   // a labourer standing with a big iron sickle held out, a sheaf at his feet
+  viaScene(g, x, y, z, () => { person(0, 0, -.4, '#b89a6a', { skin: 2, hair: 1, y: 0 }); });
+  const iron = mat('jcSickle', '#c8ccd2', { metalness: .5, roughness: .3, emissive: '#5a5e66', emissiveIntensity: .5 });
+  const sk = new THREE.Group(); sk.position.set(x + .45, y + 1.0, z - .25); sk.rotation.set(0, .4, -.3); g.add(sk); box(.05, .32, .05, jcM.beam(), 0, -.3, 0, sk);
+  const bl = add(new THREE.TorusGeometry(.26, .025, 4, 14, Math.PI * 1.2), iron, .2, .05, 0, sk); bl.rotation.z = Math.PI * .1;
+  for (let k = 0; k < 9; k++) { const st = box(.025, .7, .025, mat('jcStraw', '#d8c078'), x - .45 + (k % 3) * .05, y, z - .3 + Math.floor(k / 3) * .05, g); st.rotation.z = (k - 4) * .05; } box(.2, .06, .2, mat('jcRope', '#c8b48a'), x - .4, y + .3, z - .25, g);
+  return y + 1.9; }
 // ---- library entries ----
 { const T = (fn, id, label, origin, tags) => defObject(id, (g, x, y, z) => viaScene(g, x, y, z, fn), { label, origin, tags, kind: 'structure' });
   T(() => { jcSynagogue(0, 0); }, 'synagogue-galilean', 'Synagogue: inward-facing benches, lecterns, scroll room, portico and mikva’ot', 'james 2', ['synagogue', 'benches', 'columns', 'water']);
@@ -448,6 +467,10 @@ defObject('stone-dye-vat', jcDyeVat, { label: 'Stone dye vat of crimson dye with
 defObject('amphora-rack', jcJarRack, { label: 'Two-tier rack of shipping amphorae in straw', origin: 'james 4', tags: ['merchant', 'pottery'], kind: 'object' });
 defObject('jar-pyramid-321', jcJarPyramid, { label: 'Jars stacked 3-2-1 on a board', origin: 'james 4', tags: ['potter', 'pottery'], kind: 'object' });
 defObject('merchant-lapis-tunic', (g, x, y, z) => viaScene(g, x, y, z, () => { person(0, 0, -.5, '#2f6fd0', { skin: 1, hair: 2, y: 0 }); }), { label: 'Merchant in a bright lapis-blue tunic', origin: 'james 4', tags: ['merchant', 'man'], kind: 'person' });
+defObject('fleece-on-stone', jcSheepskin, { label: 'Sheepskin fleece spread on a stone', origin: 'james 5', tags: ['farm', 'wool', 'sheep'], kind: 'object' });
+defObject('fig-tree-broad', jcFigTree, { label: 'Broad fig tree with purple figs', origin: 'james 5', tags: ['farm', 'tree', 'fig'], kind: 'plant' });
+defObject('reaper-with-sickle', jcReaper, { label: 'Reaper standing with a big sickle and a sheaf', origin: 'james 5', tags: ['farm', 'harvest', 'man'], kind: 'person' });
+defObject('ox-grazing-small', (g, x, y, z) => { const s = new THREE.Group(); s.position.set(x, y, z); s.scale.setScalar(.72); g.add(s); upQuad(s, 0, 0, 0, 'ox', { ry: .3, graze: true, coat: ['#a8693a', '#c8986a', '#4a3020'] }); return y + 1.1; }, { label: 'Smaller light-brown ox grazing', origin: 'james 5', tags: ['farm', 'livestock'], kind: 'animal' });
 defObject('anvil', jcAnvil, { label: 'Anvil on a stump, with a hammer', origin: 'james 4', tags: ['smith', 'iron', 'tools'], kind: 'object' });
 defObject('smith-forge', jcForge, { label: 'Smith\u2019s forge with glowing coals and a hood', origin: 'james 4', tags: ['smith', 'fire', 'stone'], kind: 'object' });
 defObject('blade-rack', jcBladeRack, { label: 'Rack of new sword blades', origin: 'james 4', tags: ['smith', 'weapons', 'iron'], kind: 'object' });

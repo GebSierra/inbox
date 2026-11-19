@@ -1039,7 +1039,7 @@
        "what": "chest with a gold padlock"
       },
       {
-       "id": "reaper",
+       "id": "reaper-with-sickle",
        "what": "reaper with a sickle"
       },
       {
@@ -1067,8 +1067,8 @@
      ],
      "layout": {
       "spread": [
-       2.6,
-       2.0
+        2.3,
+        2.0
       ]
      },
      "objects": [
@@ -1082,7 +1082,7 @@
        "lift": 0.6
       },
       {
-       "id": "fig-tree",
+       "id": "fig-tree-broad",
        "what": "fig tree"
       },
       {
@@ -1116,7 +1116,7 @@
      },
      "objects": [
       {
-       "id": "sheepskin",
+       "id": "fleece-on-stone",
        "what": "sheepskin"
       },
       {
@@ -1171,7 +1171,7 @@
        "what": "basket of fruit"
       },
       {
-       "id": "ox-grazing",
+       "id": "ox-grazing-small",
        "what": "ox grazing"
       },
       {
