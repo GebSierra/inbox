@@ -171,7 +171,7 @@ function jcRichHouse(x, z) {
   // a granary block on the east side of the court: his stored-up wealth (5:2-3), jars at the door
   box(4, 3, 5, jcM.plaster(), 6.4, 0, -4.4, g); box(4.3, .3, 5.3, jcM.roof(), 6.4, 3, -4.4, g).userData.nocol = 1; box(.1, 2.2, 1.2, 'dark', 4.38, 0, -4.4, g);
   for (const [jx, jz] of [[3.6, -6.6], [3.6, -2.4], [3.2, -3.0]]) { const j = add(new THREE.SphereGeometry(.4, 10, 7), mat('jcJar', '#b0623e'), jx, .4, jz, g); j.scale.y = 1.3; cyl(.15, .2, .25, 8, mat('jcJar', '#b0623e'), jx, .85, jz, g); }
-  for (const [sx, sz] of [[4.1, -2.9], [5.3, -7.7], [7.1, -7.7]]) { cyl(.75, .8, 1.3, 12, jcPlasterMat('#d8c4a0'), sx, 0, sz, g); const d = add(new THREE.SphereGeometry(.76, 12, 6, 0, Math.PI * 2, 0, Math.PI / 2), jcPlasterMat('#c8b08a'), sx, 1.3, sz, g); d.scale.y = .8; box(.4, .4, .06, 'dark', sx - .3, .9, sz - .75, g).userData.nocol = 1; }   // domed grain bins (the granary's store)
+  for (const [sx, sz, r] of [[4.0, -1.9, .58], [5.3, -7.7, .75], [7.1, -7.7, .75]]) { cyl(r, r + .05, 1.3, 12, jcPlasterMat('#d8c4a0'), sx, 0, sz, g); const d = add(new THREE.SphereGeometry(r + .01, 12, 6, 0, Math.PI * 2, 0, Math.PI / 2), jcPlasterMat('#c8b08a'), sx, 1.3, sz, g); d.scale.y = .8; box(.36, .36, .06, 'dark', sx - .2, .9, sz - r, g).userData.nocol = 1; }   // domed grain bins (the granary's store)
   return g;
 }
 
@@ -425,11 +425,11 @@ function jcWatchtower(g, x, y, z) {
   for (const s2 of [-1, 1]) box(.06, 6.2, .06, jcM.beam(), 0, 0, s2 * .25, lad); for (let k = 0; k < 14; k++) box(.05, .05, .5, jcM.beam(), 0, .4 + k * .42, 0, lad);
   return y + 6.5; }
 
-function jcSheepskin(g, x, y, z) {   // a creamy fleece spread over a low stone to dry, wool tufts all over, legs splayed
+function jcSheepskin(g0, x0, y0, z0) { const g = new THREE.Group(); g.position.set(x0, y0, z0); g.scale.setScalar(1.3); g0.add(g); const x = 0, y = 0, z = 0;   // a creamy fleece spread over a low stone to dry, wool tufts all over, legs splayed
   box(1.2, .25, .8, jcPlasterMat('#9a8a6e'), x, y, z, g); const hide = new THREE.Shape(); hide.moveTo(-.6, -.3); for (const [a, b] of [[-.75, -.5], [-.4, -.35], [.4, -.38], [.78, -.52], [.62, 0], [.8, .5], [.4, .38], [-.4, .4], [-.78, .52], [-.62, 0]]) hide.lineTo(a, b); hide.lineTo(-.6, -.3);
-  const w = mat('jcFleece', '#e2d2ae', { emissive: '#3a3020', emissiveIntensity: .3, roughness: 1 }), h = add(new THREE.ShapeGeometry(hide), w, x, y + .27, z, g); h.rotation.x = -Math.PI / 2; h.userData.nocol = 1; const e = add(new THREE.ShapeGeometry(hide), mat('jcHide', '#8a6440'), x, y + .26, z, g); e.rotation.x = -Math.PI / 2; e.scale.set(1.12, 1.12, 1); e.userData.nocol = 1; h.scale.set(.92, .92, 1);
+  const w = mat('jcFleece', '#d8c090', { emissive: '#2a2010', emissiveIntensity: .25, roughness: 1 }), h = add(new THREE.ShapeGeometry(hide), w, x, y + .27, z, g); h.rotation.x = -Math.PI / 2; h.userData.nocol = 1; const e = add(new THREE.ShapeGeometry(hide), mat('jcHide', '#8a6440'), x, y + .26, z, g); e.rotation.x = -Math.PI / 2; e.scale.set(1.12, 1.12, 1); e.userData.nocol = 1; h.scale.set(.92, .92, 1);
   for (let k = 0; k < 70; k++) { const a = k * 2.4, r = .05 + (k % 10) * .046; add(new THREE.IcosahedronGeometry(.07 + (k % 3) * .015, 0), w, x + Math.cos(a) * r * 1.15, y + .29, z + Math.sin(a) * r * .75, g).scale.y = .55; }
-  return y + .4; }
+  return y0 + .5; }
 function jcFigTree(g, x, y, z) {   // a broad, low fig tree: a grey forked trunk, a wide dome of big leaves, purple figs
   const bark = mat('jcFigBark', '#8a8070'); cyl(.2, .32, 1.5, 8, bark, x, y, z, g); cyl(.4, .45, .12, 8, bark, x, y, z, g); for (const a of [0, 2.1, 4.2]) { const b = new THREE.Group(); b.position.set(x, y + 1.4, z); b.rotation.y = -a; g.add(b); const l = cyl(.09, .15, .9, 6, bark, 0, 0, 0, b); l.rotation.z = -.7; l.position.set(.3, .35, 0); }
   const lf = [mat('jcFigLeaf', '#4e7a2e', { roughness: .8 }), mat('jcFigLeaf2', '#6a9a3a', { roughness: .8 })];
@@ -440,16 +440,16 @@ function jcReaper(g, x, y, z) {   // a labourer standing with a big iron sickle 
   viaScene(g, x, y, z, () => { person(0, 0, -.4, '#b89a6a', { skin: 2, hair: 1, y: 0 }); });
   const iron = mat('jcSickle', '#c8ccd2', { metalness: .5, roughness: .3, emissive: '#5a5e66', emissiveIntensity: .5 });
   const sk = new THREE.Group(); sk.position.set(x + .45, y + 1.0, z - .25); sk.rotation.set(0, .4, -.3); g.add(sk); box(.05, .32, .05, jcM.beam(), 0, -.3, 0, sk);
-  const bl = add(new THREE.TorusGeometry(.26, .025, 4, 14, Math.PI * 1.2), iron, .2, .05, 0, sk); bl.rotation.z = Math.PI * .1;
+  const bl = add(new THREE.TorusGeometry(.38, .035, 4, 16, Math.PI * 1.2), iron, .3, .08, 0, sk); bl.rotation.z = Math.PI * .1;
   for (let k = 0; k < 9; k++) { const st = box(.025, .7, .025, mat('jcStraw', '#d8c078'), x - .45 + (k % 3) * .05, y, z - .3 + Math.floor(k / 3) * .05, g); st.rotation.z = (k - 4) * .05; } box(.2, .06, .2, mat('jcRope', '#c8b48a'), x - .4, y + .3, z - .25, g);
   return y + 1.9; }
-function jcVineArbour(g, x, y, z) {   // one big old vine on a pergola: a twisted trunk, a roof of leaves and heavy purple bunches hanging under it
+function jcVineArbour(g0, x0, y0, z0) { const g = new THREE.Group(); g.position.set(x0, y0, z0); g.scale.setScalar(1.25); g0.add(g); const x = 0, y = 0, z = 0;   // one big old vine on a pergola: a twisted trunk, a roof of leaves and heavy purple bunches hanging under it
   const w = jcWoodLt(), vb = mat('jcVineBark', '#5a4030'), lf = [mat('jcVineLf', '#5a8a2e'), mat('jcVineLf2', '#7aa83a')], gr = mat('jcGrape', '#5a2a6a', { roughness: .4, emissive: '#2a0a3a', emissiveIntensity: .4 });
   for (const [a, b] of [[-.9, -.6], [.9, -.6], [-.9, .6], [.9, .6]]) box(.1, 1.9, .1, w, x + a, y, z + b, g); for (const b of [-.6, .6]) box(2.0, .08, .1, w, x, y + 1.9, z + b, g); for (let k = 0; k < 5; k++) box(.06, .06, 1.4, w, x - .8 + k * .4, y + 1.96, z, g);
   for (let k = 0; k < 6; k++) { const t = cyl(.07, .09, .4, 6, vb, x + Math.sin(k * 1.3) * .08, y + k * .33, z + Math.cos(k * 1.3) * .06, g); t.rotation.z = Math.sin(k) * .25; }
   for (let k = 0; k < 16; k++) { const c = add(new THREE.IcosahedronGeometry(.32, 0), lf[k % 2], x - .85 + (k % 4) * .57, y + 2.05 + (k % 3) * .06, z - .5 + Math.floor(k / 4) * .33, g); c.scale.y = .5; }
   for (const [bx, bz] of [[-.6, -.35], [-.15, .3], [.35, -.3], [.7, .25], [.05, -.05]]) for (let k = 0; k < 10; k++) add(new THREE.SphereGeometry(.06, 6, 4), gr, x + bx + ((k % 3) - 1) * .07, y + 1.8 - Math.floor(k / 3) * .1, z + bz + (k % 2) * .05, g);
-  return y + 2.2; }
+  return y0 + 2.7; }
 function jcDryTrough(g, x, y, z) {   // a long stone water trough, empty: a dry, cracked floor and a dusty rim
   const st = jcPlasterMat('#d4c4a4'); box(1.8, .2, .8, st, x, y, z, g); for (const [rx, rz, rw, rd] of [[0, .34, 1.8, .12], [0, -.34, 1.8, .12], [.84, 0, .12, .8], [-.84, 0, .12, .8]]) box(rw, .45, rd, st, x + rx, y + .2, z + rz, g);
   const fl = box(1.56, .02, .56, mat('jcDryMud', '#b89a6a'), x, y + .2, z, g); for (let k = 0; k < 7; k++) { const c = box(.4, .005, .015, mat('jcCrack', '#6a5238'), x - .55 + k * .18, y + .225, z - .15 + (k % 3) * .14, g); c.rotation.y = k * .9; }
@@ -481,6 +481,7 @@ defObject('merchant-lapis-tunic', (g, x, y, z) => viaScene(g, x, y, z, () => { p
 defObject('fleece-on-stone', jcSheepskin, { label: 'Sheepskin fleece spread on a stone', origin: 'james 5', tags: ['farm', 'wool', 'sheep'], kind: 'object' });
 defObject('fig-tree-broad', jcFigTree, { label: 'Broad fig tree with purple figs', origin: 'james 5', tags: ['farm', 'tree', 'fig'], kind: 'plant' });
 defObject('reaper-with-sickle', jcReaper, { label: 'Reaper standing with a big sickle and a sheaf', origin: 'james 5', tags: ['farm', 'harvest', 'man'], kind: 'person' });
+defObject('ox-standing-small', (g, x, y, z) => { const s = new THREE.Group(); s.position.set(x, y, z); s.scale.setScalar(.78); g.add(s); upQuad(s, 0, 0, 0, 'ox', { ry: .3 }); return y + 1.2; }, { label: 'Smaller ox standing', origin: 'james 5', tags: ['farm', 'livestock'], kind: 'animal' });
 defObject('ox-grazing-small', (g, x, y, z) => { const s = new THREE.Group(); s.position.set(x, y, z); s.scale.setScalar(.72); g.add(s); upQuad(s, 0, 0, 0, 'ox', { ry: .3, graze: true, coat: ['#a8693a', '#c8986a', '#4a3020'] }); return y + 1.1; }, { label: 'Smaller light-brown ox grazing', origin: 'james 5', tags: ['farm', 'livestock'], kind: 'animal' });
 defObject('vine-arbour-grapes', jcVineArbour, { label: 'Old vine on a pergola, heavy with grapes', origin: 'james 5', tags: ['vineyard', 'vine', 'grapes'], kind: 'plant' });
 defObject('dry-stone-trough', jcDryTrough, { label: 'Empty stone water trough with a dry, cracked floor', origin: 'james 5', tags: ['farm', 'water', 'drought'], kind: 'object' });

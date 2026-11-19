@@ -1013,7 +1013,7 @@
      ],
      "layout": {
       "spread": [
-        2.7,
+        2.5,
         2.0
       ],
       "minY": {
@@ -1054,8 +1054,8 @@
      "verses": "5:6–10",
      "kind": "vignette",
      "name": "The Field",
-     "back": 6.6,
-     "pitch": -0.12,
+     "back": 5.8,
+     "pitch": -0.14,
      "bannerLift": -1.4,
      "at": [
       -101,
@@ -1073,7 +1073,7 @@
      },
      "objects": [
       {
-       "id": "ox",
+       "id": "ox-standing-small",
        "what": "ox"
       },
       {
