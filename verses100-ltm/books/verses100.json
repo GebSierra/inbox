@@ -1,0 +1,2208 @@
+{
+ "book": "100 Bible Verses",
+ "translation": "ESV",
+ "mode": "passages",
+ "chapters": [
+  {
+   "chapter": 1,
+   "verses": 5,
+   "district": "The Dawn Garden",
+   "section": "Beginnings",
+   "rooms": [
+    {
+     "room": 1,
+     "name": "The Lookout",
+     "ref": "Genesis 1:1",
+     "verses": [
+      "1:1"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "at": [
+      -220,
+      8
+     ],
+     "viewer": [
+      -220,
+      1
+     ],
+     "args": {
+      "h": 2.2
+     },
+     "objects": [
+      {
+       "place": true,
+       "what": "the lookout rock at the edge",
+       "at": [
+        0,
+        0
+       ],
+       "lift": 0.7
+      },
+      {
+       "id": "terebinth",
+       "what": "terebinth",
+       "extra": true,
+       "at": [
+        2.6,
+        -2.6
+       ],
+       "scale": 1.1
+      },
+      {
+       "id": "wildflowers",
+       "what": "wildflowers",
+       "extra": true,
+       "at": [
+        -1.2,
+        2.4
+       ]
+      }
+     ]
+    },
+    {
+     "room": 2,
+     "name": "The Spring",
+     "ref": "John 1:1",
+     "verses": [
+      "1:1"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "at": [
+      -206,
+      -8
+     ],
+     "viewer": [
+      -206,
+      -1
+     ],
+     "args": {
+      "h": 2.2
+     },
+     "objects": [
+      {
+       "place": true,
+       "what": "the spring pool under the rocks",
+       "at": [
+        0,
+        0
+       ],
+       "lift": 0.1
+      },
+      {
+       "id": "almond-in-blossom",
+       "what": "almond in blossom",
+       "extra": true,
+       "at": [
+        2.4,
+        2.4
+       ]
+      },
+      {
+       "id": "rocks-scatter",
+       "what": "rocks scatter",
+       "extra": true,
+       "at": [
+        -1.6,
+        -2.6
+       ]
+      }
+     ]
+    },
+    {
+     "room": 3,
+     "name": "The Pitched Tent",
+     "ref": "John 1:14",
+     "verses": [
+      "1:14"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "at": [
+      -192,
+      8
+     ],
+     "viewer": [
+      -192,
+      1
+     ],
+     "args": {
+      "h": 2.2
+     },
+     "objects": [
+      {
+       "place": true,
+       "what": "the tent doorway",
+       "at": [
+        0.6,
+        0
+       ],
+       "lift": 0.9
+      },
+      {
+       "id": "goat-hair-tent",
+       "what": "goat hair tent",
+       "extra": true,
+       "at": [
+        2.2,
+        0
+       ],
+       "scale": 0.9
+      },
+      {
+       "id": "travellers-pack",
+       "what": "travellers pack",
+       "extra": true,
+       "at": [
+        -1.6,
+        -2.2
+       ]
+      },
+      {
+       "id": "sheepskin",
+       "what": "sheepskin",
+       "extra": true,
+       "at": [
+        -1.4,
+        2.2
+       ]
+      }
+     ]
+    },
+    {
+     "room": 4,
+     "name": "The Lamp-lit Rooftop",
+     "ref": "John 3:16-17",
+     "verses": [
+      "3:16",
+      "3:17"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "at": [
+      -176,
+      -8
+     ],
+     "viewer": [
+      -176,
+      -1
+     ],
+     "args": {
+      "h": 2.2
+     },
+     "objects": [
+      {
+       "place": true,
+       "what": "the stair head",
+       "lift": 1.3
+      },
+      {
+       "id": "stone-bench",
+       "what": "stone bench"
+      },
+      {
+       "id": "hanging-oil-lamps",
+       "what": "hanging oil lamps",
+       "extra": true,
+       "at": [
+        1.4,
+        2.4
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "chapter": 2,
+   "verses": 5,
+   "district": "The Roman Road",
+   "section": "The Roman Road",
+   "rooms": [
+    {
+     "room": 1,
+     "name": "The Milestone",
+     "ref": "Romans 3:23",
+     "verses": [
+      "3:23"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "at": [
+      -156,
+      8
+     ],
+     "viewer": [
+      -156,
+      1
+     ],
+     "args": {
+      "h": 2.0
+     },
+     "objects": [
+      {
+       "id": "milestone",
+       "what": "milestone"
+      },
+      {
+       "id": "roman-seal",
+       "what": "roman seal",
+       "extra": true,
+       "at": [
+        -1.0,
+        2.2
+       ],
+       "scale": 0.45
+      }
+     ]
+    },
+    {
+     "room": 2,
+     "name": "The Paymaster's Table",
+     "ref": "Romans 6:23",
+     "verses": [
+      "6:23"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "at": [
+      -142,
+      -8
+     ],
+     "viewer": [
+      -142,
+      -1
+     ],
+     "args": {
+      "h": 2.0
+     },
+     "objects": [
+      {
+       "id": "coin-table",
+       "what": "money-changer's table"
+      },
+      {
+       "id": "hanging-scales",
+       "what": "hanging scales",
+       "extra": true,
+       "at": [
+        1.6,
+        2.0
+       ]
+      },
+      {
+       "id": "spear-rack",
+       "what": "spear rack",
+       "extra": true,
+       "at": [
+        1.8,
+        -2.0
+       ]
+      }
+     ]
+    },
+    {
+     "room": 3,
+     "name": "The Knoll Outside the Wall",
+     "ref": "Romans 5:8",
+     "verses": [
+      "5:8"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "at": [
+      -128,
+      8
+     ],
+     "viewer": [
+      -128,
+      1
+     ],
+     "pitch": -0.04,
+     "args": {
+      "h": 2.0,
+      "knoll": true
+     },
+     "objects": [
+      {
+       "place": true,
+       "what": "the top of the knoll",
+       "at": [
+        0.4,
+        0
+       ],
+       "lift": 0.15
+      },
+      {
+       "id": "thistles",
+       "what": "thistles",
+       "extra": true,
+       "at": [
+        -1.6,
+        -2.0
+       ]
+      },
+      {
+       "id": "poppy-urn",
+       "what": "poppy urn",
+       "extra": true,
+       "at": [
+        -1.4,
+        2.2
+       ]
+      }
+     ]
+    },
+    {
+     "room": 4,
+     "name": "The Speaker's Steps",
+     "ref": "Romans 10:9-10",
+     "verses": [
+      "10:9",
+      "10:10"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "at": [
+      -112,
+      -8
+     ],
+     "viewer": [
+      -112,
+      -1
+     ],
+     "args": {
+      "h": 2.0,
+      "steps": true
+     },
+     "objects": [
+      {
+       "place": true,
+       "what": "the bottom step",
+       "lift": 0.3
+      },
+      {
+       "id": "marble-column",
+       "what": "marble column",
+       "lift": 0.9,
+       "scale": 0.7
+      },
+      {
+       "id": "laurel-wreath",
+       "what": "laurel wreath",
+       "extra": true,
+       "at": [
+        2.0,
+        2.0
+       ],
+       "lift": 0.9
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "chapter": 3,
+   "verses": 11,
+   "district": "The Synagogue",
+   "section": "Listening, part 1: the Word",
+   "rooms": [
+    {
+     "room": 1,
+     "name": "The Scroll Room",
+     "ref": "2 Timothy 3:16-17",
+     "verses": [
+      "3:16",
+      "3:17"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "at": [
+      -64,
+      -7
+     ],
+     "viewer": [
+      -64,
+      -2.8
+     ],
+     "back": 3.6,
+     "args": {
+      "spread": [
+       2.0,
+       1.0
+      ],
+      "floor": {
+       "ground": [
+        -71.5,
+        0
+       ],
+       "plus": 1.5
+      }
+     },
+     "objects": [
+      {
+       "id": "scroll-rack",
+       "what": "rack of scrolls"
+      },
+      {
+       "place": true,
+       "what": "the upright scrolls in their niche",
+       "lift": 1.05
+      },
+      {
+       "id": "scroll-shelf",
+       "what": "scroll shelf",
+       "extra": true,
+       "at": [
+        -1.0,
+        2.0
+       ]
+      }
+     ]
+    },
+    {
+     "room": 2,
+     "name": "The Hall",
+     "ref": "Joshua 1:8-9",
+     "verses": [
+      "1:8",
+      "1:9"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "at": [
+      -64.4,
+      0.25
+     ],
+     "viewer": [
+      -71.4,
+      0.25
+     ],
+     "back": 6.6,
+     "args": {
+      "spread": [
+       1.25,
+       3.0
+      ],
+      "floor": {
+       "ground": [
+        -71.5,
+        0
+       ],
+       "plus": 1.5
+      }
+     },
+     "objects": [
+      {
+       "place": true,
+       "what": "the left lectern",
+       "lift": 1.2
+      },
+      {
+       "id": "seated-teacher",
+       "what": "teacher seated with a scroll"
+      },
+      {
+       "id": "wax-tablets",
+       "what": "wax tablets",
+       "extra": true,
+       "at": [
+        -3.0,
+        1.25
+       ],
+       "lift": 1.2,
+       "scale": 0.8
+      }
+     ]
+    },
+    {
+     "room": 3,
+     "name": "The Porch",
+     "ref": "Psalm 119:11",
+     "verses": [
+      "119:11"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "at": [
+      -64.1,
+      10.1
+     ],
+     "viewer": [
+      -64.1,
+      5
+     ],
+     "back": 3.3,
+     "args": {
+      "spread": [
+       1.6,
+       1.2
+      ],
+      "floor": {
+       "ground": [
+        -71.5,
+        0
+       ],
+       "plus": 1
+      }
+     },
+     "objects": [
+      {
+       "id": "padlocked-chest",
+       "what": "chest with a gold padlock",
+       "at": [
+        -0.6,
+        -0.9
+       ],
+       "scale": 0.75
+      },
+      {
+       "id": "wall-shelf-of-scrolls",
+       "what": "wall shelf of scrolls",
+       "extra": true,
+       "at": [
+        1.2,
+        1.6
+       ]
+      }
+     ]
+    },
+    {
+     "room": 4,
+     "name": "The Front Steps",
+     "ref": "Deuteronomy 6:4-7",
+     "verses": [
+      "6:4",
+      "6:5",
+      "6:6",
+      "6:7"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "at": [
+      -86.3,
+      0
+     ],
+     "viewer": [
+      -93,
+      0
+     ],
+     "args": {
+      "spread": [
+       2.6,
+       1.3
+      ],
+      "floor": {
+       "ground": [
+        -71.5,
+        0
+       ],
+       "plus": 0
+      }
+     },
+     "objects": [
+      {
+       "place": true,
+       "what": "the bottom step",
+       "lift": 0.2
+      },
+      {
+       "place": true,
+       "what": "the top of the steps, left",
+       "lift": 1.0
+      },
+      {
+       "id": "writing-desk",
+       "what": "writing table",
+       "lift": 1.0
+      },
+      {
+       "id": "child",
+       "what": "a child",
+       "lift": 0.2
+      }
+     ]
+    },
+    {
+     "room": 5,
+     "name": "The Washing Pool",
+     "ref": "Hebrews 4:12-13",
+     "verses": [
+      "4:12",
+      "4:13"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "at": [
+      -81.75,
+      6.5
+     ],
+     "viewer": [
+      -81.75,
+      -0.5
+     ],
+     "back": 7.5,
+     "pitch": -0.3,
+     "args": {
+      "spread": [
+       1.75,
+       3.0
+      ],
+      "floor": {
+       "ground": [
+        -71.5,
+        0
+       ],
+       "plus": 1
+      }
+     },
+     "objects": [
+      {
+       "place": true,
+       "what": "the top step",
+       "lift": -0.4
+      },
+      {
+       "place": true,
+       "what": "the pool",
+       "lift": -0.4
+      },
+      {
+       "id": "water-pail",
+       "what": "water pail",
+       "extra": true,
+       "at": [
+        3.0,
+        1.75
+       ]
+      },
+      {
+       "id": "clothes-rack",
+       "what": "clothes rack",
+       "extra": true,
+       "at": [
+        -3.0,
+        1.75
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "chapter": 4,
+   "verses": 8,
+   "district": "The Tabernacle",
+   "section": "Listening, part 2: Prayer",
+   "rooms": [
+    {
+     "room": 1,
+     "name": "The Holy Place",
+     "ref": "Hebrews 4:14-16",
+     "verses": [
+      "4:14",
+      "4:15",
+      "4:16"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "at": [
+      27.5,
+      0
+     ],
+     "viewer": [
+      23.5,
+      0
+     ],
+     "back": 5.2,
+     "args": {
+      "floor": {
+       "ground": [
+        27.5,
+        0
+       ],
+       "plus": 0.12
+      }
+     },
+     "objects": [
+      {
+       "id": "golden-lampstand",
+       "what": "golden lampstand",
+       "at": [
+        -1.2,
+        -1.4
+       ]
+      },
+      {
+       "place": true,
+       "what": "the veil (the ark beyond it)",
+       "at": [
+        4.2,
+        -1.0
+       ],
+       "lift": 1.4
+      },
+      {
+       "id": "table-of-showbread",
+       "what": "table of showbread",
+       "at": [
+        1.6,
+        1.4
+       ]
+      },
+      {
+       "id": "altar-of-incense",
+       "what": "altar of incense",
+       "extra": true,
+       "at": [
+        3.2,
+        0.5
+       ]
+      }
+     ]
+    },
+    {
+     "room": 2,
+     "name": "The Court",
+     "ref": "1 John 5:11-15",
+     "verses": [
+      "5:11",
+      "5:12",
+      "5:13",
+      "5:14",
+      "5:15"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "at": [
+      11.5,
+      0
+     ],
+     "viewer": [
+      20.5,
+      0
+     ],
+     "back": 9,
+     "args": {
+      "spread": [
+       3.0,
+       4.0
+      ]
+     },
+     "objects": [
+      {
+       "id": "bronze-laver",
+       "what": "bronze laver"
+      },
+      {
+       "id": "priest",
+       "what": "priest"
+      },
+      {
+       "id": "bronze-tripod",
+       "what": "bronze tripod"
+      },
+      {
+       "id": "som-log-stack",
+       "what": "stack of cut logs"
+      },
+      {
+       "id": "bronze-altar",
+       "what": "bronze altar"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "chapter": 5,
+   "verses": 11,
+   "district": "The Father's House",
+   "section": "Assurance",
+   "rooms": [
+    {
+     "room": 1,
+     "name": "The Courtyard",
+     "ref": "John 14:1-6",
+     "verses": [
+      "14:1",
+      "14:2",
+      "14:3",
+      "14:4",
+      "14:5",
+      "14:6"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "at": [
+      68,
+      0
+     ],
+     "viewer": [
+      61,
+      0
+     ],
+     "back": 8,
+     "args": {
+      "spread": [
+       2.8,
+       3.5
+      ]
+     },
+     "objects": [
+      {
+       "id": "potted-bush",
+       "what": "clay planter"
+      },
+      {
+       "place": true,
+       "what": "the row of room doorways",
+       "at": [
+        2.5,
+        -6.6
+       ],
+       "lift": 1.2
+      },
+      {
+       "place": true,
+       "what": "the kitchen doorway",
+       "at": [
+        2.0,
+        6.6
+       ],
+       "lift": 1.2
+      },
+      {
+       "id": "wooden-bucket",
+       "what": "wooden bucket"
+      },
+      {
+       "id": "herb-stand",
+       "what": "herb stand in the middle of the court"
+      },
+      {
+       "place": true,
+       "what": "the foot of the stair, the way up",
+       "at": [
+        5.3,
+        1.2
+       ],
+       "lift": 0.3
+      }
+     ]
+    },
+    {
+     "room": 2,
+     "name": "The Upper Room",
+     "ref": "John 14:27",
+     "verses": [
+      "14:27"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "at": [
+      77.5,
+      -6.5
+     ],
+     "viewer": [
+      77.5,
+      -1
+     ],
+     "back": 4.5,
+     "args": {
+      "spread": [
+       1.8,
+       1.8
+      ],
+      "floor": {
+       "ground": [
+        77.5,
+        0
+       ],
+       "plus": 3.2
+      }
+     },
+     "objects": [
+      {
+       "id": "dining-couch",
+       "what": "dining couch"
+      },
+      {
+       "id": "tray-of-cups",
+       "what": "tray of cups",
+       "extra": true,
+       "at": [
+        1.8,
+        1.8
+       ]
+      },
+      {
+       "id": "candelabrum",
+       "what": "candelabrum",
+       "extra": true,
+       "at": [
+        0,
+        0
+       ]
+      }
+     ]
+    },
+    {
+     "room": 3,
+     "name": "The Roof Terrace",
+     "ref": "Isaiah 26:3",
+     "verses": [
+      "26:3"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "at": [
+      77.5,
+      6.5
+     ],
+     "viewer": [
+      77.5,
+      1
+     ],
+     "back": 6.5,
+     "args": {
+      "spread": [
+       1.8,
+       1.8
+      ],
+      "floor": {
+       "ground": [
+        77.5,
+        0
+       ],
+       "plus": 3.2
+      }
+     },
+     "objects": [
+      {
+       "place": true,
+       "what": "the parapet",
+       "at": [
+        -1.8,
+        -3.1
+       ],
+       "lift": 1.0
+      },
+      {
+       "id": "songbird-cage",
+       "what": "songbird cage",
+       "extra": true,
+       "at": [
+        1.8,
+        1.8
+       ]
+      },
+      {
+       "id": "garland-stool",
+       "what": "garland stool",
+       "extra": true,
+       "at": [
+        0,
+        0
+       ]
+      }
+     ]
+    },
+    {
+     "room": 4,
+     "name": "The Olive-Press Yard",
+     "ref": "Isaiah 53:4-6",
+     "verses": [
+      "53:4",
+      "53:5",
+      "53:6"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "at": [
+      89.5,
+      0
+     ],
+     "viewer": [
+      83,
+      0
+     ],
+     "back": 7,
+     "args": {
+      "spread": [
+       2.5,
+       3.0
+      ]
+     },
+     "objects": [
+      {
+       "id": "big-jar",
+       "what": "big storage jar"
+      },
+      {
+       "id": "olive-press",
+       "what": "olive press",
+       "scale": 2.3
+      },
+      {
+       "place": true,
+       "what": "the yard gate left open",
+       "at": [
+        6.4,
+        2.6
+       ],
+       "lift": 0.9
+      },
+      {
+       "id": "goat",
+       "what": "goat",
+       "extra": true,
+       "at": [
+        -3.0,
+        2.5
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "chapter": 6,
+   "verses": 7,
+   "district": "The Hill of Praise",
+   "section": "Praise",
+   "rooms": [
+    {
+     "room": 1,
+     "name": "The Garden Tomb",
+     "ref": "1 Peter 1:3",
+     "verses": [
+      "1:3"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "objects": [
+      {
+       "id": "TODO",
+       "what": "the open tomb doorway",
+       "note": "NEW garden-tomb"
+      },
+      {
+       "id": "garden-plot",
+       "what": "garden plot",
+       "extra": true
+      },
+      {
+       "id": "grass-tufts",
+       "what": "grass tufts",
+       "extra": true
+      }
+     ]
+    },
+    {
+     "room": 2,
+     "name": "The Gate of the Courts",
+     "ref": "Psalm 100:1-5",
+     "verses": [
+      "100:1",
+      "100:2",
+      "100:3",
+      "100:4",
+      "100:5"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "objects": [
+      {
+       "place": true,
+       "what": "the left gate tower"
+      },
+      {
+       "id": "lyre",
+       "what": "lyre"
+      },
+      {
+       "place": true,
+       "what": "the pasture beyond the wall"
+      },
+      {
+       "place": true,
+       "what": "the inner arch"
+      },
+      {
+       "id": "incense-burner",
+       "what": "incense burner"
+      },
+      {
+       "id": "goats-grazing",
+       "what": "goats grazing",
+       "extra": true
+      }
+     ]
+    },
+    {
+     "room": 3,
+     "name": "The Round Shrine",
+     "ref": "Revelation 4:11",
+     "verses": [
+      "4:11"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "objects": [
+      {
+       "place": true,
+       "what": "the seat inside the shrine"
+      },
+      {
+       "id": "round-shrine",
+       "what": "round shrine",
+       "extra": true
+      },
+      {
+       "id": "seven-flame-lampstand",
+       "what": "seven flame lampstand",
+       "extra": true
+      },
+      {
+       "id": "victors-crown",
+       "what": "victors crown",
+       "extra": true
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "chapter": 7,
+   "verses": 11,
+   "district": "The Hillside Village",
+   "section": "Promises, part 1: God's plans",
+   "rooms": [
+    {
+     "room": 1,
+     "name": "The Lily Field",
+     "ref": "Matthew 6:33-34",
+     "verses": [
+      "6:33",
+      "6:34"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "objects": [
+      {
+       "id": "lilies-of-the-field",
+       "what": "the lily field"
+      },
+      {
+       "id": "dove-perch",
+       "what": "doves on a perch"
+      }
+     ]
+    },
+    {
+     "room": 2,
+     "name": "The Weaver's Yard",
+     "ref": "Romans 8:28",
+     "verses": [
+      "8:28"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "objects": [
+      {
+       "id": "loom",
+       "what": "loom"
+      },
+      {
+       "id": "wool-basket",
+       "what": "wool basket",
+       "extra": true
+      }
+     ]
+    },
+    {
+     "room": 3,
+     "name": "The Courier's Post",
+     "ref": "Jeremiah 29:11-13",
+     "verses": [
+      "29:11",
+      "29:12",
+      "29:13"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "objects": [
+      {
+       "id": "sealed-letter",
+       "what": "sealed letter"
+      },
+      {
+       "id": "ledger-desk",
+       "what": "writing table with a ledger"
+      },
+      {
+       "id": "donkey",
+       "what": "donkey"
+      }
+     ]
+    },
+    {
+     "room": 4,
+     "name": "The Fuller's Yard",
+     "ref": "1 John 1:7-9",
+     "verses": [
+      "1:7",
+      "1:8",
+      "1:9"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "objects": [
+      {
+       "id": "white-cloth-bolts",
+       "what": "white cloth"
+      },
+      {
+       "id": "soiled-washbasin",
+       "what": "soiled tunic in a basin"
+      },
+      {
+       "id": "big-washtub",
+       "what": "big washtub"
+      }
+     ]
+    },
+    {
+     "room": 5,
+     "name": "The Crossroads",
+     "ref": "Proverbs 3:5-6",
+     "verses": [
+      "3:5",
+      "3:6"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "objects": [
+      {
+       "id": "som-resting-stone",
+       "what": "resting stone"
+      },
+      {
+       "id": "signpost",
+       "what": "signpost"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "chapter": 8,
+   "verses": 9,
+   "district": "The Wilderness Pass",
+   "section": "Promises, part 2: hard times",
+   "rooms": [
+    {
+     "room": 1,
+     "name": "The Narrow Gorge",
+     "ref": "1 Corinthians 10:13",
+     "verses": [
+      "10:13"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "objects": [
+      {
+       "place": true,
+       "what": "the gap in the rocks"
+      },
+      {
+       "id": "som-split-boulder",
+       "what": "som split boulder",
+       "extra": true
+      },
+      {
+       "id": "acacia-tree",
+       "what": "acacia tree",
+       "extra": true
+      }
+     ]
+    },
+    {
+     "room": 2,
+     "name": "The Porters' Rest",
+     "ref": "Psalm 55:22",
+     "verses": [
+      "55:22"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "objects": [
+      {
+       "place": true,
+       "what": "the flat ledge for loads"
+      },
+      {
+       "id": "hand-cart",
+       "what": "hand cart",
+       "extra": true
+      },
+      {
+       "id": "grain-sack",
+       "what": "grain sack",
+       "extra": true
+      }
+     ]
+    },
+    {
+     "room": 3,
+     "name": "The Shepherds' Camp",
+     "ref": "1 Peter 5:5b-7",
+     "verses": [
+      "5:5b",
+      "5:6",
+      "5:7"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "objects": [
+      {
+       "id": "goat-hair-tent-brown",
+       "what": "brown tent"
+      },
+      {
+       "id": "som-goatskin-bag",
+       "what": "goatskin water bag"
+      },
+      {
+       "id": "brazier",
+       "what": "brazier"
+      }
+     ]
+    },
+    {
+     "room": 4,
+     "name": "The Watchtower and Fold",
+     "ref": "1 Peter 5:8-11",
+     "verses": [
+      "5:8",
+      "5:9",
+      "5:10",
+      "5:11"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "objects": [
+      {
+       "id": "field-watchtower",
+       "what": "watchtower"
+      },
+      {
+       "place": true,
+       "what": "the fold wall"
+      },
+      {
+       "id": "som-slab-corner",
+       "what": "roofed corner of the fold"
+      },
+      {
+       "id": "som-fold-gateway",
+       "what": "gateway of the fold"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "chapter": 9,
+   "verses": 11,
+   "district": "The Temple Courts",
+   "section": "Holiness",
+   "rooms": [
+    {
+     "room": 1,
+     "name": "The Prayer Platform",
+     "ref": "2 Chronicles 7:14",
+     "verses": [
+      "7:14"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "objects": [
+      {
+       "place": true,
+       "what": "the bronze platform"
+      },
+      {
+       "id": "woman-praying",
+       "what": "woman praying",
+       "extra": true
+      },
+      {
+       "id": "incense-stand",
+       "what": "incense stand",
+       "extra": true
+      }
+     ]
+    },
+    {
+     "room": 2,
+     "name": "The Great Altar",
+     "ref": "Romans 12:1-2",
+     "verses": [
+      "12:1",
+      "12:2"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "objects": [
+      {
+       "id": "altar-with-fire",
+       "what": "altar with fire"
+      },
+      {
+       "id": "bowl-of-offerings",
+       "what": "bowl of offerings"
+      }
+     ]
+    },
+    {
+     "room": 3,
+     "name": "The Oil Store",
+     "ref": "Romans 12:11-12",
+     "verses": [
+      "12:11",
+      "12:12"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "objects": [
+      {
+       "id": "bronze-cauldron",
+       "what": "cauldron over coals"
+      },
+      {
+       "id": "jar-rack",
+       "what": "rack of jars"
+      }
+     ]
+    },
+    {
+     "room": 4,
+     "name": "Solomon's Porch",
+     "ref": "Romans 12:18",
+     "verses": [
+      "12:18"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "objects": [
+      {
+       "id": "marble-stoa",
+       "what": "the first column of the stoa"
+      },
+      {
+       "id": "rope-barrier",
+       "what": "rope barrier",
+       "extra": true
+      }
+     ]
+    },
+    {
+     "room": 5,
+     "name": "The Treasury",
+     "ref": "2 Corinthians 9:7",
+     "verses": [
+      "9:7"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "objects": [
+      {
+       "id": "coin-chest",
+       "what": "chest of coins"
+      },
+      {
+       "id": "open-coin-chest",
+       "what": "open coin chest",
+       "extra": true
+      }
+     ]
+    },
+    {
+     "room": 6,
+     "name": "The Gathering Steps",
+     "ref": "Hebrews 10:24-25",
+     "verses": [
+      "10:24",
+      "10:25"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "objects": [
+      {
+       "place": true,
+       "what": "the lowest step"
+      },
+      {
+       "id": "water-basin",
+       "what": "water basin"
+      },
+      {
+       "id": "stack-of-bowls",
+       "what": "stack of bowls",
+       "extra": true
+      }
+     ]
+    },
+    {
+     "room": 7,
+     "name": "The Teachers' Corner",
+     "ref": "Proverbs 1:7",
+     "verses": [
+      "1:7"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "objects": [
+      {
+       "id": "elder",
+       "what": "elder with a staff"
+      },
+      {
+       "id": "stool-with-tablets",
+       "what": "stool with tablets",
+       "extra": true
+      }
+     ]
+    },
+    {
+     "room": 8,
+     "name": "The Fountain",
+     "ref": "Proverbs 15:1",
+     "verses": [
+      "15:1"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "objects": [
+      {
+       "id": "lion-head-fountain",
+       "what": "lion-head fountain"
+      },
+      {
+       "id": "water-trough",
+       "what": "water trough",
+       "extra": true
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "chapter": 10,
+   "verses": 6,
+   "district": "The Vineyard",
+   "section": "Fullness",
+   "rooms": [
+    {
+     "room": 1,
+     "name": "The Winepress",
+     "ref": "Ephesians 5:18-21",
+     "verses": [
+      "5:18",
+      "5:19",
+      "5:20",
+      "5:21"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "objects": [
+      {
+       "id": "wine-jugs",
+       "what": "wine jugs"
+      },
+      {
+       "id": "grapevine-trellis",
+       "what": "vine on a trellis"
+      },
+      {
+       "id": "vineyard-rows",
+       "what": "vineyard rows"
+      },
+      {
+       "id": "rock-cut-winepress",
+       "what": "winepress"
+      }
+     ]
+    },
+    {
+     "room": 2,
+     "name": "The Orchard",
+     "ref": "Galatians 5:22-23",
+     "verses": [
+      "5:22",
+      "5:23"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "objects": [
+      {
+       "id": "fig-tree",
+       "what": "fig tree"
+      },
+      {
+       "id": "fruit-basket",
+       "what": "basket of fruit"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "chapter": 11,
+   "verses": 14,
+   "district": "The Colony Square",
+   "section": "Joy",
+   "rooms": [
+    {
+     "room": 1,
+     "name": "The Festival Gate",
+     "ref": "Psalm 118:24",
+     "verses": [
+      "118:24"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "objects": [
+      {
+       "id": "wall-gate-small",
+       "what": "the gate arch"
+      },
+      {
+       "id": "laurel-garland",
+       "what": "laurel garland",
+       "extra": true
+      }
+     ]
+    },
+    {
+     "room": 2,
+     "name": "The Prison Yard",
+     "ref": "Philippians 4:4-9",
+     "verses": [
+      "4:4",
+      "4:5",
+      "4:6",
+      "4:7",
+      "4:8",
+      "4:9"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "objects": [
+      {
+       "id": "shackle-stele",
+       "what": "stele with open shackles"
+      },
+      {
+       "place": true,
+       "what": "the cell door"
+      },
+      {
+       "id": "letter-on-table",
+       "what": "sealed letter on a table"
+      },
+      {
+       "id": "gate-guard",
+       "what": "gate guard"
+      },
+      {
+       "id": "tall-candle",
+       "what": "lamp stand"
+      },
+      {
+       "place": true,
+       "what": "the yard gate you leave by"
+      }
+     ]
+    },
+    {
+     "room": 3,
+     "name": "The Smithy",
+     "ref": "James 1:2-5",
+     "verses": [
+      "1:2",
+      "1:3",
+      "1:4",
+      "1:5"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "objects": [
+      {
+       "id": "smith-forge",
+       "what": "forge"
+      },
+      {
+       "id": "anvil",
+       "what": "anvil"
+      },
+      {
+       "id": "quench-trough",
+       "what": "quenching trough"
+      },
+      {
+       "id": "blade-rack",
+       "what": "rack of blades"
+      }
+     ]
+    },
+    {
+     "room": 4,
+     "name": "The Bakehouse",
+     "ref": "1 Thessalonians 5:16-18",
+     "verses": [
+      "5:16",
+      "5:17",
+      "5:18"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "objects": [
+      {
+       "id": "bread-oven",
+       "what": "bread oven"
+      },
+      {
+       "id": "flour-sack",
+       "what": "sack of flour"
+      },
+      {
+       "id": "bread-basket",
+       "what": "basket of bread"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "chapter": 12,
+   "verses": 12,
+   "district": "The Caravan Inn",
+   "section": "Faith",
+   "rooms": [
+    {
+     "room": 1,
+     "name": "The Potter's Shop",
+     "ref": "Ephesians 2:8-10",
+     "verses": [
+      "2:8",
+      "2:9",
+      "2:10"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "objects": [
+      {
+       "id": "lump-of-clay",
+       "what": "lump of wet clay"
+      },
+      {
+       "id": "kick-wheel",
+       "what": "potter's kick wheel"
+      },
+      {
+       "id": "domed-kiln",
+       "what": "domed kiln"
+      }
+     ]
+    },
+    {
+     "room": 2,
+     "name": "The Carpenter's Bench",
+     "ref": "Galatians 2:20",
+     "verses": [
+      "2:20"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "objects": [
+      {
+       "id": "plank",
+       "what": "the beam on the bench"
+      },
+      {
+       "id": "mallet-and-chisel",
+       "what": "mallet and chisel",
+       "extra": true
+      }
+     ]
+    },
+    {
+     "room": 3,
+     "name": "The Common Room",
+     "ref": "Colossians 3:15-17",
+     "verses": [
+      "3:15",
+      "3:16",
+      "3:17"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "objects": [
+      {
+       "id": "stew-pot-on-tripod",
+       "what": "stew pot"
+      },
+      {
+       "id": "dining-table-with-chairs",
+       "what": "dining table"
+      },
+      {
+       "place": true,
+       "what": "the hearth"
+      }
+     ]
+    },
+    {
+     "room": 4,
+     "name": "The Street Corner",
+     "ref": "Romans 1:16-17",
+     "verses": [
+      "1:16",
+      "1:17"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "objects": [
+      {
+       "id": "two-faced-herm",
+       "what": "two-faced herm"
+      },
+      {
+       "id": "theatre-mask",
+       "what": "theatre mask on a post"
+      }
+     ]
+    },
+    {
+     "room": 5,
+     "name": "The Inn Gate at Night",
+     "ref": "Psalm 56:3",
+     "verses": [
+      "56:3"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "objects": [
+      {
+       "id": "gate-torch",
+       "what": "torch on a post"
+      },
+      {
+       "id": "bridle-post",
+       "what": "bridle post",
+       "extra": true
+      }
+     ]
+    },
+    {
+     "room": 6,
+     "name": "The Guest Room",
+     "ref": "Psalm 4:8",
+     "verses": [
+      "4:8"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "objects": [
+      {
+       "id": "bed",
+       "what": "bed"
+      },
+      {
+       "id": "sleeping-dog",
+       "what": "sleeping dog",
+       "extra": true
+      }
+     ]
+    },
+    {
+     "room": 7,
+     "name": "The Caravan Well",
+     "ref": "Hebrews 11:6",
+     "verses": [
+      "11:6"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "objects": [
+      {
+       "id": "village-well",
+       "what": "stone well with a windlass"
+      },
+      {
+       "id": "camel",
+       "what": "camel",
+       "extra": true
+      },
+      {
+       "id": "big-bucket",
+       "what": "big bucket",
+       "extra": true
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "chapter": 13,
+   "verses": 7,
+   "district": "The Harbour and the Hill",
+   "section": "Sent",
+   "rooms": [
+    {
+     "room": 1,
+     "name": "The Quay",
+     "ref": "Matthew 28:18-20",
+     "verses": [
+      "28:18",
+      "28:19",
+      "28:20"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "objects": [
+      {
+       "id": "amphora-rack",
+       "what": "rack of amphorae"
+      },
+      {
+       "id": "galilee-fishing-boat",
+       "what": "fishing boat"
+      },
+      {
+       "id": "fishing-net",
+       "what": "net on poles"
+      }
+     ]
+    },
+    {
+     "room": 2,
+     "name": "The Hill Above the Harbour",
+     "ref": "Acts 1:8-11",
+     "verses": [
+      "1:8",
+      "1:9",
+      "1:10",
+      "1:11"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "objects": [
+      {
+       "id": "som-seat-rock",
+       "what": "seat rock"
+      },
+      {
+       "id": "pillar-of-cloud",
+       "what": "cloud on the hilltop"
+      },
+      {
+       "place": true,
+       "what": "the hilltop edge"
+      },
+      {
+       "place": true,
+       "what": "the path down to the city"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "chapter": 14,
+   "verses": 6,
+   "district": "The Shepherd's Valley",
+   "section": "Psalm 23",
+   "rooms": [
+    {
+     "room": 1,
+     "name": "The Valley",
+     "ref": "Psalm 23:1-6",
+     "verses": [
+      "23:1",
+      "23:2",
+      "23:3",
+      "23:4",
+      "23:5",
+      "23:6"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "objects": [
+      {
+       "id": "shepherd",
+       "what": "shepherd"
+      },
+      {
+       "id": "water-surface",
+       "what": "the still pool"
+      },
+      {
+       "place": true,
+       "what": "the path up the ridge"
+      },
+      {
+       "place": true,
+       "what": "the dark gully"
+      },
+      {
+       "id": "fruit-table",
+       "what": "table with fruit"
+      },
+      {
+       "place": true,
+       "what": "the gate to the house beyond"
+      },
+      {
+       "id": "som-crook",
+       "what": "som crook",
+       "extra": true
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "chapter": 15,
+   "verses": 12,
+   "district": "Bethlehem and the New City",
+   "section": "Alpha and Omega",
+   "rooms": [
+    {
+     "room": 1,
+     "name": "The House in Bethlehem",
+     "ref": "Isaiah 9:6-7",
+     "verses": [
+      "9:6",
+      "9:7"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "objects": [
+      {
+       "id": "cradle",
+       "what": "cradle"
+      },
+      {
+       "place": true,
+       "what": "the doorway"
+      },
+      {
+       "id": "honey-jar",
+       "what": "honey jar",
+       "extra": true
+      }
+     ]
+    },
+    {
+     "room": 2,
+     "name": "The Shepherds' Field",
+     "ref": "Luke 2:10-14",
+     "verses": [
+      "2:10",
+      "2:11",
+      "2:12",
+      "2:13",
+      "2:14"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "objects": [
+      {
+       "id": "shepherd-boy",
+       "what": "shepherd boy"
+      },
+      {
+       "place": true,
+       "what": "the field wall"
+      },
+      {
+       "id": "som-feeding-niche",
+       "what": "manger of hay"
+      },
+      {
+       "place": true,
+       "what": "the hill crest"
+      },
+      {
+       "id": "tripod-brazier",
+       "what": "tripod brazier"
+      }
+     ]
+    },
+    {
+     "room": 3,
+     "name": "The Gate of the New City",
+     "ref": "Revelation 21:1-4",
+     "verses": [
+      "21:1",
+      "21:2",
+      "21:3",
+      "21:4"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "objects": [
+      {
+       "place": true,
+       "what": "the shore where the sea ends"
+      },
+      {
+       "id": "TODO",
+       "what": "the great city gate",
+       "note": "cityGate (Colossae)"
+      },
+      {
+       "id": "blue-amphora",
+       "what": "flawless blue amphora"
+      },
+      {
+       "id": "gold-ingot",
+       "what": "gold ingot"
+      }
+     ]
+    },
+    {
+     "room": 4,
+     "name": "The River and the Tree",
+     "ref": "Revelation 22:20",
+     "verses": [
+      "22:20"
+     ],
+     "kind": "custom",
+     "builder": "v100.room",
+     "objects": [
+      {
+       "place": true,
+       "what": "the riverbank"
+      },
+      {
+       "id": "som-date-palm",
+       "what": "som date palm",
+       "extra": true
+      },
+      {
+       "id": "barley-basket",
+       "what": "barley basket",
+       "extra": true
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

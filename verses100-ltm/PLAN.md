@@ -2,7 +2,9 @@
 
 A memory palace for the passages on the *100 Bible Verses Mind Palace Setup Sheet* (based on Robert J. Morgan's *100 Bible Verses Everyone Should Know by Heart*). It uses the shared `ltm-engine` and the object library, like `james-ltm/` and `som-ltm/`. Proposed folder: `inbox/verses100-ltm/`.
 
-**Status:** draft plan only. Following `HANDOFF.md` step 2, nothing is built until the owner approves the districts and the open decisions (§7).
+**Status (2026-11-19):** phase 0 and phase 1 are built (districts 1–5, rooms 1–19); see `INSTRUCTIONS.md`. The open decisions (§7) were taken as recommended when the owner said "Let build".
+
+**Changes made while fitting phase 1 to the real buildings** (the book file is the source of truth): in the synagogue the rooms use James's tested places, so the Portico became **the Hall** (Joshua 1:8 on the left lectern, 1:9 on the seated teacher), the Treasure Niche became **the Porch** (the padlocked chest), and the Main Door became **the Front Steps** (6:4 bottom step, 6:5 top of the steps). In the tabernacle court the spots follow the furnishings as they stand: 5:11 laver, 5:12 priest, 5:13 bronze tripod, 5:14 stack of logs for the altar, 5:15 the bronze altar. In the Father's House: 14:3 is the kitchen doorway and 14:6 the foot of the stair you climb to the upper floor. The Lamp-lit Rooftop uses a built house instead of `mud-brick-house-dressed`.
 
 ## 1. The idea in one paragraph
 
