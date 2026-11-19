@@ -18,10 +18,12 @@ const keepRooms = []; for (let ch = 1; ch <= Math.min(BUILT, 5); ch++) { const c
     const pool = add(new THREE.CircleGeometry(1.25, 28), waterM, x, y + .05, z); pool.rotation.x = -Math.PI / 2; pool.receiveShadow = true;
     for (let k = 0; k < 14; k++) { const a = k / 14 * Math.PI * 2; rock(x + Math.cos(a) * 1.55, z + Math.sin(a) * 1.55, R(.25, .45), y); }
     for (const [dx, dz, s] of [[0, -2.3, .8], [-.9, -2.0, .6], [.9, -2.1, .55]]) rock(x + dx, z + dz, s, y); } }
-  // 1.4 The Lamp-lit Rooftop: a stone stair up to the roof of the little house (the stair head is 3:16's spot)
-  { const r = roomOf(1, 4); if (r) { const F = roomFrame(r), y = heightAt(r.at[0], r.at[1]);
-    const g = atRoom(F, -2.2, -2.2, y); box(1.3, 1.2, 1.3, stoneM, 0, 0, 0, g); box(1.0, .8, .9, stoneM, 1.1, 0, .2, g); box(1.0, .4, .9, stoneM, 2.0, 0, .2, g);
-    flatHouse(...F.at(2.2, -.6), 5.2, 3.6, 2.5, F.yaw, mudM); } }   // the little house whose roof the stair climbs to
+  // 1.4 The Lamp-lit Rooftop: a flat-roofed house with a stone stair climbing its front to the roof (built like som-ltm 6.1's courtyard stair);
+  // 3:17 sits at the stair head
+  { const r = roomOf(1, 4); if (r) { const F = roomFrame(r);
+    flatHouse(...F.at(3.4, .6), 8, 4, 3.0, F.yaw, mudM);
+    for (let k = 0; k < 10; k++) { const [x, z] = F.at(.97, -.5 - k * .34); const st = box(.34, .3 * (k + 1), .85, stoneM, x, heightAt(x, z) - .02, z); st.rotation.y = F.yaw + Math.PI / 2; }
+    { const [x, z] = F.at(1.35, -3.4); const c = box(.3, .55, .3, mudM, x, heightAt(x, z) + 3.0, z); c.rotation.y = F.yaw; } } }   // a parapet post where the stair reaches the roof
   zoneLabel(1, 'The Dawn Garden', -198, 0);
 }
 

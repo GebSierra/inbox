@@ -171,13 +171,14 @@
        ]
       },
       {
-       "id": "sheepskin",
-       "what": "sheepskin",
+       "id": "cooking-pot",
+       "what": "cooking pot",
        "extra": true,
        "at": [
         -1.4,
         2.2
-       ]
+       ],
+       "scale": 0.85
       },
       {
        "id": "glory-beams",
@@ -225,26 +226,33 @@
       -176,
       -1
      ],
+     "back": 8,
+     "pitch": -0.06,
      "args": {
       "h": 2.2
      },
      "objects": [
       {
-       "place": true,
-       "what": "the stair head",
-       "lift": 1.3
+       "id": "stone-bench",
+       "what": "stone bench",
+       "scale": 0.9
       },
       {
-       "id": "stone-bench",
-       "what": "stone bench"
+       "place": true,
+       "what": "the stair head, up to the roof",
+       "at": [
+        0.97,
+        -3.56
+       ],
+       "lift": 3.08
       },
       {
        "id": "hanging-oil-lamps",
        "what": "hanging oil lamps",
        "extra": true,
        "at": [
-        1.4,
-        2.4
+        0.3,
+        3.6
        ]
       }
      ]
