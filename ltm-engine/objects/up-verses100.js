@@ -31,3 +31,27 @@ function upGlory(g, x, y, z, o = {}) {
 
 { const T = (id, label, tags, fn) => defObject(id, fn, { label, origin: 'verses100 1.1, 1.3', tags, kind: 'effect' });
   T('glory-beams', 'Glory: shafts of light shining out from behind', ['light', 'glory', 'creation', 'radiance'], (g, x, y, z, o) => upGlory(g, x, y, z, o || {})); }
+
+// ---------- NEW (verses100-ltm 6.1): a garden tomb cut into a rock outcrop, its round stone rolled aside ----------
+// upGardenTomb(g, x, y, z): a low cliff of weathered rock with a dressed face, a dark low doorway (front = local +z), the groove the stone
+// runs in, and the great round stone rolled back to the right. About 6 m wide, 3.6 m high, 4 m deep. Returns the top. Private generator.
+function upGardenTomb(g, x, y, z) {
+  const G = new THREE.Group(); G.position.set(x, y, z); g.add(G); const r = upRng(Math.round(x * 7) ^ Math.round(z * 13) ^ 41);
+  const rockM = mat('utRock', '#b9ab92'), rockDk = mat('utRockDk', '#9c8f78'), face = mat('utFace', '#cdbfa4'), dark = mat('utDark', '#1d1712'), lime = mat('utLime', '#ddd2bc');
+  for (const m of [rockM, rockDk, face, lime]) { m.map = TEX.stone; m.needsUpdate = true; }
+  // the outcrop: overlapping weathered boulders behind and round the dressed face
+  for (const [bx, by, bz, s, sy] of [[-2.2, .9, -1.2, 1.9, .9], [0, 1.5, -1.6, 2.3, .85], [2.2, .9, -1.2, 1.9, .9], [-1.2, 2.5, -1.4, 1.5, .7], [1.3, 2.4, -1.3, 1.5, .7], [-3, .5, .1, 1.1, .8], [3.1, .5, .2, 1.0, .8]]) {
+    const b = add(new THREE.DodecahedronGeometry(s, 1), r() > .4 ? rockM : rockDk, bx, by, bz, G); b.scale.set(1, sy, .8); b.rotation.set(r() * .6, r() * 3, r() * .4); }
+  // the dressed face, with a low doorway cut into it and a lintel line
+  box(4.4, 2.6, .5, face, 0, 0, .15, G);
+  box(1.0, 1.35, .22, dark, -.5, .05, .32, G);                                  // the doorway: dark and low, you would stoop to go in
+  box(1.3, .12, .14, lime, -.5, 1.42, .4, G);                                   // the cut lintel
+  box(3.6, .14, .34, rockDk, .4, 0, .62, G);                                    // the groove the stone rolls in
+  // the round stone, rolled back to the right of the door
+  const st = add(new THREE.CylinderGeometry(.95, .95, .38, 22), lime, 1.55, .97, .62, G); st.rotation.x = Math.PI / 2;
+  add(new THREE.CylinderGeometry(.2, .2, .4, 10), rockDk, 1.55, .97, .63, G).rotation.x = Math.PI / 2;
+  // grass and a few plants at the foot of the rock
+  for (let k = 0; k < 7; k++) { const s2 = add(new THREE.IcosahedronGeometry(.22 + r() * .18, 0), mat('utLeaf', '#6f8a46'), -2.8 + r() * 5.6, .12, .7 + r() * .4, G); s2.scale.y = .7; }
+  return y + 3.6; }
+{ const T = (id, label, tags, kind, fn) => defObject(id, fn, { label, origin: 'verses100 6.1', tags, kind });
+  T('garden-tomb', 'Garden tomb cut in the rock, the round stone rolled away', ['tomb', 'resurrection', 'garden', 'rock'], 'structure', (g, x, y, z) => upGardenTomb(g, x, y, z)); }

@@ -43,3 +43,6 @@ window.__h = (x, z) => heightAt(x, z);
   document.getElementById('hud').addEventListener('click', () => { const st = STATIONS[idx] || STATIONS[0]; if (st) open(st); });
   window.__openPassage = i => open(STATIONS[i]); window.__passageText = () => card.innerText;
 }
+// test hook: what does a ray from (x, y, z) in direction (dx, dy, dz) hit first? (finding stray geometry after the scenery is merged)
+window.__probe = (x, y, z, dx, dy, dz) => { const rc = new THREE.Raycaster(new THREE.Vector3(x, y, z), new THREE.Vector3(dx, dy, dz).normalize()); rc.camera = camera; const h = rc.intersectObjects(scene.children, true).find(q => q.object.isMesh && !q.object.material.isShaderMaterial);
+  if (!h) return null; const m = h.object.material; return { d: +h.distance.toFixed(2), p: h.point.toArray().map(v => +v.toFixed(2)), n: h.face && h.face.normal.toArray().map(v => +v.toFixed(2)), color: m && m.color && '#' + m.color.getHexString(), type: h.object.geometry.type, size: (() => { h.object.geometry.computeBoundingBox(); const s = h.object.geometry.boundingBox.getSize(new THREE.Vector3()); return s.toArray().map(v => +v.toFixed(1)); })() }; };

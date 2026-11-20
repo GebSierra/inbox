@@ -1146,21 +1146,55 @@
      ],
      "kind": "custom",
      "builder": "v100.room",
+     "at": [
+      116,
+      8
+     ],
+     "viewer": [
+      116,
+      1
+     ],
+     "args": {
+      "h": 2.2
+     },
      "objects": [
       {
-       "id": "TODO",
+       "place": true,
        "what": "the open tomb doorway",
-       "note": "NEW garden-tomb"
+       "at": [
+        0.5,
+        0
+       ],
+       "lift": 0.7
+      },
+      {
+       "id": "garden-tomb",
+       "what": "garden tomb",
+       "extra": true,
+       "at": [
+        2.7,
+        0
+       ],
+       "scale": 1.0
       },
       {
        "id": "garden-plot",
        "what": "garden plot",
-       "extra": true
+       "extra": true,
+       "at": [
+        -0.6,
+        -3.4
+       ],
+       "scale": 0.45
       },
       {
        "id": "grass-tufts",
        "what": "grass tufts",
-       "extra": true
+       "extra": true,
+       "at": [
+        -1.4,
+        2.6
+       ]
       }
      ]
     },
@@ -1177,10 +1211,28 @@
      ],
      "kind": "custom",
      "builder": "v100.room",
+     "at": [
+      136,
+      -8
+     ],
+     "viewer": [
+      136,
+      -1
+     ],
+     "back": 9.5,
+     "pitch": -0.1,
+     "args": {
+      "h": 2.6
+     },
      "objects": [
       {
        "place": true,
-       "what": "the left gate tower"
+       "what": "the left gate tower",
+       "at": [
+        -2.0,
+        -2.9
+       ],
+       "lift": 1.4
       },
       {
        "id": "lyre",
@@ -1188,11 +1240,21 @@
       },
       {
        "place": true,
-       "what": "the pasture beyond the wall"
+       "what": "the pasture beyond the back wall",
+       "at": [
+        3.7,
+        2.2
+       ],
+       "lift": 1.15
       },
       {
        "place": true,
-       "what": "the inner arch"
+       "what": "the right gate tower",
+       "at": [
+        -2.0,
+        2.9
+       ],
+       "lift": 1.4
       },
       {
        "id": "incense-burner",
@@ -1201,7 +1263,11 @@
       {
        "id": "goats-grazing",
        "what": "goats grazing",
-       "extra": true
+       "extra": true,
+       "at": [
+        6.5,
+        1.8
+       ]
       }
      ]
     },
@@ -1214,25 +1280,57 @@
      ],
      "kind": "custom",
      "builder": "v100.room",
+     "at": [
+      158,
+      8
+     ],
+     "viewer": [
+      158,
+      1
+     ],
+     "back": 8.5,
+     "args": {
+      "h": 2.2
+     },
      "objects": [
       {
        "place": true,
-       "what": "the seat inside the shrine"
+       "what": "the throne inside the shrine",
+       "at": [
+        1.2,
+        0
+       ],
+       "lift": 0.95
       },
       {
        "id": "round-shrine",
        "what": "round shrine",
-       "extra": true
+       "extra": true,
+       "at": [
+        1.2,
+        0
+       ],
+       "scale": 0.42
       },
       {
        "id": "seven-flame-lampstand",
        "what": "seven flame lampstand",
-       "extra": true
+       "extra": true,
+       "at": [
+        -1.6,
+        -2.6
+       ],
+       "scale": 0.8
       },
       {
        "id": "victors-crown",
        "what": "victors crown",
-       "extra": true
+       "extra": true,
+       "at": [
+        -1.6,
+        2.6
+       ],
+       "scale": 0.9
       }
      ]
     }
@@ -1254,6 +1352,17 @@
      ],
      "kind": "custom",
      "builder": "v100.room",
+     "at": [
+      180,
+      -8
+     ],
+     "viewer": [
+      180,
+      -1
+     ],
+     "args": {
+      "h": 2.2
+     },
      "objects": [
       {
        "id": "lilies-of-the-field",
@@ -1274,15 +1383,31 @@
      ],
      "kind": "custom",
      "builder": "v100.room",
+     "at": [
+      193,
+      8
+     ],
+     "viewer": [
+      193,
+      1
+     ],
+     "args": {
+      "h": 2.2
+     },
      "objects": [
       {
        "id": "loom",
-       "what": "loom"
+       "what": "loom",
+       "mark": 1.3
       },
       {
        "id": "wool-basket",
        "what": "wool basket",
-       "extra": true
+       "extra": true,
+       "at": [
+        2.2,
+        -2.2
+       ]
       }
      ]
     },
@@ -1297,6 +1422,17 @@
      ],
      "kind": "custom",
      "builder": "v100.room",
+     "at": [
+      206,
+      -8
+     ],
+     "viewer": [
+      206,
+      -1
+     ],
+     "args": {
+      "h": 2.2
+     },
      "objects": [
       {
        "id": "sealed-letter",
@@ -1323,6 +1459,17 @@
      ],
      "kind": "custom",
      "builder": "v100.room",
+     "at": [
+      219,
+      8
+     ],
+     "viewer": [
+      219,
+      1
+     ],
+     "args": {
+      "h": 2.2
+     },
      "objects": [
       {
        "id": "white-cloth-bolts",
@@ -1348,6 +1495,17 @@
      ],
      "kind": "custom",
      "builder": "v100.room",
+     "at": [
+      232,
+      -8
+     ],
+     "viewer": [
+      232,
+      -1
+     ],
+     "args": {
+      "h": 2.2
+     },
      "objects": [
       {
        "id": "som-resting-stone",
@@ -1376,20 +1534,45 @@
      ],
      "kind": "custom",
      "builder": "v100.room",
+     "at": [
+      252,
+      30
+     ],
+     "viewer": [
+      246,
+      30
+     ],
+     "args": {
+      "h": 2.2
+     },
      "objects": [
       {
        "place": true,
-       "what": "the gap in the rocks"
+       "what": "the gap in the rocks",
+       "at": [
+        1.6,
+        0
+       ],
+       "lift": 0.12
       },
       {
        "id": "som-split-boulder",
        "what": "som split boulder",
-       "extra": true
+       "extra": true,
+       "at": [
+        -1.4,
+        -2.6
+       ]
       },
       {
        "id": "acacia-tree",
        "what": "acacia tree",
-       "extra": true
+       "extra": true,
+       "at": [
+        4.6,
+        -4.6
+       ],
+       "scale": 0.9
       }
      ]
     },
@@ -1402,20 +1585,40 @@
      ],
      "kind": "custom",
      "builder": "v100.room",
+     "at": [
+      238,
+      52
+     ],
+     "viewer": [
+      244,
+      52
+     ],
+     "args": {
+      "h": 2.2
+     },
      "objects": [
       {
        "place": true,
-       "what": "the flat ledge for loads"
+       "what": "the flat ledge for loads",
+       "lift": 0.95
       },
       {
        "id": "hand-cart",
        "what": "hand cart",
-       "extra": true
+       "extra": true,
+       "at": [
+        2.2,
+        -2.2
+       ]
       },
       {
        "id": "grain-sack",
        "what": "grain sack",
-       "extra": true
+       "extra": true,
+       "at": [
+        2.2,
+        2.2
+       ]
       }
      ]
     },
@@ -1430,10 +1633,23 @@
      ],
      "kind": "custom",
      "builder": "v100.room",
+     "at": [
+      252,
+      74
+     ],
+     "viewer": [
+      246,
+      74
+     ],
+     "back": 8,
+     "args": {
+      "h": 2.2
+     },
      "objects": [
       {
        "id": "goat-hair-tent-brown",
-       "what": "brown tent"
+       "what": "brown tent",
+       "scale": 0.7
       },
       {
        "id": "som-goatskin-bag",
@@ -1457,14 +1673,33 @@
      ],
      "kind": "custom",
      "builder": "v100.room",
+     "at": [
+      238,
+      96
+     ],
+     "viewer": [
+      244,
+      96
+     ],
+     "back": 8.5,
+     "args": {
+      "h": 2.4
+     },
      "objects": [
       {
        "id": "field-watchtower",
-       "what": "watchtower"
+       "what": "watchtower",
+       "at": [
+        -1.6,
+        -3.2
+       ],
+       "scale": 0.45,
+       "mark": 1.8
       },
       {
        "place": true,
-       "what": "the fold wall"
+       "what": "the fold wall",
+       "lift": 1.05
       },
       {
        "id": "som-slab-corner",
@@ -1472,7 +1707,8 @@
       },
       {
        "id": "som-fold-gateway",
-       "what": "gateway of the fold"
+       "what": "gateway of the fold",
+       "scale": 0.8
       }
      ]
     }
@@ -1493,20 +1729,40 @@
      ],
      "kind": "custom",
      "builder": "v100.room",
+     "at": [
+      212,
+      141
+     ],
+     "viewer": [
+      212,
+      148
+     ],
+     "args": {
+      "h": 2.2
+     },
      "objects": [
       {
        "place": true,
-       "what": "the bronze platform"
+       "what": "the bronze platform",
+       "lift": 0.5
       },
       {
        "id": "woman-praying",
        "what": "woman praying",
-       "extra": true
+       "extra": true,
+       "at": [
+        2.2,
+        -2.2
+       ]
       },
       {
        "id": "incense-stand",
        "what": "incense stand",
-       "extra": true
+       "extra": true,
+       "at": [
+        2.2,
+        2.2
+       ]
       }
      ]
     },
@@ -1520,10 +1776,22 @@
      ],
      "kind": "custom",
      "builder": "v100.room",
+     "at": [
+      198,
+      141
+     ],
+     "viewer": [
+      198,
+      148
+     ],
+     "args": {
+      "h": 2.2
+     },
      "objects": [
       {
        "id": "altar-with-fire",
-       "what": "altar with fire"
+       "what": "altar with fire",
+       "scale": 0.75
       },
       {
        "id": "bowl-of-offerings",
@@ -1541,6 +1809,17 @@
      ],
      "kind": "custom",
      "builder": "v100.room",
+     "at": [
+      184,
+      141
+     ],
+     "viewer": [
+      184,
+      148
+     ],
+     "args": {
+      "h": 2.2
+     },
      "objects": [
       {
        "id": "bronze-cauldron",
@@ -1561,15 +1840,37 @@
      ],
      "kind": "custom",
      "builder": "v100.room",
+     "at": [
+      170,
+      141
+     ],
+     "viewer": [
+      170,
+      148
+     ],
+     "args": {
+      "h": 2.2
+     },
      "objects": [
       {
        "id": "marble-stoa",
-       "what": "the first column of the stoa"
+       "what": "the stoa of Solomon's Porch",
+       "at": [
+        3.2,
+        0
+       ],
+       "scale": 0.42,
+       "mark": 1.4,
+       "rot": -1.5708
       },
       {
        "id": "rope-barrier",
        "what": "rope barrier",
-       "extra": true
+       "extra": true,
+       "at": [
+        -1.2,
+        -2.4
+       ]
       }
      ]
     },
@@ -1582,6 +1883,17 @@
      ],
      "kind": "custom",
      "builder": "v100.room",
+     "at": [
+      170,
+      179
+     ],
+     "viewer": [
+      170,
+      172
+     ],
+     "args": {
+      "h": 2.2
+     },
      "objects": [
       {
        "id": "coin-chest",
@@ -1590,7 +1902,11 @@
       {
        "id": "open-coin-chest",
        "what": "open coin chest",
-       "extra": true
+       "extra": true,
+       "at": [
+        2.2,
+        -2.2
+       ]
       }
      ]
     },
@@ -1604,19 +1920,37 @@
      ],
      "kind": "custom",
      "builder": "v100.room",
+     "at": [
+      184,
+      179
+     ],
+     "viewer": [
+      184,
+      172
+     ],
+     "args": {
+      "h": 2.2
+     },
      "objects": [
       {
        "place": true,
-       "what": "the lowest step"
+       "what": "the lowest step",
+       "lift": 0.3
       },
       {
        "id": "water-basin",
-       "what": "water basin"
+       "what": "water basin",
+       "lift": 0.9
       },
       {
        "id": "stack-of-bowls",
        "what": "stack of bowls",
-       "extra": true
+       "extra": true,
+       "at": [
+        2.2,
+        2.2
+       ],
+       "lift": 0.9
       }
      ]
     },
@@ -1629,6 +1963,17 @@
      ],
      "kind": "custom",
      "builder": "v100.room",
+     "at": [
+      198,
+      179
+     ],
+     "viewer": [
+      198,
+      172
+     ],
+     "args": {
+      "h": 2.2
+     },
      "objects": [
       {
        "id": "elder",
@@ -1637,7 +1982,11 @@
       {
        "id": "stool-with-tablets",
        "what": "stool with tablets",
-       "extra": true
+       "extra": true,
+       "at": [
+        2.2,
+        -2.2
+       ]
       }
      ]
     },
@@ -1650,6 +1999,17 @@
      ],
      "kind": "custom",
      "builder": "v100.room",
+     "at": [
+      212,
+      179
+     ],
+     "viewer": [
+      212,
+      172
+     ],
+     "args": {
+      "h": 2.2
+     },
      "objects": [
       {
        "id": "lion-head-fountain",
@@ -1658,7 +2018,11 @@
       {
        "id": "water-trough",
        "what": "water trough",
-       "extra": true
+       "extra": true,
+       "at": [
+        2.2,
+        -2.2
+       ]
       }
      ]
     }
@@ -1682,6 +2046,17 @@
      ],
      "kind": "custom",
      "builder": "v100.room",
+     "at": [
+      140,
+      170
+     ],
+     "viewer": [
+      140,
+      163
+     ],
+     "args": {
+      "h": 2.4
+     },
      "objects": [
       {
        "id": "wine-jugs",
@@ -1689,15 +2064,18 @@
       },
       {
        "id": "grapevine-trellis",
-       "what": "vine on a trellis"
+       "what": "vine on a trellis",
+       "mark": 1.6
       },
       {
        "id": "vineyard-rows",
-       "what": "vineyard rows"
+       "what": "vineyard rows",
+       "scale": 0.6
       },
       {
        "id": "rock-cut-winepress",
-       "what": "winepress"
+       "what": "winepress",
+       "scale": 0.8
       }
      ]
     },
@@ -1711,10 +2089,23 @@
      ],
      "kind": "custom",
      "builder": "v100.room",
+     "at": [
+      126,
+      154
+     ],
+     "viewer": [
+      126,
+      161
+     ],
+     "args": {
+      "h": 2.2
+     },
      "objects": [
       {
        "id": "fig-tree",
-       "what": "fig tree"
+       "what": "fig tree",
+       "scale": 1.1,
+       "mark": 1.5
       },
       {
        "id": "fruit-basket",

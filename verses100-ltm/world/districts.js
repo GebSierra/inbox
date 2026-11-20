@@ -144,5 +144,76 @@ const keepRooms = []; for (let ch = 1; ch <= Math.min(BUILT, 5); ch++) { const c
   VIA['5.4'] = [[79.5, 9.7], [81.1, 9.7], [86.5, 9.7], [86.5, 4]];                           // across the terrace and down the outside stair
 }
 
+
+// ===================== PHASE 2 (PLAN.md §5, districts 6-10) =====================
+const keep2 = []; for (let ch = 6; ch <= Math.min(BUILT, 10); ch++) { const c = bookChapter(ch); if (c) for (const r of c.rooms) if (r.at) keep2.push([Math.min(r.at[0], r.viewer[0]) - 6, Math.min(r.at[1], r.viewer[1]) - 6, Math.max(r.at[0], r.viewer[0]) + 6, Math.max(r.at[1], r.viewer[1]) + 6]); }
+if (BUILT >= 6) {
+  // the road on from the olive-press yard's gate
+  VIA['6.1'] = [[88, 2.6], [97.5, 2.6], [104, 1]];
+  // ===== 6. THE HILL OF PRAISE (Praise): a garden tomb at the foot, a gated court on the slope, a round shrine on the top =====
+  scatter(104, -34, 172, 34, 26, [...keep2, [108, 2, 126, 16]], (x, z) => rnd() < .35 ? cypress(x, z, R(.8, 1.1)) : tree(x, z, R(.8, 1.1)));
+  scatter(106, 3, 128, 18, 10, keep2, (x, z) => shrub(x, z, R(.8, 1.2)));   // the garden round the tomb
+  // 6.2 The Gate of the Courts: two gate towers and a lintel at the front, low walls round a small court, pasture beyond the back wall
+  { const r = roomOf(6, 2); if (r) { const F = roomFrame(r), y = heightAt(r.at[0], r.at[1]);
+    for (const sd of [-1, 1]) { const g = atRoom(F, -1.45, sd * 3.3, y - .1); box(1.3, 3.8, 1.3, stoneM, 0, 0, 0, g); box(1.5, .25, 1.5, stoneDkM, 0, 3.8, 0, g); }
+    { const g = atRoom(F, -1.45, 0, y - .1); box(7.9, .55, 1.0, stoneM, 0, 3.55, 0, g); }
+    for (const sd of [-1, 1]) { const g = atRoom(F, 1.6, sd * 3.95, y - .1); box(.5, 1.2, 4.9, stoneM, 0, 0, 0, g); }
+    { const g = atRoom(F, 4.0, 0, y - .1); box(8.4, 1.0, .5, stoneM, 0, 0, 0, g); } } }
+  // 6.3 The Round Shrine: a stone throne under the ring of columns (Revelation 4)
+  { const r = roomOf(6, 3); if (r) { const F = roomFrame(r), y = heightAt(r.at[0], r.at[1]); const g = atRoom(F, 1.0, 0, y);
+    const gold = mat('v100ThroneGold', '#d8a63c', { metalness: .35, roughness: .4, emissive: '#3a2406', emissiveIntensity: .3 });
+    box(1.1, .2, 1.0, 'marble', 0, 0, 0, g); box(.9, .55, .8, 'marble', 0, .2, 0, g); box(1.0, 1.4, .18, 'marble', 0, .2, -.42, g); box(1.06, .12, .24, gold, 0, 1.58, -.42, g);
+    for (const sd of [-1, 1]) box(.14, .35, .7, gold, sd * .48, .75, 0, g); } }
+  zoneLabel(6, 'The Hill of Praise', 138, 0);
+
+  // ===== 7. THE HILLSIDE VILLAGE (Promises, part 1): a village on the lane down the hill's east side =====
+  for (const [n, f, s2, w, d] of [[2, 4.6, 0, 6, 4], [3, 4.8, .5, 6.5, 4.2], [4, 4.6, -.5, 5.5, 4]]) { const r = roomOf(7, n); if (r) { const F = roomFrame(r); flatHouse(...F.at(f, s2), w, d, 2.8, F.yaw, n === 3 ? plasterM : mudM, { door: 1.6, win: -1.4 }); } }
+  for (const [x, z, w, d, rot] of [[187, -20, 6, 5, 0], [212, 20, 5.5, 4.5, Math.PI], [224, 21, 6, 5, Math.PI], [200, -21, 5, 4, 0]]) flatHouse(x, z, w, d, 2.8, rot);
+  scatter(170, -34, 242, 34, 22, [...keep2, [184, -26, 230, 26]], (x, z) => rnd() < .3 ? cypress(x, z, R(.8, 1.1)) : tree(x, z, R(.8, 1.1)));
+  // 7.1 The Lily Field: lilies all round the room, not only on its spot
+  { const r = roomOf(7, 1); if (r) { const F = roomFrame(r); for (const [f, s2] of [[3.6, -3.6], [3.8, 0], [3.6, 3.4], [-.5, -3.8], [.8, 3.8]]) v100Put('lilies-of-the-field', ...F.at(f, s2), R(0, 6), .9); } }
+  zoneLabel(7, 'The Hillside Village', 206, 0);
+
+  // ===== 8. THE WILDERNESS PASS (Promises, part 2): a rocky pass running north =====
+  VIA['8.1'] = [[244, 0], [245.5, 10]];
+  scatter(229, 18, 268, 126, 40, keep2, (x, z) => { if (Math.abs(x - 245) < 9) return; rock(x, z, R(.6, 1.6)); });
+  scatter(229, 18, 268, 126, 10, keep2, (x, z) => { if (Math.abs(x - 245) < 10) return; v100Put('acacia-tree', x, z, R(0, 6), R(.8, 1.1)); });
+  // 8.1 The Narrow Gorge: two rock masses with a gap between them, the way of escape (10:13's spot)
+  { const r = roomOf(8, 1); if (r) { const F = roomFrame(r), y = heightAt(r.at[0], r.at[1]);
+    for (const [f, s2, sz] of [[2.6, -2.4, 1.7], [3.6, -3.6, 2.0], [2.4, 2.5, 1.7], [3.5, 3.7, 2.1], [5.2, -1.8, 1.6], [5.2, 2.0, 1.6]]) { const [x, z] = F.at(f, s2); rock(x, z, sz, y - .2); } } }
+  // 8.2 The Porters' Rest: a flat stone ledge for setting loads down (55:22's spot)
+  { const r = roomOf(8, 2); if (r) { const F = roomFrame(r), y = heightAt(r.at[0], r.at[1]); const g = atRoom(F, -2.2, -2.2, y); box(1.7, .85, 1.2, stoneM, 0, 0, 0, g); box(1.8, .08, 1.3, stoneDkM, 0, .85, 0, g); } }
+  // 8.4 The Watchtower and Fold: dry-stone walls of the fold (5:9's spot on the far-left wall)
+  { const r = roomOf(8, 4); if (r) { const F = roomFrame(r), y = heightAt(r.at[0], r.at[1]);
+    { const g = atRoom(F, 2.2, -2.4, y - .1); box(.55, 1.0, 3.6, stoneDkM, 0, 0, 0, g); }
+    { const g = atRoom(F, 4.0, 0, y - .1); box(5.4, 1.0, .55, stoneDkM, 0, 0, 0, g); }
+    for (let k = 0; k < 4; k++) { const [x, z] = F.at(1.2 + k * .8, 1.2 - k * .3); sheep(x, z); } } }
+  zoneLabel(8, 'The Wilderness Pass', 245, 70);
+
+  // ===== 9. THE TEMPLE COURTS (Holiness): a walled court, rooms along the south side and back along the north =====
+  { const y0 = heightAt(191, 160), T = 4.2, X0 = 160, X1 = 222, Z0 = 136, Z1 = 184;
+    wallSeg(X0, Z0, X1, Z0, T, 1.0, stoneM, y0); wallSeg(X0, Z1, X1, Z1, T, 1.0, stoneM, y0);
+    for (const x of [X0, X1]) { wallSeg(x, Z0, x, 156.6, T, 1.0, stoneM, y0); wallSeg(x, 163.4, x, Z1, T, 1.0, stoneM, y0);
+      for (const z of [155.2, 164.8]) box(2.8, 5.6, 2.8, stoneM, x, y0 - .1, z); box(1.4, .8, 10.4, stoneM, x, y0 + T - .3, 160); }
+    WALKWAYS.push([X1 - 2, 157, X1 + 2, 163], [X0 - 2, 157, X0 + 2, 163]);
+    drape(X0 + .6, Z0 + .6, X1 - .6, Z1 - .6, 'path', .04);
+    for (let x = X0 + 4; x < X1 - 2; x += 7) for (const z of [Z0 + 1.6, Z1 - 1.6]) { cyl(.32, .36, 5.2, 12, 'marble', x, y0, z); box(.9, .35, .9, 'marble', x, y0 + 5.2, z); }   // columns along the walls
+    // 9.1 the bronze platform where Solomon knelt (7:14's spot) · 9.6 the gathering steps (10:24 on the lowest)
+    { const r = roomOf(9, 1); if (r) { const F = roomFrame(r); const g = atRoom(F, -2.2, -2.2, y0); box(1.6, .42, 1.6, mat('v100Bronze', '#9a6436', { metalness: .3, roughness: .5 }), 0, 0, 0, g); } }
+    { const r = roomOf(9, 6); if (r) { const F = roomFrame(r); for (const [f0, f1, h] of [[-3.1, -1.2, .3], [-1.2, .6, .6], [.6, 3.1, .9]]) { const g = atRoom(F, (f0 + f1) / 2, 0, y0 - .02); box(6.2, h, f1 - f0, 'marble', 0, 0, 0, g); } } }
+    // dressing along the sides of each court room, outside its square of spots: lamps, planters, benches, jars
+    for (let n = 1; n <= 8; n++) { const r = roomOf(9, n); if (!r) continue; const F = roomFrame(r), kit = [['potted-laurel', 'big-jar'], ['hanging-oil-lamps', 'stone-bench'], ['potted-bush', 'wooden-crate'], ['tall-candle', 'big-jar']][n % 4];
+      v100Put(kit[0], ...F.at(3.4, -4.2), F.yaw, 1); v100Put(kit[1], ...F.at(3.4, 4.2), F.yaw + Math.PI / 2, 1); }
+    zoneLabel(9, 'The Temple Courts', 191, 160); }
+  VIA['9.1'] = [[245, 118], [245, 160], [226, 160], [219, 160], [214, 154]];   // up the pass, round to the courts' east gate, in
+  // ===== 10. THE VINEYARD (Fullness): a walled vineyard and orchard below the courts' west gate =====
+  { const y0 = heightAt(133.5, 162), L = (x0, z0, x1, z1) => wallSeg(x0, z0, x1, z1, 1.2, .55, stoneM, y0);
+    L(115, 148, 152, 148); L(115, 176, 152, 176); L(152, 148, 152, 158.8); L(152, 165.2, 152, 176); L(115, 148, 115, 158.8); L(115, 165.2, 115, 176);
+    WALKWAYS.push([150, 159, 154, 165], [113, 159, 117, 165]);
+    for (const [x, z] of [[120, 152], [120, 172], [148, 152], [132, 172.5], [147, 172]]) v100Put('vineyard-rows', x, z, 0, .9); }
+  zoneLabel(10, 'The Vineyard', 133, 162);
+  VIA['10.1'] = [[200, 164], [158, 160], [152, 162]];                        // across the court and out of its west gate, into the vineyard
+}
+
 // ---- the rooms, in walking order ----
 for (let ch = 1; ch <= 15; ch++) buildRooms(ch);

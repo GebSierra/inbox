@@ -20,7 +20,7 @@ function v100Put(id, x, z, rot = 0, s = 1, y = heightAt(x, z), args) {
   g.updateMatrixWorld(true); const bb = new THREE.Box3().setFromObject(g); if (bb.isEmpty()) return y + 1;
   // some library pieces are built at the world origin: set every piece down on its own spot
   const c = bb.getCenter(new THREE.Vector3()); if (Math.hypot(c.x - x, c.z - z) > 2.5) { g.position.x -= c.x - x; g.position.z -= c.z - z; }
-  if (Math.abs(bb.min.y - y) > .4) g.position.y -= bb.min.y - y;
+  if (bb.min.y - y > .4 || (bb.min.y - y < -.4 && e.kind !== 'structure')) g.position.y -= bb.min.y - y;   // a structure may sit sunk into the ground on purpose (the garden tomb's rock)
   g.updateMatrixWorld(true); return new THREE.Box3().setFromObject(g).max.y; }
 // a group standing at room coordinates (f, s), turned with the room (local +z = towards the viewer)
 function atRoom(F, f, s, y) { const [x, z] = F.at(f, s), g = new THREE.Group(); g.position.set(x, y ?? heightAt(x, z), z); g.rotation.y = F.yaw; scene.add(g); return g; }
@@ -49,8 +49,10 @@ if (BOOKDATA) for (const c of BOOKDATA.chapters) if (c.chapter <= BUILT) for (co
 FLAT.push([SO[0] - 3.5, SO[1] + 1.5, 16.5, 14.5]);   // the synagogue (as in James)
 FLAT.push([23, 0, 25, 13]);                         // the tabernacle court
 FLAT.push([78, 0, 21, 13.5]);                       // the Father's House and its yard
+FLAT.push([191, 160, 33, 26]);                      // the temple courts
+FLAT.push([133.5, 162, 20, 16]);                    // the vineyard
 {
-  const SX = 620, SZ = 560, N = 300, CX = -40;
+  const SX = 660, SZ = 560, N = 340, CX = -30;
   const g = new THREE.PlaneGeometry(SX, SZ, N, N); g.rotateX(-Math.PI / 2);
   const p = g.attributes.position, col = [];
   const cGrass = new THREE.Color('#a3ad62'), cGrass2 = new THREE.Color('#8f9a52'), cPath = new THREE.Color('#d9bf8e'), cDry = new THREE.Color('#c8b47a'), cFlower = new THREE.Color('#c9b04e');
@@ -61,6 +63,7 @@ FLAT.push([78, 0, 21, 13.5]);                       // the Father's House and it
     const n2 = Math.sin(x * .041 + 2) * Math.sin(z * .047) + Math.sin(x * .09 - z * .07) * .5; if (n2 > .7) c.lerp(cFlower, .35); else if (n2 < -.6) c.lerp(new THREE.Color('#738f47'), .4);
     if (x > -104) c.lerp(cDry, .35);                                                  // the town and the plain beyond: drier, trodden ground
     if (ROAD_D(x, z) < 2.2 || (x > -104 && Math.abs(z) < 2.2 && x < 96)) c.lerp(cPath, .6);
+    if (x > 230 && x < 276 && z > 16 && z < 126 && Math.abs(x - 245) > 10) c.lerp(new THREE.Color('#b3a07c'), .55);   // bare rock and scree on the pass
     col.push(c.r, c.g, c.b);
   }
   g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
@@ -79,8 +82,8 @@ function hillDome(x, z, r, h, c) {
   const m = add(g, new THREE.MeshStandardMaterial({ color: c, flatShading: true, roughness: 1 }), x, -4, z); m.scale.set(r, h, r * R(.7, 1)); m.castShadow = false;
 }
 for (let i = 0; i < 11; i++) hillDome(-360 + i * 65, -330 + R(-30, 30), R(70, 110), R(30, 55), i % 2 ? '#8b9358' : '#988e60');
-for (let i = 0; i < 11; i++) hillDome(-360 + i * 65, 330 + R(-30, 30), R(80, 120), R(40, 70), i % 3 ? '#86955a' : '#958d5e');
-hillDome(-420, 0, 120, 60, '#8f965c'); hillDome(320, 0, 120, 50, '#8f965c');
+for (let i = 0; i < 11; i++) hillDome(-360 + i * 65, 420 + R(-30, 30), R(80, 120), R(40, 70), i % 3 ? '#86955a' : '#958d5e');   // far enough north to clear the phase 2-3 road (z up to 260)
+hillDome(-420, 0, 120, 60, '#8f965c'); hillDome(470, 80, 120, 50, '#8f965c');   // the east hill clear of the pass (x up to 276)
 
 // ---------- small builders shared by the districts ----------
 const stoneM = mat('v100Stone', '#cdbd9f'), stoneDkM = mat('v100StoneDk', '#a99a80'), mudM = mat('v100Mud', '#c9a77a'), plasterM = mat('v100Plaster', '#ede0c6'),
