@@ -55,3 +55,11 @@ function upGardenTomb(g, x, y, z) {
   return y + 3.6; }
 { const T = (id, label, tags, kind, fn) => defObject(id, fn, { label, origin: 'verses100 6.1', tags, kind });
   T('garden-tomb', 'Garden tomb cut in the rock, the round stone rolled away', ['tomb', 'resurrection', 'garden', 'rock'], 'structure', (g, x, y, z) => upGardenTomb(g, x, y, z)); }
+
+// ---------- NEW (verses100-ltm 7.5): a traveller leaning on his walking stick (the Crossroads, Proverbs 3:5) ----------
+// The shared person builder (objects/up-c.js upPerson) in a dusty travelling cloak, the staff in his right hand, the whole figure tilted
+// a little onto it, as a tired man rests his weight at a fork in the road.
+{ defObject('traveller-with-walking-stick', (g, x, y, z) => { const p = new THREE.Group(); p.position.set(x, y, z); g.add(p);
+    const lean = new THREE.Group(); lean.rotation.z = -.07; lean.rotation.x = .03; p.add(lean);
+    upPerson(lean, '#9c8460', { pose: 'stand', prop: 'staff', cloak: '#6e5a40', hair: 2 }); return y + 1.75; },
+  { label: 'Traveller leaning on his walking stick', origin: 'verses100 7.5', tags: ['traveller', 'road', 'old', 'staff'], kind: 'person' }); }
