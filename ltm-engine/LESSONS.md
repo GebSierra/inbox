@@ -187,3 +187,30 @@ Verification
 - `node ltm-engine/tools/angles.mjs <id>[,<id>] --out <dir> --tag before|after` renders a library object from four sides and above into one picture. Look before and after every change; one angle hides what another shows.
 - Match the viewing angle to the complaint (a low camera hides water at the bottom of a well). Also look at the real in-town stop camera.
 - Don't trust one set of numbers; use a reference height for figure proportions.
+
+## 11. The 100 Bible Verses palace (verses100-ltm, 2026-11-19)
+
+A verse list, not a book: one district per topic, one room per passage, built along one long road.
+
+**Method and layout**
+- **A list of passages needs "passage mode"**, not five-verse rooms: the room is the passage, its sign leads with the reference ("John 3:16-17"), and a sixth verse goes on the doorway or stair you leave by. The room's name then cues the reference too.
+- **Order rooms by what you see first as you walk in.** I ordered the synagogue's rooms by the passages' meaning; the owner reordered them by the walk (front steps, pool, inside, side steps). Fit the place to the walk first, then the passage to the place.
+- **Copy proven builders, don't improvise.** A stair I made up "looked random"; the stair built for the Sermon on the Mount (som-ltm 6.1) was what the owner wanted. Search the other towns' world files as well as the object library.
+- **A stair must never cross a doorway.** Give `flatHouse` a door position (`{ door, win }`) and check the front view.
+- **Keep objects that read clearly from the standing spot.** A sheepskin read as "a rock or a loaf" from 8 m; a cooking pot on embers read at once.
+- **Lowercase Greek is easier to recognise than capitals** (λόγος, not ΛΟΓΟΣ). A carved word on a standing stone (canvas texture: groove, shadow, lit edge) is a cheap, strong memory hook.
+
+**Engineering**
+- **The sky dome must follow the camera.** It was centred on the world origin; from 220 m away its far side passed the 900 m far plane and showed a black patch behind the hills. Fixed in `engine/core.js` for every town.
+- **Effects are centred on their source.** Don't re-seat them by their bounding box like solid objects (that lifted the light 5 m into the sky). `v100Put` skips that for `kind: 'effect'`.
+- **James's `spread` is [lateral, depth].** I swapped the two when copying synagogue rooms and every spot missed its feature. Convert carefully, then look at the screenshot.
+- **A custom room builder should set `st.bookBack = true`** with `st.back`, or the route check (`__blockers`) measures from the wrong standing spot.
+- **BSB text from bible.helloao.org can have a footnote run into the verse** (John 3:16: "only3:16 Or only begotten… Son"). After fetching, scan the text for digits. Psalm titles ("A Psalm of David.") are marked `descriptive`; drop them.
+- **Never put a comment on the same line as a function's opening brace with a string replace**: it swallowed the first statement and the town stopped loading. Run `fast.mjs` after every edit, however small.
+- **Validator gaps fixed:** `def('som-…')` in objects/som.js and `T(() => { … }, 'id', …)` in up-james-civic.js were not recognised as library ids.
+
+**Light effects and the blind critic**
+- **God-rays that read as light:** a few broad shafts with gaps between them, bright along their whole length, rising mostly upward, warm gold, additive, with a dim hub hidden behind the object. The critics marked down: a white blob at the hub ("blown out", "a light bulb"), many thin even spokes ("clip-art sunburst"), rays bright at the base and faint above ("two separate effects"), and rays over dark trees with normal blending ("grey smoke").
+- **Additive light disappears against a bright daytime sky; normal blending turns grey over dark trees.** Additive, warm gold and stronger opacity was the balance. Clear trees from behind the effect so it has open sky.
+- **Tell the critic the intent and score against it** when there is no reference image. Three Sonnet runs a round; rounds moved 6.8 → 6.3 → 6.7, so the owner's eye on the final version was the deciding test. Record the scores honestly in the town's INSTRUCTIONS.md.
+- **A tappable sign is a good place for the verse text.** Ray-cast the banner sprites on a tap (not a drag), open a card with BSB / ESV, remember the choice. The BSB is public domain and can ship with the palace; the ESV comes from the owner's `verses.json`, and until then the card links to esv.org.
